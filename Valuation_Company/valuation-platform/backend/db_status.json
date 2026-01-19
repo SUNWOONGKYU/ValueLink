@@ -1,0 +1,84 @@
+{
+  "news_count": 78,
+  "company_count": 5,
+  "rounds_count": 1,
+  "companies": [
+    {
+      "name": "케이앤에스아이앤씨",
+      "industry": "IT",
+      "funding": null
+    },
+    {
+      "name": "팝업스튜디오",
+      "industry": "IT",
+      "funding": 15
+    },
+    {
+      "name": "슈퍼브에이아이",
+      "industry": "IT",
+      "funding": 140
+    },
+    {
+      "name": "기술보증기금",
+      "industry": "창업지원",
+      "funding": null
+    },
+    {
+      "name": "팬딩",
+      "industry": "IT",
+      "funding": null
+    }
+  ],
+  "recent_news": [
+    {
+      "title": "네이버·NC, 국가 AI 프로젝트서 1차 탈락…’독자성 논란’과 ‘성능 미달’",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "“투자자에게 ‘사고의 파트너’를 제공한다”…링크알파의 금융 AI 혁신",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "아이피텍, 케이그라운드벤처스로부터 혁신 IP 펀드 투자 유치",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "바이버, 송승환 전 컬리 본부장 CSO 선임",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "[컬처슬로건 탐방기]이것을 무엇이라 부를까요?",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "로그프레소, 160억 원 투자 유치",
+      "ai_amount": null,
+      "ai_industry": null
+    },
+    {
+      "title": "슈퍼브에이아이, LG AI연구원 컨소시엄과 국가대표 AI 파운데이션 모델 2차 사업 최종 ",
+      "ai_amount": 140.0,
+      "ai_industry": "IT"
+    },
+    {
+      "title": "팝업스튜디오, ‘UKF 2026 서밋’서 ‘바이브 코딩’ 실시간 개발 시연",
+      "ai_amount": 15.0,
+      "ai_industry": "IT"
+    },
+    {
+      "title": "기보, ‘제18기 기보벤처캠프’ 참여기업 모집",
+      "ai_amount": null,
+      "ai_industry": "창업지원"
+    },
+    {
+      "title": "케이앤에스아이앤씨, 코스닥 상장 예비심사 신청",
+      "ai_amount": null,
+      "ai_industry": "IT"
+    }
+  ]
+}

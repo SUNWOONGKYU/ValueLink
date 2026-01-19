@@ -202,40 +202,32 @@
             box-shadow: 0 12px 24px rgba(0,0,0,0.1);
         }
 
-        .news-image {
-            height: 140px;
-            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            position: relative;
+        .news-content {
+            padding: 20px;
         }
 
-        /* 뉴스 바로가기 버튼 */
+        .news-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
         .news-link-btn {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(0,0,0,0.6);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
+            flex-shrink: 0;
+            background: var(--amber-pale);
+            color: var(--amber-dark);
+            padding: 4px 10px;
+            border-radius: 4px;
             font-size: 11px;
             font-weight: 600;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
             transition: background 0.2s;
         }
 
         .news-link-btn:hover {
-            background: rgba(0,0,0,0.8);
-        }
-
-        .news-content {
-            padding: 20px;
+            background: #FDE68A;
         }
 
         .news-meta {
@@ -786,18 +778,15 @@
 
                 return `
                     <div class="news-card">
-                        <div class="news-image" style="font-size: 14px; font-weight: 600; color: #B45309;">
-                            ${escapeHtml(industry)}
-                            <a href="${url}" target="_blank" class="news-link-btn">
-                                원문보기
-                            </a>
-                        </div>
                         <div class="news-content">
                             <div class="news-meta">
                                 <span class="news-source">${escapeHtml(source)}</span>
                                 <span class="news-date">최근</span>
                             </div>
-                            <h3 class="news-title">${escapeHtml(title)}</h3>
+                            <div class="news-title-row">
+                                <h3 class="news-title" style="margin-bottom: 0;">${escapeHtml(title)}</h3>
+                                <a href="${url}" target="_blank" class="news-link-btn">원문</a>
+                            </div>
                             <div class="news-company">
                                 <div class="company-badge" style="font-size: 12px; font-weight: 600; color: #166534;">${escapeHtml(company.charAt(0))}</div>
                                 <div class="company-info">

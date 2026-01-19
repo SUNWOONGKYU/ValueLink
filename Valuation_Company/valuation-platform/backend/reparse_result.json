@@ -1,0 +1,320 @@
+{
+  "updated": 63,
+  "companies": [
+    {
+      "company": "SDT",
+      "amount": 300.0,
+      "industry": "IT"
+    },
+    {
+      "company": "에디트콜렉티브",
+      "amount": 55.0,
+      "industry": "IT"
+    },
+    {
+      "company": "SDT",
+      "amount": 300.0,
+      "industry": "IT"
+    },
+    {
+      "company": "KRG그룹",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "클래시스",
+      "amount": null,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "열다컴퍼니",
+      "amount": 5.0,
+      "industry": "홈케어"
+    },
+    {
+      "company": "차봇 모빌리티",
+      "amount": null,
+      "industry": "모빌리티"
+    },
+    {
+      "company": "타이디비",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "Konnect",
+      "amount": null,
+      "industry": "AI"
+    },
+    {
+      "company": "웨이크",
+      "amount": null,
+      "industry": "푸드테크"
+    },
+    {
+      "company": "빅웨이브카",
+      "amount": 7.0,
+      "industry": "모빌리티"
+    },
+    {
+      "company": "미주한인창업자연합",
+      "amount": null,
+      "industry": "창업 지원"
+    },
+    {
+      "company": "피키",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "한국딥러닝",
+      "amount": 120.0,
+      "industry": "IT"
+    },
+    {
+      "company": "포스페이스랩",
+      "amount": null,
+      "industry": "푸드테크"
+    },
+    {
+      "company": "리벨리온",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "키뮤스튜디오",
+      "amount": null,
+      "industry": "콘텐츠"
+    },
+    {
+      "company": "크라우드웍스",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "메타 플랫폼스",
+      "amount": 1000000.0,
+      "industry": "IT"
+    },
+    {
+      "company": "매니패스트",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "아이에스티이",
+      "amount": 18.0,
+      "industry": "IT"
+    },
+    {
+      "company": "그린다",
+      "amount": 30.0,
+      "industry": "친환경"
+    },
+    {
+      "company": "오피스허브",
+      "amount": null,
+      "industry": "창업지원"
+    },
+    {
+      "company": "탄탄코어",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "알스퀘어",
+      "amount": null,
+      "industry": "부동산"
+    },
+    {
+      "company": "엘바",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "콕스웨이브",
+      "amount": 70.0,
+      "industry": "IT"
+    },
+    {
+      "company": "블루포인트파트너스",
+      "amount": 3.9,
+      "industry": "VC"
+    },
+    {
+      "company": "넥스트파이낸스이니셔티브",
+      "amount": null,
+      "industry": "핀테크"
+    },
+    {
+      "company": "밸류맵",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "십일리터",
+      "amount": 20.0,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "뉴아이",
+      "amount": null,
+      "industry": "핀테크"
+    },
+    {
+      "company": "위드포인츠",
+      "amount": 15.0,
+      "industry": "IT"
+    },
+    {
+      "company": "퓨어스페이스",
+      "amount": 60.0,
+      "industry": "푸드테크"
+    },
+    {
+      "company": "휴이노",
+      "amount": null,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "인탑스",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "어메스",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "뉴패러다임인베스트먼트",
+      "amount": null,
+      "industry": "VC"
+    },
+    {
+      "company": "아워스팟",
+      "amount": null,
+      "industry": "에듀테크"
+    },
+    {
+      "company": "한패스",
+      "amount": null,
+      "industry": "핀테크"
+    },
+    {
+      "company": "올거나이즈",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "코넥트",
+      "amount": 2.5,
+      "industry": "AI"
+    },
+    {
+      "company": "법무법인 미션",
+      "amount": null,
+      "industry": "법률"
+    },
+    {
+      "company": "세종창조경제혁신센터",
+      "amount": null,
+      "industry": "창업 지원"
+    },
+    {
+      "company": "아크리얼",
+      "amount": 80.0,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "와디즈임팩트",
+      "amount": 122.0,
+      "industry": "플랫폼"
+    },
+    {
+      "company": "리전 헬스",
+      "amount": null,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "오비터스",
+      "amount": 30.0,
+      "industry": "이커머스"
+    },
+    {
+      "company": "큐빅",
+      "amount": 90.0,
+      "industry": "IT"
+    },
+    {
+      "company": "와디즈",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "자비스앤빌런즈",
+      "amount": null,
+      "industry": "핀테크"
+    },
+    {
+      "company": "아셉틱",
+      "amount": null,
+      "industry": "헬스케어"
+    },
+    {
+      "company": "퍼슬리",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "에스와이유",
+      "amount": 8.0,
+      "industry": "IT"
+    },
+    {
+      "company": "워터베이션",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "주미당",
+      "amount": 55.0,
+      "industry": "IT"
+    },
+    {
+      "company": "긱스로프트",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "플로라운지",
+      "amount": null,
+      "industry": "이커머스"
+    },
+    {
+      "company": "네이버클라우드",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "링크알파",
+      "amount": 90.0,
+      "industry": "핀테크"
+    },
+    {
+      "company": "아이피텍",
+      "amount": null,
+      "industry": "IT"
+    },
+    {
+      "company": "바이버",
+      "amount": null,
+      "industry": "이커머스"
+    },
+    {
+      "company": "로그프레소",
+      "amount": 160.0,
+      "industry": "IT"
+    }
+  ]
+}

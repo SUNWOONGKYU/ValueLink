@@ -1,0 +1,110 @@
+{
+  "total_crawled": 55,
+  "ai_extracted": 13,
+  "companies": [
+    {
+      "company": "바이버",
+      "industry": "이커머스",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.9
+    },
+    {
+      "company": "키뮤스튜디오",
+      "industry": "콘텐츠",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.8
+    },
+    {
+      "company": "와디즈임팩트",
+      "industry": "플랫폼",
+      "amount": 122.0,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.9
+    },
+    {
+      "company": "SDT",
+      "industry": "IT",
+      "amount": 300.0,
+      "stage": "-",
+      "lead": "프랙시스캐피탈파트너스",
+      "conf": 0.95
+    },
+    {
+      "company": "기술보증기금",
+      "industry": "창업지원",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.95
+    },
+    {
+      "company": "KRG그룹",
+      "industry": "IT",
+      "amount": null,
+      "stage": "시리즈A",
+      "lead": "-",
+      "conf": 0.8
+    },
+    {
+      "company": "팬딩",
+      "industry": "IT",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.9
+    },
+    {
+      "company": "링크알파",
+      "industry": "핀테크",
+      "amount": 90.0,
+      "stage": "seed",
+      "lead": "-",
+      "conf": 1.0
+    },
+    {
+      "company": "워터베이션",
+      "industry": "IT",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.9
+    },
+    {
+      "company": "리벨리온",
+      "industry": "IT",
+      "amount": null,
+      "stage": "시리즈C",
+      "lead": "-",
+      "conf": 0.95
+    },
+    {
+      "company": "오피스허브",
+      "industry": "기타",
+      "amount": null,
+      "stage": "-",
+      "lead": "-",
+      "conf": 0.9
+    },
+    {
+      "company": "위드포인츠",
+      "industry": "IT",
+      "amount": 15.0,
+      "stage": "프리A",
+      "lead": "크릿벤처스",
+      "conf": 0.95
+    },
+    {
+      "company": "로그프레소",
+      "industry": "IT",
+      "amount": 160.0,
+      "stage": "시리즈B",
+      "lead": "-",
+      "conf": 0.95
+    }
+  ]
+}

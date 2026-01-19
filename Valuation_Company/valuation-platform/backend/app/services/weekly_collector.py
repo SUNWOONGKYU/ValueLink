@@ -164,6 +164,18 @@ class WeeklyCollector:
                     )
 
                     # 뉴스 저장 (AI 요약 포함)
+                    import json as json_module
+                    ai_data = None
+                    if extracted:
+                        ai_data = json_module.dumps({
+                            "confidence": extracted.confidence_score,
+                            "industry": extracted.industry,
+                            "amount_krw": extracted.investment_amount_krw,
+                            "stage": extracted.investment_stage,
+                            "lead_investor": extracted.lead_investor,
+                            "investors": extracted.investors
+                        }, ensure_ascii=False)
+
                     await supabase_client.insert("investment_news", {
                         "company_id": company_id,
                         "title": news.title,
@@ -173,7 +185,7 @@ class WeeklyCollector:
                         "source_url": news.source_url,
                         "published_date": news.published_at.isoformat() if news.published_at else None,
                         "collection_id": self.collection_id,
-                        "ai_confidence": extracted.confidence_score if extracted else None
+                        "ai_extracted_data": ai_data
                     })
 
                     self.stats["news_saved"] += 1
@@ -327,17 +339,17 @@ class WeeklyCollector:
                 "round_name": extracted.investment_stage or "unknown",
                 "amount_krw": int(extracted.investment_amount_krw * 100_000_000) if extracted.investment_amount_krw else None,
                 "announced_date": news.published_at.isoformat() if news.published_at else datetime.utcnow().isoformat(),
-                "news_source_url": news.source_url,
+                "source_url": news.source_url,
             }
 
-            if extracted.valuation_pre_krw:
-                round_data["valuation_pre_krw"] = int(extracted.valuation_pre_krw * 100_000_000)
             if extracted.valuation_post_krw:
-                round_data["valuation_post_krw"] = int(extracted.valuation_post_krw * 100_000_000)
+                round_data["valuation_krw"] = int(extracted.valuation_post_krw * 100_000_000)
             if extracted.lead_investor:
                 round_data["lead_investor"] = extracted.lead_investor
             if extracted.investors:
-                round_data["investors_json"] = str(extracted.investors)
+                # co_investors는 배열 형태
+                co_investors = [inv.get("name", "") for inv in extracted.investors if inv.get("name")]
+                round_data["co_investors"] = co_investors
 
             await supabase_client.insert("investment_rounds", round_data)
             logger.info(f"Saved investment round for company {company_id}: {extracted.investment_stage} {extracted.investment_amount_krw}억원")
