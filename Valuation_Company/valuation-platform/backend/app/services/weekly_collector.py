@@ -3,7 +3,7 @@ Weekly Collector Orchestrator (Supabase Version)
 주간 투자 뉴스 수집 오케스트레이터
 
 @task Investment Tracker
-@description 뉴스 크롤링 → AI 파싱 → Supabase 저장
+@description 뉴스 크롤링 → Gemini AI 파싱 → Supabase 저장
 """
 import logging
 from datetime import datetime, timedelta
@@ -11,6 +11,7 @@ from typing import List, Dict, Any, Optional
 
 from app.db.supabase_client import supabase_client
 from app.services.news_crawler import CrawlerManager, CrawledNews
+from app.services.news_parser import NewsParser
 
 logger = logging.getLogger(__name__)
 
@@ -20,11 +21,14 @@ class WeeklyCollector:
     주간 수집 오케스트레이터 (Supabase 버전)
     """
 
-    def __init__(self):
+    def __init__(self, use_ai_parser: bool = True):
         self.crawler_manager = CrawlerManager()
+        self.news_parser = NewsParser() if use_ai_parser else None
+        self.use_ai_parser = use_ai_parser
         self.collection_id: Optional[int] = None
         self.stats = {
             "news_crawled": 0,
+            "news_parsed_by_ai": 0,
             "news_saved": 0,
             "companies_found": 0,
             "new_companies": 0,
@@ -128,31 +132,48 @@ class WeeklyCollector:
         self,
         news_list: List[CrawledNews]
     ) -> None:
-        """DB에 저장"""
+        """DB에 저장 (Gemini AI 파싱 사용)"""
         logger.info(f"Saving {len(news_list)} news items to database")
 
         for news in news_list:
             try:
-                # 기업명 추출 (제목에서 간단히 추출)
-                company_name = self._extract_company_name(news.title)
+                extracted = None
+                company_name = None
+
+                # Gemini AI로 데이터 추출 시도
+                if self.use_ai_parser and self.news_parser:
+                    try:
+                        extracted = await self.news_parser.parse_news(news)
+                        if extracted and extracted.company_name_ko:
+                            company_name = extracted.company_name_ko
+                            self.stats["news_parsed_by_ai"] += 1
+                            logger.info(f"AI parsed: {company_name} ({extracted.industry}, {extracted.investment_amount_krw}억원)")
+                    except Exception as ai_error:
+                        logger.warning(f"AI parsing failed for '{news.title}': {ai_error}")
+
+                # AI 파싱 실패 시 regex fallback
+                if not company_name:
+                    company_name = self._extract_company_name(news.title)
 
                 if company_name:
-                    # 기업 조회 또는 생성
-                    company_id = await self._get_or_create_company(
+                    # 기업 조회 또는 생성 (AI 추출 데이터 활용)
+                    company_id = await self._get_or_create_company_with_ai(
                         company_name,
-                        news
+                        news,
+                        extracted
                     )
 
-                    # 뉴스 저장
+                    # 뉴스 저장 (AI 요약 포함)
                     await supabase_client.insert("investment_news", {
                         "company_id": company_id,
                         "title": news.title,
                         "content": news.content[:5000] if news.content else None,
-                        "summary": news.content[:500] if news.content else None,
+                        "summary": extracted.summary if extracted else (news.content[:500] if news.content else None),
                         "source": news.source,
                         "source_url": news.source_url,
                         "published_date": news.published_at.isoformat() if news.published_at else None,
-                        "collection_id": self.collection_id
+                        "collection_id": self.collection_id,
+                        "ai_confidence": extracted.confidence_score if extracted else None
                     })
 
                     self.stats["news_saved"] += 1
@@ -197,7 +218,7 @@ class WeeklyCollector:
         company_name: str,
         news: CrawledNews
     ) -> int:
-        """기업 조회 또는 생성"""
+        """기업 조회 또는 생성 (레거시 - regex 기반)"""
         # 기존 기업 조회
         existing = await supabase_client.select(
             "startup_companies",
@@ -220,6 +241,109 @@ class WeeklyCollector:
 
         self.stats["new_companies"] += 1
         return result["id"] if isinstance(result, dict) else result[0]["id"]
+
+    async def _get_or_create_company_with_ai(
+        self,
+        company_name: str,
+        news: CrawledNews,
+        extracted: Optional[Any] = None
+    ) -> int:
+        """기업 조회 또는 생성 (AI 추출 데이터 활용)"""
+        from app.services.news_parser import ExtractedInvestmentData
+
+        # 기존 기업 조회
+        existing = await supabase_client.select(
+            "startup_companies",
+            filters={"name_ko": company_name}
+        )
+
+        if existing:
+            company_id = existing[0]["id"]
+
+            # AI 데이터가 있으면 기존 정보 업데이트
+            if extracted and isinstance(extracted, ExtractedInvestmentData):
+                update_data = {}
+
+                if extracted.industry and not existing[0].get("industry"):
+                    update_data["industry"] = extracted.industry
+                if extracted.company_name_en and not existing[0].get("name_en"):
+                    update_data["name_en"] = extracted.company_name_en
+
+                if update_data:
+                    await supabase_client.update("startup_companies", company_id, update_data)
+
+            return company_id
+
+        # 신규 기업 생성
+        company_data = {"name_ko": company_name}
+
+        if extracted and isinstance(extracted, ExtractedInvestmentData):
+            # AI 추출 데이터 사용
+            if extracted.company_name_en:
+                company_data["name_en"] = extracted.company_name_en
+            if extracted.industry:
+                company_data["industry"] = extracted.industry
+            if extracted.sub_industry:
+                company_data["sub_industry"] = extracted.sub_industry
+            if extracted.investment_stage:
+                company_data["investment_stage"] = extracted.investment_stage
+            if extracted.investment_amount_krw:
+                company_data["total_funding_krw"] = extracted.investment_amount_krw * 100_000_000  # 억원 → 원
+            if extracted.valuation_post_krw:
+                company_data["latest_valuation_krw"] = extracted.valuation_post_krw * 100_000_000
+        else:
+            # Fallback: regex 추출
+            company_data["investment_stage"] = self._extract_stage(news.title)
+            amount = self._extract_amount(news.title)
+            if amount:
+                company_data["total_funding_krw"] = amount
+
+        result = await supabase_client.insert("startup_companies", company_data)
+
+        self.stats["new_companies"] += 1
+        company_id = result["id"] if isinstance(result, dict) else result[0]["id"]
+
+        # 투자 라운드 정보 저장 (AI 데이터가 있는 경우)
+        if extracted and isinstance(extracted, ExtractedInvestmentData) and extracted.investment_amount_krw:
+            await self._save_investment_round(company_id, extracted, news)
+
+        return company_id
+
+    async def _save_investment_round(
+        self,
+        company_id: int,
+        extracted: Any,
+        news: CrawledNews
+    ) -> None:
+        """투자 라운드 정보 저장"""
+        from app.services.news_parser import ExtractedInvestmentData
+
+        if not isinstance(extracted, ExtractedInvestmentData):
+            return
+
+        try:
+            round_data = {
+                "company_id": company_id,
+                "round_name": extracted.investment_stage or "unknown",
+                "amount_krw": int(extracted.investment_amount_krw * 100_000_000) if extracted.investment_amount_krw else None,
+                "announced_date": news.published_at.isoformat() if news.published_at else datetime.utcnow().isoformat(),
+                "news_source_url": news.source_url,
+            }
+
+            if extracted.valuation_pre_krw:
+                round_data["valuation_pre_krw"] = int(extracted.valuation_pre_krw * 100_000_000)
+            if extracted.valuation_post_krw:
+                round_data["valuation_post_krw"] = int(extracted.valuation_post_krw * 100_000_000)
+            if extracted.lead_investor:
+                round_data["lead_investor"] = extracted.lead_investor
+            if extracted.investors:
+                round_data["investors_json"] = str(extracted.investors)
+
+            await supabase_client.insert("investment_rounds", round_data)
+            logger.info(f"Saved investment round for company {company_id}: {extracted.investment_stage} {extracted.investment_amount_krw}억원")
+
+        except Exception as e:
+            logger.warning(f"Failed to save investment round: {e}")
 
     def _extract_stage(self, title: str) -> Optional[str]:
         """제목에서 투자 단계 추출"""

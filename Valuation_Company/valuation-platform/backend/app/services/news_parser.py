@@ -11,7 +11,7 @@ from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
 from datetime import datetime
 
-import google.generativeai as genai
+from google import genai
 
 from app.core.config import settings
 from app.services.news_crawler.base_crawler import CrawledNews
@@ -64,16 +64,14 @@ class NewsParser:
     }
 
     def __init__(self):
-        genai.configure(api_key=settings.GOOGLE_API_KEY)
-        self.model = genai.GenerativeModel(
-            'gemini-1.5-pro',
-            generation_config={
-                "temperature": 0.1,  # 낮은 온도로 일관된 추출
-                "top_p": 0.95,
-                "top_k": 40,
-                "max_output_tokens": 2048,
-            }
-        )
+        self.client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+        self.model_name = 'gemini-2.0-flash'  # 최신 무료 모델
+        self.generation_config = {
+            "temperature": 0.1,  # 낮은 온도로 일관된 추출
+            "top_p": 0.95,
+            "top_k": 40,
+            "max_output_tokens": 2048,
+        }
 
     async def parse_news(self, news: CrawledNews) -> Optional[ExtractedInvestmentData]:
         """
@@ -88,7 +86,11 @@ class NewsParser:
         prompt = self._build_extraction_prompt(news.title, news.content or "")
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=self.generation_config
+            )
             extracted = self._parse_response(response.text)
 
             if extracted and extracted.company_name_ko:
@@ -263,7 +265,10 @@ class NewsParser:
 요약:"""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt
+            )
             return response.text.strip()
         except Exception as e:
             logger.error(f"Error generating summary: {e}")

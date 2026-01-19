@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pattern definitions for black and white patent drawings -->
+  <defs>
+    <pattern id="diagonal1" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,4 L4,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="diagonal2" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0 M0,0 L6,6" stroke="black" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="5" height="5">
+      <rect width="5" height="5" fill="white"/>
+      <circle cx="2.5" cy="2.5" r="0.5" fill="black"/>
+    </pattern>
+    <pattern id="vertical" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M2,0 L2,4" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="horizontal" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,2 L4,2" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="white" stroke="none"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="black">
+    Figure 6. 관심도 리포트 시스템 분석 과정
+  </text>
+  
+  <!-- Main Container -->
+  <rect x="50" y="60" width="1100" height="680" fill="none" stroke="black" stroke-width="3"/>
+  <text x="70" y="85" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    관심도 리포트 시스템 (150) - Interest Report System
+  </text>
+  
+  <!-- Behavior Tracking Section -->
+  <rect x="80" y="110" width="280" height="200" fill="url(#diagonal1)" stroke="black" stroke-width="2"/>
+  <text x="220" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    행동 추적부
+  </text>
+  <text x="220" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Behavior Tracking Unit (151)
+  </text>
+  
+  <!-- Tracking categories -->
+  <rect x="90" y="160" width="120" height="60" fill="white" stroke="black" stroke-width="1"/>
+  <text x="150" y="175" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">기본 행동</text>
+  <text x="95" y="192" font-family="Arial" font-size="8" fill="black">• 페이지 조회수</text>
+  <text x="95" y="205" font-family="Arial" font-size="8" fill="black">• 체류시간</text>
+  <text x="95" y="218" font-family="Arial" font-size="8" fill="black">• 스크롤 깊이</text>
+  
+  <rect x="220" y="160" width="130" height="60" fill="white" stroke="black" stroke-width="1"/>
+  <text x="285" y="175" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">상호작용</text>
+  <text x="225" y="192" font-family="Arial" font-size="8" fill="black">• AI 아바타 대화 횟수</text>
+  <text x="225" y="205" font-family="Arial" font-size="8" fill="black">• 대화 지속 시간</text>
+  <text x="225" y="218" font-family="Arial" font-size="8" fill="black">• 질의 복잡도</text>
+  
+  <rect x="90" y="230" width="120" height="70" fill="white" stroke="black" stroke-width="1"/>
+  <text x="150" y="245" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">심화 활동</text>
+  <text x="95" y="262" font-family="Arial" font-size="8" fill="black">• 보고서 다운로드</text>
+  <text x="95" y="275" font-family="Arial" font-size="8" fill="black">• 기업 프로필 저장</text>
+  <text x="95" y="288" font-family="Arial" font-size="8" fill="black">• 연락처 조회</text>
+  
+  <rect x="220" y="230" width="130" height="70" fill="white" stroke="black" stroke-width="1"/>
+  <text x="285" y="245" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">실시간 수집</text>
+  <text x="225" y="262" font-family="Arial" font-size="8" fill="black">• 클릭 패턴 분석</text>
+  <text x="225" y="275" font-family="Arial" font-size="8" fill="black">• 네비게이션 경로</text>
+  <text x="225" y="288" font-family="Arial" font-size="8" fill="black">• 반복 방문 추적</text>
+  
+  <!-- Data Analysis Section -->
+  <rect x="400" y="110" width="280" height="200" fill="url(#crosshatch)" stroke="black" stroke-dasharray="10,5" stroke-width="2"/>
+  <text x="540" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    데이터 분석부
+  </text>
+  <text x="540" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Data Analysis Unit (152)
+  </text>
+  
+  <!-- Investor type analysis -->
+  <rect x="410" y="160" width="120" height="80" fill="white" stroke="black" stroke-dasharray="10,5" stroke-width="1"/>
+  <text x="470" y="175" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">투자자 유형별</text>
+  <text x="415" y="192" font-family="Arial" font-size="8" fill="black">• VC 패턴</text>
+  <text x="415" y="205" font-family="Arial" font-size="8" fill="black">• PE 패턴</text>
+  <text x="415" y="218" font-family="Arial" font-size="8" fill="black">• 엔젤투자자</text>
+  <text x="415" y="231" font-family="Arial" font-size="8" fill="black">• 기관투자자</text>
+  
+  <rect x="540" y="160" width="130" height="80" fill="white" stroke="black" stroke-dasharray="10,5" stroke-width="1"/>
+  <text x="605" y="175" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">관심 단계 분류</text>
+  <text x="545" y="192" font-family="Arial" font-size="8" fill="black">1. 인지 단계</text>
+  <text x="545" y="205" font-family="Arial" font-size="8" fill="black">2. 관심 단계</text>
+  <text x="545" y="218" font-family="Arial" font-size="8" fill="black">3. 검토 단계</text>
+  <text x="545" y="231" font-family="Arial" font-size="8" fill="black">4. 의사결정 단계</text>
+  
+  <!-- Behavioral patterns -->
+  <rect x="410" y="250" width="260" height="50" fill="white" stroke="black" stroke-dasharray="10,5" stroke-width="1"/>
+  <text x="540" y="265" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="black">행동 패턴 분석</text>
+  <text x="415" y="280" font-family="Arial" font-size="8" fill="black">• 방문 빈도 & 패턴 • 관심 분야 클러스터링</text>
+  <text x="415" y="293" font-family="Arial" font-size="8" fill="black">• 체류시간 분포 • 투자 성향 유추</text>
+  
+  <!-- Score Calculation Section -->
+  <rect x="720" y="110" width="280" height="200" fill="#e8f5e8" stroke="#388e3c" stroke-width="2"/>
+  <text x="860" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#388e3c">
+    점수 산출부
+  </text>
+  <text x="860" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="#388e3c">
+    Score Calculation Unit (153)
+  </text>
+  
+  <!-- Interest Score Formula -->
+  <rect x="730" y="160" width="260" height="60" fill="white" stroke="#388e3c" stroke-width="1"/>
+  <text x="860" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="black">
+    Interest_Score = Σ(Action_i × Weight_i × Time_decay)
+  </text>
+  <text x="735" y="195" font-family="Arial" font-size="8" fill="black">Action_i: i번째 행동의 발생 횟수/시간</text>
+  <text x="735" y="208" font-family="Arial" font-size="8" fill="black">Weight_i: 행동의 가중치 (투자 성사율 기반 학습)</text>
+  
+  <!-- Dynamic weight learning -->
+  <rect x="730" y="230" width="260" height="70" fill="white" stroke="#388e3c" stroke-width="1"/>
+  <text x="860" y="245" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#388e3c">동적 가중치 학습</text>
+  <text x="735" y="262" font-family="Arial" font-size="8" fill="black">• 과거 투자 성사 데이터 분석</text>
+  <text x="735" y="275" font-family="Arial" font-size="8" fill="black">• 행동-투자 성사 상관관계 계산</text>
+  <text x="735" y="288" font-family="Arial" font-size="8" fill="black">• 머신러닝 최적 가중치 도출</text>
+  
+  <!-- Detailed Scoring Matrix -->
+  <rect x="80" y="340" width="920" height="160" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+  <text x="540" y="365" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    상세 점수 매트릭스 (Detailed Scoring Matrix)
+  </text>
+  
+  <!-- Action weights table -->
+  <rect x="100" y="380" width="160" height="110" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="180" y="395" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">기본 행동 가중치</text>
+  <text x="105" y="412" font-family="Arial" font-size="8" fill="black">페이지 조회: 기본값</text>
+  <text x="105" y="427" font-family="Arial" font-size="8" fill="black">체류시간: 중간값</text>
+  <text x="105" y="442" font-family="Arial" font-size="8" fill="black">스크롤 깊이: 중간값</text>
+  <text x="105" y="457" font-family="Arial" font-size="8" fill="black">반복 방문: 높은값</text>
+  <text x="105" y="472" font-family="Arial" font-size="8" fill="black">북마크 저장: 높은값</text>
+  
+  <rect x="280" y="380" width="160" height="110" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="360" y="395" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">상호작용 가중치</text>
+  <text x="285" y="412" font-family="Arial" font-size="8" fill="black">AI 대화 시작: 높은값</text>
+  <text x="285" y="427" font-family="Arial" font-size="8" fill="black">대화 지속: 매우높은값</text>
+  <text x="285" y="442" font-family="Arial" font-size="8" fill="black">복잡한 질의: 높은값</text>
+  <text x="285" y="457" font-family="Arial" font-size="8" fill="black">다회차 대화: 매우높은값</text>
+  <text x="285" y="472" font-family="Arial" font-size="8" fill="black">피드백 제공: 높은값</text>
+  
+  <rect x="460" y="380" width="160" height="110" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="540" y="395" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">심화활동 가중치</text>
+  <text x="465" y="412" font-family="Arial" font-size="8" fill="black">보고서 다운로드: 매우높은값</text>
+  <text x="465" y="427" font-family="Arial" font-size="8" fill="black">상세정보 조회: 높은값</text>
+  <text x="465" y="442" font-family="Arial" font-size="8" fill="black">연락처 확인: 최고값</text>
+  <text x="465" y="457" font-family="Arial" font-size="8" fill="black">IR 미팅 요청: 최고값</text>
+  <text x="465" y="472" font-family="Arial" font-size="8" fill="black">투자 문의: 최고값</text>
+  
+  <rect x="640" y="380" width="160" height="110" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="720" y="395" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">시간 감소 팩터</text>
+  <text x="645" y="412" font-family="Arial" font-size="8" fill="black">최근 1주: 100%</text>
+  <text x="645" y="427" font-family="Arial" font-size="8" fill="black">최근 1개월: 80%</text>
+  <text x="645" y="442" font-family="Arial" font-size="8" fill="black">최근 3개월: 60%</text>
+  <text x="645" y="457" font-family="Arial" font-size="8" fill="black">최근 6개월: 40%</text>
+  <text x="645" y="472" font-family="Arial" font-size="8" fill="black">6개월 초과: 20%</text>
+  
+  <rect x="820" y="380" width="160" height="110" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="900" y="395" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">투자자별 보정</text>
+  <text x="825" y="412" font-family="Arial" font-size="8" fill="black">VC: 빠른 의사결정 가중</text>
+  <text x="825" y="427" font-family="Arial" font-size="8" fill="black">PE: 심층 분석 가중</text>
+  <text x="825" y="442" font-family="Arial" font-size="8" fill="black">엔젤: 직관적 판단 가중</text>
+  <text x="825" y="457" font-family="Arial" font-size="8" fill="black">기관: 보수적 접근 가중</text>
+  <text x="825" y="472" font-family="Arial" font-size="8" fill="black">개인: 다양성 반영</text>
+  
+  <!-- Report Generation -->
+  <rect x="320" y="530" width="280" height="140" fill="url(#vertical)" stroke="black" stroke-width="3" stroke-width="2"/>
+  <text x="460" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    리포트 생성부
+  </text>
+  <text x="460" y="565" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Report Generation Unit (154)
+  </text>
+  <text x="330" y="590" font-family="Arial" font-size="9" fill="black">• 총 조회수 & 유니크 투자자 수</text>
+  <text x="330" y="605" font-family="Arial" font-size="9" fill="black">• 투자자 유형별 분포 분석</text>
+  <text x="330" y="620" font-family="Arial" font-size="9" fill="black">• 관심도 순위 & 경쟁사 대비</text>
+  <text x="330" y="635" font-family="Arial" font-size="9" fill="black">• 개선 권고사항 제안</text>
+  <text x="330" y="650" font-family="Arial" font-size="9" fill="black">• 월 단위 정기 리포트</text>
+  <text x="330" y="665" font-family="Arial" font-size="9" fill="black">• 실시간 대시보드 제공</text>
+  
+  <!-- Report Examples -->
+  <rect x="640" y="530" width="320" height="140" fill="url(#diagonal2)" stroke="black" stroke-dasharray="5,5" stroke-width="2"/>
+  <text x="800" y="550" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    리포트 예시
+  </text>
+  <text x="800" y="565" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Report Examples
+  </text>
+  <text x="650" y="590" font-family="Arial" font-size="8" fill="black">A사 관심도 리포트 (3월):</text>
+  <text x="650" y="605" font-family="Arial" font-size="8" fill="black">• 총 조회: 투자자 수, 전월 대비 증가율</text>
+  <text x="650" y="620" font-family="Arial" font-size="8" fill="black">• VC 비중 높음, 해외 투자자 관심 증가</text>
+  <text x="650" y="635" font-family="Arial" font-size="8" fill="black">• 동 업종 내 관심도 순위: 상위권</text>
+  <text x="650" y="650" font-family="Arial" font-size="8" fill="black">• 권고: AI 기술 설명 강화 필요</text>
+  <text x="650" y="665" font-family="Arial" font-size="8" fill="black">• 고관심 투자자: 투자자, 상세 행동 분석</text>
+  
+  <!-- Data Flow -->
+  <rect x="80" y="700" width="920" height="30" fill="#f1f8e9" stroke="#689f38" stroke-width="1"/>
+  <text x="540" y="720" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#689f38">
+    데이터 플로우: 실시간 행동 수집 → 투자자 유형별 분석 → 관심도 점수 계산 → 리포트 생성 → 기업 피드백
+  </text>
+  
+  <!-- Flow Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+  
+  <line x1="360" y1="210" x2="400" y2="210" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="680" y1="210" x2="720" y2="210" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="860" y1="310" x2="540" y2="340" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="540" y1="500" x2="460" y2="530" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Process Labels -->
+  <text x="380" y="205" text-anchor="middle" font-family="Arial" font-size="8" fill="black">행동 데이터</text>
+  <text x="700" y="205" text-anchor="middle" font-family="Arial" font-size="8" fill="black">패턴 분석</text>
+  <text x="700" y="320" font-family="Arial" font-size="8" fill="black">점수 계산</text>
+  <text x="500" y="515" font-family="Arial" font-size="8" fill="black">리포트 생성</text>
+  
+</svg>

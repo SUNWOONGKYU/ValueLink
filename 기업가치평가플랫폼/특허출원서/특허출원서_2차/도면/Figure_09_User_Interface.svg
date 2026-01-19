@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <title>제9도 - 사용자 인터페이스 통합 구성도</title>
+  
+  <!-- Pattern definitions for black and white patent drawings -->
+  <defs>
+    <pattern id="diagonal1" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,4 L4,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="diagonal2" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0 M0,0 L6,6" stroke="black" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="5" height="5">
+      <rect width="5" height="5" fill="white"/>
+      <circle cx="2.5" cy="2.5" r="0.5" fill="black"/>
+    </pattern>
+    <pattern id="vertical" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M2,0 L2,4" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="horizontal" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,2 L4,2" stroke="black" stroke-width="0.5"/>
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="800" fill="white"/>
+  
+  <!-- Main Container -->
+  <rect x="50" y="50" width="1100" height="700" fill="white" stroke="black" stroke-width="3" rx="10"/>
+  
+  <!-- Title -->
+  <text x="600" y="90" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="black">
+    사용자 인터페이스 통합 구성도
+  </text>
+  
+  <!-- Company Dashboard Section -->
+  <g id="company-dashboard">
+    <rect x="100" y="130" width="480" height="280" fill="url(#vertical)" stroke="black" stroke-width="2" rx="5"/>
+    <rect x="100" y="130" width="480" height="40" fill="url(#diagonal1)" stroke="black" stroke-width="2" rx="5 5 0 0"/>
+    <text x="340" y="155" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="black">
+      기업 대시보드
+    </text>
+    
+    <!-- Menu items -->
+    <rect x="120" y="190" width="200" height="40" fill="white" stroke="black" stroke-width="2" rx="5"/>
+    <text x="220" y="215" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">평가정보 등록/수정</text>
+    
+    <rect x="340" y="190" width="200" height="40" fill="white" stroke="black" stroke-width="2" stroke-dasharray="4,2" rx="5"/>
+    <text x="440" y="215" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">랭킹 현황</text>
+    
+    <rect x="120" y="240" width="200" height="40" fill="url(#horizontal)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="220" y="265" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">AI 아바타 관리</text>
+    
+    <rect x="340" y="240" width="200" height="40" fill="url(#crosshatch)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="440" y="265" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">관심도 리포트</text>
+    
+    <rect x="120" y="290" width="200" height="40" fill="url(#dots)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="220" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">포인트 관리</text>
+    
+    <rect x="340" y="290" width="200" height="40" fill="url(#diagonal2)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="440" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">투자자 연결 현황</text>
+    
+    <!-- Statistics -->
+    <rect x="120" y="350" width="420" height="40" fill="white" stroke="black" stroke-width="2" stroke-dasharray="6,3" rx="5"/>
+    <text x="130" y="375" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="black">
+      총 조회수: 12,345 | 유니크 투자자: 234 | 관심도 점수: 85 | 포인트 잔액: 50,000P
+    </text>
+  </g>
+  
+  <!-- Investor Portal Section -->
+  <g id="investor-portal">
+    <rect x="620" y="130" width="480" height="280" fill="url(#dots)" stroke="black" stroke-width="2" rx="5"/>
+    <rect x="620" y="130" width="480" height="40" fill="url(#diagonal2)" stroke="black" stroke-width="2" rx="5 5 0 0"/>
+    <text x="860" y="155" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="black">
+      투자자 포털
+    </text>
+    
+    <!-- Menu items -->
+    <rect x="640" y="190" width="200" height="40" fill="white" stroke="black" stroke-width="2" rx="5"/>
+    <text x="740" y="215" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">기업 검색/필터</text>
+    
+    <rect x="860" y="190" width="200" height="40" fill="url(#vertical)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="960" y="215" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">랭킹 보기</text>
+    
+    <rect x="640" y="240" width="200" height="40" fill="url(#horizontal)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="740" y="265" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">AI 아바타 대화</text>
+    
+    <rect x="860" y="240" width="200" height="40" fill="url(#crosshatch)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="960" y="265" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">매칭 추천</text>
+    
+    <rect x="640" y="290" width="200" height="40" fill="black" stroke="black" stroke-width="2" rx="5"/>
+    <text x="740" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="white">평가보고서 구매</text>
+    
+    <rect x="860" y="290" width="200" height="40" fill="url(#diagonal1)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="960" y="315" font-family="Arial, sans-serif" font-size="12" text-anchor="middle" fill="black">관심 기업 관리</text>
+    
+    <!-- Investment Profile -->
+    <rect x="640" y="350" width="420" height="40" fill="white" stroke="black" stroke-width="2" stroke-dasharray="5,2" rx="5"/>
+    <text x="650" y="375" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="black">
+      선호 섹터: IT/바이오 | 투자 규모: 10-50억 | 단계: 시리즈A/B | 매칭 기업: 15개
+    </text>
+  </g>
+  
+  <!-- AI Avatar Chat Interface -->
+  <g id="ai-chat">
+    <rect x="100" y="430" width="480" height="300" fill="url(#horizontal)" stroke="black" stroke-width="2" rx="5"/>
+    <rect x="100" y="430" width="480" height="40" fill="url(#crosshatch)" stroke="black" stroke-width="2" rx="5 5 0 0"/>
+    <text x="340" y="455" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="black">
+      AI 아바타 대화 인터페이스
+    </text>
+    
+    <!-- Chat window -->
+    <rect x="120" y="490" width="440" height="180" fill="white" stroke="black" stroke-width="2" rx="5"/>
+    
+    <!-- Sample conversation -->
+    <rect x="130" y="500" width="300" height="30" fill="url(#vertical)" stroke="black" stroke-width="1" rx="15"/>
+    <text x="140" y="520" font-family="Arial, sans-serif" font-size="11" fill="black">
+      투자자: 귀사의 핵심 경쟁력은 무엇인가요?
+    </text>
+    
+    <rect x="220" y="540" width="330" height="50" fill="url(#dots)" stroke="black" stroke-width="1" rx="15"/>
+    <text x="230" y="560" font-family="Arial, sans-serif" font-size="11" fill="black">
+      AI: 저희의 핵심 경쟁력은 독자적인 알고리즘과
+    </text>
+    <text x="230" y="575" font-family="Arial, sans-serif" font-size="11" fill="black">
+      3년간 축적된 데이터베이스입니다...
+    </text>
+    
+    <rect x="130" y="600" width="250" height="30" fill="url(#diagonal1)" stroke="black" stroke-width="1" rx="15"/>
+    <text x="140" y="620" font-family="Arial, sans-serif" font-size="11" fill="black">
+      투자자: 매출 성장률은 어떻게 되나요?
+    </text>
+    
+    <rect x="220" y="640" width="330" height="20" fill="black" stroke="black" stroke-width="1" rx="10"/>
+    <text x="230" y="655" font-family="Arial, sans-serif" font-size="11" fill="white">
+      AI: 최근 3년간 연평균 성장률은...
+    </text>
+    
+    <!-- Input area -->
+    <rect x="120" y="680" width="360" height="30" fill="white" stroke="black" stroke-width="2" stroke-dasharray="3,2" rx="5"/>
+    <text x="130" y="700" font-family="Arial, sans-serif" font-size="11" fill="black">메시지를 입력하세요...</text>
+    
+    <rect x="490" y="680" width="70" height="30" fill="black" stroke="black" stroke-width="2" rx="5"/>
+    <text x="525" y="700" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">전송</text>
+  </g>
+  
+  <!-- Analytics Dashboard -->
+  <g id="analytics">
+    <rect x="620" y="430" width="480" height="300" fill="url(#diagonal2)" stroke="black" stroke-width="2" rx="5"/>
+    <rect x="620" y="430" width="480" height="40" fill="url(#horizontal)" stroke="black" stroke-width="2" rx="5 5 0 0"/>
+    <text x="860" y="455" font-family="Arial, sans-serif" font-size="16" font-weight="bold" text-anchor="middle" fill="black">
+      분석 대시보드
+    </text>
+    
+    <!-- Charts -->
+    <rect x="640" y="490" width="200" height="100" fill="white" stroke="black" stroke-width="2" rx="5"/>
+    <text x="740" y="510" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="black">투자자 관심도 추이</text>
+    <!-- Simple line chart representation -->
+    <polyline points="660,570 700,550 740,560 780,530 820,540" stroke="black" stroke-width="3" fill="none"/>
+    
+    <rect x="860" y="490" width="200" height="100" fill="url(#vertical)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="960" y="510" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="black">섹터별 분포</text>
+    <!-- Simple pie chart representation -->
+    <circle cx="960" cy="550" r="25" fill="none" stroke="black" stroke-width="15" 
+            stroke-dasharray="40 60" transform="rotate(-90 960 550)"/>
+    
+    <rect x="640" y="600" width="200" height="100" fill="url(#crosshatch)" stroke="black" stroke-width="2" rx="5"/>
+    <text x="740" y="620" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="black">매칭 성공률</text>
+    <!-- Bar chart -->
+    <rect x="680" y="650" width="30" height="40" fill="black" stroke="black" stroke-width="1"/>
+    <rect x="720" y="640" width="30" height="50" fill="url(#diagonal1)" stroke="black" stroke-width="1"/>
+    <rect x="760" y="660" width="30" height="30" fill="url(#vertical)" stroke="black" stroke-width="1"/>
+    <rect x="800" y="630" width="30" height="60" fill="url(#horizontal)" stroke="black" stroke-width="1"/>
+    
+    <rect x="860" y="600" width="200" height="100" fill="white" stroke="black" stroke-width="2" stroke-dasharray="4,3" rx="5"/>
+    <text x="960" y="620" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="black">실시간 활동</text>
+    <text x="870" y="645" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="black">• 투자자 A가 보고서 다운로드</text>
+    <text x="870" y="665" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="black">• 투자자 B가 AI 대화 시작</text>
+    <text x="870" y="685" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="black">• 신규 매칭 3건 발생</text>
+  </g>
+</svg>

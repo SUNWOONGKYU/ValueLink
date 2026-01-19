@@ -1,0 +1,33 @@
+{
+  "_meta": {
+    "description": "사이드바 진행률 표시용 데이터 파일 (로컬 JSON 방식)",
+    "storage_type": "local_json",
+    "update_method": "node Development_Process_Monitor/build-progress.js 실행",
+    "auto_calculation": {
+      "P0_S0": "폴더/파일 존재 여부로 자동 계산",
+      "S1_S5": "sal_grid.csv의 task_status = Completed 비율로 자동 계산"
+    },
+    "fields": {
+      "project_id": "프로젝트 루트 폴더명에서 자동 추출",
+      "updated_at": "빌드 실행 시간 (ISO 형식)",
+      "progress": "진행률 0-100 (completed/total * 100)",
+      "completed": "완료된 항목 수",
+      "total": "전체 항목 수"
+    },
+    "trigger": "배포 전 또는 진행률 업데이트 필요 시 build-progress.js 실행"
+  },
+  "project_id": "",
+  "updated_at": "",
+  "phases": {
+    "P0": { "name": "작업 디렉토리 구조 생성", "progress": 0, "completed": 0, "total": 0 },
+    "P1": { "name": "사업계획", "progress": 0, "completed": 0, "total": 0 },
+    "P2": { "name": "프로젝트 기획", "progress": 0, "completed": 0, "total": 0 },
+    "P3": { "name": "프로토타입 제작", "progress": 0, "completed": 0, "total": 0 },
+    "S0": { "name": "Project SAL Grid 생성", "progress": 0, "completed": 0, "total": 0 },
+    "S1": { "name": "개발 준비", "progress": 0, "completed": 0, "total": 0 },
+    "S2": { "name": "개발 1차", "progress": 0, "completed": 0, "total": 0 },
+    "S3": { "name": "개발 2차", "progress": 0, "completed": 0, "total": 0 },
+    "S4": { "name": "개발 3차", "progress": 0, "completed": 0, "total": 0 },
+    "S5": { "name": "개발 마무리", "progress": 0, "completed": 0, "total": 0 }
+  }
+}

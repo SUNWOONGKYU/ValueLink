@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pattern definitions for black and white patent drawings -->
+  <defs>
+    <!-- Hatching patterns for different components -->
+    <pattern id="diagonal1" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,4 L4,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="diagonal2" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0 M0,0 L6,6" stroke="black" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="5" height="5">
+      <rect width="5" height="5" fill="white"/>
+      <circle cx="2.5" cy="2.5" r="0.5" fill="black"/>
+    </pattern>
+    <pattern id="vertical" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M2,0 L2,4" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="horizontal" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,2 L4,2" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="white" stroke="none"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="black">
+    Figure 5. AI 투자자 매칭 시스템 과정
+  </text>
+  
+  <!-- Main Container -->
+  <rect x="50" y="60" width="1100" height="680" fill="none" stroke="black" stroke-width="3"/>
+  <text x="70" y="85" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    AI 투자자 매칭 시스템 (140) - AI Investor Matching System
+  </text>
+  
+  <!-- Investor Input -->
+  <rect x="80" y="110" width="200" height="180" fill="url(#diagonal1)" stroke="black" stroke-width="2"/>
+  <text x="180" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    투자자 조건 설정
+  </text>
+  <text x="180" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Investor Preferences
+  </text>
+  <text x="90" y="170" font-family="Arial" font-size="9" fill="black">• 선호 섹터</text>
+  <text x="90" y="185" font-family="Arial" font-size="9" fill="black">• 투자 규모</text>
+  <text x="90" y="200" font-family="Arial" font-size="9" fill="black">• 투자 단계</text>
+  <text x="90" y="215" font-family="Arial" font-size="9" fill="black">• 지역 선호도</text>
+  <text x="90" y="230" font-family="Arial" font-size="9" fill="black">• 리스크 성향</text>
+  <text x="90" y="245" font-family="Arial" font-size="9" fill="black">• 기대 수익률</text>
+  <text x="90" y="260" font-family="Arial" font-size="9" fill="black">• 투자 기간</text>
+  <text x="90" y="275" font-family="Arial" font-size="9" fill="black">• 과거 투자 이력</text>
+  
+  <!-- Profile Analysis -->
+  <rect x="320" y="110" width="200" height="180" fill="url(#diagonal2)" stroke="black" stroke-dasharray="5,5" stroke-width="2"/>
+  <text x="420" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    프로파일 분석부
+  </text>
+  <text x="420" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Profile Analysis (141)
+  </text>
+  <text x="330" y="170" font-family="Arial" font-size="9" fill="black">• 다차원 조건 분석</text>
+  <text x="330" y="185" font-family="Arial" font-size="9" fill="black">• 투자자 유형 분류</text>
+  <text x="330" y="200" font-family="Arial" font-size="9" fill="black">• VC / PE / 엔젤</text>
+  <text x="330" y="215" font-family="Arial" font-size="9" fill="black">• 기관투자자 구분</text>
+  <text x="330" y="230" font-family="Arial" font-size="9" fill="black">• 명시적 선호도 추출</text>
+  <text x="330" y="245" font-family="Arial" font-size="9" fill="black">• 암묵적 선호도 분석</text>
+  <text x="330" y="260" font-family="Arial" font-size="9" fill="black">• 투자 패턴 학습</text>
+  <text x="330" y="275" font-family="Arial" font-size="9" fill="black">• 프로파일 생성</text>
+  
+  <!-- Hybrid Matching Algorithm -->
+  <rect x="560" y="110" width="280" height="180" fill="url(#dots)" stroke="black" stroke-dasharray="3,3" stroke-width="2"/>
+  <text x="700" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    하이브리드 매칭 알고리즘부
+  </text>
+  <text x="700" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Hybrid Matching Algorithm (142)
+  </text>
+  
+  <!-- Three matching components -->
+  <rect x="570" y="160" width="80" height="60" fill="white" stroke="black" stroke-dasharray="3,3" stroke-width="1"/>
+  <text x="610" y="175" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="black">콘텐츠 기반</text>
+  <text x="610" y="188" text-anchor="middle" font-family="Arial" font-size="7" fill="black">Content Score</text>
+  <text x="575" y="203" font-family="Arial" font-size="7" fill="black">직접 일치도</text>
+  <text x="575" y="213" font-family="Arial" font-size="7" fill="black">기업-조건</text>
+  
+  <rect x="660" y="160" width="80" height="60" fill="white" stroke="black" stroke-dasharray="3,3" stroke-width="1"/>
+  <text x="700" y="175" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="black">협업 필터링</text>
+  <text x="700" y="188" text-anchor="middle" font-family="Arial" font-size="7" fill="black">Collaborative</text>
+  <text x="665" y="203" font-family="Arial" font-size="7" fill="black">유사 투자자</text>
+  <text x="665" y="213" font-family="Arial" font-size="7" fill="black">패턴 분석</text>
+  
+  <rect x="750" y="160" width="80" height="60" fill="white" stroke="black" stroke-dasharray="3,3" stroke-width="1"/>
+  <text x="790" y="175" text-anchor="middle" font-family="Arial" font-size="8" font-weight="bold" fill="black">네트워크 효과</text>
+  <text x="790" y="188" text-anchor="middle" font-family="Arial" font-size="7" fill="black">Network Score</text>
+  <text x="755" y="203" font-family="Arial" font-size="7" fill="black">그래프 신경망</text>
+  <text x="755" y="213" font-family="Arial" font-size="7" fill="black">연결 강도</text>
+  
+  <!-- Matching formula -->
+  <rect x="570" y="230" width="260" height="50" fill="#f8f9fa" stroke="black" stroke-dasharray="3,3" stroke-width="1"/>
+  <text x="700" y="245" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="#d32f2f">
+    Matching_Score = α×Content + β×Collaborative + γ×Network
+  </text>
+  <text x="575" y="265" font-family="Arial" font-size="8" fill="black">α, β, γ: 상황별 동적 가중치 (α + β + γ = 1)</text>
+  <text x="575" y="275" font-family="Arial" font-size="8" fill="black">머신러닝 기반 최적화 (과거 투자 성사 데이터 학습)</text>
+  
+  <!-- Auto Discovery Unit -->
+  <rect x="880" y="110" width="200" height="180" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="2"/>
+  <text x="980" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#7b1fa2">
+    자동 발굴부
+  </text>
+  <text x="980" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="#7b1fa2">
+    Auto Discovery (143)
+  </text>
+  <text x="890" y="170" font-family="Arial" font-size="9" fill="black">• 임계값 이상 기업 발굴</text>
+  <text x="890" y="185" font-family="Arial" font-size="9" fill="black">• 실시간 매칭 분석</text>
+  <text x="890" y="200" font-family="Arial" font-size="9" fill="black">• 신규 기업 등록 감지</text>
+  <text x="890" y="215" font-family="Arial" font-size="9" fill="black">• 기업 정보 업데이트 추적</text>
+  <text x="890" y="230" font-family="Arial" font-size="9" fill="black">• 투자자 조건 변경 대응</text>
+  <text x="890" y="245" font-family="Arial" font-size="9" fill="black">• 매칭 우선순위 결정</text>
+  <text x="890" y="260" font-family="Arial" font-size="9" fill="black">• 중복 매칭 방지</text>
+  <text x="890" y="275" font-family="Arial" font-size="9" fill="black">• 개인화된 추천</text>
+  
+  <!-- Matching Components Detail -->
+  <rect x="80" y="320" width="560" height="150" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+  <text x="360" y="345" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    매칭 요소 상세 분석 (Detailed Matching Components)
+  </text>
+  
+  <rect x="100" y="360" width="100" height="100" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="150" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">섹터 일치도</text>
+  <text x="105" y="395" font-family="Arial" font-size="8" fill="black">IT, 바이오</text>
+  <text x="105" y="408" font-family="Arial" font-size="8" fill="black">제조, 서비스</text>
+  <text x="105" y="421" font-family="Arial" font-size="8" fill="black">금융, 유통 등</text>
+  <text x="105" y="434" font-family="Arial" font-size="8" fill="black">전문 영역 매칭</text>
+  <text x="105" y="447" font-family="Arial" font-size="8" fill="black">가중치 적용</text>
+  
+  <rect x="210" y="360" width="100" height="100" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="260" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">투자규모</text>
+  <text x="215" y="395" font-family="Arial" font-size="8" fill="black">시드 단계</text>
+  <text x="215" y="408" font-family="Arial" font-size="8" fill="black">시리즈 A/B/C</text>
+  <text x="215" y="421" font-family="Arial" font-size="8" fill="black">Pre-IPO</text>
+  <text x="215" y="434" font-family="Arial" font-size="8" fill="black">규모 적합성</text>
+  <text x="215" y="447" font-family="Arial" font-size="8" fill="black">단계별 매칭</text>
+  
+  <rect x="320" y="360" width="100" height="100" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="370" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">지역 선호도</text>
+  <text x="325" y="395" font-family="Arial" font-size="8" fill="black">국내 우선</text>
+  <text x="325" y="408" font-family="Arial" font-size="8" fill="black">글로벌 확장</text>
+  <text x="325" y="421" font-family="Arial" font-size="8" fill="black">특정 지역</text>
+  <text x="325" y="434" font-family="Arial" font-size="8" fill="black">거리별 가중치</text>
+  <text x="325" y="447" font-family="Arial" font-size="8" fill="black">문화적 적합성</text>
+  
+  <rect x="430" y="360" width="100" height="100" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="480" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">리스크-수익</text>
+  <text x="435" y="395" font-family="Arial" font-size="8" fill="black">보수적</text>
+  <text x="435" y="408" font-family="Arial" font-size="8" fill="black">균형적</text>
+  <text x="435" y="421" font-family="Arial" font-size="8" fill="black">공격적</text>
+  <text x="435" y="434" font-family="Arial" font-size="8" fill="black">수익률 기대치</text>
+  <text x="435" y="447" font-family="Arial" font-size="8" fill="black">위험도 평가</text>
+  
+  <rect x="540" y="360" width="90" height="100" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="585" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">ML 최적화</text>
+  <text x="545" y="395" font-family="Arial" font-size="8" fill="black">과거 성사율</text>
+  <text x="545" y="408" font-family="Arial" font-size="8" fill="black">패턴 학습</text>
+  <text x="545" y="421" font-family="Arial" font-size="8" fill="black">가중치 조정</text>
+  <text x="545" y="434" font-family="Arial" font-size="8" fill="black">동적 업데이트</text>
+  <text x="545" y="447" font-family="Arial" font-size="8" fill="black">정확도 향상</text>
+  
+  <!-- System Performance & Scalability -->
+  <rect x="680" y="320" width="400" height="150" fill="#ffebee" stroke="#d32f2f" stroke-width="2"/>
+  <text x="880" y="345" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#d32f2f">
+    대용량 처리 및 장애 복구 (Scalability & Recovery)
+  </text>
+  
+  <rect x="700" y="360" width="110" height="100" fill="white" stroke="#d32f2f" stroke-width="1"/>
+  <text x="755" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">트래픽 분산</text>
+  <text x="705" y="395" font-family="Arial" font-size="8" fill="black">로드 밸런서</text>
+  <text x="705" y="408" font-family="Arial" font-size="8" fill="black">캐싱 시스템</text>
+  <text x="705" y="421" font-family="Arial" font-size="8" fill="black">비동기 처리</text>
+  <text x="705" y="434" font-family="Arial" font-size="8" fill="black">응답 최적화</text>
+  <text x="705" y="447" font-family="Arial" font-size="8" fill="black">부하 관리</text>
+  
+  <rect x="820" y="360" width="110" height="100" fill="white" stroke="#d32f2f" stroke-width="1"/>
+  <text x="875" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">장애 복구</text>
+  <text x="825" y="395" font-family="Arial" font-size="8" fill="black">자동 페일오버</text>
+  <text x="825" y="408" font-family="Arial" font-size="8" fill="black">백업 동기화</text>
+  <text x="825" y="421" font-family="Arial" font-size="8" fill="black">서킷 브레이커</text>
+  <text x="825" y="434" font-family="Arial" font-size="8" fill="black">장애 전파 방지</text>
+  <text x="825" y="447" font-family="Arial" font-size="8" fill="black">신속 복구</text>
+  
+  <rect x="940" y="360" width="120" height="100" fill="white" stroke="#d32f2f" stroke-width="1"/>
+  <text x="1000" y="375" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">동시 접근 처리</text>
+  <text x="945" y="395" font-family="Arial" font-size="8" fill="black">분산 락 메커니즘</text>
+  <text x="945" y="408" font-family="Arial" font-size="8" fill="black">큐 시스템 관리</text>
+  <text x="945" y="421" font-family="Arial" font-size="8" fill="black">요청 순서 보장</text>
+  <text x="945" y="434" font-family="Arial" font-size="8" fill="black">스케일 아웃</text>
+  <text x="945" y="447" font-family="Arial" font-size="8" fill="black">확장성 구조</text>
+  
+  <!-- Notification Unit -->
+  <rect x="320" y="500" width="200" height="100" fill="url(#crosshatch)" stroke="black" stroke-dasharray="10,5" stroke-width="2"/>
+  <text x="420" y="520" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    알림 전송부
+  </text>
+  <text x="420" y="535" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Notification Unit (144)
+  </text>
+  <text x="330" y="555" font-family="Arial" font-size="9" fill="black">• 기업명 & 매칭점수</text>
+  <text x="330" y="570" font-family="Arial" font-size="9" fill="black">• 매칭 사유 제공</text>
+  <text x="330" y="585" font-family="Arial" font-size="9" fill="black">• AI 아바타 링크</text>
+  
+  <!-- Matching Results -->
+  <rect x="560" y="500" width="280" height="100" fill="#f1f8e9" stroke="#689f38" stroke-width="2"/>
+  <text x="700" y="520" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#689f38">
+    매칭 결과 예시
+  </text>
+  <text x="700" y="535" text-anchor="middle" font-family="Arial" font-size="11" fill="#689f38">
+    Matching Results Example
+  </text>
+  <text x="570" y="555" font-family="Arial" font-size="8" fill="black">• AI 헬스케어 A사 (매칭점수: 94%)</text>
+  <text x="570" y="570" font-family="Arial" font-size="8" fill="black">• 바이오테크 B사 (매칭점수: 87%)</text>
+  <text x="570" y="585" font-family="Arial" font-size="8" fill="black">• 로봇 제조 C사 (매칭점수: 82%)</text>
+  
+  <!-- Explainable AI -->
+  <rect x="80" y="630" width="940" height="80" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
+  <text x="550" y="655" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#c2185b">
+    익스플레인러블 AI - 매칭 이유 명확 제시 (Explainable AI Matching Reasons)
+  </text>
+  <text x="100" y="675" font-family="Arial" font-size="10" fill="black">
+    • 섹터 일치도 (헬스케어 전문) + 투자규모 적합성 (시리즈A 선호) + 성장성 점수 (상위권)
+  </text>
+  <text x="100" y="695" font-family="Arial" font-size="10" fill="black">
+    • 유사 투자자 성공 패턴 + 지역별 선호도 매칭 + 리스크-수익 균형점 적합
+  </text>
+  
+  <!-- Flow Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+  
+  <line x1="280" y1="200" x2="320" y2="200" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="520" y1="200" x2="560" y2="200" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="840" y1="200" x2="880" y2="200" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="980" y1="290" x2="700" y2="500" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="420" y1="470" x2="420" y2="500" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  
+  <!-- Process Labels -->
+  <text x="300" y="195" text-anchor="middle" font-family="Arial" font-size="8" fill="black">조건 입력</text>
+  <text x="540" y="195" text-anchor="middle" font-family="Arial" font-size="8" fill="black">프로파일 분석</text>
+  <text x="860" y="195" text-anchor="middle" font-family="Arial" font-size="8" fill="black">매칭 계산</text>
+  <text x="840" y="395" font-family="Arial" font-size="8" fill="black">자동 발굴</text>
+  <text x="440" y="485" font-family="Arial" font-size="8" fill="black">알림 전송</text>
+  
+</svg>

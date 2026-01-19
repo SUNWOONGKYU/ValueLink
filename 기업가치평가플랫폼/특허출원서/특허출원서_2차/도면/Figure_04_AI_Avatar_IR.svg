@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pattern definitions for black and white patent drawings -->
+  <defs>
+    <!-- Hatching patterns for different components -->
+    <pattern id="diagonal1" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,4 L4,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="diagonal2" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0 M0,0 L6,6" stroke="black" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="5" height="5">
+      <rect width="5" height="5" fill="white"/>
+      <circle cx="2.5" cy="2.5" r="0.5" fill="black"/>
+    </pattern>
+    <pattern id="vertical" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M2,0 L2,4" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="horizontal" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,2 L4,2" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="white" stroke="none"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" font-family="Arial" font-size="18" font-weight="bold" fill="black">
+    Figure 4. AI 아바타 상시 IR 시스템 구성도
+  </text>
+  
+  <!-- Main Container -->
+  <rect x="50" y="60" width="1100" height="680" fill="none" stroke="black" stroke-width="3"/>
+  <text x="70" y="85" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    AI 아바타 상시 IR 시스템 (130) - AI Avatar Continuous IR System
+  </text>
+  
+  <!-- Input Data Sources -->
+  <rect x="80" y="110" width="200" height="150" fill="url(#diagonal1)" stroke="black" stroke-width="2"/>
+  <text x="180" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    학습 데이터 소스
+  </text>
+  <text x="180" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Training Data Sources
+  </text>
+  <text x="90" y="170" font-family="Arial" font-size="9" fill="black">• 평가보고서</text>
+  <text x="90" y="185" font-family="Arial" font-size="9" fill="black">• 사업계획서</text>
+  <text x="90" y="200" font-family="Arial" font-size="9" fill="black">• 공시자료</text>
+  <text x="90" y="215" font-family="Arial" font-size="9" fill="black">• 기업 소개서</text>
+  <text x="90" y="230" font-family="Arial" font-size="9" fill="black">• 특허 정보</text>
+  <text x="90" y="245" font-family="Arial" font-size="9" fill="black">• 임상시험 결과</text>
+  
+  <!-- AI Learning Unit -->
+  <rect x="320" y="110" width="240" height="280" fill="url(#diagonal2)" stroke="black" stroke-dasharray="5,5" stroke-width="2"/>
+  <text x="440" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    AI 학습부
+  </text>
+  <text x="440" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    AI Learning Unit (131)
+  </text>
+  
+  <!-- 3-Stage Learning Process -->
+  <rect x="330" y="160" width="220" height="70" fill="white" stroke="black" stroke-dasharray="5,5" stroke-width="1"/>
+  <text x="440" y="175" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="black">1단계: 기본 언어 모델 학습</text>
+  <text x="335" y="195" font-family="Arial" font-size="8" fill="black">• 대규모 금융 텍스트 데이터셋 활용</text>
+  <text x="335" y="208" font-family="Arial" font-size="8" fill="black">• 트랜스포머 아키텍처 기반 구축</text>
+  <text x="335" y="221" font-family="Arial" font-size="8" fill="black">• 금융 도메인 특화 어휘 학습</text>
+  
+  <rect x="330" y="240" width="220" height="70" fill="white" stroke="black" stroke-dasharray="5,5" stroke-width="1"/>
+  <text x="440" y="255" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="black">2단계: 기업별 파인튜닝</text>
+  <text x="335" y="275" font-family="Arial" font-size="8" fill="black">• 해당 기업 특화 데이터 학습</text>
+  <text x="335" y="288" font-family="Arial" font-size="8" fill="black">• 비즈니스 모델 및 특성 반영</text>
+  <text x="335" y="301" font-family="Arial" font-size="8" fill="black">• 질의-응답 쌍 데이터 활용</text>
+  
+  <rect x="330" y="320" width="220" height="60" fill="white" stroke="black" stroke-dasharray="5,5" stroke-width="1"/>
+  <text x="440" y="335" text-anchor="middle" font-family="Arial" font-size="10" font-weight="bold" fill="black">3단계: 지속적 학습</text>
+  <text x="335" y="355" font-family="Arial" font-size="8" fill="black">• 실제 대화 데이터 축적 및 학습</text>
+  <text x="335" y="368" font-family="Arial" font-size="8" fill="black">• 피드백 기반 성능 개선</text>
+  
+  <!-- Avatar Generation -->
+  <rect x="600" y="110" width="180" height="150" fill="url(#dots)" stroke="black" stroke-dasharray="3,3" stroke-width="2"/>
+  <text x="690" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    아바타 생성부
+  </text>
+  <text x="690" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Avatar Generation (132)
+  </text>
+  <text x="610" y="170" font-family="Arial" font-size="9" fill="black">• 기업 특성 반영 캐릭터</text>
+  <text x="610" y="185" font-family="Arial" font-size="9" fill="black">• 전문적이고 친근한 톤앤매너</text>
+  <text x="610" y="200" font-family="Arial" font-size="9" fill="black">• 업종별 맞춤형 설정</text>
+  <text x="610" y="215" font-family="Arial" font-size="9" fill="black">• 다국어 지원 가능</text>
+  <text x="610" y="230" font-family="Arial" font-size="9" fill="black">• 24시간 상시 대응</text>
+  <text x="610" y="245" font-family="Arial" font-size="9" fill="black">• 실시간 응답 최적화</text>
+  
+  <!-- Continuous Response Unit -->
+  <rect x="820" y="110" width="200" height="150" fill="url(#crosshatch)" stroke="black" stroke-dasharray="10,5" stroke-width="2"/>
+  <text x="920" y="130" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    상시 응답부
+  </text>
+  <text x="920" y="145" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    Continuous Response (133)
+  </text>
+  <text x="830" y="170" font-family="Arial" font-size="9" fill="black">• 실시간 질의 수신</text>
+  <text x="830" y="185" font-family="Arial" font-size="9" fill="black">• 신속한 응답 생성</text>
+  <text x="830" y="200" font-family="Arial" font-size="9" fill="black">• 다국어 동시 지원</text>
+  <text x="830" y="215" font-family="Arial" font-size="9" fill="black">• 복잡도별 응답 시간 조절</text>
+  <text x="830" y="230" font-family="Arial" font-size="9" fill="black">• 투자자 맞춤형 답변</text>
+  <text x="830" y="245" font-family="Arial" font-size="9" fill="black">• 상호작용 최적화</text>
+  
+  <!-- Response Time Optimization -->
+  <rect x="80" y="300" width="500" height="120" fill="#f8f9fa" stroke="#6c757d" stroke-width="2"/>
+  <text x="330" y="325" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="black">
+    응답 시간 최적화 알고리즘 (Response Time Optimization)
+  </text>
+  
+  <rect x="100" y="340" width="140" height="70" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="170" y="355" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">단순 질의</text>
+  <text x="170" y="370" text-anchor="middle" font-family="Arial" font-size="8" fill="#6c757d">키워드 기반</text>
+  <text x="170" y="385" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">1-3초 이내</text>
+  <text x="110" y="400" font-family="Arial" font-size="8" fill="black">기본정보 조회</text>
+  
+  <rect x="260" y="340" width="140" height="70" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="330" y="355" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">복합 질의</text>
+  <text x="330" y="370" text-anchor="middle" font-family="Arial" font-size="8" fill="#6c757d">분석 요구</text>
+  <text x="330" y="385" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">3-10초 이내</text>
+  <text x="270" y="400" font-family="Arial" font-size="8" fill="black">데이터 분석</text>
+  
+  <rect x="420" y="340" width="140" height="70" fill="white" stroke="#6c757d" stroke-width="1"/>
+  <text x="490" y="355" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#6c757d">복잡한 질의</text>
+  <text x="490" y="370" text-anchor="middle" font-family="Arial" font-size="8" fill="#6c757d">종합 분석</text>
+  <text x="490" y="385" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">10-30초 이내</text>
+  <text x="430" y="400" font-family="Arial" font-size="8" fill="black">통합 평가</text>
+  
+  <!-- Quality Management -->
+  <rect x="620" y="300" width="400" height="120" fill="#ffebee" stroke="#d32f2f" stroke-width="2"/>
+  <text x="820" y="325" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#d32f2f">
+    품질 관리부 (Quality Management Unit - 134)
+  </text>
+  
+  <rect x="640" y="340" width="160" height="70" fill="white" stroke="#d32f2f" stroke-width="1"/>
+  <text x="720" y="355" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">실시간 모니터링</text>
+  <text x="650" y="375" font-family="Arial" font-size="8" fill="black">• 응답 품질 추적</text>
+  <text x="650" y="388" font-family="Arial" font-size="8" fill="black">• 투자자 평가 수집</text>
+  <text x="650" y="401" font-family="Arial" font-size="8" fill="black">• 성능 지표 분석</text>
+  
+  <rect x="820" y="340" width="160" height="70" fill="white" stroke="#d32f2f" stroke-width="1"/>
+  <text x="900" y="355" text-anchor="middle" font-family="Arial" font-size="9" font-weight="bold" fill="#d32f2f">자동 개선</text>
+  <text x="830" y="375" font-family="Arial" font-size="8" fill="black">• 기준 미달 시 알림</text>
+  <text x="830" y="388" font-family="Arial" font-size="8" fill="black">• 전문가 검토 요청</text>
+  <text x="830" y="401" font-family="Arial" font-size="8" fill="black">• 지속적 성능 개선</text>
+  
+  <!-- Investor Interaction -->
+  <rect x="80" y="450" width="280" height="120" fill="#e1bee7" stroke="#8e24aa" stroke-width="2"/>
+  <text x="220" y="470" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#8e24aa">
+    투자자 상호작용
+  </text>
+  <text x="220" y="485" text-anchor="middle" font-family="Arial" font-size="11" fill="#8e24aa">
+    Investor Interaction
+  </text>
+  <text x="90" y="510" font-family="Arial" font-size="9" fill="black">질의 예시:</text>
+  <text x="90" y="525" font-family="Arial" font-size="8" fill="black">• "이 회사의 주요 경쟁 우위는?"</text>
+  <text x="90" y="540" font-family="Arial" font-size="8" fill="black">• "시장 성장성은 어떻게 평가되나?"</text>
+  <text x="90" y="555" font-family="Arial" font-size="8" fill="black">• "재무 건전성 지표는?"</text>
+  
+  <!-- AI Avatar Response Examples -->
+  <rect x="400" y="450" width="320" height="120" fill="url(#diagonal1)" stroke="black" stroke-width="2"/>
+  <text x="560" y="470" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="black">
+    AI 아바타 응답 예시
+  </text>
+  <text x="560" y="485" text-anchor="middle" font-family="Arial" font-size="11" fill="black">
+    AI Avatar Response Examples
+  </text>
+  <text x="410" y="510" font-family="Arial" font-size="8" fill="black">Dr. Alex (헬스케어 아바타):</text>
+  <text x="410" y="525" font-family="Arial" font-size="8" fill="black">"당사는 독창적인 AI 진단 알고리즘을</text>
+  <text x="410" y="540" font-family="Arial" font-size="8" fill="black">보유하고 있으며, 임상시험에서 기존 대비</text>
+  <text x="410" y="555" font-family="Arial" font-size="8" fill="black">진단 정확도가 향상되었습니다..."</text>
+  
+  <!-- System Benefits -->
+  <rect x="760" y="450" width="260" height="120" fill="#f1f8e9" stroke="#689f38" stroke-width="2"/>
+  <text x="890" y="470" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#689f38">
+    시스템 효과
+  </text>
+  <text x="890" y="485" text-anchor="middle" font-family="Arial" font-size="11" fill="#689f38">
+    System Benefits
+  </text>
+  <text x="770" y="510" font-family="Arial" font-size="9" fill="black">✓ IR 비용 절감</text>
+  <text x="770" y="525" font-family="Arial" font-size="9" fill="black">✓ 글로벌 투자자 접근성 향상</text>
+  <text x="770" y="540" font-family="Arial" font-size="9" fill="black">✓ 24시간 상시 IR 서비스</text>
+  <text x="770" y="555" font-family="Arial" font-size="9" fill="black">✓ 개인화된 투자자 대응</text>
+  
+  <!-- Performance Metrics -->
+  <rect x="80" y="600" width="940" height="100" fill="#fafafa" stroke="#424242" stroke-width="2"/>
+  <text x="550" y="625" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#424242">
+    성능 지표 및 A/B 테스트 최적화 (Performance Metrics & A/B Testing)
+  </text>
+  
+  <text x="100" y="650" font-family="Arial" font-size="10" fill="black">
+    • 응답 정확도: 지속적 학습을 통한 단계적 정확도 향상 (초기 대비 개선율 추적)
+  </text>
+  <text x="100" y="670" font-family="Arial" font-size="10" fill="black">
+    • 투자자 만족도: 피드백 기반 품질 평가 시스템 (5점 척도 평균 점수 관리)
+  </text>
+  <text x="100" y="690" font-family="Arial" font-size="10" fill="black">
+    • A/B 테스트: 응답 스타일별 효과성 비교 분석을 통한 최적 모델 선택
+  </text>
+  
+  <!-- Flow Arrows -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
+  
+  <line x1="280" y1="185" x2="320" y2="185" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="560" y1="250" x2="600" y2="185" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="780" y1="185" x2="820" y2="185" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="920" y1="260" x2="920" y2="300" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <line x1="220" y1="450" x2="440" y2="390" stroke="#666666" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <line x1="560" y1="450" x2="720" y2="410" stroke="#666666" stroke-width="1" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  
+  <!-- Process Labels -->
+  <text x="300" y="180" text-anchor="middle" font-family="Arial" font-size="8" fill="black">데이터 학습</text>
+  <text x="580" y="220" font-family="Arial" font-size="8" fill="black">아바타 생성</text>
+  <text x="800" y="180" text-anchor="middle" font-family="Arial" font-size="8" fill="black">상시 응답</text>
+  <text x="940" y="285" font-family="Arial" font-size="8" fill="black">품질 관리</text>
+  <text x="330" y="420" font-family="Arial" font-size="8" fill="#666666">질의</text>
+  <text x="640" y="430" font-family="Arial" font-size="8" fill="#666666">피드백</text>
+  
+</svg>

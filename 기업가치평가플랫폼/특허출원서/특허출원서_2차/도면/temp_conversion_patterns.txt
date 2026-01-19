@@ -1,0 +1,32 @@
+<!-- Pattern definitions for black and white patent drawings -->
+  <defs>
+    <!-- Hatching patterns for different components -->
+    <pattern id="diagonal1" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,4 L4,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="diagonal2" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="crosshatch" patternUnits="userSpaceOnUse" width="6" height="6">
+      <rect width="6" height="6" fill="white"/>
+      <path d="M0,6 L6,0 M0,0 L6,6" stroke="black" stroke-width="0.3"/>
+    </pattern>
+    <pattern id="dots" patternUnits="userSpaceOnUse" width="5" height="5">
+      <rect width="5" height="5" fill="white"/>
+      <circle cx="2.5" cy="2.5" r="0.5" fill="black"/>
+    </pattern>
+    <pattern id="vertical" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M2,0 L2,4" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <pattern id="horizontal" patternUnits="userSpaceOnUse" width="4" height="4">
+      <rect width="4" height="4" fill="white"/>
+      <path d="M0,2 L4,2" stroke="black" stroke-width="0.5"/>
+    </pattern>
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="black"/>
+    </marker>
+  </defs>
