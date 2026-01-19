@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자산가치 평가 (순자산가치법) | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: #FEF3C7; }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        /* HERO */
+        .hero {
+            background: var(--deep-blue);
+            padding: 48px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-blue-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: var(--deep-blue-pale);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        /* FORM GRID */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .form-input.readonly {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        /* BALANCE SHEET TABLE */
+        .balance-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .balance-table th,
+        .balance-table td {
+            padding: 14px 16px;
+            text-align: right;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .balance-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .balance-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .balance-table input {
+            width: 140px;
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .balance-table input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .balance-table .category-row {
+            background: #F9FAFB;
+        }
+
+        .balance-table .category-row td {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .balance-table .subtotal-row {
+            background: var(--deep-blue-pale);
+        }
+
+        .balance-table .subtotal-row td {
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
+        .balance-table .total-row {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .balance-table .total-row td {
+            font-weight: 700;
+            border-bottom: none;
+        }
+
+        .balance-table .indent {
+            padding-left: 32px;
+        }
+
+        .balance-table .calc-value {
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        .balance-table .adjustment {
+            color: var(--error);
+        }
+
+        .balance-table .adjustment.positive {
+            color: var(--success);
+        }
+
+        /* TWO COLUMN LAYOUT */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        /* SUMMARY CARDS */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .summary-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .summary-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .summary-unit {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .result-unit {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .result-final {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .result-final .result-label {
+            font-size: 16px;
+        }
+
+        .result-final .result-value {
+            font-size: 48px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .btn-calculate:hover {
+            background: #1E40AF;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">ASSET VALUATION</div>
+        <h1>자산가치 평가</h1>
+        <p>순자산가치법(NAV)을 활용한 자산 기반 기업가치 산정</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h4>&#128161; 순자산가치법(NAV)이란?</h4>
+            <p>
+                순자산가치법(Net Asset Value)은 기업의 자산에서 부채를 차감한 순자산의 시가를 기준으로
+                기업가치를 산정하는 방법입니다. 장부가액과 시가의 차이를 조정하여 실질적인 기업가치를 평가하며,
+                특히 부동산, 투자자산이 많은 기업이나 청산가치 평가에 적합합니다.
+            </p>
+        </div>
+
+        <!-- COMPANY INFO -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#127970;</span>
+                기업 기본 정보
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">회사명</label>
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">평가기준일</label>
+                    <input type="date" class="form-input" id="valuation-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">발행주식수</label>
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <span class="form-hint">주</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ASSETS -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128230;</span>
+                자산 평가
+            </h2>
+            <table class="balance-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; width: 35%;">항목</th>
+                        <th style="width: 20%;">장부가액</th>
+                        <th style="width: 20%;">시가조정액</th>
+                        <th style="width: 25%;">시가</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 유동자산 -->
+                    <tr class="category-row">
+                        <td colspan="4">I. 유동자산</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">현금및현금성자산</td>
+                        <td><input type="text" id="cash-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="cash-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="cash-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">매출채권</td>
+                        <td><input type="text" id="ar-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="ar-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="ar-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">재고자산</td>
+                        <td><input type="text" id="inventory-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="inventory-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="inventory-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">기타유동자산</td>
+                        <td><input type="text" id="other-current-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="other-current-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="other-current-market">0</td>
+                    </tr>
+                    <tr class="subtotal-row">
+                        <td>유동자산 소계</td>
+                        <td class="calc-value" id="current-assets-book">0</td>
+                        <td class="calc-value" id="current-assets-adj">0</td>
+                        <td class="calc-value" id="current-assets-market">0</td>
+                    </tr>
+
+                    <!-- 비유동자산 -->
+                    <tr class="category-row">
+                        <td colspan="4">II. 비유동자산</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">투자자산</td>
+                        <td><input type="text" id="investment-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="investment-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="investment-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">토지</td>
+                        <td><input type="text" id="land-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="land-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="land-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">건물</td>
+                        <td><input type="text" id="building-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="building-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="building-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">기계장치</td>
+                        <td><input type="text" id="equipment-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="equipment-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="equipment-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">무형자산</td>
+                        <td><input type="text" id="intangible-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="intangible-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="intangible-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">기타비유동자산</td>
+                        <td><input type="text" id="other-noncurrent-book" placeholder="0" data-type="asset"></td>
+                        <td><input type="text" id="other-noncurrent-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="other-noncurrent-market">0</td>
+                    </tr>
+                    <tr class="subtotal-row">
+                        <td>비유동자산 소계</td>
+                        <td class="calc-value" id="noncurrent-assets-book">0</td>
+                        <td class="calc-value" id="noncurrent-assets-adj">0</td>
+                        <td class="calc-value" id="noncurrent-assets-market">0</td>
+                    </tr>
+
+                    <!-- 자산총계 -->
+                    <tr class="total-row">
+                        <td>자산총계</td>
+                        <td id="total-assets-book">0</td>
+                        <td id="total-assets-adj">0</td>
+                        <td id="total-assets-market">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- LIABILITIES -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128181;</span>
+                부채 평가
+            </h2>
+            <table class="balance-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; width: 35%;">항목</th>
+                        <th style="width: 20%;">장부가액</th>
+                        <th style="width: 20%;">시가조정액</th>
+                        <th style="width: 25%;">시가</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 유동부채 -->
+                    <tr class="category-row">
+                        <td colspan="4">I. 유동부채</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">매입채무</td>
+                        <td><input type="text" id="ap-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="ap-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="ap-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">단기차입금</td>
+                        <td><input type="text" id="short-debt-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="short-debt-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="short-debt-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">기타유동부채</td>
+                        <td><input type="text" id="other-current-liability-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="other-current-liability-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="other-current-liability-market">0</td>
+                    </tr>
+                    <tr class="subtotal-row">
+                        <td>유동부채 소계</td>
+                        <td class="calc-value" id="current-liabilities-book">0</td>
+                        <td class="calc-value" id="current-liabilities-adj">0</td>
+                        <td class="calc-value" id="current-liabilities-market">0</td>
+                    </tr>
+
+                    <!-- 비유동부채 -->
+                    <tr class="category-row">
+                        <td colspan="4">II. 비유동부채</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">장기차입금</td>
+                        <td><input type="text" id="long-debt-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="long-debt-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="long-debt-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">퇴직급여충당부채</td>
+                        <td><input type="text" id="pension-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="pension-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="pension-market">0</td>
+                    </tr>
+                    <tr>
+                        <td class="indent">기타비유동부채</td>
+                        <td><input type="text" id="other-noncurrent-liability-book" placeholder="0" data-type="liability"></td>
+                        <td><input type="text" id="other-noncurrent-liability-adj" placeholder="0" data-type="adjustment"></td>
+                        <td class="calc-value" id="other-noncurrent-liability-market">0</td>
+                    </tr>
+                    <tr class="subtotal-row">
+                        <td>비유동부채 소계</td>
+                        <td class="calc-value" id="noncurrent-liabilities-book">0</td>
+                        <td class="calc-value" id="noncurrent-liabilities-adj">0</td>
+                        <td class="calc-value" id="noncurrent-liabilities-market">0</td>
+                    </tr>
+
+                    <!-- 부채총계 -->
+                    <tr class="total-row">
+                        <td>부채총계</td>
+                        <td id="total-liabilities-book">0</td>
+                        <td id="total-liabilities-adj">0</td>
+                        <td id="total-liabilities-market">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SUMMARY -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128202;</span>
+                순자산 요약
+            </h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-label">장부가 자산총계</div>
+                    <div class="summary-value" id="summary-assets-book">0</div>
+                    <div class="summary-unit">백만원</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">장부가 부채총계</div>
+                    <div class="summary-value" id="summary-liabilities-book">0</div>
+                    <div class="summary-unit">백만원</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">장부가 순자산</div>
+                    <div class="summary-value" id="summary-nav-book">0</div>
+                    <div class="summary-unit">백만원</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">시가 자산총계</div>
+                    <div class="summary-value" id="summary-assets-market">0</div>
+                    <div class="summary-unit">백만원</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">시가 부채총계</div>
+                    <div class="summary-value" id="summary-liabilities-market">0</div>
+                    <div class="summary-unit">백만원</div>
+                </div>
+                <div class="summary-card" style="background: var(--deep-blue-pale);">
+                    <div class="summary-label" style="color: var(--deep-blue);">시가 순자산 (NAV)</div>
+                    <div class="summary-value" id="summary-nav-market" style="color: var(--deep-blue);">0</div>
+                    <div class="summary-unit" style="color: var(--deep-blue);">백만원</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATE -->
+        <button class="btn-calculate" onclick="calculateNAV()">주당순자산가치 산정하기</button>
+
+        <!-- RESULT -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <h2 class="result-title">
+                <span>&#127919;</span>
+                자산가치 평가 결과
+            </h2>
+            <div class="result-grid">
+                <div class="result-card">
+                    <div class="result-label">장부가 순자산</div>
+                    <div class="result-value" id="result-book-nav">-</div>
+                    <div class="result-unit">백만원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">시가조정액 합계</div>
+                    <div class="result-value" id="result-adjustment">-</div>
+                    <div class="result-unit">백만원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">시가 순자산 (NAV)</div>
+                    <div class="result-value" id="result-market-nav">-</div>
+                    <div class="result-unit">백만원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">발행주식수</div>
+                    <div class="result-value" id="result-shares">-</div>
+                    <div class="result-unit">주</div>
+                </div>
+            </div>
+            <div class="result-final">
+                <div class="result-label">주당순자산가치 (NAVPS)</div>
+                <div class="result-value" id="result-navps">-</div>
+                <div class="result-unit">원</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Format number
+        function formatNumber(num) {
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Parse number
+        function parseNumber(str) {
+            if (!str) return 0;
+            return parseFloat(str.toString().replace(/,/g, '')) || 0;
+        }
+
+        // Calculate market values for each row
+        function calculateRowMarketValue(bookId, adjId, marketId) {
+            const book = parseNumber(document.getElementById(bookId).value);
+            const adj = parseNumber(document.getElementById(adjId).value);
+            const market = book + adj;
+            document.getElementById(marketId).textContent = formatNumber(market);
+            return { book, adj, market };
+        }
+
+        // Calculate all values
+        function calculateAll() {
+            // Current Assets
+            const cash = calculateRowMarketValue('cash-book', 'cash-adj', 'cash-market');
+            const ar = calculateRowMarketValue('ar-book', 'ar-adj', 'ar-market');
+            const inventory = calculateRowMarketValue('inventory-book', 'inventory-adj', 'inventory-market');
+            const otherCurrent = calculateRowMarketValue('other-current-book', 'other-current-adj', 'other-current-market');
+
+            const currentAssetsBook = cash.book + ar.book + inventory.book + otherCurrent.book;
+            const currentAssetsAdj = cash.adj + ar.adj + inventory.adj + otherCurrent.adj;
+            const currentAssetsMarket = cash.market + ar.market + inventory.market + otherCurrent.market;
+
+            document.getElementById('current-assets-book').textContent = formatNumber(currentAssetsBook);
+            document.getElementById('current-assets-adj').textContent = formatNumber(currentAssetsAdj);
+            document.getElementById('current-assets-market').textContent = formatNumber(currentAssetsMarket);
+
+            // Non-current Assets
+            const investment = calculateRowMarketValue('investment-book', 'investment-adj', 'investment-market');
+            const land = calculateRowMarketValue('land-book', 'land-adj', 'land-market');
+            const building = calculateRowMarketValue('building-book', 'building-adj', 'building-market');
+            const equipment = calculateRowMarketValue('equipment-book', 'equipment-adj', 'equipment-market');
+            const intangible = calculateRowMarketValue('intangible-book', 'intangible-adj', 'intangible-market');
+            const otherNoncurrent = calculateRowMarketValue('other-noncurrent-book', 'other-noncurrent-adj', 'other-noncurrent-market');
+
+            const noncurrentAssetsBook = investment.book + land.book + building.book + equipment.book + intangible.book + otherNoncurrent.book;
+            const noncurrentAssetsAdj = investment.adj + land.adj + building.adj + equipment.adj + intangible.adj + otherNoncurrent.adj;
+            const noncurrentAssetsMarket = investment.market + land.market + building.market + equipment.market + intangible.market + otherNoncurrent.market;
+
+            document.getElementById('noncurrent-assets-book').textContent = formatNumber(noncurrentAssetsBook);
+            document.getElementById('noncurrent-assets-adj').textContent = formatNumber(noncurrentAssetsAdj);
+            document.getElementById('noncurrent-assets-market').textContent = formatNumber(noncurrentAssetsMarket);
+
+            // Total Assets
+            const totalAssetsBook = currentAssetsBook + noncurrentAssetsBook;
+            const totalAssetsAdj = currentAssetsAdj + noncurrentAssetsAdj;
+            const totalAssetsMarket = currentAssetsMarket + noncurrentAssetsMarket;
+
+            document.getElementById('total-assets-book').textContent = formatNumber(totalAssetsBook);
+            document.getElementById('total-assets-adj').textContent = formatNumber(totalAssetsAdj);
+            document.getElementById('total-assets-market').textContent = formatNumber(totalAssetsMarket);
+
+            // Current Liabilities
+            const ap = calculateRowMarketValue('ap-book', 'ap-adj', 'ap-market');
+            const shortDebt = calculateRowMarketValue('short-debt-book', 'short-debt-adj', 'short-debt-market');
+            const otherCurrentLiability = calculateRowMarketValue('other-current-liability-book', 'other-current-liability-adj', 'other-current-liability-market');
+
+            const currentLiabilitiesBook = ap.book + shortDebt.book + otherCurrentLiability.book;
+            const currentLiabilitiesAdj = ap.adj + shortDebt.adj + otherCurrentLiability.adj;
+            const currentLiabilitiesMarket = ap.market + shortDebt.market + otherCurrentLiability.market;
+
+            document.getElementById('current-liabilities-book').textContent = formatNumber(currentLiabilitiesBook);
+            document.getElementById('current-liabilities-adj').textContent = formatNumber(currentLiabilitiesAdj);
+            document.getElementById('current-liabilities-market').textContent = formatNumber(currentLiabilitiesMarket);
+
+            // Non-current Liabilities
+            const longDebt = calculateRowMarketValue('long-debt-book', 'long-debt-adj', 'long-debt-market');
+            const pension = calculateRowMarketValue('pension-book', 'pension-adj', 'pension-market');
+            const otherNoncurrentLiability = calculateRowMarketValue('other-noncurrent-liability-book', 'other-noncurrent-liability-adj', 'other-noncurrent-liability-market');
+
+            const noncurrentLiabilitiesBook = longDebt.book + pension.book + otherNoncurrentLiability.book;
+            const noncurrentLiabilitiesAdj = longDebt.adj + pension.adj + otherNoncurrentLiability.adj;
+            const noncurrentLiabilitiesMarket = longDebt.market + pension.market + otherNoncurrentLiability.market;
+
+            document.getElementById('noncurrent-liabilities-book').textContent = formatNumber(noncurrentLiabilitiesBook);
+            document.getElementById('noncurrent-liabilities-adj').textContent = formatNumber(noncurrentLiabilitiesAdj);
+            document.getElementById('noncurrent-liabilities-market').textContent = formatNumber(noncurrentLiabilitiesMarket);
+
+            // Total Liabilities
+            const totalLiabilitiesBook = currentLiabilitiesBook + noncurrentLiabilitiesBook;
+            const totalLiabilitiesAdj = currentLiabilitiesAdj + noncurrentLiabilitiesAdj;
+            const totalLiabilitiesMarket = currentLiabilitiesMarket + noncurrentLiabilitiesMarket;
+
+            document.getElementById('total-liabilities-book').textContent = formatNumber(totalLiabilitiesBook);
+            document.getElementById('total-liabilities-adj').textContent = formatNumber(totalLiabilitiesAdj);
+            document.getElementById('total-liabilities-market').textContent = formatNumber(totalLiabilitiesMarket);
+
+            // Summary
+            const navBook = totalAssetsBook - totalLiabilitiesBook;
+            const navMarket = totalAssetsMarket - totalLiabilitiesMarket;
+
+            document.getElementById('summary-assets-book').textContent = formatNumber(totalAssetsBook);
+            document.getElementById('summary-liabilities-book').textContent = formatNumber(totalLiabilitiesBook);
+            document.getElementById('summary-nav-book').textContent = formatNumber(navBook);
+            document.getElementById('summary-assets-market').textContent = formatNumber(totalAssetsMarket);
+            document.getElementById('summary-liabilities-market').textContent = formatNumber(totalLiabilitiesMarket);
+            document.getElementById('summary-nav-market').textContent = formatNumber(navMarket);
+
+            return {
+                totalAssetsBook,
+                totalAssetsAdj,
+                totalAssetsMarket,
+                totalLiabilitiesBook,
+                totalLiabilitiesAdj,
+                totalLiabilitiesMarket,
+                navBook,
+                navMarket
+            };
+        }
+
+        // Calculate NAV per share
+        function calculateNAV() {
+            const values = calculateAll();
+            const shares = parseNumber(document.getElementById('shares-outstanding').value);
+
+            if (shares <= 0) {
+                alert('발행주식수를 입력해 주세요.');
+                return;
+            }
+
+            const totalAdj = values.totalAssetsAdj - values.totalLiabilitiesAdj;
+            const navps = (values.navMarket * 1000000) / shares; // 백만원 → 원
+
+            document.getElementById('result-book-nav').textContent = formatNumber(values.navBook);
+            document.getElementById('result-adjustment').textContent = formatNumber(totalAdj);
+            document.getElementById('result-market-nav').textContent = formatNumber(values.navMarket);
+            document.getElementById('result-shares').textContent = formatNumber(shares);
+            document.getElementById('result-navps').textContent = formatNumber(navps);
+
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add input listeners
+        document.querySelectorAll('.balance-table input').forEach(input => {
+            input.addEventListener('input', calculateAll);
+        });
+
+        // Set today's date
+        document.getElementById('valuation-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPO 공모가 평가 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: #FEF3C7; }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        /* HERO */
+        .hero {
+            background: var(--deep-blue);
+            padding: 48px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-blue-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* FORM GRID */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: var(--deep-blue-pale);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        /* COMPARABLE TABLE */
+        .comparable-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .comparable-table th,
+        .comparable-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .comparable-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .comparable-table input {
+            width: 100%;
+            padding: 8px;
+            font-size: 13px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .comparable-table input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .btn-add:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-remove {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--error);
+            background: #FEE2E2;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* DISCOUNT SECTION */
+        .discount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .discount-card {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .discount-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .discount-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .discount-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* SLIDER */
+        .slider-container {
+            margin-top: 24px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .slider-label span {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .slider-value {
+            color: var(--deep-blue);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--deep-blue);
+            cursor: pointer;
+            border: 4px solid var(--white);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .slider-marks {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* PRICE RANGE */
+        .price-range-section {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            border-radius: 16px;
+            padding: 32px;
+            color: var(--white);
+            margin-bottom: 24px;
+        }
+
+        .price-range-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .price-range-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .price-box {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .price-box-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .price-box-value {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        .price-box-unit {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .price-separator {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .result-unit {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .result-final {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .result-final .result-label {
+            font-size: 16px;
+        }
+
+        .result-final .result-value {
+            font-size: 48px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .btn-calculate:hover {
+            background: #1E40AF;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .discount-grid {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .price-range-grid {
+                grid-template-columns: 1fr;
+            }
+            .price-separator {
+                transform: rotate(90deg);
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">IPO VALUATION</div>
+        <h1>IPO 공모가 평가</h1>
+        <p>유사기업 비교법과 IPO 할인율을 적용한 희망공모가 산정</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h4>&#128161; IPO 공모가 산정이란?</h4>
+            <p>
+                IPO(기업공개) 시 공모가는 유사 상장기업의 주가수익비율(PER), 주가순자산비율(PBR) 등을 기준으로 산정한 후,
+                주식의 유동성 부족, 기업규모 차이, 상장 후 주가 변동성 등을 고려하여 IPO 할인율을 적용합니다.
+                일반적으로 10%~30%의 할인율이 적용되며, 희망공모가 범위(밴드)를 설정하여 수요예측을 진행합니다.
+            </p>
+        </div>
+
+        <!-- TARGET COMPANY -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#127970;</span>
+                공모 기업 정보
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">회사명</label>
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">업종</label>
+                    <select class="form-input" id="industry">
+                        <option value="">업종 선택</option>
+                        <option value="it">정보기술(IT)</option>
+                        <option value="bio">바이오/헬스케어</option>
+                        <option value="manufacturing">제조업</option>
+                        <option value="retail">유통/소비재</option>
+                        <option value="content">콘텐츠/미디어</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">상장 예정 시장</label>
+                    <select class="form-input" id="market">
+                        <option value="kospi">KOSPI</option>
+                        <option value="kosdaq">KOSDAQ</option>
+                        <option value="konex">KONEX</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">총 발행주식수 (공모 후)</label>
+                    <input type="text" class="form-input" id="total-shares" placeholder="10,000,000">
+                    <span class="form-hint">주</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">공모주식수 (신주)</label>
+                    <input type="text" class="form-input" id="new-shares" placeholder="2,000,000">
+                    <span class="form-hint">주</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">구주매출 주식수</label>
+                    <input type="text" class="form-input" id="old-shares" placeholder="0">
+                    <span class="form-hint">주 (선택사항)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- FINANCIALS -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128200;</span>
+                공모 기업 재무지표
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">당기순이익</label>
+                    <input type="text" class="form-input" id="net-income" placeholder="5,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">자기자본</label>
+                    <input type="text" class="form-input" id="equity" placeholder="30,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">매출액</label>
+                    <input type="text" class="form-input" id="revenue" placeholder="50,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">주당순이익 (EPS)</label>
+                    <input type="text" class="form-input" id="eps" placeholder="500" readonly>
+                    <span class="form-hint">원 (자동 계산)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">주당순자산 (BPS)</label>
+                    <input type="text" class="form-input" id="bps" placeholder="3,000" readonly>
+                    <span class="form-hint">원 (자동 계산)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">주당매출액 (SPS)</label>
+                    <input type="text" class="form-input" id="sps" placeholder="5,000" readonly>
+                    <span class="form-hint">원 (자동 계산)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPARABLE COMPANIES -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128101;</span>
+                유사 상장기업
+            </h2>
+            <table class="comparable-table" id="peer-table">
+                <thead>
+                    <tr>
+                        <th style="width: 180px;">기업명</th>
+                        <th>주가 (원)</th>
+                        <th>PER (배)</th>
+                        <th>PBR (배)</th>
+                        <th>PSR (배)</th>
+                        <th style="width: 60px;"></th>
+                    </tr>
+                </thead>
+                <tbody id="peer-tbody">
+                    <tr>
+                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                        <td><input type="text" placeholder="0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                        <td><input type="text" placeholder="0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                        <td><input type="text" placeholder="0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><input type="text" placeholder="0.0"></td>
+                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background: var(--deep-blue-pale); font-weight: 600;">
+                        <td>평균</td>
+                        <td id="avg-price">-</td>
+                        <td id="avg-per">-</td>
+                        <td id="avg-pbr">-</td>
+                        <td id="avg-psr">-</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <button class="btn-add" onclick="addRow()">
+                <span>+</span> 유사기업 추가
+            </button>
+        </section>
+
+        <!-- MULTIPLE WEIGHT -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#9878;&#65039;</span>
+                멀티플 가중치 설정
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">PER 가중치</label>
+                    <input type="number" class="form-input" id="weight-per" value="50" min="0" max="100">
+                    <span class="form-hint">% (0~100)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">PBR 가중치</label>
+                    <input type="number" class="form-input" id="weight-pbr" value="30" min="0" max="100">
+                    <span class="form-hint">% (0~100)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">PSR 가중치</label>
+                    <input type="number" class="form-input" id="weight-psr" value="20" min="0" max="100">
+                    <span class="form-hint">% (0~100)</span>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 16px; font-size: 14px;">
+                가중치 합계: <span id="weight-total" style="font-weight: 700; color: var(--deep-blue);">100</span>%
+            </div>
+        </section>
+
+        <!-- IPO DISCOUNT -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128181;</span>
+                IPO 할인율 설정
+            </h2>
+            <div class="discount-grid">
+                <div class="discount-card">
+                    <div class="discount-label">유동성 할인</div>
+                    <div class="discount-value" id="display-liquidity">10%</div>
+                    <div class="discount-hint">비상장 → 상장 유동성 부족</div>
+                </div>
+                <div class="discount-card">
+                    <div class="discount-label">규모 할인</div>
+                    <div class="discount-value" id="display-size">5%</div>
+                    <div class="discount-hint">대기업 대비 중소기업 리스크</div>
+                </div>
+                <div class="discount-card">
+                    <div class="discount-label">총 IPO 할인율</div>
+                    <div class="discount-value" id="display-total">15%</div>
+                    <div class="discount-hint">최종 적용 할인율</div>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>유동성 할인율</span>
+                    <span class="slider-value" id="liquidity-value">10%</span>
+                </div>
+                <input type="range" id="liquidity-slider" min="0" max="30" value="10" step="1">
+                <div class="slider-marks">
+                    <span>0%</span>
+                    <span>10%</span>
+                    <span>20%</span>
+                    <span>30%</span>
+                </div>
+            </div>
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span>규모 할인율</span>
+                    <span class="slider-value" id="size-value">5%</span>
+                </div>
+                <input type="range" id="size-slider" min="0" max="20" value="5" step="1">
+                <div class="slider-marks">
+                    <span>0%</span>
+                    <span>5%</span>
+                    <span>10%</span>
+                    <span>15%</span>
+                    <span>20%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BAND WIDTH -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128200;</span>
+                희망공모가 밴드 설정
+            </h2>
+            <div class="form-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="form-group">
+                    <label class="form-label">밴드 하단 (-)</label>
+                    <input type="number" class="form-input" id="band-low" value="10" min="0" max="30">
+                    <span class="form-hint">% (기준가 대비 하한)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">밴드 상단 (+)</label>
+                    <input type="number" class="form-input" id="band-high" value="10" min="0" max="30">
+                    <span class="form-hint">% (기준가 대비 상한)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATE -->
+        <button class="btn-calculate" onclick="calculateIPO()">공모가 산정하기</button>
+
+        <!-- PRICE RANGE -->
+        <section class="price-range-section" id="price-range-section" style="display: none;">
+            <h2 class="price-range-title">
+                <span>&#128178;</span>
+                희망공모가 범위 (밴드)
+            </h2>
+            <div class="price-range-grid">
+                <div class="price-box">
+                    <div class="price-box-label">밴드 하단</div>
+                    <div class="price-box-value" id="band-low-price">-</div>
+                    <div class="price-box-unit">원</div>
+                </div>
+                <div class="price-separator">~</div>
+                <div class="price-box">
+                    <div class="price-box-label">밴드 상단</div>
+                    <div class="price-box-value" id="band-high-price">-</div>
+                    <div class="price-box-unit">원</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULT -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <h2 class="result-title">
+                <span>&#127919;</span>
+                IPO 공모가 평가 결과
+            </h2>
+            <div class="result-grid">
+                <div class="result-card">
+                    <div class="result-label">PER 기준 주가</div>
+                    <div class="result-value" id="result-per">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">PBR 기준 주가</div>
+                    <div class="result-value" id="result-pbr">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">PSR 기준 주가</div>
+                    <div class="result-value" id="result-psr">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">가중평균 주가</div>
+                    <div class="result-value" id="result-weighted">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+            </div>
+            <div class="result-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="result-card">
+                    <div class="result-label">IPO 할인율</div>
+                    <div class="result-value" id="result-discount">-</div>
+                    <div class="result-unit">%</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">공모 예정 금액</div>
+                    <div class="result-value" id="result-proceeds">-</div>
+                    <div class="result-unit">억원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">공모 후 시가총액</div>
+                    <div class="result-value" id="result-marketcap">-</div>
+                    <div class="result-unit">억원</div>
+                </div>
+            </div>
+            <div class="result-final">
+                <div class="result-label">할인 후 기준공모가</div>
+                <div class="result-value" id="result-final">-</div>
+                <div class="result-unit">원</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Format number
+        function formatNumber(num) {
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Parse number
+        function parseNumber(str) {
+            return parseFloat(str.replace(/,/g, '')) || 0;
+        }
+
+        // Add row
+        function addRow() {
+            const tbody = document.getElementById('peer-tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+            `;
+            tbody.appendChild(newRow);
+            addInputListeners();
+        }
+
+        // Remove row
+        function removeRow(btn) {
+            const tbody = document.getElementById('peer-tbody');
+            if (tbody.rows.length > 1) {
+                btn.closest('tr').remove();
+                calculateAverages();
+            }
+        }
+
+        // Calculate averages
+        function calculateAverages() {
+            const tbody = document.getElementById('peer-tbody');
+            const rows = tbody.rows;
+
+            let totals = { price: 0, per: 0, pbr: 0, psr: 0 };
+            let counts = { price: 0, per: 0, pbr: 0, psr: 0 };
+
+            for (let row of rows) {
+                const inputs = row.querySelectorAll('input');
+                const values = Array.from(inputs).slice(1, 5).map(input => parseFloat(input.value.replace(/,/g, '')) || 0);
+
+                if (values[0] > 0) { totals.price += values[0]; counts.price++; }
+                if (values[1] > 0) { totals.per += values[1]; counts.per++; }
+                if (values[2] > 0) { totals.pbr += values[2]; counts.pbr++; }
+                if (values[3] > 0) { totals.psr += values[3]; counts.psr++; }
+            }
+
+            document.getElementById('avg-price').textContent = counts.price > 0 ? formatNumber(totals.price / counts.price) : '-';
+            document.getElementById('avg-per').textContent = counts.per > 0 ? (totals.per / counts.per).toFixed(1) : '-';
+            document.getElementById('avg-pbr').textContent = counts.pbr > 0 ? (totals.pbr / counts.pbr).toFixed(1) : '-';
+            document.getElementById('avg-psr').textContent = counts.psr > 0 ? (totals.psr / counts.psr).toFixed(1) : '-';
+        }
+
+        // Calculate per-share metrics
+        function calculatePerShare() {
+            const totalShares = parseNumber(document.getElementById('total-shares').value);
+            const netIncome = parseNumber(document.getElementById('net-income').value) * 1000000; // 백만원 → 원
+            const equity = parseNumber(document.getElementById('equity').value) * 1000000;
+            const revenue = parseNumber(document.getElementById('revenue').value) * 1000000;
+
+            if (totalShares > 0) {
+                document.getElementById('eps').value = formatNumber(netIncome / totalShares);
+                document.getElementById('bps').value = formatNumber(equity / totalShares);
+                document.getElementById('sps').value = formatNumber(revenue / totalShares);
+            }
+        }
+
+        // Update discount display
+        function updateDiscount() {
+            const liquidity = parseInt(document.getElementById('liquidity-slider').value);
+            const size = parseInt(document.getElementById('size-slider').value);
+            const total = liquidity + size;
+
+            document.getElementById('liquidity-value').textContent = liquidity + '%';
+            document.getElementById('size-value').textContent = size + '%';
+            document.getElementById('display-liquidity').textContent = liquidity + '%';
+            document.getElementById('display-size').textContent = size + '%';
+            document.getElementById('display-total').textContent = total + '%';
+        }
+
+        // Update weight total
+        function updateWeightTotal() {
+            const per = parseFloat(document.getElementById('weight-per').value) || 0;
+            const pbr = parseFloat(document.getElementById('weight-pbr').value) || 0;
+            const psr = parseFloat(document.getElementById('weight-psr').value) || 0;
+            const total = per + pbr + psr;
+            document.getElementById('weight-total').textContent = total;
+            document.getElementById('weight-total').style.color = total === 100 ? '#10B981' : '#EF4444';
+        }
+
+        // Calculate IPO
+        function calculateIPO() {
+            // Get data
+            const totalShares = parseNumber(document.getElementById('total-shares').value);
+            const newShares = parseNumber(document.getElementById('new-shares').value);
+            const eps = parseNumber(document.getElementById('eps').value);
+            const bps = parseNumber(document.getElementById('bps').value);
+            const sps = parseNumber(document.getElementById('sps').value);
+
+            const avgPer = parseFloat(document.getElementById('avg-per').textContent) || 0;
+            const avgPbr = parseFloat(document.getElementById('avg-pbr').textContent) || 0;
+            const avgPsr = parseFloat(document.getElementById('avg-psr').textContent) || 0;
+
+            const weightPer = parseFloat(document.getElementById('weight-per').value) / 100 || 0;
+            const weightPbr = parseFloat(document.getElementById('weight-pbr').value) / 100 || 0;
+            const weightPsr = parseFloat(document.getElementById('weight-psr').value) / 100 || 0;
+
+            const discountLiquidity = parseInt(document.getElementById('liquidity-slider').value) / 100;
+            const discountSize = parseInt(document.getElementById('size-slider').value) / 100;
+            const totalDiscount = discountLiquidity + discountSize;
+
+            const bandLow = parseFloat(document.getElementById('band-low').value) / 100;
+            const bandHigh = parseFloat(document.getElementById('band-high').value) / 100;
+
+            // Validate
+            if (totalShares <= 0) {
+                alert('총 발행주식수를 입력해 주세요.');
+                return;
+            }
+
+            const weightTotal = weightPer + weightPbr + weightPsr;
+            if (Math.abs(weightTotal - 1) > 0.01) {
+                alert('가중치 합계가 100%가 되어야 합니다.');
+                return;
+            }
+
+            // Calculate stock prices
+            const pricePer = eps * avgPer;
+            const pricePbr = bps * avgPbr;
+            const pricePsr = sps * avgPsr;
+
+            // Weighted average
+            const weightedPrice = pricePer * weightPer + pricePbr * weightPbr + pricePsr * weightPsr;
+
+            // Apply discount
+            const discountedPrice = weightedPrice * (1 - totalDiscount);
+
+            // Round to nearest 100
+            const roundedPrice = Math.round(discountedPrice / 100) * 100;
+
+            // Calculate band
+            const lowPrice = Math.round(roundedPrice * (1 - bandLow) / 100) * 100;
+            const highPrice = Math.round(roundedPrice * (1 + bandHigh) / 100) * 100;
+
+            // Calculate proceeds
+            const proceeds = (newShares * roundedPrice) / 100000000; // 억원
+            const marketCap = (totalShares * roundedPrice) / 100000000; // 억원
+
+            // Display results
+            document.getElementById('result-per').textContent = avgPer > 0 ? formatNumber(pricePer) : '-';
+            document.getElementById('result-pbr').textContent = avgPbr > 0 ? formatNumber(pricePbr) : '-';
+            document.getElementById('result-psr').textContent = avgPsr > 0 ? formatNumber(pricePsr) : '-';
+            document.getElementById('result-weighted').textContent = formatNumber(weightedPrice);
+            document.getElementById('result-discount').textContent = (totalDiscount * 100).toFixed(0);
+            document.getElementById('result-proceeds').textContent = formatNumber(proceeds);
+            document.getElementById('result-marketcap').textContent = formatNumber(marketCap);
+            document.getElementById('result-final').textContent = formatNumber(roundedPrice);
+
+            document.getElementById('band-low-price').textContent = formatNumber(lowPrice);
+            document.getElementById('band-high-price').textContent = formatNumber(highPrice);
+
+            document.getElementById('price-range-section').style.display = 'block';
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('price-range-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add input listeners
+        function addInputListeners() {
+            document.querySelectorAll('#peer-tbody input').forEach(input => {
+                input.addEventListener('input', calculateAverages);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('liquidity-slider').addEventListener('input', updateDiscount);
+        document.getElementById('size-slider').addEventListener('input', updateDiscount);
+
+        ['weight-per', 'weight-pbr', 'weight-psr'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateWeightTotal);
+        });
+
+        ['total-shares', 'net-income', 'equity', 'revenue'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculatePerShare);
+        });
+
+        // Initialize
+        addInputListeners();
+        updateDiscount();
+    </script>
+</body>
+</html>

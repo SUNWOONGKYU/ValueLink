@@ -1,0 +1,401 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2000">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; fill: #1a1a1a; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; fill: #444; }
+      .small-label { font-family: Arial, sans-serif; font-size: 12px; fill: #666; }
+      .mvp { fill: #E8F5E9; stroke: #2E7D32; stroke-width: 3; }
+      .future { fill: #E3F2FD; stroke: #1976D2; stroke-width: 2; stroke-dasharray: 5,5; }
+      .core { fill: #FFF3E0; stroke: #F57C00; stroke-width: 3; }
+      .arrow { fill: none; stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+      .expand-arrow { fill: none; stroke: #1976D2; stroke-width: 2; stroke-dasharray: 8,4; marker-end: url(#bluearrow); }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+    <marker id="bluearrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#1976D2" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="800" y="40" text-anchor="middle" class="title">확장 가능한 시스템 아키텍처 설계</text>
+  <text x="800" y="70" text-anchor="middle" class="subtitle">MVP → 플랫폼 진화 전략</text>
+
+  <!-- Legend -->
+  <g transform="translate(100, 100)">
+    <rect x="0" y="0" width="150" height="30" class="mvp" rx="5"/>
+    <text x="75" y="20" text-anchor="middle" class="small-label">MVP 필수 기능</text>
+    
+    <rect x="170" y="0" width="150" height="30" class="future" rx="5"/>
+    <text x="245" y="20" text-anchor="middle" class="small-label">향후 확장 기능</text>
+    
+    <rect x="340" y="0" width="150" height="30" class="core" rx="5"/>
+    <text x="415" y="20" text-anchor="middle" class="small-label">핵심 인프라</text>
+  </g>
+
+  <!-- Core Infrastructure (중앙) -->
+  <g transform="translate(550, 180)">
+    <rect x="0" y="0" width="500" height="400" class="core" rx="15"/>
+    <text x="250" y="35" text-anchor="middle" class="subtitle">📦 핵심 인프라 (처음부터 구축)</text>
+    
+    <!-- 모듈화 아키텍처 -->
+    <g transform="translate(20, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">1️⃣ 모듈화 아키텍처</text>
+      <rect x="0" y="10" width="460" height="90" fill="#FFE0B2" stroke="#E65100" rx="8"/>
+      <text x="10" y="30" class="small-label">• 각 기능을 독립 모듈로 설계</text>
+      <text x="10" y="50" class="small-label">• 평가 모듈 / 사용자 모듈 / 결제 모듈 / 보고서 모듈</text>
+      <text x="10" y="70" class="small-label">• 새로운 모듈 추가 시 기존 코드 수정 최소화</text>
+      <text x="10" y="90" class="small-label">예: services/evaluation, services/user, services/payment</text>
+    </g>
+
+    <!-- API 우선 설계 -->
+    <g transform="translate(20, 170)">
+      <text x="0" y="0" class="label" font-weight="bold">2️⃣ API 우선 설계 (RESTful)</text>
+      <rect x="0" y="10" width="460" height="90" fill="#FFE0B2" stroke="#E65100" rx="8"/>
+      <text x="10" y="30" class="small-label">• 모든 기능을 API 엔드포인트로 제공</text>
+      <text x="10" y="50" class="small-label">• /api/v1/evaluation, /api/v1/user, /api/v1/report</text>
+      <text x="10" y="70" class="small-label">• 향후 모바일 앱, 외부 연동 대비</text>
+      <text x="10" y="90" class="small-label">• 버전 관리 (v1, v2...) 로 호환성 유지</text>
+    </g>
+
+    <!-- 확장 가능 DB -->
+    <g transform="translate(20, 280)">
+      <text x="0" y="0" class="label" font-weight="bold">3️⃣ 확장 가능한 DB 스키마</text>
+      <rect x="0" y="10" width="460" height="90" fill="#FFE0B2" stroke="#E65100" rx="8"/>
+      <text x="10" y="30" class="small-label">• 회사 테이블에 향후 필드 추가 여유</text>
+      <text x="10" y="50" class="small-label">• 연결 테이블 미리 설계 (company_investors, rankings)</text>
+      <text x="10" y="70" class="small-label">• JSON 필드로 유연성 확보 (metadata column)</text>
+      <text x="10" y="90" class="small-label">• PostgreSQL 사용 추천 (확장성 좋음)</text>
+    </g>
+  </g>
+
+  <!-- MVP Phase (왼쪽 상단) -->
+  <g transform="translate(50, 180)">
+    <rect x="0" y="0" width="450" height="500" class="mvp" rx="15"/>
+    <text x="225" y="35" text-anchor="middle" class="subtitle">🎯 Phase 1: MVP (1-2개월)</text>
+    
+    <g transform="translate(20, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">필수 기능만</text>
+      
+      <!-- 평가 신청 -->
+      <rect x="0" y="15" width="410" height="60" fill="#C8E6C9" stroke="#388E3C" rx="5"/>
+      <text x="10" y="35" class="small-label" font-weight="bold">📝 평가 신청 시스템</text>
+      <text x="15" y="50" class="small-label">• 기업 정보 입력 폼</text>
+      <text x="15" y="65" class="small-label">• 재무제표 업로드</text>
+
+      <!-- 평가 실행 -->
+      <rect x="0" y="85" width="410" height="60" fill="#C8E6C9" stroke="#388E3C" rx="5"/>
+      <text x="10" y="105" class="small-label" font-weight="bold">⚙️ 평가 실행 엔진</text>
+      <text x="15" y="120" class="small-label">• DCF 알고리즘</text>
+      <text x="15" y="135" class="small-label">• AI 보고서 생성</text>
+
+      <!-- 검토 -->
+      <rect x="0" y="155" width="410" height="60" fill="#C8E6C9" stroke="#388E3C" rx="5"/>
+      <text x="10" y="175" class="small-label" font-weight="bold">✅ 검토자 대시보드</text>
+      <text x="15" y="190" class="small-label">• 평가 결과 검토</text>
+      <text x="15" y="205" class="small-label">• 수정 지시</text>
+
+      <!-- 결제 -->
+      <rect x="0" y="225" width="410" height="60" fill="#C8E6C9" stroke="#388E3C" rx="5"/>
+      <text x="10" y="245" class="small-label" font-weight="bold">💳 결제 & 다운로드</text>
+      <text x="15" y="260" class="small-label">• 토스페이먼츠 연동</text>
+      <text x="15" y="275" class="small-label">• PDF 보고서 전달</text>
+
+      <!-- 중요 포인트 -->
+      <rect x="0" y="305" width="410" height="110" fill="#FFF9C4" stroke="#F57F17" rx="5"/>
+      <text x="10" y="325" class="small-label" font-weight="bold">🔑 확장 대비 설계</text>
+      <text x="15" y="345" class="small-label">• User 테이블에 role 필드 (기업/투자자 구분)</text>
+      <text x="15" y="360" class="small-label">• Company 테이블에 is_public 필드</text>
+      <text x="15" y="375" class="small-label">• Evaluation 테이블에 status 필드</text>
+      <text x="15" y="390" class="small-label">• API 엔드포인트 구조화</text>
+      <text x="15" y="405" class="small-label">• 이벤트 시스템 준비 (Webhook)</text>
+    </g>
+  </g>
+
+  <!-- Platform Features (오른쪽 상단) -->
+  <g transform="translate(1100, 180)">
+    <rect x="0" y="0" width="450" height="500" class="future" rx="15"/>
+    <text x="225" y="35" text-anchor="middle" class="subtitle">🚀 Phase 2-5: 플랫폼 (3-12개월)</text>
+    
+    <g transform="translate(20, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">단계적 추가 기능</text>
+      
+      <!-- 랭킹 -->
+      <rect x="0" y="15" width="410" height="60" fill="#BBDEFB" stroke="#1976D2" rx="5"/>
+      <text x="10" y="35" class="small-label" font-weight="bold">🏆 Phase 2: 랭킹 시스템</text>
+      <text x="15" y="50" class="small-label">• 평가 데이터로 자동 랭킹</text>
+      <text x="15" y="65" class="small-label">• 공개/비공개 설정</text>
+
+      <!-- 투자자 -->
+      <rect x="0" y="85" width="410" height="60" fill="#BBDEFB" stroke="#1976D2" rx="5"/>
+      <text x="10" y="105" class="small-label" font-weight="bold">👥 Phase 3: 투자자 회원</text>
+      <text x="15" y="120" class="small-label">• 투자자 가입/로그인</text>
+      <text x="15" y="135" class="small-label">• 랭킹 열람 (무료)</text>
+
+      <!-- AI 아바타 -->
+      <rect x="0" y="155" width="410" height="60" fill="#BBDEFB" stroke="#1976D2" rx="5"/>
+      <text x="10" y="175" class="small-label" font-weight="bold">🤖 Phase 4: AI 아바타 IR</text>
+      <text x="15" y="190" class="small-label">• 기업별 챗봇</text>
+      <text x="15" y="205" class="small-label">• 24시간 투자자 응답</text>
+
+      <!-- 매칭 -->
+      <rect x="0" y="225" width="410" height="60" fill="#BBDEFB" stroke="#1976D2" rx="5"/>
+      <text x="10" y="245" class="small-label" font-weight="bold">🎯 Phase 5: 스마트 매칭</text>
+      <text x="15" y="260" class="small-label">• 투자자-기업 자동 매칭</text>
+      <text x="15" y="275" class="small-label">• 관심도 추적 리포트</text>
+
+      <!-- 확장 포인트 -->
+      <rect x="0" y="305" width="410" height="110" fill="#FFF9C4" stroke="#F57F17" rx="5"/>
+      <text x="10" y="325" class="small-label" font-weight="bold">🔧 확장 시 활용할 기반</text>
+      <text x="15" y="345" class="small-label">• 기존 User 테이블 role 활용</text>
+      <text x="15" y="360" class="small-label">• Company.is_public = true 설정</text>
+      <text x="15" y="375" class="small-label">• API 엔드포인트만 추가</text>
+      <text x="15" y="390" class="small-label">• Webhook으로 이벤트 처리</text>
+      <text x="15" y="405" class="small-label">• 기존 코드 수정 최소화</text>
+    </g>
+  </g>
+
+  <!-- Connection Arrows -->
+  <line x1="500" y1="420" x2="550" y2="420" class="expand-arrow"/>
+  <text x="520" y="410" class="small-label" fill="#1976D2">기반 위에</text>
+  
+  <line x1="1050" y1="420" x2="1100" y2="420" class="expand-arrow"/>
+  <text x="1060" y="410" class="small-label" fill="#1976D2">기반 활용</text>
+
+  <!-- Database Schema Example -->
+  <g transform="translate(100, 750)">
+    <rect x="0" y="0" width="1400" height="450" fill="#F5F5F5" stroke="#9E9E9E" stroke-width="2" rx="10"/>
+    <text x="700" y="35" text-anchor="middle" class="subtitle">💾 확장 가능한 데이터베이스 스키마 설계</text>
+    
+    <!-- Users Table -->
+    <g transform="translate(50, 70)">
+      <rect x="0" y="0" width="300" height="340" fill="white" stroke="#2196F3" stroke-width="2" rx="8"/>
+      <text x="150" y="25" text-anchor="middle" class="label" font-weight="bold">👤 Users (처음부터)</text>
+      
+      <text x="10" y="50" class="small-label" font-weight="bold">id</text>
+      <text x="10" y="70" class="small-label">email</text>
+      <text x="10" y="90" class="small-label">password</text>
+      <text x="10" y="110" class="small-label" font-weight="bold" fill="#2196F3">role ⭐</text>
+      <text x="70" y="110" class="small-label" fill="#666">(company/investor/admin)</text>
+      <text x="10" y="130" class="small-label">name</text>
+      <text x="10" y="150" class="small-label">phone</text>
+      <text x="10" y="170" class="small-label" font-weight="bold" fill="#2196F3">metadata ⭐</text>
+      <text x="100" y="170" class="small-label" fill="#666">(JSON 유연 필드)</text>
+      <text x="10" y="190" class="small-label">created_at</text>
+      <text x="10" y="210" class="small-label">updated_at</text>
+      
+      <rect x="10" y="230" width="280" height="90" fill="#E3F2FD" rx="5"/>
+      <text x="15" y="250" class="small-label" font-weight="bold">확장 활용:</text>
+      <text x="15" y="270" class="small-label">• role로 기업/투자자 구분</text>
+      <text x="15" y="285" class="small-label">• metadata에 투자 성향,</text>
+      <text x="20" y="300" class="small-label">  관심 업종 등 저장</text>
+      <text x="15" y="315" class="small-label">• 기존 코드 수정 없음</text>
+    </g>
+
+    <!-- Companies Table -->
+    <g transform="translate(380, 70)">
+      <rect x="0" y="0" width="300" height="340" fill="white" stroke="#4CAF50" stroke-width="2" rx="8"/>
+      <text x="150" y="25" text-anchor="middle" class="label" font-weight="bold">🏢 Companies (처음부터)</text>
+      
+      <text x="10" y="50" class="small-label" font-weight="bold">id</text>
+      <text x="10" y="70" class="small-label">user_id (FK)</text>
+      <text x="10" y="90" class="small-label">name</text>
+      <text x="10" y="110" class="small-label">industry</text>
+      <text x="10" y="130" class="small-label" font-weight="bold" fill="#4CAF50">is_public ⭐</text>
+      <text x="100" y="130" class="small-label" fill="#666">(랭킹 공개 여부)</text>
+      <text x="10" y="150" class="small-label" font-weight="bold" fill="#4CAF50">ranking_score ⭐</text>
+      <text x="130" y="150" class="small-label" fill="#666">(나중 계산)</text>
+      <text x="10" y="170" class="small-label" font-weight="bold" fill="#4CAF50">metadata ⭐</text>
+      <text x="100" y="170" class="small-label" fill="#666">(JSON)</text>
+      <text x="10" y="190" class="small-label">created_at</text>
+      
+      <rect x="10" y="210" width="280" height="110" fill="#E8F5E9" rx="5"/>
+      <text x="15" y="230" class="small-label" font-weight="bold">확장 활용:</text>
+      <text x="15" y="250" class="small-label">• is_public = true면 랭킹</text>
+      <text x="15" y="265" class="small-label">• ranking_score 자동 계산</text>
+      <text x="15" y="280" class="small-label">• metadata에 IR 자료,</text>
+      <text x="20" y="295" class="small-label">  아바타 설정 등</text>
+      <text x="15" y="310" class="small-label">• 처음엔 비워두기 OK</text>
+    </g>
+
+    <!-- Evaluations Table -->
+    <g transform="translate(710, 70)">
+      <rect x="0" y="0" width="300" height="340" fill="white" stroke="#FF9800" stroke-width="2" rx="8"/>
+      <text x="150" y="25" text-anchor="middle" class="label" font-weight="bold">📊 Evaluations (처음부터)</text>
+      
+      <text x="10" y="50" class="small-label" font-weight="bold">id</text>
+      <text x="10" y="70" class="small-label">company_id (FK)</text>
+      <text x="10" y="90" class="small-label">type (DCF/상대가치...)</text>
+      <text x="10" y="110" class="small-label" font-weight="bold" fill="#FF9800">status ⭐</text>
+      <text x="70" y="110" class="small-label" fill="#666">(draft/review/done)</text>
+      <text x="10" y="130" class="small-label">valuation_amount</text>
+      <text x="10" y="150" class="small-label">report_url</text>
+      <text x="10" y="170" class="small-label">created_at</text>
+      <text x="10" y="190" class="small-label">updated_at</text>
+      
+      <rect x="10" y="210" width="280" height="110" fill="#FFF3E0" rx="5"/>
+      <text x="15" y="230" class="small-label" font-weight="bold">확장 활용:</text>
+      <text x="15" y="250" class="small-label">• status로 진행 상황</text>
+      <text x="15" y="265" class="small-label">• 투자자가 리포트 조회</text>
+      <text x="15" y="280" class="small-label">• 랭킹 계산 소스</text>
+      <text x="15" y="295" class="small-label">• 이력 관리</text>
+    </g>
+
+    <!-- Future Tables -->
+    <g transform="translate(1040, 70)">
+      <rect x="0" y="0" width="300" height="340" fill="white" stroke="#9C27B0" stroke-width="2" stroke-dasharray="5,5" rx="8"/>
+      <text x="150" y="25" text-anchor="middle" class="label" font-weight="bold">🔮 나중 추가 테이블</text>
+      
+      <text x="10" y="60" class="small-label" font-weight="bold">Rankings</text>
+      <text x="15" y="80" class="small-label">• company_id (FK)</text>
+      <text x="15" y="95" class="small-label">• category</text>
+      <text x="15" y="110" class="small-label">• rank_position</text>
+      
+      <text x="10" y="140" class="small-label" font-weight="bold">Investor_Actions</text>
+      <text x="15" y="160" class="small-label">• investor_id (FK)</text>
+      <text x="15" y="175" class="small-label">• company_id (FK)</text>
+      <text x="15" y="190" class="small-label">• action_type (view/download)</text>
+      
+      <text x="10" y="220" class="small-label" font-weight="bold">AI_Avatars</text>
+      <text x="15" y="240" class="small-label">• company_id (FK)</text>
+      <text x="15" y="255" class="small-label">• training_data</text>
+      <text x="15" y="270" class="small-label">• config</text>
+      
+      <rect x="10" y="290" width="280" height="30" fill="#F3E5F5" rx="5"/>
+      <text x="15" y="310" class="small-label">필요할 때 추가하면 됨!</text>
+    </g>
+  </g>
+
+  <!-- Key Principles -->
+  <g transform="translate(100, 1250)">
+    <rect x="0" y="0" width="1400" height="250" fill="#FFFDE7" stroke="#F57F17" stroke-width="3" rx="10"/>
+    <text x="700" y="35" text-anchor="middle" class="subtitle">🎯 핵심 설계 원칙</text>
+    
+    <g transform="translate(50, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">1. 느슨한 결합 (Loose Coupling)</text>
+      <text x="10" y="20" class="small-label">• 각 모듈이 독립적으로 동작</text>
+      <text x="10" y="40" class="small-label">• 평가 시스템이 랭킹 시스템을 몰라도 OK</text>
+      <text x="10" y="60" class="small-label">• 나중에 랭킹 추가 시 평가 코드 수정 불필요</text>
+    </g>
+    
+    <g transform="translate(450, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">2. 이벤트 기반 (Event-Driven)</text>
+      <text x="10" y="20" class="small-label">• "평가 완료" 이벤트 발생</text>
+      <text x="10" y="40" class="small-label">• 나중에 랭킹 모듈이 이벤트 구독</text>
+      <text x="10" y="60" class="small-label">• Webhook, 메시지 큐 활용</text>
+    </g>
+    
+    <g transform="translate(850, 60)">
+      <text x="0" y="0" class="label" font-weight="bold">3. 데이터 중심 (Data-Centric)</text>
+      <text x="10" y="20" class="small-label">• DB 스키마를 확장 가능하게</text>
+      <text x="10" y="40" class="small-label">• JSON 필드로 유연성 확보</text>
+      <text x="10" y="60" class="small-label">• 필드 추가는 쉽게, 삭제는 어렵게</text>
+    </g>
+    
+    <g transform="translate(50, 130)">
+      <text x="0" y="0" class="label" font-weight="bold">4. API 버전 관리</text>
+      <text x="10" y="20" class="small-label">• /api/v1/... 으로 시작</text>
+      <text x="10" y="40" class="small-label">• v2 추가 시 v1 유지</text>
+      <text x="10" y="60" class="small-label">• 하위 호환성 보장</text>
+    </g>
+    
+    <g transform="translate(450, 130)">
+      <text x="0" y="0" class="label" font-weight="bold">5. 기능 플래그 (Feature Flags)</text>
+      <text x="10" y="20" class="small-label">• 환경변수로 기능 ON/OFF</text>
+      <text x="10" y="40" class="small-label">• ENABLE_RANKING=false (초기)</text>
+      <text x="10" y="60" class="small-label">• 개발 완료 시 true로 변경</text>
+    </g>
+    
+    <g transform="translate(850, 130)">
+      <text x="0" y="0" class="label" font-weight="bold">6. 문서화 습관</text>
+      <text x="10" y="20" class="small-label">• API 명세서 작성 (Swagger)</text>
+      <text x="10" y="40" class="small-label">• DB 스키마 문서화 (ER 다이어그램)</text>
+      <text x="10" y="60" class="small-label">• 확장 포인트 주석으로 표시</text>
+    </g>
+  </g>
+
+  <!-- Implementation Timeline -->
+  <g transform="translate(100, 1550)">
+    <rect x="0" y="0" width="1400" height="350" fill="#ECEFF1" stroke="#607D8B" stroke-width="2" rx="10"/>
+    <text x="700" y="35" text-anchor="middle" class="subtitle">📅 단계별 개발 타임라인</text>
+    
+    <!-- Month 1-2: MVP -->
+    <g transform="translate(50, 70)">
+      <rect x="0" y="0" width="250" height="240" fill="#C8E6C9" stroke="#388E3C" stroke-width="2" rx="8"/>
+      <text x="125" y="25" text-anchor="middle" class="label" font-weight="bold">Month 1-2: MVP</text>
+      <text x="10" y="50" class="small-label" font-weight="bold">✅ 구현</text>
+      <text x="15" y="70" class="small-label">• 평가 신청 시스템</text>
+      <text x="15" y="85" class="small-label">• DCF 알고리즘</text>
+      <text x="15" y="100" class="small-label">• 검토 대시보드</text>
+      <text x="15" y="115" class="small-label">• 결제 & 다운로드</text>
+      
+      <text x="10" y="140" class="small-label" font-weight="bold">🔧 확장 준비</text>
+      <text x="15" y="160" class="small-label">• 모듈화 구조</text>
+      <text x="15" y="175" class="small-label">• API 엔드포인트</text>
+      <text x="15" y="190" class="small-label">• DB에 확장 필드</text>
+      <text x="15" y="205" class="small-label">• 이벤트 시스템 뼈대</text>
+      
+      <text x="10" y="230" class="small-label" font-weight="bold">목표: 첫 고객 확보</text>
+    </g>
+
+    <!-- Month 3-4: Ranking -->
+    <g transform="translate(330, 70)">
+      <rect x="0" y="0" width="250" height="240" fill="#BBDEFB" stroke="#1976D2" stroke-width="2" rx="8"/>
+      <text x="125" y="25" text-anchor="middle" class="label" font-weight="bold">Month 3-4: 랭킹</text>
+      <text x="10" y="50" class="small-label" font-weight="bold">➕ 추가</text>
+      <text x="15" y="70" class="small-label">• Rankings 테이블</text>
+      <text x="15" y="85" class="small-label">• 랭킹 계산 로직</text>
+      <text x="15" y="100" class="small-label">• 공개 페이지</text>
+      
+      <text x="10" y="125" class="small-label" font-weight="bold">🔌 활용</text>
+      <text x="15" y="145" class="small-label">• 기존 Companies 테이블</text>
+      <text x="15" y="160" class="small-label">• is_public 필드 활용</text>
+      <text x="15" y="175" class="small-label">• API 엔드포인트 추가</text>
+      
+      <text x="10" y="200" class="small-label" font-weight="bold">✅ 기존 코드 수정</text>
+      <text x="15" y="220" class="small-label">최소화 (5% 미만)</text>
+    </g>
+
+    <!-- Month 5-6: Investors -->
+    <g transform="translate(610, 70)">
+      <rect x="0" y="0" width="250" height="240" fill="#BBDEFB" stroke="#1976D2" stroke-width="2" rx="8"/>
+      <text x="125" y="25" text-anchor="middle" class="label" font-weight="bold">Month 5-6: 투자자</text>
+      <text x="10" y="50" class="small-label" font-weight="bold">➕ 추가</text>
+      <text x="15" y="70" class="small-label">• 투자자 회원가입</text>
+      <text x="15" y="85" class="small-label">• 랭킹 열람 페이지</text>
+      <text x="15" y="100" class="small-label">• 보고서 구매 기능</text>
+      
+      <text x="10" y="125" class="small-label" font-weight="bold">🔌 활용</text>
+      <text x="15" y="145" class="small-label">• Users.role 활용</text>
+      <text x="15" y="160" class="small-label">• 기존 인증 시스템</text>
+      <text x="15" y="175" class="small-label">• 기존 결제 모듈</text>
+      
+      <text x="10" y="200" class="small-label" font-weight="bold">✅ 새 API만 추가</text>
+      <text x="15" y="220" class="small-label">/api/v1/investor/...</text>
+    </g>
+
+    <!-- Month 7+: Advanced -->
+    <g transform="translate(890, 70)">
+      <rect x="0" y="0" width="250" height="240" fill="#BBDEFB" stroke="#1976D2" stroke-width="2" rx="8"/>
+      <text x="125" y="25" text-anchor="middle" class="label" font-weight="bold">Month 7+: 고급</text>
+      <text x="10" y="50" class="small-label" font-weight="bold">➕ 추가</text>
+      <text x="15" y="70" class="small-label">• AI 아바타 IR</text>
+      <text x="15" y="85" class="small-label">• 스마트 매칭</text>
+      <text x="15" y="100" class="small-label">• 관심도 분석</text>
+      
+      <text x="10" y="125" class="small-label" font-weight="bold">🔌 활용</text>
+      <text x="15" y="145" class="small-label">• 전체 인프라 활용</text>
+      <text x="15" y="160" class="small-label">• 독립 마이크로서비스</text>
+      <text x="15" y="175" class="small-label">• API로 연동</text>
+      
+      <text x="10" y="200" class="small-label" font-weight="bold">✅ 완전 독립 모듈</text>
+      <text x="15" y="220" class="small-label">기존 시스템 영향 0</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="800" y="1960" text-anchor="middle" class="small-label">💡 핵심: 처음부터 완벽하게 만들지 말고, 확장 가능하게 설계하라!</text>
+  
+</svg>

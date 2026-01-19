@@ -1,0 +1,20 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+anthropic
+google-generativeai
+openai
+pydantic
+pydantic-settings
+httpx
+python-multipart
+
+# Database (Supabase)
+supabase
+
+# Scheduler
+apscheduler
+
+# Web Scraping
+beautifulsoup4
+lxml

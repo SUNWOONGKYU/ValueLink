@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- 배경 -->
+  <rect width="200" height="200" fill="#FFFFFF"/>
+
+  <!-- V + L 심볼 (심볼만 - 앱 아이콘용) -->
+  <g transform="translate(30, 50)">
+    <!-- 선1: 기업 - 딥그린 -->
+    <line x1="0" y1="0" x2="60" y2="90" stroke="#166534" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- 선2: 평가 - 딥블루 -->
+    <line x1="120" y1="0" x2="60" y2="90" stroke="#1D4ED8" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- 선3: 연결 - 앰버 -->
+    <line x1="60" y1="90" x2="160" y2="90" stroke="#F59E0B" stroke-width="14" stroke-linecap="round"/>
+  </g>
+</svg>

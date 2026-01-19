@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상대가치 평가 - 자료 제출 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --deep-blue: #1D4ED8; --deep-blue-pale: #DBEAFE; --text-primary: #111827; --text-muted: #6B7280; --bg-light: #F3F4F6; --white: #FFFFFF; --success: #10B981; --error: #EF4444; }
+        body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: var(--bg-light); color: var(--text-primary); min-height: 100vh; }
+        header { background: var(--white); border-bottom: 1px solid #E5E7EB; padding: 0 40px; height: 72px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .header-left { display: flex; align-items: center; gap: 48px; }
+        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+        .portal-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--deep-blue-pale); color: var(--deep-blue); border-radius: 8px; font-size: 14px; font-weight: 600; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 40px; height: 40px; background: var(--deep-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--deep-blue); }
+        .user-name { font-size: 14px; font-weight: 600; }
+        .user-company { font-size: 12px; color: var(--text-muted); }
+        .btn-logout { padding: 8px 16px; font-size: 14px; color: var(--text-muted); background: transparent; border: 1px solid #E5E7EB; border-radius: 8px; cursor: pointer; }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 40px; }
+        .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
+        .project-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .project-id { font-size: 14px; color: var(--text-muted); font-family: monospace; background: var(--bg-light); padding: 4px 12px; border-radius: 4px; }
+        .project-status { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; background: #FEF3C7; color: #92400E; }
+        .project-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; padding-top: 24px; border-top: 1px solid #E5E7EB; }
+        .meta-item { text-align: center; }
+        .meta-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .meta-value { font-size: 16px; font-weight: 600; }
+        .notice-box { background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; }
+        .notice-title { font-size: 14px; font-weight: 600; color: #92400E; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .notice-text { font-size: 13px; color: #78350F; line-height: 1.6; }
+        .upload-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 32px; }
+        .upload-card { background: var(--white); border-radius: 16px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .upload-card.full-width { grid-column: 1 / -1; }
+        .upload-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .upload-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .upload-title .required { color: var(--error); font-size: 12px; }
+        .upload-status { font-size: 12px; padding: 4px 12px; border-radius: 12px; font-weight: 500; }
+        .upload-status.pending { background: #FEF3C7; color: #92400E; }
+        .upload-status.uploaded { background: #D1FAE5; color: #065F46; }
+        .upload-dropzone { border: 2px dashed #D1D5DB; border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 0.3s; }
+        .upload-dropzone:hover { border-color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .dropzone-icon { font-size: 48px; margin-bottom: 16px; }
+        .dropzone-text { font-size: 14px; color: #374151; margin-bottom: 8px; }
+        .dropzone-hint { font-size: 12px; color: var(--text-muted); }
+        .btn-upload { display: inline-block; padding: 10px 20px; font-size: 14px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 8px; cursor: pointer; margin-top: 16px; }
+        .file-list { margin-top: 16px; }
+        .file-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg-light); border-radius: 8px; margin-bottom: 8px; }
+        .file-info { display: flex; align-items: center; gap: 12px; }
+        .file-name { font-size: 14px; font-weight: 500; }
+        .file-size { font-size: 12px; color: var(--text-muted); }
+        .btn-file-action { padding: 6px 12px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; background: #FEE2E2; color: var(--error); }
+        .input-section { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .section-title { font-size: 18px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-label { font-size: 14px; font-weight: 600; }
+        .form-label .required { color: var(--error); }
+        .form-input { padding: 12px 16px; font-size: 14px; border: 1px solid #D1D5DB; border-radius: 8px; }
+        .form-input:focus { outline: none; border-color: var(--deep-blue); }
+        .form-hint { font-size: 12px; color: var(--text-muted); }
+        textarea.form-input { min-height: 120px; resize: vertical; }
+        .submit-section { background: var(--white); border-radius: 16px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .submit-checklist { margin-bottom: 24px; }
+        .checklist-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #E5E7EB; }
+        .checklist-item:last-child { border-bottom: none; }
+        .checklist-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .checklist-icon.complete { background: var(--success); color: var(--white); }
+        .checklist-icon.incomplete { background: #E5E7EB; color: var(--text-muted); }
+        .checklist-text { font-size: 14px; }
+        .submit-actions { display: flex; justify-content: space-between; }
+        .btn-save-draft { padding: 14px 28px; font-size: 15px; font-weight: 600; color: #374151; background: var(--white); border: 1px solid #D1D5DB; border-radius: 10px; cursor: pointer; }
+        .btn-submit { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 10px; cursor: pointer; }
+        .btn-submit:disabled { background: #9CA3AF; cursor: not-allowed; }
+        footer { background: #1E3A5F; color: var(--white); padding: 32px 40px; margin-top: 60px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; }
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+        .hidden-input { display: none; }
+        @media (max-width: 768px) { .upload-grid, .form-grid { grid-template-columns: 1fr; } .project-meta { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100"><g transform="translate(15, 20)"><line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/><line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/><line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/></g></svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <div class="portal-badge"><span>&#128202;</span><span>상대가치 평가 포털</span></div>
+        </div>
+        <div class="header-right">
+            <div class="user-info"><div class="user-avatar">김</div><div><div class="user-name">김철수</div><div class="user-company">삼성전자(주)</div></div></div>
+            <button class="btn-logout">로그아웃</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="project-info-card">
+            <div class="project-header">
+                <div>
+                    <h1 class="project-title">삼성전자(주) 상대가치 평가</h1>
+                    <span class="project-id">SAMSU-2501191430-RV</span>
+                </div>
+                <div class="project-status"><span>&#128196;</span><span>자료 수집중</span></div>
+            </div>
+            <div class="project-meta">
+                <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">상대가치 (멀티플)</div></div>
+                <div class="meta-item"><div class="meta-label">신청일</div><div class="meta-value">2025.01.19</div></div>
+                <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">박회계 회계사</div></div>
+                <div class="meta-item"><div class="meta-label">자료 제출 기한</div><div class="meta-value" style="color: var(--error);">2025.01.26</div></div>
+            </div>
+        </section>
+
+        <div class="notice-box">
+            <div class="notice-title"><span>&#9888;&#65039;</span>상대가치 평가를 위한 자료 안내</div>
+            <div class="notice-text">상대가치(멀티플) 평가를 위해 <strong>최근 재무제표</strong>와 <strong>업종/경쟁사 정보</strong>가 필요합니다. 유사기업 비교를 위한 업종 분류와 주요 경쟁사 정보를 함께 제출해 주세요.</div>
+        </div>
+
+        <div class="upload-grid">
+            <div class="upload-card">
+                <div class="upload-header">
+                    <div class="upload-title"><span>&#128200;</span>재무제표 (최근 1년)<span class="required">*필수</span></div>
+                    <span class="upload-status pending">미제출</span>
+                </div>
+                <div class="upload-dropzone" data-category="financial">
+                    <div class="dropzone-icon">&#128196;</div>
+                    <div class="dropzone-text">파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="dropzone-hint">최근 결산 재무상태표, 손익계산서</div>
+                    <button class="btn-upload">파일 선택</button>
+                </div>
+                <input type="file" class="hidden-input" id="file-financial" multiple accept=".pdf,.xlsx,.xls">
+                <div class="file-list" id="list-financial"></div>
+            </div>
+
+            <div class="upload-card">
+                <div class="upload-header">
+                    <div class="upload-title"><span>&#128101;</span>주주명부<span class="required">*필수</span></div>
+                    <span class="upload-status pending">미제출</span>
+                </div>
+                <div class="upload-dropzone" data-category="shareholder">
+                    <div class="dropzone-icon">&#128100;</div>
+                    <div class="dropzone-text">파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="dropzone-hint">주주 현황 및 지분율</div>
+                    <button class="btn-upload">파일 선택</button>
+                </div>
+                <input type="file" class="hidden-input" id="file-shareholder" multiple accept=".pdf,.xlsx,.xls">
+                <div class="file-list" id="list-shareholder"></div>
+            </div>
+
+            <div class="upload-card">
+                <div class="upload-header">
+                    <div class="upload-title"><span>&#127970;</span>회사소개서</div>
+                    <span class="upload-status pending">미제출</span>
+                </div>
+                <div class="upload-dropzone" data-category="company_intro">
+                    <div class="dropzone-icon">&#128188;</div>
+                    <div class="dropzone-text">파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="dropzone-hint">회사 연혁, 조직도, 사업 현황</div>
+                    <button class="btn-upload">파일 선택</button>
+                </div>
+                <input type="file" class="hidden-input" id="file-company_intro" multiple accept=".pdf,.pptx,.ppt">
+                <div class="file-list" id="list-company_intro"></div>
+            </div>
+
+            <div class="upload-card">
+                <div class="upload-header">
+                    <div class="upload-title"><span>&#128193;</span>기타 자료</div>
+                    <span class="upload-status pending">미제출</span>
+                </div>
+                <div class="upload-dropzone" data-category="others">
+                    <div class="dropzone-icon">&#128230;</div>
+                    <div class="dropzone-text">파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="dropzone-hint">경쟁사 분석, 시장 자료 등 (최대 5개)</div>
+                    <button class="btn-upload">파일 선택</button>
+                </div>
+                <input type="file" class="hidden-input" id="file-others" multiple>
+                <div class="file-list" id="list-others"></div>
+            </div>
+        </div>
+
+        <section class="input-section">
+            <h2 class="section-title"><span>&#128221;</span>상대가치 평가 추가 정보</h2>
+            <div class="form-grid">
+                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="삼성전자(주)" readonly></div>
+                <div class="form-group"><label class="form-label">발행주식수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000"></div>
+                <div class="form-group"><label class="form-label">업종 <span class="required">*</span></label>
+                    <select class="form-input"><option value="">업종 선택</option><option value="it">정보기술(IT)</option><option value="bio">바이오/헬스케어</option><option value="manufacturing">제조업</option><option value="retail">유통/소비재</option><option value="content">콘텐츠/미디어</option></select>
+                </div>
+                <div class="form-group"><label class="form-label">세부 업종</label><input type="text" class="form-input" placeholder="예: 반도체 제조"></div>
+                <div class="form-group full-width"><label class="form-label">주요 경쟁사 (상장사)</label><input type="text" class="form-input" placeholder="예: SK하이닉스, 삼성SDI, LG에너지솔루션"><span class="form-hint">비교 대상이 될 수 있는 상장 경쟁사를 입력해 주세요</span></div>
+                <div class="form-group"><label class="form-label">당기순이익</label><input type="text" class="form-input" placeholder="백만원"></div>
+                <div class="form-group"><label class="form-label">자기자본</label><input type="text" class="form-input" placeholder="백만원"></div>
+                <div class="form-group full-width"><label class="form-label">추가 요청사항</label><textarea class="form-input" placeholder="멀티플 적용에 대한 의견이 있으시면 입력해 주세요."></textarea></div>
+            </div>
+        </section>
+
+        <section class="submit-section">
+            <h2 class="section-title"><span>&#9989;</span>제출 전 확인</h2>
+            <div class="submit-checklist">
+                <div class="checklist-item"><div class="checklist-icon incomplete">&#10003;</div><div class="checklist-text">재무제표 업로드</div></div>
+                <div class="checklist-item"><div class="checklist-icon incomplete">&#10003;</div><div class="checklist-text">주주명부 업로드</div></div>
+                <div class="checklist-item"><div class="checklist-icon incomplete">&#10003;</div><div class="checklist-text">필수 정보 입력 완료</div></div>
+            </div>
+            <div class="submit-actions">
+                <button class="btn-save-draft">임시 저장</button>
+                <button class="btn-submit" disabled>자료 제출하기</button>
+            </div>
+        </section>
+    </main>
+
+    <footer><div class="footer-content"><div class="footer-logo">ValueLink</div><div class="footer-text">© 2026 ValueLink. All rights reserved.</div></div></footer>
+
+    <script>
+        const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip'];
+        const uploadedFiles = { financial: [], shareholder: [], company_intro: [], others: [] };
+
+        document.querySelectorAll('.upload-dropzone').forEach(dropzone => {
+            const category = dropzone.dataset.category;
+            const fileInput = document.getElementById(`file-${category}`);
+            dropzone.addEventListener('click', () => fileInput.click());
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+            dropzone.addEventListener('drop', (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); handleFiles(e.dataTransfer.files, category); });
+            fileInput.addEventListener('change', (e) => handleFiles(e.target.files, category));
+        });
+
+        function handleFiles(files, category) {
+            Array.from(files).forEach(file => {
+                if (category === 'others' && uploadedFiles.others.length >= 5) { alert('최대 5개까지 업로드 가능합니다.'); return; }
+                uploadedFiles[category].push(file);
+                const list = document.getElementById(`list-${category}`);
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `<div class="file-info"><span>&#128196;</span><div><div class="file-name">${file.name}</div><div class="file-size">${(file.size/1024/1024).toFixed(1)} MB</div></div></div><button class="btn-file-action" onclick="this.parentElement.remove(); uploadedFiles['${category}'] = uploadedFiles['${category}'].filter(f=>f.name!=='${file.name}'); updateStatus('${category}'); updateChecklist();">삭제</button>`;
+                list.appendChild(item);
+                updateStatus(category);
+                updateChecklist();
+            });
+        }
+
+        function updateStatus(category) {
+            const card = document.querySelector(`[data-category="${category}"]`).closest('.upload-card');
+            const badge = card.querySelector('.upload-status');
+            if (uploadedFiles[category].length > 0) { badge.textContent = `${uploadedFiles[category].length}개 업로드됨`; badge.className = 'upload-status uploaded'; }
+            else { badge.textContent = '미제출'; badge.className = 'upload-status pending'; }
+        }
+
+        function updateChecklist() {
+            const checks = [uploadedFiles.financial.length > 0, uploadedFiles.shareholder.length > 0, true];
+            document.querySelectorAll('.checklist-item').forEach((item, i) => {
+                const icon = item.querySelector('.checklist-icon');
+                icon.className = 'checklist-icon ' + (checks[i] ? 'complete' : 'incomplete');
+            });
+            document.querySelector('.btn-submit').disabled = !checks.slice(0, 2).every(Boolean);
+        }
+
+        document.querySelector('.btn-save-draft').addEventListener('click', () => alert('임시 저장되었습니다.'));
+        document.querySelector('.btn-submit').addEventListener('click', () => { if (confirm('자료를 제출하시겠습니까?')) alert('제출 완료!'); });
+    </script>
+</body>
+</html>

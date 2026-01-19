@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation - 기업가치 평가 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: #FEF3C7; }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .btn-login {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .btn-signup {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        /* HERO - Valuation Theme */
+        .hero {
+            background: #1D4ED8;
+            padding: 60px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        .section-title {
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        /* 5가지 평가 방법 카드 */
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+
+        .method-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 28px 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .method-card:hover {
+            border-color: var(--deep-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(29, 78, 216, 0.15);
+        }
+
+        .method-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--deep-blue-pale);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+
+        .method-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .method-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .method-action {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .btn-detail {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-detail:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        /* 시뮬레이터 섹션 */
+        .simulator-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 48px;
+        }
+
+        .simulator-info {
+            text-align: center;
+        }
+
+        .simulator-info h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .simulator-info p {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .simulator-list {
+            list-style: none;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .simulator-list li {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .simulator-list li:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-simulator {
+            width: 100%;
+            padding: 18px 32px;
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 24px;
+            margin-bottom: 24px;
+        }
+
+        .btn-simulator:hover {
+            background: #1E40AF;
+        }
+
+        .simulator-preview {
+            background: var(--bg-light);
+            border-radius: 16px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-login">로그인</button>
+            <button class="btn-signup">회원가입</button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">VALUATION</div>
+        <h1>기업가치 평가</h1>
+        <p>5가지 전문 평가 방법론으로 정확한 기업가치를 산정합니다</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <div class="section-title">
+            <h2>5가지 평가 방법</h2>
+            <p>기업 상황에 맞는 최적의 평가 방법을 선택하세요</p>
+        </div>
+
+        <div class="method-grid">
+            <div class="method-card">
+                <div class="method-icon">📈</div>
+                <h3>DCF</h3>
+                <p>현금흐름할인법<br>미래 현금흐름 기반</p>
+                <div class="method-action">
+                    <a href="dcf-valuation.html" class="btn-detail">자세히 보기</a>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">📊</div>
+                <h3>상대가치</h3>
+                <p>유사기업 비교<br>멀티플 기반 평가</p>
+                <div class="method-action">
+                    <a href="relative-valuation.html" class="btn-detail">자세히 보기</a>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">🚀</div>
+                <h3>IPO</h3>
+                <p>기업공개 평가<br>공모가 산정</p>
+                <div class="method-action">
+                    <a href="ipo-valuation.html" class="btn-detail">자세히 보기</a>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">🏢</div>
+                <h3>자산가치</h3>
+                <p>순자산가치법<br>자산 기반 평가</p>
+                <div class="method-action">
+                    <a href="asset-valuation.html" class="btn-detail">자세히 보기</a>
+                </div>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">📜</div>
+                <h3>상증법</h3>
+                <p>상속·증여세법<br>세법 기준 평가</p>
+                <div class="method-action">
+                    <a href="tax-valuation.html" class="btn-detail">자세히 보기</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 시뮬레이터 -->
+        <div class="simulator-section">
+            <div class="simulator-info">
+                <h2>시뮬레이터</h2>
+                <p>
+                    전문 평가를 받기 전, 시뮬레이터로<br>
+                    예상 기업가치를 미리 확인해보세요.
+                </p>
+                <ul class="simulator-list">
+                    <li>DCF</li>
+                    <li>상대가치</li>
+                    <li>IPO</li>
+                    <li>자산가치</li>
+                    <li>상증법</li>
+                </ul>
+                <button class="btn-simulator">시뮬레이터 실행하기</button>
+                <div class="simulator-preview">
+                    [시뮬레이터 실행 결과 보기]
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>

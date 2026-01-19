@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .card {
+            width: 1200px;
+            background: white;
+            border-radius: 32px;
+            padding: 60px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            border: 5px solid #f59e0b;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 44px;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 28px;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+        }
+        .title {
+            font-size: 52px;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 12px;
+        }
+        .domain {
+            font-size: 34px;
+            color: #b45309;
+            font-weight: 800;
+        }
+        .subtitle {
+            font-size: 22px;
+            color: #333;
+            margin-top: 14px;
+            font-weight: 600;
+        }
+        .cpa-badge {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 28px;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 16px;
+            letter-spacing: 0.5px;
+        }
+
+        /* 핵심 가치 섹션 */
+        .core-values {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 36px;
+            border: 3px solid #f59e0b;
+        }
+        .core-values-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #000;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .core-values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .value-card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #e5e5e5;
+        }
+        .value-icon {
+            font-size: 52px;
+            margin-bottom: 14px;
+        }
+        .value-label {
+            font-size: 22px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 10px;
+        }
+        .value-main {
+            font-size: 40px;
+            font-weight: 900;
+            color: #b45309;
+            margin-bottom: 10px;
+        }
+        .value-desc {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* AI 엔진 섹션 */
+        .ai-section {
+            background: #fff8e1;
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 32px;
+            border: 2px solid #f59e0b;
+        }
+        .ai-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .ai-logos {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+        }
+        .ai-item {
+            text-align: center;
+        }
+        .ai-name {
+            font-size: 30px;
+            font-weight: 800;
+            color: #000;
+        }
+        .ai-role {
+            font-size: 18px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* 평가 방법 섹션 */
+        .methods-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .method-card {
+            background: #fff8e1;
+            border: 3px solid #f59e0b;
+            border-radius: 16px;
+            padding: 24px 12px;
+            text-align: center;
+        }
+        .method-num {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            margin: 0 auto 12px;
+        }
+        .method-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .method-use {
+            font-size: 16px;
+            color: #333;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        /* 결과물 섹션 */
+        .output-section {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 32px;
+        }
+        .output-title {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .output-items {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+        }
+        .output-item {
+            color: white;
+            text-align: center;
+        }
+        .output-icon {
+            font-size: 44px;
+            margin-bottom: 10px;
+        }
+        .output-name {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* 타임라인 */
+        .timeline {
+            text-align: center;
+            padding: 24px;
+            background: #000;
+            border-radius: 16px;
+            color: #fff;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <div class="badge">Sunny의 네번째 개발 프로젝트</div>
+            <div class="title">AI 기반 기업가치평가 서비스 플랫폼</div>
+            <div class="domain">valuation.ai.kr</div>
+            <div class="subtitle">평가 + 랭킹 + 투자자 매칭 양면 플랫폼</div>
+            <div class="cpa-badge">Sunny의 공인회계사로서의 전문업무 분야</div>
+        </div>
+
+        <!-- 핵심 가치 3가지 -->
+        <div class="core-values">
+            <div class="core-values-title">기업가치평가 핵심 가치</div>
+            <div class="core-values-grid">
+                <div class="value-card">
+                    <div class="value-icon">⚡</div>
+                    <div class="value-label">시간</div>
+                    <div class="value-main">48시간</div>
+                    <div class="value-desc">자료 확보 후 이틀 내 완료</div>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">💰</div>
+                    <div class="value-label">비용</div>
+                    <div class="value-main">50%</div>
+                    <div class="value-desc">시장가 절반 / 재발급 시 10%↓</div>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">📊</div>
+                    <div class="value-label">결과물</div>
+                    <div class="value-main">PDF+Excel</div>
+                    <div class="value-desc">직접 수정 가능한 계산 파일</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 엔진 -->
+        <div class="ai-section">
+            <div class="ai-title">AI Engine</div>
+            <div class="ai-logos">
+                <div class="ai-item">
+                    <div class="ai-name">Claude</div>
+                    <div class="ai-role">핵심 계산 로직</div>
+                </div>
+                <div class="ai-item">
+                    <div class="ai-name">Gemini</div>
+                    <div class="ai-role">자료 수집 / 대용량 분석</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5가지 평가 방법 -->
+        <div class="methods-title">5가지 평가 방법</div>
+        <div class="methods-grid">
+            <div class="method-card">
+                <div class="method-num">1</div>
+                <div class="method-name">현금흐름<br>할인법</div>
+                <div class="method-use">투자유치 / M&A</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">2</div>
+                <div class="method-name">상대가치<br>평가법</div>
+                <div class="method-use">시장 비교 평가</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">3</div>
+                <div class="method-name">공모가산정<br>평가법</div>
+                <div class="method-use">상장 / 공모가</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">4</div>
+                <div class="method-name">자산가치<br>평가법</div>
+                <div class="method-use">지주회사 / 자산형</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">5</div>
+                <div class="method-name">상속증여세법<br>평가법</div>
+                <div class="method-use">양도 / 승계 / 증여</div>
+            </div>
+        </div>
+
+        <!-- 결과물 -->
+        <div class="output-section">
+            <div class="output-title">결과물</div>
+            <div class="output-items">
+                <div class="output-item">
+                    <div class="output-icon">📄</div>
+                    <div class="output-name">PDF 보고서</div>
+                </div>
+                <div class="output-item">
+                    <div class="output-icon">📊</div>
+                    <div class="output-name">Excel 계산 파일</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 타임라인 -->
+        <div class="timeline">
+            2~4주 내 프로덕션 레벨 완성 예정
+        </div>
+    </div>
+</body>
+</html>

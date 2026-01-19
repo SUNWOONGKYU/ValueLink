@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상증법 평가 (비상장주식 보충적 평가) | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: #FEF3C7; }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        /* HERO */
+        .hero {
+            background: var(--deep-blue);
+            padding: 48px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-blue-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: var(--deep-blue-pale);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        .info-box.warning {
+            background: #FEF3C7;
+        }
+
+        .info-box.warning h4 {
+            color: #92400E;
+        }
+
+        .info-box.warning p {
+            color: #78350F;
+        }
+
+        /* FORM GRID */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .form-input.readonly {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        /* COMPANY TYPE SELECTION */
+        .company-type-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .company-type-card {
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .company-type-card:hover {
+            border-color: var(--deep-blue-light);
+        }
+
+        .company-type-card.selected {
+            border-color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+        }
+
+        .company-type-card input {
+            display: none;
+        }
+
+        .company-type-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .company-type-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .company-type-formula {
+            margin-top: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        /* PROFIT TABLE */
+        .profit-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .profit-table th,
+        .profit-table td {
+            padding: 14px 16px;
+            text-align: center;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .profit-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .profit-table td:first-child {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .profit-table input {
+            width: 140px;
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .profit-table input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .profit-table .subtotal-row {
+            background: var(--deep-blue-pale);
+        }
+
+        .profit-table .subtotal-row td {
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
+        /* CALCULATION BOX */
+        .calc-box {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .calc-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .calc-formula {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 2;
+        }
+
+        .calc-formula .highlight {
+            color: var(--deep-blue);
+            font-size: 20px;
+        }
+
+        /* TWO COLUMN */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .result-unit {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .result-formula-box {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .result-formula {
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 2;
+        }
+
+        .result-final {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .result-final .result-label {
+            font-size: 16px;
+        }
+
+        .result-final .result-value {
+            font-size: 48px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .btn-calculate:hover {
+            background: #1E40AF;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .company-type-grid {
+                grid-template-columns: 1fr;
+            }
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">TAX LAW VALUATION</div>
+        <h1>상증법 평가</h1>
+        <p>상속세 및 증여세법에 따른 비상장주식 보충적 평가방법</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h4>&#128161; 상증법 보충적 평가방법이란?</h4>
+            <p>
+                상속세 및 증여세법 제63조에 따른 비상장주식의 보충적 평가방법입니다.
+                순손익가치와 순자산가치를 가중평균하여 1주당 가액을 산정합니다.
+                일반법인은 순손익가치 3, 순자산가치 2의 비율로 평가하고,
+                부동산과다보유법인 등은 순손익가치 2, 순자산가치 3의 비율로 평가합니다.
+            </p>
+        </div>
+
+        <div class="info-box warning">
+            <h4>&#9888;&#65039; 적용 시 유의사항</h4>
+            <p>
+                본 평가방법은 세법상 보충적 평가방법으로, 시가가 있는 경우 시가를 우선 적용합니다.
+                또한 평가기준일 전후 3개월(합병 시 6개월) 이내 거래가액이 있는 경우 해당 가액을 참고해야 합니다.
+            </p>
+        </div>
+
+        <!-- COMPANY INFO -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#127970;</span>
+                기업 기본 정보
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">회사명</label>
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">평가기준일</label>
+                    <input type="date" class="form-input" id="valuation-date">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">발행주식총수</label>
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <span class="form-hint">주</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPANY TYPE -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#127959;&#65039;</span>
+                법인 유형 선택
+            </h2>
+            <div class="company-type-grid">
+                <div class="company-type-card selected" onclick="selectCompanyType(this, 'general')">
+                    <input type="radio" name="company-type" value="general" checked>
+                    <div class="company-type-title">일반법인</div>
+                    <div class="company-type-desc">
+                        부동산과다보유법인 등에 해당하지 않는 일반적인 법인
+                    </div>
+                    <div class="company-type-formula">
+                        (순손익가치 × 3 + 순자산가치 × 2) ÷ 5
+                    </div>
+                </div>
+                <div class="company-type-card" onclick="selectCompanyType(this, 'realestate')">
+                    <input type="radio" name="company-type" value="realestate">
+                    <div class="company-type-title">부동산과다보유법인 등</div>
+                    <div class="company-type-desc">
+                        자산총액 중 부동산가액 비율이 50% 이상이거나,<br>
+                        부동산임대업이 주된 사업인 법인
+                    </div>
+                    <div class="company-type-formula">
+                        (순손익가치 × 2 + 순자산가치 × 3) ÷ 5
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NET PROFIT VALUE -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128200;</span>
+                1주당 순손익가치 산정
+            </h2>
+            <table class="profit-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; width: 30%;">항목</th>
+                        <th>3년 전</th>
+                        <th>2년 전</th>
+                        <th>1년 전 (직전)</th>
+                        <th>가중치</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>각 사업연도 소득금액</td>
+                        <td><input type="text" id="income-3" placeholder="0"></td>
+                        <td><input type="text" id="income-2" placeholder="0"></td>
+                        <td><input type="text" id="income-1" placeholder="0"></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>( + ) 비과세소득 등</td>
+                        <td><input type="text" id="nontax-3" placeholder="0"></td>
+                        <td><input type="text" id="nontax-2" placeholder="0"></td>
+                        <td><input type="text" id="nontax-1" placeholder="0"></td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td>( - ) 법인세 등</td>
+                        <td><input type="text" id="tax-3" placeholder="0"></td>
+                        <td><input type="text" id="tax-2" placeholder="0"></td>
+                        <td><input type="text" id="tax-1" placeholder="0"></td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="subtotal-row">
+                        <td>각 연도 순손익액</td>
+                        <td id="profit-3">0</td>
+                        <td id="profit-2">0</td>
+                        <td id="profit-1">0</td>
+                        <td>1 : 2 : 3</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="calc-box">
+                <div class="calc-title">가중평균 순손익액 계산</div>
+                <div class="calc-formula">
+                    가중평균 순손익액 = (<span id="calc-profit-3">0</span> × 1 + <span id="calc-profit-2">0</span> × 2 + <span id="calc-profit-1">0</span> × 3) ÷ 6
+                    = <span class="highlight" id="weighted-profit">0</span> 백만원
+                </div>
+            </div>
+
+            <div class="two-column" style="margin-top: 24px;">
+                <div class="form-group">
+                    <label class="form-label">순손익가치 환원율</label>
+                    <input type="number" class="form-input" id="discount-rate" value="10" readonly>
+                    <span class="form-hint">% (법정 10%)</span>
+                </div>
+                <div class="calc-box" style="margin-top: 0;">
+                    <div class="calc-title">1주당 순손익가치</div>
+                    <div class="calc-formula">
+                        <span id="calc-weighted">0</span> 백만원 ÷ <span id="calc-rate">10</span>% ÷ <span id="calc-shares-1">0</span> 주
+                        = <span class="highlight" id="profit-value-per-share">0</span> 원
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NET ASSET VALUE -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128230;</span>
+                1주당 순자산가치 산정
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">자산총액 (상증세법 평가액)</label>
+                    <input type="text" class="form-input" id="total-assets" placeholder="100,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">부채총액</label>
+                    <input type="text" class="form-input" id="total-liabilities" placeholder="30,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">순자산가액</label>
+                    <input type="text" class="form-input readonly" id="net-assets" readonly>
+                    <span class="form-hint">백만원 (자동 계산)</span>
+                </div>
+            </div>
+
+            <div class="calc-box">
+                <div class="calc-title">1주당 순자산가치</div>
+                <div class="calc-formula">
+                    순자산가액 <span id="calc-net-assets">0</span> 백만원 ÷ 발행주식총수 <span id="calc-shares-2">0</span> 주
+                    = <span class="highlight" id="asset-value-per-share">0</span> 원
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATE -->
+        <button class="btn-calculate" onclick="calculateTaxValue()">1주당 가액 산정하기</button>
+
+        <!-- RESULT -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <h2 class="result-title">
+                <span>&#127919;</span>
+                상증법 평가 결과
+            </h2>
+            <div class="result-grid">
+                <div class="result-card">
+                    <div class="result-label">1주당 순손익가치</div>
+                    <div class="result-value" id="result-profit-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">1주당 순자산가치</div>
+                    <div class="result-value" id="result-asset-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">적용 법인 유형</div>
+                    <div class="result-value" id="result-type" style="font-size: 18px;">-</div>
+                    <div class="result-unit" id="result-weight">-</div>
+                </div>
+            </div>
+
+            <div class="result-formula-box">
+                <div class="result-formula" id="result-formula">
+                    <!-- 계산식이 여기 표시됩니다 -->
+                </div>
+            </div>
+
+            <div class="result-final">
+                <div class="result-label">1주당 평가액</div>
+                <div class="result-value" id="result-final-value">-</div>
+                <div class="result-unit">원</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Format number
+        function formatNumber(num) {
+            return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Parse number
+        function parseNumber(str) {
+            if (!str) return 0;
+            return parseFloat(str.toString().replace(/,/g, '')) || 0;
+        }
+
+        // Select company type
+        function selectCompanyType(card, type) {
+            document.querySelectorAll('.company-type-card').forEach(c => {
+                c.classList.remove('selected');
+                c.querySelector('input').checked = false;
+            });
+            card.classList.add('selected');
+            card.querySelector('input').checked = true;
+        }
+
+        // Calculate profit values
+        function calculateProfitValues() {
+            // Get input values
+            const income3 = parseNumber(document.getElementById('income-3').value);
+            const income2 = parseNumber(document.getElementById('income-2').value);
+            const income1 = parseNumber(document.getElementById('income-1').value);
+
+            const nontax3 = parseNumber(document.getElementById('nontax-3').value);
+            const nontax2 = parseNumber(document.getElementById('nontax-2').value);
+            const nontax1 = parseNumber(document.getElementById('nontax-1').value);
+
+            const tax3 = parseNumber(document.getElementById('tax-3').value);
+            const tax2 = parseNumber(document.getElementById('tax-2').value);
+            const tax1 = parseNumber(document.getElementById('tax-1').value);
+
+            // Calculate net profit for each year
+            const profit3 = income3 + nontax3 - tax3;
+            const profit2 = income2 + nontax2 - tax2;
+            const profit1 = income1 + nontax1 - tax1;
+
+            // Display profit
+            document.getElementById('profit-3').textContent = formatNumber(profit3);
+            document.getElementById('profit-2').textContent = formatNumber(profit2);
+            document.getElementById('profit-1').textContent = formatNumber(profit1);
+
+            // Calculate weighted average (1:2:3)
+            const weightedProfit = (profit3 * 1 + profit2 * 2 + profit1 * 3) / 6;
+
+            // Update calculation display
+            document.getElementById('calc-profit-3').textContent = formatNumber(profit3);
+            document.getElementById('calc-profit-2').textContent = formatNumber(profit2);
+            document.getElementById('calc-profit-1').textContent = formatNumber(profit1);
+            document.getElementById('weighted-profit').textContent = formatNumber(weightedProfit);
+            document.getElementById('calc-weighted').textContent = formatNumber(weightedProfit);
+
+            // Calculate per share profit value
+            const shares = parseNumber(document.getElementById('shares-outstanding').value);
+            const discountRate = parseNumber(document.getElementById('discount-rate').value) / 100;
+
+            document.getElementById('calc-shares-1').textContent = formatNumber(shares);
+            document.getElementById('calc-shares-2').textContent = formatNumber(shares);
+
+            if (shares > 0 && discountRate > 0) {
+                const profitValue = (weightedProfit * 1000000) / discountRate / shares;
+                document.getElementById('profit-value-per-share').textContent = formatNumber(profitValue);
+                return profitValue;
+            }
+
+            return 0;
+        }
+
+        // Calculate asset values
+        function calculateAssetValues() {
+            const totalAssets = parseNumber(document.getElementById('total-assets').value);
+            const totalLiabilities = parseNumber(document.getElementById('total-liabilities').value);
+            const netAssets = totalAssets - totalLiabilities;
+
+            document.getElementById('net-assets').value = formatNumber(netAssets);
+            document.getElementById('calc-net-assets').textContent = formatNumber(netAssets);
+
+            const shares = parseNumber(document.getElementById('shares-outstanding').value);
+            document.getElementById('calc-shares-2').textContent = formatNumber(shares);
+
+            if (shares > 0) {
+                const assetValue = (netAssets * 1000000) / shares;
+                document.getElementById('asset-value-per-share').textContent = formatNumber(assetValue);
+                return assetValue;
+            }
+
+            return 0;
+        }
+
+        // Calculate final tax value
+        function calculateTaxValue() {
+            const profitValue = calculateProfitValues();
+            const assetValue = calculateAssetValues();
+
+            const shares = parseNumber(document.getElementById('shares-outstanding').value);
+            if (shares <= 0) {
+                alert('발행주식총수를 입력해 주세요.');
+                return;
+            }
+
+            // Get company type
+            const isGeneral = document.querySelector('input[name="company-type"]:checked').value === 'general';
+
+            let finalValue, profitWeight, assetWeight;
+
+            if (isGeneral) {
+                // General: (profit × 3 + asset × 2) / 5
+                profitWeight = 3;
+                assetWeight = 2;
+                finalValue = (profitValue * 3 + assetValue * 2) / 5;
+            } else {
+                // Real estate heavy: (profit × 2 + asset × 3) / 5
+                profitWeight = 2;
+                assetWeight = 3;
+                finalValue = (profitValue * 2 + assetValue * 3) / 5;
+            }
+
+            // Round down to nearest 원 (floor)
+            finalValue = Math.floor(finalValue);
+
+            // Display results
+            document.getElementById('result-profit-value').textContent = formatNumber(profitValue);
+            document.getElementById('result-asset-value').textContent = formatNumber(assetValue);
+            document.getElementById('result-type').textContent = isGeneral ? '일반법인' : '부동산과다보유법인';
+            document.getElementById('result-weight').textContent = `순손익 ${profitWeight} : 순자산 ${assetWeight}`;
+
+            // Display formula
+            document.getElementById('result-formula').innerHTML = `
+                (${formatNumber(profitValue)}원 × ${profitWeight} + ${formatNumber(assetValue)}원 × ${assetWeight}) ÷ 5<br>
+                = (${formatNumber(profitValue * profitWeight)} + ${formatNumber(assetValue * assetWeight)}) ÷ 5<br>
+                = <strong>${formatNumber(finalValue)}원</strong>
+            `;
+
+            document.getElementById('result-final-value').textContent = formatNumber(finalValue);
+
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add input listeners
+        document.querySelectorAll('.profit-table input').forEach(input => {
+            input.addEventListener('input', calculateProfitValues);
+        });
+
+        document.getElementById('shares-outstanding').addEventListener('input', () => {
+            calculateProfitValues();
+            calculateAssetValues();
+        });
+
+        document.getElementById('total-assets').addEventListener('input', calculateAssetValues);
+        document.getElementById('total-liabilities').addEventListener('input', calculateAssetValues);
+
+        // Set today's date
+        document.getElementById('valuation-date').valueAsDate = new Date();
+    </script>
+</body>
+</html>

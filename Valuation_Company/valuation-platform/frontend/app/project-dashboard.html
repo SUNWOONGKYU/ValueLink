@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 관리 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-pale: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-pale: #FEF3C7;
+            --error: #EF4444;
+            --error-pale: #FEE2E2;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .header-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+        }
+
+        .nav-item.active {
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+            font-weight: 600;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .user-info strong {
+            color: var(--text-primary);
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-new {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-new:hover {
+            background: #1E40AF;
+        }
+
+        /* STATS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .stat-card.highlight {
+            background: var(--deep-blue);
+        }
+
+        .stat-card.highlight .number,
+        .stat-card.highlight .label {
+            color: var(--white);
+        }
+
+        /* FILTERS */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--deep-blue-light);
+        }
+
+        .filter-btn.active {
+            background: var(--deep-blue);
+            color: var(--white);
+            border-color: var(--deep-blue);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--white);
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+        }
+
+        /* TABLE */
+        .table-container {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .project-table th,
+        .project-table td {
+            padding: 16px 20px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .project-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .project-table tr:hover {
+            background: #FAFAFA;
+        }
+
+        .project-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* PROJECT ID */
+        .project-id {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* COMPANY */
+        .company-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .company-biz {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* METHOD BADGE */
+        .method-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .method-badge.dc { background: #DBEAFE; color: #1D4ED8; }
+        .method-badge.rv { background: #E0E7FF; color: #4F46E5; }
+        .method-badge.ip { background: #FEF3C7; color: #D97706; }
+        .method-badge.av { background: #D1FAE5; color: #059669; }
+        .method-badge.tx { background: #FCE7F3; color: #DB2777; }
+
+        /* STATUS BADGE */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 20px;
+        }
+
+        .status-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-badge.collecting { background: var(--warning-pale); color: #B45309; }
+        .status-badge.collecting .dot { background: var(--warning); }
+
+        .status-badge.reviewing { background: var(--deep-blue-pale); color: var(--deep-blue); }
+        .status-badge.reviewing .dot { background: var(--deep-blue); }
+
+        .status-badge.evaluating { background: #E0E7FF; color: #4F46E5; }
+        .status-badge.evaluating .dot { background: #4F46E5; }
+
+        .status-badge.completed { background: var(--success-pale); color: #047857; }
+        .status-badge.completed .dot { background: var(--success); }
+
+        /* PROGRESS BAR */
+        .progress-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--bg-light);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--deep-blue);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ASSIGNEE */
+        .assignee {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .assignee-avatar {
+            width: 28px;
+            height: 28px;
+            background: var(--deep-blue-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        .assignee-name {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ACTIONS */
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.view {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .action-btn.view:hover {
+            background: var(--border);
+        }
+
+        .action-btn.primary {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .action-btn.primary:hover {
+            background: #1E40AF;
+        }
+
+        /* DATE */
+        .date {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="header-nav">
+                <a href="project-dashboard.html" class="nav-item active">프로젝트 관리</a>
+                <a href="mockup-valuation.html" class="nav-item">평가 도구</a>
+                <a href="#" class="nav-item">보고서</a>
+                <a href="#" class="nav-item">설정</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <strong>김철수</strong> 회계사
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="page-title">
+                <h1>프로젝트 관리</h1>
+            </div>
+            <a href="project-create.html" class="btn-new">
+                <span>+</span> 신규 프로젝트
+            </a>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card highlight">
+                <div class="number">24</div>
+                <div class="label">전체 프로젝트</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">5</div>
+                <div class="label">자료 수집중</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">검토중</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">평가 진행중</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">완료</div>
+            </div>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <button class="filter-btn active">전체</button>
+            <button class="filter-btn">자료 수집중</button>
+            <button class="filter-btn">검토중</button>
+            <button class="filter-btn">평가 진행중</button>
+            <button class="filter-btn">완료</button>
+            <div class="search-box">
+                <input type="text" placeholder="회사명, 프로젝트 번호 검색">
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+            <table class="project-table">
+                <thead>
+                    <tr>
+                        <th>프로젝트 번호</th>
+                        <th>회사</th>
+                        <th>평가방법</th>
+                        <th>상태</th>
+                        <th>진행률</th>
+                        <th>담당자</th>
+                        <th>평가기준일</th>
+                        <th>작업</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="project-id">SAMSU-2501191430-DC</span></td>
+                        <td>
+                            <div class="company-info">
+                                <span class="company-name">삼성전자</span>
+                                <span class="company-biz">전자제품 제조업</span>
+                            </div>
+                        </td>
+                        <td><span class="method-badge dc">DCF</span></td>
+                        <td>
+                            <span class="status-badge collecting">
+                                <span class="dot"></span>
+                                자료 수집중
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar"><div class="fill" style="width: 30%"></div></div>
+                            <div class="progress-text">30%</div>
+                        </td>
+                        <td>
+                            <div class="assignee">
+                                <div class="assignee-avatar">김</div>
+                                <span class="assignee-name">김철수</span>
+                            </div>
+                        </td>
+                        <td><span class="date">2025.01.01</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view">보기</button>
+                                <button class="action-btn primary">입력</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="project-id">HYUND-2501180915-RV</span></td>
+                        <td>
+                            <div class="company-info">
+                                <span class="company-name">현대자동차</span>
+                                <span class="company-biz">자동차 제조업</span>
+                            </div>
+                        </td>
+                        <td><span class="method-badge rv">상대가치</span></td>
+                        <td>
+                            <span class="status-badge reviewing">
+                                <span class="dot"></span>
+                                검토중
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar"><div class="fill" style="width: 60%"></div></div>
+                            <div class="progress-text">60%</div>
+                        </td>
+                        <td>
+                            <div class="assignee">
+                                <div class="assignee-avatar">이</div>
+                                <span class="assignee-name">이영희</span>
+                            </div>
+                        </td>
+                        <td><span class="date">2025.01.01</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view">보기</button>
+                                <button class="action-btn primary">입력</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="project-id">KAKAO-2501171600-TX</span></td>
+                        <td>
+                            <div class="company-info">
+                                <span class="company-name">카카오</span>
+                                <span class="company-biz">소프트웨어 개발업</span>
+                            </div>
+                        </td>
+                        <td><span class="method-badge tx">상증법</span></td>
+                        <td>
+                            <span class="status-badge evaluating">
+                                <span class="dot"></span>
+                                평가 진행중
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar"><div class="fill" style="width: 80%"></div></div>
+                            <div class="progress-text">80%</div>
+                        </td>
+                        <td>
+                            <div class="assignee">
+                                <div class="assignee-avatar">박</div>
+                                <span class="assignee-name">박민수</span>
+                            </div>
+                        </td>
+                        <td><span class="date">2024.12.31</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view">보기</button>
+                                <button class="action-btn primary">평가</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="project-id">NAVER-2501151045-IP</span></td>
+                        <td>
+                            <div class="company-info">
+                                <span class="company-name">네이버</span>
+                                <span class="company-biz">포털 서비스업</span>
+                            </div>
+                        </td>
+                        <td><span class="method-badge ip">IPO</span></td>
+                        <td>
+                            <span class="status-badge completed">
+                                <span class="dot"></span>
+                                완료
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar"><div class="fill" style="width: 100%"></div></div>
+                            <div class="progress-text">100%</div>
+                        </td>
+                        <td>
+                            <div class="assignee">
+                                <div class="assignee-avatar">김</div>
+                                <span class="assignee-name">김철수</span>
+                            </div>
+                        </td>
+                        <td><span class="date">2024.12.15</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view">보기</button>
+                                <button class="action-btn primary">보고서</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="project-id">LGELE-2501140830-AV</span></td>
+                        <td>
+                            <div class="company-info">
+                                <span class="company-name">LG전자</span>
+                                <span class="company-biz">전자제품 제조업</span>
+                            </div>
+                        </td>
+                        <td><span class="method-badge av">자산가치</span></td>
+                        <td>
+                            <span class="status-badge collecting">
+                                <span class="dot"></span>
+                                자료 수집중
+                            </span>
+                        </td>
+                        <td>
+                            <div class="progress-bar"><div class="fill" style="width: 20%"></div></div>
+                            <div class="progress-text">20%</div>
+                        </td>
+                        <td>
+                            <div class="assignee">
+                                <div class="assignee-avatar">이</div>
+                                <span class="assignee-name">이영희</span>
+                            </div>
+                        </td>
+                        <td><span class="date">2025.01.01</span></td>
+                        <td>
+                            <div class="actions">
+                                <button class="action-btn view">보기</button>
+                                <button class="action-btn primary">입력</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // 필터 버튼 클릭
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // 실제로는 여기서 테이블 필터링
+            });
+        });
+    </script>
+</body>
+</html>

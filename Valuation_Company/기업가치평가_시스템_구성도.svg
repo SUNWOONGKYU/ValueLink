@@ -1,0 +1,263 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1800">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 28px; font-weight: bold; fill: #1a1a1a; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #333; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; fill: #444; }
+      .small-label { font-family: Arial, sans-serif; font-size: 12px; fill: #666; }
+      .box { fill: white; stroke: #333; stroke-width: 2; }
+      .customer { fill: #E3F2FD; stroke: #1976D2; stroke-width: 2; }
+      .system { fill: #FFF3E0; stroke: #F57C00; stroke-width: 2; }
+      .ai { fill: #F3E5F5; stroke: #7B1FA2; stroke-width: 2; }
+      .algorithm { fill: #E8F5E9; stroke: #388E3C; stroke-width: 2; }
+      .reviewer { fill: #FCE4EC; stroke: #C2185B; stroke-width: 2; }
+      .arrow { fill: none; stroke: #333; stroke-width: 2; marker-end: url(#arrowhead); }
+      .data-arrow { fill: none; stroke: #666; stroke-width: 1.5; stroke-dasharray: 5,5; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#333" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="700" y="40" text-anchor="middle" class="title">기업가치평가 시스템 구성도</text>
+  
+  <!-- Legend -->
+  <g transform="translate(50, 70)">
+    <rect x="0" y="0" width="80" height="30" class="customer" rx="5"/>
+    <text x="40" y="20" text-anchor="middle" class="small-label">고객</text>
+    
+    <rect x="100" y="0" width="80" height="30" class="system" rx="5"/>
+    <text x="140" y="20" text-anchor="middle" class="small-label">시스템</text>
+    
+    <rect x="200" y="0" width="80" height="30" class="ai" rx="5"/>
+    <text x="240" y="20" text-anchor="middle" class="small-label">AI 모듈</text>
+    
+    <rect x="300" y="0" width="80" height="30" class="algorithm" rx="5"/>
+    <text x="340" y="20" text-anchor="middle" class="small-label">알고리즘</text>
+    
+    <rect x="400" y="0" width="80" height="30" class="reviewer" rx="5"/>
+    <text x="440" y="20" text-anchor="middle" class="small-label">검토자</text>
+  </g>
+
+  <!-- Step 1: Customer Input -->
+  <g transform="translate(100, 150)">
+    <rect x="0" y="0" width="250" height="100" class="customer" rx="10"/>
+    <text x="125" y="30" text-anchor="middle" class="subtitle">1. 고객 기업</text>
+    <text x="125" y="55" text-anchor="middle" class="label">수동 입력 인터페이스</text>
+    <text x="15" y="80" class="small-label">• 재무제표 (3개년)</text>
+    <text x="15" y="95" class="small-label">• 기업 정보 입력</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <line x1="225" y1="250" x2="225" y2="300" class="arrow"/>
+  <text x="240" y="280" class="small-label">데이터 전송</text>
+
+  <!-- Step 2: Data Collection System -->
+  <g transform="translate(100, 300)">
+    <rect x="0" y="0" width="250" height="120" class="system" rx="10"/>
+    <text x="125" y="30" text-anchor="middle" class="subtitle">2. 데이터 수집 시스템</text>
+    <text x="15" y="55" class="small-label">• 입력 데이터 검증</text>
+    <text x="15" y="75" class="small-label">• 데이터 표준화</text>
+    <text x="15" y="95" class="small-label">• 데이터베이스 저장</text>
+    <text x="15" y="115" class="small-label">• AI 수집 트리거</text>
+  </g>
+
+  <!-- Arrow 2 -->
+  <line x1="350" y1="360" x2="450" y2="360" class="arrow"/>
+  <text x="390" y="350" class="small-label">수집 요청</text>
+
+  <!-- Step 3: AI Auto Collection -->
+  <g transform="translate(450, 300)">
+    <rect x="0" y="0" width="300" height="150" class="ai" rx="10"/>
+    <text x="150" y="30" text-anchor="middle" class="subtitle">3. AI 자동 데이터 수집</text>
+    <text x="15" y="60" class="small-label">📊 웹 검색 모듈</text>
+    <text x="25" y="80" class="small-label">• 무위험이자율 (한국은행)</text>
+    <text x="25" y="95" class="small-label">• 업종 베타 (DART API)</text>
+    <text x="25" y="110" class="small-label">• 업종 평균 지표</text>
+    <text x="25" y="125" class="small-label">• 비교 기업 재무정보</text>
+    <text x="25" y="140" class="small-label">• 시장 벤치마크 데이터</text>
+  </g>
+
+  <!-- Arrow 3 -->
+  <line x1="600" y1="450" x2="600" y2="500" class="arrow"/>
+  <text x="615" y="480" class="small-label">완전한 데이터셋</text>
+
+  <!-- Step 4: Algorithm Engine -->
+  <g transform="translate(400, 500)">
+    <rect x="0" y="0" width="400" height="180" class="algorithm" rx="10"/>
+    <text x="200" y="30" text-anchor="middle" class="subtitle">4. 평가 알고리즘 엔진</text>
+    
+    <g transform="translate(20, 50)">
+      <rect x="0" y="0" width="160" height="110" fill="#C8E6C9" stroke="#66BB6A" stroke-width="1" rx="5"/>
+      <text x="80" y="20" text-anchor="middle" class="small-label" font-weight="bold">DCF 알고리즘</text>
+      <text x="10" y="40" class="small-label">• 현금흐름 추정</text>
+      <text x="10" y="55" class="small-label">• WACC 계산</text>
+      <text x="10" y="70" class="small-label">• 계속가치 산정</text>
+      <text x="10" y="85" class="small-label">• 현재가치 할인</text>
+      <text x="10" y="100" class="small-label">• 민감도 분석</text>
+    </g>
+    
+    <g transform="translate(200, 50)">
+      <rect x="0" y="0" width="180" height="110" fill="#C8E6C9" stroke="#66BB6A" stroke-width="1" rx="5"/>
+      <text x="90" y="20" text-anchor="middle" class="small-label" font-weight="bold">상대가치 알고리즘</text>
+      <text x="10" y="40" class="small-label">• 비교기업 선정</text>
+      <text x="10" y="55" class="small-label">• 멀티플 계산</text>
+      <text x="10" y="70" class="small-label">• 할인율 적용</text>
+      <text x="10" y="85" class="small-label">• 가치 산출</text>
+    </g>
+  </g>
+
+  <!-- Arrow 4 -->
+  <line x1="600" y1="680" x2="600" y2="730" class="arrow"/>
+  <text x="615" y="710" class="small-label">평가 결과</text>
+
+  <!-- Step 5: Draft Report Generation -->
+  <g transform="translate(425, 730)">
+    <rect x="0" y="0" width="350" height="100" class="ai" rx="10"/>
+    <text x="175" y="30" text-anchor="middle" class="subtitle">5. AI 보고서 초안 생성</text>
+    <text x="15" y="55" class="small-label">• Claude API 활용</text>
+    <text x="15" y="75" class="small-label">• 평가 결과 → 전문가 수준 보고서 작성</text>
+    <text x="15" y="95" class="small-label">• 표, 그래프, 분석 포함</text>
+  </g>
+
+  <!-- Arrow 5 -->
+  <line x1="600" y1="830" x2="600" y2="880" class="arrow"/>
+  <text x="615" y="860" class="small-label">초안 보고서</text>
+
+  <!-- Step 6: Reviewer Check -->
+  <g transform="translate(425, 880)">
+    <rect x="0" y="0" width="350" height="120" class="reviewer" rx="10"/>
+    <text x="175" y="30" text-anchor="middle" class="subtitle">6. 검토자 (공인회계사)</text>
+    <text x="15" y="60" class="label">검토 대시보드</text>
+    <text x="15" y="80" class="small-label">• 평가 가정 검토</text>
+    <text x="15" y="95" class="small-label">• 계산 검증</text>
+    <text x="15" y="110" class="small-label">• 수정 지시 입력</text>
+  </g>
+
+  <!-- Revision Loop -->
+  <path d="M 825 940 L 900 940 L 900 780 L 825 780" class="data-arrow"/>
+  <text x="910" y="860" class="small-label">수정 필요 시</text>
+  <text x="910" y="875" class="small-label">재생성</text>
+
+  <!-- Arrow 6 -->
+  <line x1="600" y1="1000" x2="600" y2="1050" class="arrow"/>
+  <text x="615" y="1030" class="small-label">승인</text>
+
+  <!-- Step 7: Final Report -->
+  <g transform="translate(425, 1050)">
+    <rect x="0" y="0" width="350" height="100" class="system" rx="10"/>
+    <text x="175" y="30" text-anchor="middle" class="subtitle">7. 최종 보고서 생성</text>
+    <text x="15" y="55" class="small-label">• PDF 파일 생성</text>
+    <text x="15" y="75" class="small-label">• 전자서명 추가</text>
+    <text x="15" y="95" class="small-label">• 보안 저장</text>
+  </g>
+
+  <!-- Arrow 7 -->
+  <line x1="600" y1="1150" x2="600" y2="1200" class="arrow"/>
+  <text x="615" y="1180" class="small-label">보고서 준비 완료</text>
+
+  <!-- Step 8: Payment -->
+  <g transform="translate(425, 1200)">
+    <rect x="0" y="0" width="350" height="100" class="customer" rx="10"/>
+    <text x="175" y="30" text-anchor="middle" class="subtitle">8. 고객 결제</text>
+    <text x="15" y="55" class="small-label">• 평가 금액 확인</text>
+    <text x="15" y="75" class="small-label">• 토스페이먼츠 결제</text>
+    <text x="15" y="95" class="small-label">• 결제 완료 확인</text>
+  </g>
+
+  <!-- Arrow 8 -->
+  <line x1="600" y1="1300" x2="600" y2="1350" class="arrow"/>
+  <text x="615" y="1330" class="small-label">결제 완료</text>
+
+  <!-- Step 9: Download -->
+  <g transform="translate(425, 1350)">
+    <rect x="0" y="0" width="350" height="100" class="customer" rx="10"/>
+    <text x="175" y="30" text-anchor="middle" class="subtitle">9. 보고서 다운로드</text>
+    <text x="15" y="55" class="small-label">• 보안 다운로드 링크 생성</text>
+    <text x="15" y="75" class="small-label">• PDF 다운로드</text>
+    <text x="15" y="95" class="small-label">• 이메일 발송</text>
+  </g>
+
+  <!-- Side Panel: Database -->
+  <g transform="translate(900, 300)">
+    <rect x="0" y="0" width="200" height="300" fill="#ECEFF1" stroke="#607D8B" stroke-width="2" rx="10"/>
+    <text x="100" y="30" text-anchor="middle" class="subtitle">💾 데이터베이스</text>
+    <text x="15" y="60" class="small-label">저장 정보:</text>
+    <text x="15" y="80" class="small-label">• 기업 기본정보</text>
+    <text x="15" y="95" class="small-label">• 재무제표</text>
+    <text x="15" y="110" class="small-label">• 수집된 시장 데이터</text>
+    <text x="15" y="125" class="small-label">• 평가 결과</text>
+    <text x="15" y="140" class="small-label">• 보고서 파일</text>
+    <text x="15" y="155" class="small-label">• 검토 이력</text>
+    <text x="15" y="170" class="small-label">• 결제 내역</text>
+    
+    <text x="100" y="200" text-anchor="middle" class="small-label" font-weight="bold">보안 기능:</text>
+    <text x="15" y="220" class="small-label">• 데이터 암호화</text>
+    <text x="15" y="235" class="small-label">• 접근 권한 관리</text>
+    <text x="15" y="250" class="small-label">• 백업 시스템</text>
+    <text x="15" y="265" class="small-label">• 감사 로그</text>
+  </g>
+
+  <!-- Data connections -->
+  <line x1="350" y1="360" x2="900" y2="400" class="data-arrow"/>
+  <line x1="750" y1="425" x2="900" y2="450" class="data-arrow"/>
+  <line x1="775" y1="780" x2="900" y2="500" class="data-arrow"/>
+  <line x1="775" y1="1100" x2="900" y2="550" class="data-arrow"/>
+
+  <!-- Side Panel: External APIs -->
+  <g transform="translate(50, 700)">
+    <rect x="0" y="0" width="250" height="250" fill="#FFF9C4" stroke="#F57F17" stroke-width="2" rx="10"/>
+    <text x="125" y="30" text-anchor="middle" class="subtitle">🌐 외부 API 연동</text>
+    
+    <text x="15" y="60" class="small-label" font-weight="bold">데이터 소스:</text>
+    <text x="15" y="80" class="small-label">1. 한국은행 API</text>
+    <text x="25" y="95" class="small-label">→ 금리, 경제지표</text>
+    
+    <text x="15" y="115" class="small-label">2. DART (금융감독원)</text>
+    <text x="25" y="130" class="small-label">→ 상장사 재무제표</text>
+    
+    <text x="15" y="150" class="small-label">3. 통계청 API</text>
+    <text x="25" y="165" class="small-label">→ 산업통계</text>
+    
+    <text x="15" y="185" class="small-label">4. Claude API</text>
+    <text x="25" y="200" class="small-label">→ 보고서 생성</text>
+    
+    <text x="15" y="220" class="small-label">5. 토스페이먼츠</text>
+    <text x="25" y="235" class="small-label">→ 결제 처리</text>
+  </g>
+
+  <!-- Connection lines from External APIs -->
+  <path d="M 300 825 L 350 825 L 350 375 L 450 375" class="data-arrow"/>
+  <path d="M 300 910 L 380 910 L 380 810 L 425 810" class="data-arrow"/>
+  <path d="M 300 950 L 400 950 L 400 1250 L 425 1250" class="data-arrow"/>
+
+  <!-- Process Time Indicators -->
+  <g transform="translate(50, 1500)">
+    <text x="0" y="20" class="label" font-weight="bold">⏱️ 예상 처리 시간:</text>
+    <text x="20" y="45" class="small-label">• 고객 입력: 30-60분</text>
+    <text x="20" y="65" class="small-label">• AI 데이터 수집: 5-10분</text>
+    <text x="20" y="85" class="small-label">• 알고리즘 실행: 2-5분</text>
+    <text x="20" y="105" class="small-label">• 보고서 초안 생성: 3-5분</text>
+    <text x="20" y="125" class="small-label">• 검토자 검증: 2-4시간</text>
+    <text x="20" y="145" class="small-label">• 최종 보고서 생성: 1-2분</text>
+    <text x="20" y="165" class="small-label">• 결제 및 다운로드: 5분</text>
+    <text x="20" y="190" class="label" font-weight="bold">→ 총 처리시간: 약 3-5시간</text>
+  </g>
+
+
+
+  <!-- System Benefits -->
+  <g transform="translate(850, 700)">
+    <text x="0" y="20" class="label" font-weight="bold">✨ 시스템 장점:</text>
+    <text x="20" y="45" class="small-label">• 자동화로 시간 단축</text>
+    <text x="20" y="65" class="small-label">• 전문가 검증으로 신뢰성</text>
+    <text x="20" y="85" class="small-label">• 표준화된 평가 품질</text>
+    <text x="20" y="105" class="small-label">• 실시간 데이터 반영</text>
+    <text x="20" y="125" class="small-label">• 확장 가능한 구조</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="700" y="1750" text-anchor="middle" class="small-label">valuation.ai.kr - 기업가치평가 시스템</text>
+  
+</svg>

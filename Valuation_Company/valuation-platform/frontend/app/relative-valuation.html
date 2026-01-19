@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상대가치 평가 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: #FEF3C7; }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        /* HERO */
+        .hero {
+            background: var(--deep-blue);
+            padding: 48px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* SECTION CARD */
+        .section-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-blue-pale);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* FORM GRID */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* COMPARABLE COMPANIES TABLE */
+        .comparable-table-container {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+
+        .comparable-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .comparable-table th,
+        .comparable-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .comparable-table th {
+            background: var(--bg-light);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .comparable-table tr:hover {
+            background: #F9FAFB;
+        }
+
+        .comparable-table input {
+            width: 100%;
+            padding: 8px;
+            font-size: 13px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            text-align: right;
+        }
+
+        .comparable-table input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .comparable-table .company-name {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .btn-add-company {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        .btn-add-company:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-remove {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--error);
+            background: #FEE2E2;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* MULTIPLE SELECTION */
+        .multiple-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .multiple-card {
+            background: var(--bg-light);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .multiple-card:hover {
+            border-color: var(--deep-blue-light);
+        }
+
+        .multiple-card.selected {
+            border-color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+        }
+
+        .multiple-card input[type="checkbox"] {
+            display: none;
+        }
+
+        .multiple-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .multiple-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .multiple-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            margin-top: 12px;
+        }
+
+        /* WEIGHT INPUT */
+        .weight-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .weight-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .weight-item {
+            text-align: center;
+        }
+
+        .weight-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .weight-input {
+            width: 80px;
+            padding: 8px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+        }
+
+        .weight-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .weight-total {
+            margin-top: 16px;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .weight-total span {
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
+        /* RESULT SECTION */
+        .result-section {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            border-radius: 16px;
+            padding: 40px;
+            color: var(--white);
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .result-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .result-unit {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .result-final {
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .result-final .result-label {
+            font-size: 16px;
+        }
+
+        .result-final .result-value {
+            font-size: 42px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .btn-calculate:hover {
+            background: #1E40AF;
+        }
+
+        /* INFO BOX */
+        .info-box {
+            background: var(--deep-blue-pale);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-box h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .multiple-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .weight-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .result-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .multiple-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .weight-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">RELATIVE VALUATION</div>
+        <h1>상대가치 평가</h1>
+        <p>유사기업 비교를 통한 시장 멀티플 기반 기업가치 산정</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- INFO BOX -->
+        <div class="info-box">
+            <h4>&#128161; 상대가치 평가란?</h4>
+            <p>
+                상대가치 평가는 유사한 사업을 영위하는 상장기업의 시장 멀티플(PER, PBR, PSR, EV/EBITDA, EV/Sales)을
+                평가대상기업에 적용하여 기업가치를 산정하는 방법입니다. 시장에서 형성된 가격을 기준으로 하므로
+                현재 시장 상황을 반영한 가치를 산출할 수 있습니다.
+            </p>
+        </div>
+
+        <!-- TARGET COMPANY -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#127970;</span>
+                평가대상 기업 정보
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">회사명</label>
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">업종</label>
+                    <select class="form-input" id="industry">
+                        <option value="">업종 선택</option>
+                        <option value="it">정보기술(IT)</option>
+                        <option value="bio">바이오/헬스케어</option>
+                        <option value="manufacturing">제조업</option>
+                        <option value="retail">유통/소비재</option>
+                        <option value="finance">금융</option>
+                        <option value="energy">에너지/유틸리티</option>
+                        <option value="content">콘텐츠/미디어</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">발행주식수</label>
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <span class="form-hint">주</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TARGET FINANCIALS -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128200;</span>
+                평가대상 기업 재무지표
+            </h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">순이익 (당기순이익)</label>
+                    <input type="text" class="form-input" id="net-income" placeholder="10,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">자기자본 (순자산)</label>
+                    <input type="text" class="form-input" id="equity" placeholder="50,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">매출액</label>
+                    <input type="text" class="form-input" id="revenue" placeholder="100,000">
+                    <span class="form-hint">백만원</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">EBITDA</label>
+                    <input type="text" class="form-input" id="ebitda" placeholder="20,000">
+                    <span class="form-hint">백만원 (영업이익 + 감가상각비)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">순차입금</label>
+                    <input type="text" class="form-input" id="net-debt" placeholder="15,000">
+                    <span class="form-hint">백만원 (총차입금 - 현금성자산)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPARABLE COMPANIES -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128101;</span>
+                유사기업 (Peer Group)
+            </h2>
+            <div class="comparable-table-container">
+                <table class="comparable-table" id="peer-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 180px;">기업명</th>
+                            <th>시가총액<br>(백만원)</th>
+                            <th>PER<br>(배)</th>
+                            <th>PBR<br>(배)</th>
+                            <th>PSR<br>(배)</th>
+                            <th>EV/EBITDA<br>(배)</th>
+                            <th>EV/Sales<br>(배)</th>
+                            <th style="width: 60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="peer-tbody">
+                        <tr>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                            <td><input type="text" placeholder="0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                        </tr>
+                        <tr>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                            <td><input type="text" placeholder="0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                        </tr>
+                        <tr>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                            <td><input type="text" placeholder="0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><input type="text" placeholder="0.0"></td>
+                            <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: var(--deep-blue-pale); font-weight: 600;">
+                            <td>평균</td>
+                            <td id="avg-marketcap">-</td>
+                            <td id="avg-per">-</td>
+                            <td id="avg-pbr">-</td>
+                            <td id="avg-psr">-</td>
+                            <td id="avg-ev-ebitda">-</td>
+                            <td id="avg-ev-sales">-</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <button class="btn-add-company" onclick="addCompanyRow()">
+                <span>+</span> 유사기업 추가
+            </button>
+        </section>
+
+        <!-- MULTIPLE SELECTION -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="icon">&#128202;</span>
+                적용 멀티플 선택 및 가중치
+            </h2>
+            <div class="multiple-grid">
+                <div class="multiple-card selected" onclick="toggleMultiple(this)">
+                    <input type="checkbox" id="check-per" checked>
+                    <div class="multiple-name">PER</div>
+                    <div class="multiple-desc">주가수익비율</div>
+                    <div class="multiple-value" id="display-per">-</div>
+                </div>
+                <div class="multiple-card selected" onclick="toggleMultiple(this)">
+                    <input type="checkbox" id="check-pbr" checked>
+                    <div class="multiple-name">PBR</div>
+                    <div class="multiple-desc">주가순자산비율</div>
+                    <div class="multiple-value" id="display-pbr">-</div>
+                </div>
+                <div class="multiple-card" onclick="toggleMultiple(this)">
+                    <input type="checkbox" id="check-psr">
+                    <div class="multiple-name">PSR</div>
+                    <div class="multiple-desc">주가매출비율</div>
+                    <div class="multiple-value" id="display-psr">-</div>
+                </div>
+                <div class="multiple-card selected" onclick="toggleMultiple(this)">
+                    <input type="checkbox" id="check-ev-ebitda" checked>
+                    <div class="multiple-name">EV/EBITDA</div>
+                    <div class="multiple-desc">기업가치/EBITDA</div>
+                    <div class="multiple-value" id="display-ev-ebitda">-</div>
+                </div>
+                <div class="multiple-card" onclick="toggleMultiple(this)">
+                    <input type="checkbox" id="check-ev-sales">
+                    <div class="multiple-name">EV/Sales</div>
+                    <div class="multiple-desc">기업가치/매출</div>
+                    <div class="multiple-value" id="display-ev-sales">-</div>
+                </div>
+            </div>
+
+            <div class="weight-section">
+                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">멀티플별 가중치 설정</h4>
+                <div class="weight-grid">
+                    <div class="weight-item">
+                        <div class="weight-label">PER</div>
+                        <input type="number" class="weight-input" id="weight-per" value="40" min="0" max="100">
+                        <span class="form-hint">%</span>
+                    </div>
+                    <div class="weight-item">
+                        <div class="weight-label">PBR</div>
+                        <input type="number" class="weight-input" id="weight-pbr" value="30" min="0" max="100">
+                        <span class="form-hint">%</span>
+                    </div>
+                    <div class="weight-item">
+                        <div class="weight-label">PSR</div>
+                        <input type="number" class="weight-input" id="weight-psr" value="0" min="0" max="100">
+                        <span class="form-hint">%</span>
+                    </div>
+                    <div class="weight-item">
+                        <div class="weight-label">EV/EBITDA</div>
+                        <input type="number" class="weight-input" id="weight-ev-ebitda" value="30" min="0" max="100">
+                        <span class="form-hint">%</span>
+                    </div>
+                    <div class="weight-item">
+                        <div class="weight-label">EV/Sales</div>
+                        <input type="number" class="weight-input" id="weight-ev-sales" value="0" min="0" max="100">
+                        <span class="form-hint">%</span>
+                    </div>
+                </div>
+                <div class="weight-total">
+                    가중치 합계: <span id="weight-total">100</span>% (100%가 되어야 합니다)
+                </div>
+            </div>
+        </section>
+
+        <!-- CALCULATE -->
+        <button class="btn-calculate" onclick="calculateValuation()">기업가치 산정하기</button>
+
+        <!-- RESULT -->
+        <section class="result-section" id="result-section" style="display: none;">
+            <h2 class="result-title">
+                <span>&#127919;</span>
+                상대가치 평가 결과
+            </h2>
+            <div class="result-grid">
+                <div class="result-card">
+                    <div class="result-label">PER 기준 주당가치</div>
+                    <div class="result-value" id="result-per-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">PBR 기준 주당가치</div>
+                    <div class="result-value" id="result-pbr-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">PSR 기준 주당가치</div>
+                    <div class="result-value" id="result-psr-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">EV/EBITDA 기준 주당가치</div>
+                    <div class="result-value" id="result-ev-ebitda-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">EV/Sales 기준 주당가치</div>
+                    <div class="result-value" id="result-ev-sales-value">-</div>
+                    <div class="result-unit">원</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-label">시가총액 (가중평균)</div>
+                    <div class="result-value" id="result-market-cap">-</div>
+                    <div class="result-unit">백만원</div>
+                </div>
+            </div>
+            <div class="result-final">
+                <div class="result-label">가중평균 주당가치</div>
+                <div class="result-value" id="result-final-value">-</div>
+                <div class="result-unit">원</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // Add company row
+        function addCompanyRow() {
+            const tbody = document.getElementById('peer-tbody');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
+                <td><input type="text" placeholder="0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><input type="text" placeholder="0.0"></td>
+                <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+            `;
+            tbody.appendChild(newRow);
+            addInputListeners();
+        }
+
+        // Remove row
+        function removeRow(btn) {
+            const tbody = document.getElementById('peer-tbody');
+            if (tbody.rows.length > 1) {
+                btn.closest('tr').remove();
+                calculateAverages();
+            }
+        }
+
+        // Toggle multiple selection
+        function toggleMultiple(card) {
+            const checkbox = card.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            card.classList.toggle('selected', checkbox.checked);
+            updateWeights();
+        }
+
+        // Update weights based on selection
+        function updateWeights() {
+            const weightInputs = [
+                { id: 'weight-per', checkId: 'check-per' },
+                { id: 'weight-pbr', checkId: 'check-pbr' },
+                { id: 'weight-psr', checkId: 'check-psr' },
+                { id: 'weight-ev-ebitda', checkId: 'check-ev-ebitda' },
+                { id: 'weight-ev-sales', checkId: 'check-ev-sales' }
+            ];
+
+            weightInputs.forEach(item => {
+                const checkbox = document.getElementById(item.checkId);
+                const input = document.getElementById(item.id);
+                input.disabled = !checkbox.checked;
+                if (!checkbox.checked) {
+                    input.value = 0;
+                }
+            });
+
+            calculateWeightTotal();
+        }
+
+        // Calculate weight total
+        function calculateWeightTotal() {
+            const weights = [
+                parseFloat(document.getElementById('weight-per').value) || 0,
+                parseFloat(document.getElementById('weight-pbr').value) || 0,
+                parseFloat(document.getElementById('weight-psr').value) || 0,
+                parseFloat(document.getElementById('weight-ev-ebitda').value) || 0,
+                parseFloat(document.getElementById('weight-ev-sales').value) || 0
+            ];
+            const total = weights.reduce((a, b) => a + b, 0);
+            document.getElementById('weight-total').textContent = total;
+            document.getElementById('weight-total').style.color = total === 100 ? '#10B981' : '#EF4444';
+        }
+
+        // Calculate averages
+        function calculateAverages() {
+            const tbody = document.getElementById('peer-tbody');
+            const rows = tbody.rows;
+
+            let totals = { marketcap: 0, per: 0, pbr: 0, psr: 0, evEbitda: 0, evSales: 0 };
+            let counts = { marketcap: 0, per: 0, pbr: 0, psr: 0, evEbitda: 0, evSales: 0 };
+
+            for (let row of rows) {
+                const inputs = row.querySelectorAll('input');
+                const values = Array.from(inputs).slice(1, 7).map(input => parseFloat(input.value.replace(/,/g, '')) || 0);
+
+                if (values[0] > 0) { totals.marketcap += values[0]; counts.marketcap++; }
+                if (values[1] > 0) { totals.per += values[1]; counts.per++; }
+                if (values[2] > 0) { totals.pbr += values[2]; counts.pbr++; }
+                if (values[3] > 0) { totals.psr += values[3]; counts.psr++; }
+                if (values[4] > 0) { totals.evEbitda += values[4]; counts.evEbitda++; }
+                if (values[5] > 0) { totals.evSales += values[5]; counts.evSales++; }
+            }
+
+            const avgPer = counts.per > 0 ? (totals.per / counts.per).toFixed(1) : '-';
+            const avgPbr = counts.pbr > 0 ? (totals.pbr / counts.pbr).toFixed(1) : '-';
+            const avgPsr = counts.psr > 0 ? (totals.psr / counts.psr).toFixed(1) : '-';
+            const avgEvEbitda = counts.evEbitda > 0 ? (totals.evEbitda / counts.evEbitda).toFixed(1) : '-';
+            const avgEvSales = counts.evSales > 0 ? (totals.evSales / counts.evSales).toFixed(1) : '-';
+            const avgMarketcap = counts.marketcap > 0 ? formatNumber(Math.round(totals.marketcap / counts.marketcap)) : '-';
+
+            document.getElementById('avg-marketcap').textContent = avgMarketcap;
+            document.getElementById('avg-per').textContent = avgPer;
+            document.getElementById('avg-pbr').textContent = avgPbr;
+            document.getElementById('avg-psr').textContent = avgPsr;
+            document.getElementById('avg-ev-ebitda').textContent = avgEvEbitda;
+            document.getElementById('avg-ev-sales').textContent = avgEvSales;
+
+            // Update display values
+            document.getElementById('display-per').textContent = avgPer !== '-' ? avgPer + 'x' : '-';
+            document.getElementById('display-pbr').textContent = avgPbr !== '-' ? avgPbr + 'x' : '-';
+            document.getElementById('display-psr').textContent = avgPsr !== '-' ? avgPsr + 'x' : '-';
+            document.getElementById('display-ev-ebitda').textContent = avgEvEbitda !== '-' ? avgEvEbitda + 'x' : '-';
+            document.getElementById('display-ev-sales').textContent = avgEvSales !== '-' ? avgEvSales + 'x' : '-';
+        }
+
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Parse number (remove commas)
+        function parseNumber(str) {
+            return parseFloat(str.replace(/,/g, '')) || 0;
+        }
+
+        // Calculate valuation
+        function calculateValuation() {
+            // Get target company data
+            const shares = parseNumber(document.getElementById('shares-outstanding').value);
+            const netIncome = parseNumber(document.getElementById('net-income').value);
+            const equity = parseNumber(document.getElementById('equity').value);
+            const revenue = parseNumber(document.getElementById('revenue').value);
+            const ebitda = parseNumber(document.getElementById('ebitda').value);
+            const netDebt = parseNumber(document.getElementById('net-debt').value);
+
+            // Get average multiples
+            const avgPer = parseFloat(document.getElementById('avg-per').textContent) || 0;
+            const avgPbr = parseFloat(document.getElementById('avg-pbr').textContent) || 0;
+            const avgPsr = parseFloat(document.getElementById('avg-psr').textContent) || 0;
+            const avgEvEbitda = parseFloat(document.getElementById('avg-ev-ebitda').textContent) || 0;
+            const avgEvSales = parseFloat(document.getElementById('avg-ev-sales').textContent) || 0;
+
+            // Get weights
+            const weightPer = parseFloat(document.getElementById('weight-per').value) / 100 || 0;
+            const weightPbr = parseFloat(document.getElementById('weight-pbr').value) / 100 || 0;
+            const weightPsr = parseFloat(document.getElementById('weight-psr').value) / 100 || 0;
+            const weightEvEbitda = parseFloat(document.getElementById('weight-ev-ebitda').value) / 100 || 0;
+            const weightEvSales = parseFloat(document.getElementById('weight-ev-sales').value) / 100 || 0;
+
+            // Validate
+            const weightTotal = weightPer + weightPbr + weightPsr + weightEvEbitda + weightEvSales;
+            if (Math.abs(weightTotal - 1) > 0.01) {
+                alert('가중치 합계가 100%가 되어야 합니다.');
+                return;
+            }
+
+            if (shares <= 0) {
+                alert('발행주식수를 입력해 주세요.');
+                return;
+            }
+
+            // Calculate equity values (Market Cap)
+            // PER method: Market Cap = Net Income x PER
+            const mcPer = netIncome * avgPer;
+            const perPerShare = shares > 0 ? Math.round(mcPer * 1000000 / shares) : 0;
+
+            // PBR method: Market Cap = Equity x PBR
+            const mcPbr = equity * avgPbr;
+            const pbrPerShare = shares > 0 ? Math.round(mcPbr * 1000000 / shares) : 0;
+
+            // PSR method: Market Cap = Revenue x PSR
+            const mcPsr = revenue * avgPsr;
+            const psrPerShare = shares > 0 ? Math.round(mcPsr * 1000000 / shares) : 0;
+
+            // EV/EBITDA method: EV = EBITDA x Multiple, Market Cap = EV - Net Debt
+            const evEbitda = ebitda * avgEvEbitda;
+            const mcEvEbitda = evEbitda - netDebt;
+            const evEbitdaPerShare = shares > 0 ? Math.round(mcEvEbitda * 1000000 / shares) : 0;
+
+            // EV/Sales method: EV = Revenue x Multiple, Market Cap = EV - Net Debt
+            const evSales = revenue * avgEvSales;
+            const mcEvSales = evSales - netDebt;
+            const evSalesPerShare = shares > 0 ? Math.round(mcEvSales * 1000000 / shares) : 0;
+
+            // Weighted average
+            const weightedPerShare =
+                perPerShare * weightPer +
+                pbrPerShare * weightPbr +
+                psrPerShare * weightPsr +
+                evEbitdaPerShare * weightEvEbitda +
+                evSalesPerShare * weightEvSales;
+
+            const weightedMarketCap =
+                mcPer * weightPer +
+                mcPbr * weightPbr +
+                mcPsr * weightPsr +
+                mcEvEbitda * weightEvEbitda +
+                mcEvSales * weightEvSales;
+
+            // Display results
+            document.getElementById('result-per-value').textContent = avgPer > 0 ? formatNumber(perPerShare) : '-';
+            document.getElementById('result-pbr-value').textContent = avgPbr > 0 ? formatNumber(pbrPerShare) : '-';
+            document.getElementById('result-psr-value').textContent = avgPsr > 0 ? formatNumber(psrPerShare) : '-';
+            document.getElementById('result-ev-ebitda-value').textContent = avgEvEbitda > 0 ? formatNumber(evEbitdaPerShare) : '-';
+            document.getElementById('result-ev-sales-value').textContent = avgEvSales > 0 ? formatNumber(evSalesPerShare) : '-';
+            document.getElementById('result-market-cap').textContent = formatNumber(Math.round(weightedMarketCap));
+            document.getElementById('result-final-value').textContent = formatNumber(Math.round(weightedPerShare));
+
+            document.getElementById('result-section').style.display = 'block';
+            document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add input listeners for real-time average calculation
+        function addInputListeners() {
+            document.querySelectorAll('#peer-tbody input').forEach(input => {
+                input.addEventListener('input', calculateAverages);
+            });
+        }
+
+        // Weight input listeners
+        document.querySelectorAll('.weight-input').forEach(input => {
+            input.addEventListener('input', calculateWeightTotal);
+        });
+
+        // Initialize
+        addInputListeners();
+        updateWeights();
+    </script>
+</body>
+</html>

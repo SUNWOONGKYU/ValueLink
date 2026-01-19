@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        .card {
+            width: 800px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 48px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+        }
+        .domain {
+            font-size: 20px;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-top: 12px;
+        }
+        .ai-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+        .ai-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 12px;
+        }
+        .ai-logos {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        .ai-item {
+            text-align: center;
+        }
+        .ai-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .ai-role {
+            font-size: 12px;
+            color: #666;
+        }
+        .methods-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .method-card {
+            background: white;
+            border: 2px solid #e4e8ec;
+            border-radius: 12px;
+            padding: 16px 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .method-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        .method-num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            margin: 0 auto 8px;
+        }
+        .method-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+        .method-use {
+            font-size: 10px;
+            color: #666;
+            line-height: 1.4;
+        }
+        .output-section {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+        .output-title {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .output-items {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        .output-item {
+            color: white;
+            text-align: center;
+        }
+        .output-icon {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+        .output-name {
+            font-size: 14px;
+        }
+        .timeline {
+            text-align: center;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <div class="badge">NEW PROJECT</div>
+            <div class="title">AI 기반 기업가치평가 서비스 플랫폼</div>
+            <div class="domain">valuation.ai.kr</div>
+            <div class="subtitle">평가 + 랭킹 + 투자자 매칭 양면 플랫폼</div>
+        </div>
+
+        <div class="ai-section">
+            <div class="ai-title">AI Engine</div>
+            <div class="ai-logos">
+                <div class="ai-item">
+                    <div class="ai-name">Claude</div>
+                    <div class="ai-role">핵심 계산 로직</div>
+                </div>
+                <div class="ai-item">
+                    <div class="ai-name">Gemini</div>
+                    <div class="ai-role">대용량 분석</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="methods-title">5가지 평가 방법</div>
+        <div class="methods-grid">
+            <div class="method-card">
+                <div class="method-num">1</div>
+                <div class="method-name">DCF</div>
+                <div class="method-use">투자유치 / M&A</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">2</div>
+                <div class="method-name">상대가치</div>
+                <div class="method-use">시장 비교 평가</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">3</div>
+                <div class="method-name">IPO</div>
+                <div class="method-use">상장 / 공모가</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">4</div>
+                <div class="method-name">자산가치</div>
+                <div class="method-use">지주회사 / 자산형</div>
+            </div>
+            <div class="method-card">
+                <div class="method-num">5</div>
+                <div class="method-name">상증법</div>
+                <div class="method-use">가업승계 / 증여</div>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <div class="output-title">결과물</div>
+            <div class="output-items">
+                <div class="output-item">
+                    <div class="output-icon">📄</div>
+                    <div class="output-name">PDF 보고서</div>
+                </div>
+                <div class="output-item">
+                    <div class="output-icon">📊</div>
+                    <div class="output-name">Excel 계산 파일</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            2주 내 프로덕션 레벨 완성 예정
+        </div>
+    </div>
+</body>
+</html>

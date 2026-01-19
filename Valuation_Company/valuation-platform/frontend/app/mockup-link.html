@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link - 기업가치 평가액 순위 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --amber-dark: #B45309;
+            --amber-pale: #FEF3C7;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 48px; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); }
+        .nav-item.valuation:hover { background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); background: var(--amber-pale); }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: var(--amber-pale); }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .btn-login {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .btn-signup {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        /* HERO - Link Theme (Amber) */
+        .hero {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            padding: 60px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* 순위 테이블 */
+        .ranking-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #E5E7EB;
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab.active {
+            background: var(--amber);
+            color: var(--white);
+            border-color: var(--amber);
+        }
+
+        .ranking-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .ranking-table th {
+            text-align: left;
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .ranking-table td {
+            padding: 20px 16px;
+            font-size: 15px;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .ranking-table tr:hover {
+            background: #FEFCE8;
+            cursor: pointer;
+        }
+
+        .rank-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .rank-1 { background: #FEF3C7; color: #B45309; }
+        .rank-2 { background: #F3F4F6; color: #374151; }
+        .rank-3 { background: #FED7AA; color: #9A3412; }
+        .rank-other { background: #F9FAFB; color: #6B7280; }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .company-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .company-industry {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .valuation-amount {
+            font-weight: 700;
+            color: var(--amber-dark);
+        }
+
+        .stage-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 12px;
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+        }
+
+        /* 서비스 카드 */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            border-color: var(--amber);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(245, 158, 11, 0.15);
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--amber-pale);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .service-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .service-card p {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .service-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: var(--amber-pale);
+            color: var(--amber-dark);
+            border-radius: 6px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-login">로그인</button>
+            <button class="btn-signup">회원가입</button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">LINK</div>
+        <h1>기업가치 평가액 순위</h1>
+        <p>평가된 기업들의 순위를 확인하고 투자자와 연결합니다</p>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- 순위 테이블 -->
+        <div class="ranking-section">
+            <div class="section-header">
+                <h2>🏆 기업가치 TOP 10</h2>
+                <div class="filter-tabs">
+                    <button class="filter-tab active">전체</button>
+                    <button class="filter-tab">IT/소프트웨어</button>
+                    <button class="filter-tab">바이오/헬스케어</button>
+                    <button class="filter-tab">핀테크</button>
+                </div>
+            </div>
+
+            <table class="ranking-table">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">순위</th>
+                        <th>기업명</th>
+                        <th style="width: 180px;">기업가치</th>
+                        <th style="width: 120px;">투자 단계</th>
+                        <th style="width: 120px;">평가일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="rank-number rank-1">1</div></td>
+                        <td>
+                            <div class="company-info">
+                                <div class="company-logo">🚀</div>
+                                <div>
+                                    <div class="company-name">테크스타트업 A</div>
+                                    <div class="company-industry">AI/머신러닝</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="valuation-amount">1,250억원</td>
+                        <td><span class="stage-badge">시리즈B</span></td>
+                        <td>2026.01.15</td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-number rank-2">2</div></td>
+                        <td>
+                            <div class="company-info">
+                                <div class="company-logo">💊</div>
+                                <div>
+                                    <div class="company-name">바이오텍 B</div>
+                                    <div class="company-industry">바이오/헬스케어</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="valuation-amount">980억원</td>
+                        <td><span class="stage-badge">시리즈A</span></td>
+                        <td>2026.01.12</td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-number rank-3">3</div></td>
+                        <td>
+                            <div class="company-info">
+                                <div class="company-logo">💳</div>
+                                <div>
+                                    <div class="company-name">핀테크 C</div>
+                                    <div class="company-industry">핀테크</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="valuation-amount">720억원</td>
+                        <td><span class="stage-badge">시리즈A</span></td>
+                        <td>2026.01.10</td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-number rank-other">4</div></td>
+                        <td>
+                            <div class="company-info">
+                                <div class="company-logo">🛒</div>
+                                <div>
+                                    <div class="company-name">이커머스 D</div>
+                                    <div class="company-industry">이커머스</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="valuation-amount">580억원</td>
+                        <td><span class="stage-badge">시드</span></td>
+                        <td>2026.01.08</td>
+                    </tr>
+                    <tr>
+                        <td><div class="rank-number rank-other">5</div></td>
+                        <td>
+                            <div class="company-info">
+                                <div class="company-logo">🎮</div>
+                                <div>
+                                    <div class="company-name">게임테크 E</div>
+                                    <div class="company-industry">게임/엔터테인먼트</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="valuation-amount">450억원</td>
+                        <td><span class="stage-badge">프리A</span></td>
+                        <td>2026.01.05</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 서비스 카드 -->
+        <div class="service-grid">
+            <div class="service-card">
+                <div class="service-icon">🤖</div>
+                <h3>AI IR 매니저</h3>
+                <p>
+                    AI가 자동으로 투자자 IR을 준비하고<br>
+                    맞춤형 투자 제안서를 생성합니다.
+                </p>
+                <span class="service-tag">Coming Soon</span>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">🤝</div>
+                <h3>투자자 매칭</h3>
+                <p>
+                    기업가치와 업종에 맞는 최적의<br>
+                    투자자를 매칭해드립니다.
+                </p>
+                <span class="service-tag">Coming Soon</span>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>

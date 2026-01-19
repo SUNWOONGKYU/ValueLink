@@ -1,0 +1,274 @@
+"""
+News Parser Service (Gemini)
+AI 기반 뉴스 파싱 및 데이터 추출
+
+@task Investment Tracker
+@description Gemini를 사용하여 투자 뉴스에서 구조화된 데이터 추출
+"""
+import json
+import logging
+from typing import Dict, Any, Optional, List
+from dataclasses import dataclass
+from datetime import datetime
+
+import google.generativeai as genai
+
+from app.core.config import settings
+from app.services.news_crawler.base_crawler import CrawledNews
+
+logger = logging.getLogger(__name__)
+
+
+@dataclass
+class ExtractedInvestmentData:
+    """AI로 추출한 투자 데이터"""
+    company_name_ko: str
+    company_name_en: Optional[str] = None
+    industry: Optional[str] = None
+    sub_industry: Optional[str] = None
+    investment_amount_krw: Optional[float] = None  # 억원 단위
+    valuation_pre_krw: Optional[float] = None      # 억원 단위
+    valuation_post_krw: Optional[float] = None     # 억원 단위
+    investment_stage: Optional[str] = None
+    lead_investor: Optional[str] = None
+    investors: Optional[List[Dict[str, str]]] = None
+    summary: Optional[str] = None
+    confidence_score: float = 0.0  # AI 추출 신뢰도
+
+
+class NewsParser:
+    """
+    Gemini 기반 뉴스 파싱 서비스
+    투자 뉴스에서 구조화된 데이터 추출
+    """
+
+    # 투자 단계 매핑
+    STAGE_MAPPING = {
+        "시드": "seed",
+        "seed": "seed",
+        "프리A": "pre_a",
+        "프리 A": "pre_a",
+        "pre-a": "pre_a",
+        "pre a": "pre_a",
+        "시리즈A": "series_a",
+        "시리즈 A": "series_a",
+        "series a": "series_a",
+        "시리즈B": "series_b",
+        "시리즈 B": "series_b",
+        "series b": "series_b",
+        "시리즈C": "series_c",
+        "시리즈 C": "series_c",
+        "series c": "series_c",
+        "엔젤": "seed",
+        "angel": "seed",
+    }
+
+    def __init__(self):
+        genai.configure(api_key=settings.GOOGLE_API_KEY)
+        self.model = genai.GenerativeModel(
+            'gemini-1.5-pro',
+            generation_config={
+                "temperature": 0.1,  # 낮은 온도로 일관된 추출
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 2048,
+            }
+        )
+
+    async def parse_news(self, news: CrawledNews) -> Optional[ExtractedInvestmentData]:
+        """
+        단일 뉴스 기사에서 투자 정보 추출
+
+        Args:
+            news: 크롤링된 뉴스 객체
+
+        Returns:
+            추출된 투자 데이터 또는 None
+        """
+        prompt = self._build_extraction_prompt(news.title, news.content or "")
+
+        try:
+            response = self.model.generate_content(prompt)
+            extracted = self._parse_response(response.text)
+
+            if extracted and extracted.company_name_ko:
+                logger.info(f"Successfully extracted data for: {extracted.company_name_ko}")
+                return extracted
+            else:
+                logger.warning(f"No company name extracted from: {news.title}")
+                return None
+
+        except Exception as e:
+            logger.error(f"Error parsing news '{news.title}': {e}")
+            return None
+
+    async def parse_batch(
+        self,
+        news_list: List[CrawledNews]
+    ) -> List[Dict[str, Any]]:
+        """
+        여러 뉴스 기사 일괄 파싱
+
+        Args:
+            news_list: 크롤링된 뉴스 목록
+
+        Returns:
+            추출된 데이터와 원본 뉴스 쌍의 목록
+        """
+        results = []
+
+        for news in news_list:
+            extracted = await self.parse_news(news)
+            if extracted:
+                results.append({
+                    "news": news,
+                    "extracted": extracted
+                })
+
+        logger.info(f"Parsed {len(results)}/{len(news_list)} news articles")
+        return results
+
+    def _build_extraction_prompt(self, title: str, content: str) -> str:
+        """
+        데이터 추출을 위한 프롬프트 생성
+
+        Args:
+            title: 뉴스 제목
+            content: 뉴스 본문
+
+        Returns:
+            추출 프롬프트
+        """
+        return f"""다음 스타트업 투자 뉴스에서 정보를 추출하세요.
+
+[뉴스 제목]
+{title}
+
+[뉴스 본문]
+{content[:5000]}
+
+아래 JSON 형식으로 정확히 응답하세요. 확인할 수 없는 정보는 null로 표시하세요.
+
+{{
+    "company_name_ko": "한글 기업명 (필수)",
+    "company_name_en": "영문 기업명 또는 null",
+    "industry": "업종/분야 (IT, 바이오, 핀테크, 이커머스, 에듀테크, 헬스케어, 푸드테크, 모빌리티 등)",
+    "sub_industry": "세부 분야 또는 null",
+    "investment_amount_krw": 투자금액(억원, 숫자만),
+    "valuation_pre_krw": Pre-money 밸류에이션(억원, 숫자만) 또는 null,
+    "valuation_post_krw": Post-money 밸류에이션(억원, 숫자만) 또는 null,
+    "investment_stage": "시드/프리A/시리즈A/시리즈B/시리즈C 중 하나",
+    "lead_investor": "리드 투자자 또는 null",
+    "investors": [
+        {{"name": "투자자명", "type": "VC/엔젤/CVC/기타"}}
+    ],
+    "summary": "2-3문장 요약",
+    "confidence_score": 추출 신뢰도(0.0~1.0)
+}}
+
+중요:
+1. 금액은 억원 단위 숫자만 (예: 100억원 -> 100)
+2. 기업명은 정확하게 (주식회사, (주) 제외)
+3. 투자 단계는 명시된 것만 기입
+4. 투자자가 여러 명이면 모두 나열
+5. 확실하지 않으면 confidence_score를 낮게"""
+
+    def _parse_response(self, response_text: str) -> Optional[ExtractedInvestmentData]:
+        """
+        AI 응답을 파싱하여 데이터 객체로 변환
+
+        Args:
+            response_text: AI 응답 텍스트
+
+        Returns:
+            ExtractedInvestmentData 객체 또는 None
+        """
+        try:
+            # JSON 추출 (마크다운 코드 블록 처리)
+            json_str = response_text
+            if "```json" in json_str:
+                json_str = json_str.split("```json")[1].split("```")[0]
+            elif "```" in json_str:
+                json_str = json_str.split("```")[1].split("```")[0]
+
+            data = json.loads(json_str.strip())
+
+            # 투자 단계 정규화
+            stage = data.get("investment_stage")
+            if stage:
+                stage = self.STAGE_MAPPING.get(stage.lower(), stage)
+
+            return ExtractedInvestmentData(
+                company_name_ko=data.get("company_name_ko", ""),
+                company_name_en=data.get("company_name_en"),
+                industry=data.get("industry"),
+                sub_industry=data.get("sub_industry"),
+                investment_amount_krw=self._parse_amount(data.get("investment_amount_krw")),
+                valuation_pre_krw=self._parse_amount(data.get("valuation_pre_krw")),
+                valuation_post_krw=self._parse_amount(data.get("valuation_post_krw")),
+                investment_stage=stage,
+                lead_investor=data.get("lead_investor"),
+                investors=data.get("investors"),
+                summary=data.get("summary"),
+                confidence_score=float(data.get("confidence_score", 0.0))
+            )
+
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON parse error: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Error parsing response: {e}")
+            return None
+
+    def _parse_amount(self, value: Any) -> Optional[float]:
+        """
+        금액 값 파싱 (다양한 형식 처리)
+
+        Args:
+            value: 원본 값
+
+        Returns:
+            float 또는 None
+        """
+        if value is None:
+            return None
+
+        if isinstance(value, (int, float)):
+            return float(value)
+
+        if isinstance(value, str):
+            # 숫자만 추출
+            import re
+            numbers = re.findall(r'[\d.]+', value.replace(',', ''))
+            if numbers:
+                return float(numbers[0])
+
+        return None
+
+    async def generate_summary(self, news: CrawledNews) -> Optional[str]:
+        """
+        뉴스 요약 생성 (별도 메서드)
+
+        Args:
+            news: 크롤링된 뉴스
+
+        Returns:
+            요약 문자열
+        """
+        prompt = f"""다음 뉴스를 3문장 이내로 요약하세요. 핵심 정보(기업명, 투자금액, 투자자)를 포함하세요.
+
+제목: {news.title}
+내용: {news.content[:3000] if news.content else ''}
+
+요약:"""
+
+        try:
+            response = self.model.generate_content(prompt)
+            return response.text.strip()
+        except Exception as e:
+            logger.error(f"Error generating summary: {e}")
+            return None
+
+
+# 전역 인스턴스
+news_parser = NewsParser()

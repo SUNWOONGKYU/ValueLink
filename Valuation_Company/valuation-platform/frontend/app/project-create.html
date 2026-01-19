@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신규 프로젝트 생성 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-pale: #D1FAE5;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .breadcrumb a {
+            color: var(--deep-blue);
+            text-decoration: none;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        /* FORM */
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .form-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #EF4444;
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px var(--deep-blue-pale);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 평가방법 선택 */
+        .method-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .method-option {
+            position: relative;
+        }
+
+        .method-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .method-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .method-option label:hover {
+            border-color: var(--deep-blue-light);
+        }
+
+        .method-option input:checked + label {
+            border-color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+        }
+
+        .method-option .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .method-option .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .method-option .code {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* 프로젝트 번호 미리보기 */
+        .project-id-preview {
+            background: var(--deep-blue);
+            border-radius: 12px;
+            padding: 24px;
+            color: var(--white);
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .project-id-preview label {
+            display: block;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .project-id-preview .id {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+            letter-spacing: 1px;
+        }
+
+        .project-id-preview .hint {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 12px;
+        }
+
+        /* 버튼 */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #1E40AF;
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* 성공 모달 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .modal .project-id {
+            background: var(--bg-light);
+            padding: 16px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            margin-bottom: 24px;
+        }
+
+        .modal .btn-group {
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <div class="breadcrumb">
+                <a href="project-dashboard.html">프로젝트 관리</a>
+                <span>›</span>
+                <span>신규 생성</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <div class="page-title">
+            <h1>신규 프로젝트 생성</h1>
+            <p>기업가치 평가 프로젝트를 생성합니다</p>
+        </div>
+
+        <!-- 프로젝트 번호 미리보기 -->
+        <div class="project-id-preview">
+            <label>프로젝트 관리번호</label>
+            <div class="id" id="projectIdPreview">XXXXX-0000000000-XX</div>
+            <div class="hint">회사명과 평가방법 입력 시 자동 생성됩니다</div>
+        </div>
+
+        <!-- 고객사 정보 -->
+        <div class="form-card">
+            <h2>고객사 정보</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>회사명 (국문) <span class="required">*</span></label>
+                    <input type="text" id="companyNameKr" placeholder="예: 삼성전자" oninput="updateProjectId()">
+                </div>
+                <div class="form-group">
+                    <label>회사명 (영문) <span class="required">*</span></label>
+                    <input type="text" id="companyNameEn" placeholder="예: Samsung Electronics" oninput="updateProjectId()">
+                    <div class="hint">영문명이 없으면 한글 발음을 로마자로 입력</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>사업자등록번호 <span class="required">*</span></label>
+                    <input type="text" id="bizNumber" placeholder="000-00-00000">
+                </div>
+                <div class="form-group">
+                    <label>대표자명 <span class="required">*</span></label>
+                    <input type="text" id="ceoName" placeholder="대표이사 성명">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>업종</label>
+                    <input type="text" id="industry" placeholder="예: 소프트웨어 개발업">
+                </div>
+                <div class="form-group">
+                    <label>설립일</label>
+                    <input type="date" id="foundedDate">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>담당자 연락처</label>
+                <div class="form-row">
+                    <input type="text" id="contactName" placeholder="담당자 성명">
+                    <input type="email" id="contactEmail" placeholder="이메일 주소">
+                </div>
+            </div>
+        </div>
+
+        <!-- 평가 정보 -->
+        <div class="form-card">
+            <h2>평가 정보</h2>
+
+            <div class="form-group">
+                <label>평가 방법 <span class="required">*</span></label>
+                <div class="method-selector">
+                    <div class="method-option">
+                        <input type="radio" name="method" id="methodDC" value="DC" onchange="updateProjectId()">
+                        <label for="methodDC">
+                            <span class="icon">📈</span>
+                            <span class="name">DCF</span>
+                            <span class="code">DC</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="radio" name="method" id="methodRV" value="RV" onchange="updateProjectId()">
+                        <label for="methodRV">
+                            <span class="icon">📊</span>
+                            <span class="name">상대가치</span>
+                            <span class="code">RV</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="radio" name="method" id="methodIP" value="IP" onchange="updateProjectId()">
+                        <label for="methodIP">
+                            <span class="icon">🚀</span>
+                            <span class="name">IPO</span>
+                            <span class="code">IP</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="radio" name="method" id="methodAV" value="AV" onchange="updateProjectId()">
+                        <label for="methodAV">
+                            <span class="icon">🏢</span>
+                            <span class="name">자산가치</span>
+                            <span class="code">AV</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="radio" name="method" id="methodTX" value="TX" onchange="updateProjectId()">
+                        <label for="methodTX">
+                            <span class="icon">📜</span>
+                            <span class="name">상증법</span>
+                            <span class="code">TX</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>평가 기준일 <span class="required">*</span></label>
+                    <input type="date" id="valuationDate" value="2025-01-01">
+                </div>
+                <div class="form-group">
+                    <label>평가 목적</label>
+                    <select id="purpose">
+                        <option value="">선택하세요</option>
+                        <option value="investment">투자 유치</option>
+                        <option value="ma">M&A</option>
+                        <option value="tax">세무 신고 (상속/증여)</option>
+                        <option value="ipo">기업공개 (IPO)</option>
+                        <option value="internal">내부 의사결정</option>
+                        <option value="litigation">소송/분쟁</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>평가 요청 사항</label>
+                <textarea id="requirements" placeholder="특별히 고려해야 할 사항이나 요청 사항을 입력해주세요"></textarea>
+            </div>
+        </div>
+
+        <!-- 담당자 배정 -->
+        <div class="form-card">
+            <h2>담당자 배정</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>담당 회계사 <span class="required">*</span></label>
+                    <select id="assignedAccountant">
+                        <option value="">선택하세요</option>
+                        <option value="kim">김철수 회계사</option>
+                        <option value="lee">이영희 회계사</option>
+                        <option value="park">박민수 회계사</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>검토자</label>
+                    <select id="reviewer">
+                        <option value="">선택하세요</option>
+                        <option value="choi">최상무 이사</option>
+                        <option value="jung">정부장 상무</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="history.back()">취소</button>
+            <button class="btn btn-primary" onclick="createProject()">프로젝트 생성</button>
+        </div>
+    </main>
+
+    <!-- 성공 모달 -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="success-icon">✓</div>
+            <h2>프로젝트가 생성되었습니다</h2>
+            <p>고객에게 자료 제출 안내 메일이 발송됩니다</p>
+            <div class="project-id" id="modalProjectId">SAMSU-2501191430-DC</div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="location.href='project-dashboard.html'">목록으로</button>
+                <button class="btn btn-primary" onclick="location.href='project-detail.html'">프로젝트 보기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 영문명에서 5글자 코드 추출
+        function getCompanyCode(englishName) {
+            if (!englishName) return 'XXXXX';
+
+            // 공백, 특수문자 제거하고 대문자로
+            const cleaned = englishName.replace(/[^a-zA-Z]/g, '').toUpperCase();
+
+            if (cleaned.length >= 5) {
+                return cleaned.substring(0, 5);
+            } else {
+                // 5자 미만이면 X로 채움
+                return cleaned.padEnd(5, 'X');
+            }
+        }
+
+        // 현재 시간 코드 생성 (YYMMDDHHmm)
+        function getTimeCode() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            return yy + mm + dd + hh + min;
+        }
+
+        // 선택된 평가방법 코드
+        function getMethodCode() {
+            const selected = document.querySelector('input[name="method"]:checked');
+            return selected ? selected.value : 'XX';
+        }
+
+        // 프로젝트 ID 업데이트
+        function updateProjectId() {
+            const englishName = document.getElementById('companyNameEn').value;
+            const companyCode = getCompanyCode(englishName);
+            const timeCode = getTimeCode();
+            const methodCode = getMethodCode();
+
+            const projectId = `${companyCode}-${timeCode}-${methodCode}`;
+            document.getElementById('projectIdPreview').textContent = projectId;
+        }
+
+        // 프로젝트 생성
+        function createProject() {
+            // 필수 입력 검증
+            const companyNameKr = document.getElementById('companyNameKr').value;
+            const companyNameEn = document.getElementById('companyNameEn').value;
+            const method = document.querySelector('input[name="method"]:checked');
+
+            if (!companyNameKr || !companyNameEn) {
+                alert('회사명을 입력해주세요.');
+                return;
+            }
+
+            if (!method) {
+                alert('평가 방법을 선택해주세요.');
+                return;
+            }
+
+            // 프로젝트 ID 생성
+            const projectId = document.getElementById('projectIdPreview').textContent;
+
+            // 모달에 표시
+            document.getElementById('modalProjectId').textContent = projectId;
+            document.getElementById('successModal').classList.add('show');
+
+            // 실제로는 여기서 API 호출하여 DB에 저장
+            console.log('프로젝트 생성:', {
+                projectId: projectId,
+                companyNameKr: companyNameKr,
+                companyNameEn: companyNameEn,
+                method: method.value,
+                valuationDate: document.getElementById('valuationDate').value,
+                purpose: document.getElementById('purpose').value,
+                assignedAccountant: document.getElementById('assignedAccountant').value
+            });
+        }
+
+        // 1초마다 시간 업데이트
+        setInterval(updateProjectId, 1000);
+
+        // 초기 실행
+        updateProjectId();
+    </script>
+</body>
+</html>

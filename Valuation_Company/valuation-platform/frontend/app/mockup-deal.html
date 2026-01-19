@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal - 투자받은 스타트업 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --amber-dark: #B45309;
+            --amber-pale: #FEF3C7;
+            --deep-blue-pale: #DBEAFE;
+            --deep-green-pale: #DCFCE7;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 48px; }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); }
+        .nav-item.valuation:hover { background: var(--deep-blue-pale); }
+        .nav-item.link { color: var(--amber); }
+        .nav-item.link:hover { background: var(--amber-pale); }
+        .nav-item.deal { color: var(--amber); background: var(--amber-pale); }
+
+        .header-right { display: flex; align-items: center; gap: 12px; }
+
+        .btn-login {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .btn-signup {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        /* HERO - Deal Theme */
+        .hero {
+            background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+            padding: 60px 40px;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        /* STATS */
+        .stats-bar {
+            background: var(--white);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--amber-dark);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* 뉴스 섹션 */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .view-all {
+            font-size: 14px;
+            color: var(--amber);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        /* 뉴스 카드 그리드 */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .news-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+
+        .news-image {
+            height: 140px;
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        /* 뉴스 바로가기 버튼 */
+        .news-link-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: background 0.2s;
+        }
+
+        .news-link-btn:hover {
+            background: rgba(0,0,0,0.8);
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+        .news-meta {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .news-source {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--amber-dark);
+            background: var(--amber-pale);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .news-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .news-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .news-company {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px solid #F3F4F6;
+        }
+
+        .company-badge {
+            width: 36px;
+            height: 36px;
+            background: var(--deep-green-pale);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .company-info {
+            flex: 1;
+        }
+
+        .company-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .company-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 홈페이지 바로가기 */
+        .company-website {
+            font-size: 11px;
+            color: var(--deep-blue);
+            text-decoration: none;
+            padding: 2px 6px;
+            background: var(--deep-blue-pale);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .company-website:hover {
+            background: #BFDBFE;
+        }
+
+        .company-details {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .company-details span {
+            margin-right: 8px;
+        }
+
+        /* 최근 딜 테이블 */
+        .deals-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 32px;
+        }
+
+        .deals-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .deals-table th {
+            text-align: left;
+            padding: 16px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid #E5E7EB;
+            white-space: nowrap;
+        }
+
+        .deals-table td {
+            padding: 16px 12px;
+            font-size: 13px;
+            border-bottom: 1px solid #F3F4F6;
+            vertical-align: middle;
+        }
+
+        .deals-table tr:hover {
+            background: #FEFCE8;
+        }
+
+        .deal-company {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .deal-logo {
+            width: 44px;
+            height: 44px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .deal-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .deal-industry {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .deal-amount {
+            font-weight: 700;
+            color: var(--deep-green);
+        }
+
+        .deal-stage {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        .stage-seed { background: #DCFCE7; color: #166534; }
+        .stage-prea { background: #DBEAFE; color: #1D4ED8; }
+        .stage-a { background: #FEF3C7; color: #B45309; }
+        .stage-b { background: #FCE7F3; color: #BE185D; }
+        .stage-c { background: #E0E7FF; color: #4338CA; }
+
+        .deal-investors {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .deal-region {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .deal-employees {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .deal-links {
+            display: flex;
+            gap: 8px;
+        }
+
+        .link-btn {
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 500;
+            border-radius: 6px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .link-news {
+            background: var(--amber-pale);
+            color: var(--amber-dark);
+        }
+
+        .link-news:hover {
+            background: #FDE68A;
+        }
+
+        .link-website {
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+        }
+
+        .link-website:hover {
+            background: #BFDBFE;
+        }
+
+        .deal-founded {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .deal-total-funding {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        /* 필터 바 */
+        .filter-bar {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            font-size: 13px;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            background: var(--white);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--amber);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-link.html" class="nav-item link">Link</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <button class="btn-login">로그인</button>
+            <button class="btn-signup">회원가입</button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">DEAL</div>
+        <h1>투자받은 스타트업</h1>
+        <p>최신 투자 유치 소식을 추적하고 딜 정보를 확인합니다</p>
+    </section>
+
+    <!-- STATS (2026.01.19 기준 정확한 집계) -->
+    <div class="stats-bar">
+        <div class="stat-item">
+            <div class="stat-value">73</div>
+            <div class="stat-label">수집된 뉴스</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">18</div>
+            <div class="stat-label">투자 유치 건수</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">975.5억</div>
+            <div class="stat-label">파악된 투자 금액</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">13/18</div>
+            <div class="stat-label">금액 파악 기업</div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- 최신 뉴스 -->
+        <div class="section-header">
+            <h2>최신 투자 뉴스</h2>
+            <a href="#" class="view-all">전체보기 →</a>
+        </div>
+
+        <div class="news-grid" id="news-grid">
+            <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6B7280;">
+                데이터 로딩 중...
+            </div>
+        </div>
+
+        <!-- 최근 딜 -->
+        <div class="deals-section">
+            <div class="section-header">
+                <h2>최근 투자 딜</h2>
+                <a href="#" class="view-all">전체보기 →</a>
+            </div>
+
+            <!-- 필터 -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">업종</span>
+                    <select class="filter-select">
+                        <option value="">전체</option>
+                        <option>AI/머신러닝</option>
+                        <option>바이오/헬스케어</option>
+                        <option>핀테크</option>
+                        <option>이커머스</option>
+                        <option>게임/엔터</option>
+                        <option>SaaS/B2B</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">투자 단계</span>
+                    <select class="filter-select">
+                        <option value="">전체</option>
+                        <option>시드</option>
+                        <option>프리A</option>
+                        <option>시리즈A</option>
+                        <option>시리즈B</option>
+                        <option>시리즈C+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">지역</span>
+                    <select class="filter-select">
+                        <option value="">전체</option>
+                        <option>서울</option>
+                        <option>경기</option>
+                        <option>부산</option>
+                        <option>대전</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">기간</span>
+                    <select class="filter-select">
+                        <option>최근 1주</option>
+                        <option>최근 1개월</option>
+                        <option>최근 3개월</option>
+                        <option>최근 1년</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="deals-table">
+                <thead>
+                    <tr>
+                        <th>기업명</th>
+                        <th>대표</th>
+                        <th>업종</th>
+                        <th>설립</th>
+                        <th>직원</th>
+                        <th>지역</th>
+                        <th>투자 단계</th>
+                        <th>투자자</th>
+                        <th>투자 금액</th>
+                        <th>누적 투자</th>
+                        <th>뉴스</th>
+                    </tr>
+                </thead>
+                <tbody id="deals-tbody">
+                    <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
+                    <tr>
+                        <td colspan="11" style="text-align: center; padding: 40px; color: #6B7280;">
+                            데이터 로딩 중...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api/v1/investment-tracker';
+
+        // 실제 수집된 투자 뉴스 데이터 (2026년 1월 기준, 총 18개) - 뉴스 본문에서 추출한 상세 정보 포함
+        const STATIC_NEWS_DATA = [
+            { company: "SDT", ceo: "윤지원", title: "SDT, 300억 원 투자 유치", industry: "양자기술", amount: "300억원", totalFunding: "-", stage: "투자", investor: "프랙시스캐피탈(리드), NH투자증권", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031956/" },
+            { company: "로그프레소", ceo: "양봉열", title: "로그프레소, 160억 원 투자 유치", industry: "보안/SIEM", amount: "160억원", totalFunding: "230억원", stage: "시리즈B", investor: "KB인베스트먼트 외", founded: "2013", employees: "-", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1019960/" },
+            { company: "한국딥러닝", ceo: "김지현", title: "한국딥러닝, 120억 원 투자 유치 완료", industry: "문서AI", amount: "120억원", totalFunding: "120억원", stage: "시리즈A", investor: "트랜스링크(리드), SV인베스트먼트, IBK, 산업은행", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031399/" },
+            { company: "아크리얼", ceo: "전승현", title: "아크리얼, 80억 원 투자 유치", industry: "덴탈AI", amount: "80억원", totalFunding: "141억원", stage: "프리A", investor: "DSC인베스트먼트, SDB인베스트먼트, 슈미트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019955/" },
+            { company: "콕스웨이브", ceo: "김주원", title: "콕스웨이브, 70억 원 투자 유치", industry: "AI분석", amount: "70억원", totalFunding: "125억원", stage: "프리A", investor: "L&S벤처캐피탈(리드), KB인베스트먼트, 현대기술투자", founded: "2021", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032568/" },
+            { company: "퓨어스페이스", ceo: "이선영", title: "퓨어스페이스, 60억 원 투자 유치", industry: "푸드테크", amount: "60억원", totalFunding: "-", stage: "시리즈A", investor: "알토스벤처스", founded: "2018", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019914/" },
+            { company: "주미당", ceo: "김동완", title: "주미당, 55억 원 투자 유치", industry: "향미AI", amount: "55억원", totalFunding: "-", stage: "프리A", investor: "알바트로스, 위벤처스, 인터밸류파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030380/" },
+            { company: "에디트콜렉티브", ceo: "전주형", title: "에디트콜렉티브, 55억 투자 유치", industry: "프롭테크", amount: "55억원", totalFunding: "55억원", stage: "시리즈A", investor: "본엔젤스, 해시드, 롯데벤처스, 스트롱벤처스", founded: "2021", employees: "14명", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017987/" },
+            { company: "그린다", ceo: "황규용", title: "그린다, 30억 투자 유치", industry: "친환경/SAF", amount: "30억원", totalFunding: "-", stage: "시리즈A", investor: "블루포인트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017460/" },
+            { company: "십일리터", ceo: "-", title: "십일리터, 누적 20억 원 투자 유치", industry: "IT", amount: "20억원", totalFunding: "20억원", stage: "투자", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030364/" },
+            { company: "위드포인츠", ceo: "-", title: "위드포인츠, 15억 원 투자 유치", industry: "IT", amount: "15억원", totalFunding: "-", stage: "투자", investor: "크릿벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030924/" },
+            { company: "에스와이유", ceo: "-", title: "에스와이유, 8억 원 시드 투자 유치", industry: "IT", amount: "8억원", totalFunding: "-", stage: "시드", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1033001/" },
+            { company: "코넥트", ceo: "-", title: "코넥트, 최대 2.5억 투자 확정", industry: "IT", amount: "2.5억원", totalFunding: "-", stage: "투자", investor: "Alcove", founded: "-", employees: "-", region: "경기", source: "venturesquare", source_url: "https://www.venturesquare.net/1019530/" },
+            { company: "엘바", ceo: "-", title: "엘바, 시드 투자 유치", industry: "영상AI", amount: "미공개", totalFunding: "-", stage: "시드", investor: "시리즈벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032554/" },
+            { company: "피키", ceo: "-", title: "피키, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "한리버파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1020468/" },
+            { company: "오비터스", ceo: "-", title: "오비터스, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "하나벤처스, 롯데벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017083/" },
+            { company: "아이피텍", ceo: "-", title: "아이피텍, 혁신 IP 펀드 투자 유치", industry: "IP/특허", amount: "미공개", totalFunding: "-", stage: "투자", investor: "케이그라운드벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032600/" },
+            { company: "KRG그룹(개런티즈)", ceo: "김준영, 김기성", title: "KRG그룹 개런티즈, 시리즈A 진행", industry: "프롭테크", amount: "미공개", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "2020", employees: "7명", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1011412/" }
+        ];
+
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('페이지 로드됨');
+            // 먼저 정적 데이터로 표시
+            renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+            renderNewsTable(STATIC_NEWS_DATA);
+
+            // API 호출 시도
+            loadDashboardStats();
+            loadLatestNews();
+        });
+
+        // 대시보드 통계 로드
+        async function loadDashboardStats() {
+            try {
+                console.log('통계 API 호출 중...');
+                const res = await fetch(`${API_BASE}/dashboard/stats`);
+                const data = await res.json();
+                console.log('통계 데이터:', data);
+
+                const statValues = document.querySelectorAll('.stat-value');
+                if (statValues.length >= 4) {
+                    statValues[0].textContent = data.total_companies?.toLocaleString() || '0';
+                    statValues[1].textContent = data.total_news?.toLocaleString() || '0';
+                    statValues[2].textContent = (data.total_funding_krw / 10000)?.toFixed(1) + '조' || '0조';
+                    statValues[3].textContent = data.this_week_new_companies?.toLocaleString() || '0';
+                }
+            } catch (err) {
+                console.error('통계 로드 실패:', err);
+            }
+        }
+
+        // 최신 뉴스 로드 - API 실패 시 정적 데이터 사용
+        async function loadLatestNews() {
+            try {
+                console.log('뉴스 API 호출 중...');
+                const res = await fetch(`${API_BASE}/news?page_size=20`);
+                const data = await res.json();
+                console.log('뉴스 데이터:', data);
+
+                if (data.items && data.items.length > 0) {
+                    renderNewsCards(data.items.slice(0, 3));
+                    renderNewsTable(data.items);
+                } else {
+                    // API 응답은 왔지만 데이터가 없으면 정적 데이터 사용
+                    console.log('API 데이터 없음, 정적 데이터 사용');
+                    renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                    renderNewsTable(STATIC_NEWS_DATA);
+                }
+            } catch (err) {
+                // API 연결 실패 시 정적 데이터로 표시
+                console.log('API 연결 실패, 정적 데이터 사용:', err.message);
+                renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                renderNewsTable(STATIC_NEWS_DATA);
+            }
+        }
+
+        // 뉴스 카드 렌더링
+        function renderNewsCards(newsItems) {
+            const newsGrid = document.getElementById('news-grid');
+            if (!newsGrid) return;
+
+            newsGrid.innerHTML = newsItems.map((news) => {
+                const company = news.company || extractCompanyName(news.title);
+                const source = news.source || '미디어';
+                const title = news.title || '제목 없음';
+                const url = news.source_url || '#';
+                const industry = news.industry || extractIndustry(title);
+                const amount = news.amount || extractAmount(title);
+
+                return `
+                    <div class="news-card">
+                        <div class="news-image" style="font-size: 14px; font-weight: 600; color: #B45309;">
+                            ${escapeHtml(industry)}
+                            <a href="${url}" target="_blank" class="news-link-btn">
+                                원문보기
+                            </a>
+                        </div>
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <span class="news-source">${escapeHtml(source)}</span>
+                                <span class="news-date">최근</span>
+                            </div>
+                            <h3 class="news-title">${escapeHtml(title)}</h3>
+                            <div class="news-company">
+                                <div class="company-badge" style="font-size: 12px; font-weight: 600; color: #166534;">${escapeHtml(company.charAt(0))}</div>
+                                <div class="company-info">
+                                    <div class="company-name-row">
+                                        <span class="company-name">${escapeHtml(company)}</span>
+                                    </div>
+                                    <div class="company-details">
+                                        <span>${escapeHtml(industry)}</span>
+                                        <span>${amount !== '-' ? amount : ''}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 뉴스 테이블 렌더링 - 상세 정보 표시
+        function renderNewsTable(newsItems) {
+            const tbody = document.getElementById('deals-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = newsItems.map(news => {
+                const company = news.company || extractCompanyName(news.title);
+                const ceo = news.ceo || '-';
+                const url = news.source_url || '#';
+                const industry = news.industry || extractIndustry(news.title);
+                const stage = news.stage || extractStage(news.title);
+                const amount = news.amount || extractAmount(news.title);
+                const totalFunding = news.totalFunding || '-';
+                const investor = news.investor || '-';
+                const founded = news.founded || '-';
+                const employees = news.employees || '-';
+                const region = news.region || '-';
+
+                return `
+                    <tr>
+                        <td><div class="deal-name">${escapeHtml(company)}</div></td>
+                        <td class="deal-ceo">${escapeHtml(ceo)}</td>
+                        <td class="deal-industry">${escapeHtml(industry)}</td>
+                        <td class="deal-founded">${escapeHtml(founded)}</td>
+                        <td class="deal-employees">${escapeHtml(employees)}</td>
+                        <td class="deal-region">${escapeHtml(region)}</td>
+                        <td><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
+                        <td class="deal-investors">${escapeHtml(investor)}</td>
+                        <td class="deal-amount">${escapeHtml(amount)}</td>
+                        <td class="deal-total-funding">${escapeHtml(totalFunding)}</td>
+                        <td><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 유틸리티 함수들
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diff = (now - date) / (1000 * 60 * 60);
+
+            if (diff < 1) return '방금 전';
+            if (diff < 24) return Math.floor(diff) + '시간 전';
+            if (diff < 48) return '어제';
+            return date.toLocaleDateString('ko-KR');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, m => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;',
+                '"': '&quot;', "'": '&#39;'
+            }[m]));
+        }
+
+        function extractCompanyName(title) {
+            // 따옴표 안의 기업명 추출
+            const match = title.match(/['']([^'']+)['']|"([^"]+)"/);
+            if (match) return match[1] || match[2];
+
+            // 콤마 앞 단어 추출
+            const commaMatch = title.match(/^([^,]+)/);
+            if (commaMatch) {
+                const words = commaMatch[1].split(' ');
+                if (words.length <= 3) return commaMatch[1].trim();
+            }
+            return title.slice(0, 20) + '...';
+        }
+
+        function extractIndustry(title) {
+            const industries = {
+                'AI': 'AI/머신러닝', '인공지능': 'AI/머신러닝',
+                '바이오': '바이오/헬스', '헬스': '바이오/헬스', '의료': '바이오/헬스',
+                '핀테크': '핀테크', '금융': '핀테크', '페이': '핀테크',
+                '이커머스': '이커머스', '커머스': '이커머스', '쇼핑': '이커머스',
+                '게임': '게임/엔터', '엔터': '게임/엔터',
+                'SaaS': 'SaaS/B2B', 'B2B': 'SaaS/B2B', '클라우드': 'SaaS/B2B',
+                '푸드테크': '푸드테크', '식품': '푸드테크',
+                '모빌리티': '모빌리티', '자율주행': '모빌리티',
+                '부동산': '프롭테크', '프롭': '프롭테크',
+                '에듀': '에듀테크', '교육': '에듀테크',
+                '양자': '양자기술', '퀀텀': '양자기술'
+            };
+
+            for (const [key, value] of Object.entries(industries)) {
+                if (title.includes(key)) return value;
+            }
+            return '기타';
+        }
+
+        function extractStage(title) {
+            if (title.includes('시리즈C') || title.includes('Series C')) return '시리즈C+';
+            if (title.includes('시리즈B') || title.includes('Series B')) return '시리즈B';
+            if (title.includes('시리즈A') || title.includes('Series A')) return '시리즈A';
+            if (title.includes('프리A') || title.includes('Pre-A')) return '프리A';
+            if (title.includes('시드') || title.includes('Seed')) return '시드';
+            if (title.includes('투자') || title.includes('유치')) return '투자';
+            return '-';
+        }
+
+        function extractAmount(title) {
+            const match = title.match(/(\d+(?:\.\d+)?)\s*(억|조|만)/);
+            if (match) {
+                return match[1] + match[2] + '원';
+            }
+            return '-';
+        }
+
+        function getStageClass(stage) {
+            const classes = {
+                '시드': 'stage-seed',
+                '프리A': 'stage-prea',
+                '시리즈A': 'stage-a',
+                '시리즈B': 'stage-b',
+                '시리즈C+': 'stage-c',
+                '투자': 'stage-seed'
+            };
+            return classes[stage] || 'stage-seed';
+        }
+    </script>
+</body>
+</html>
