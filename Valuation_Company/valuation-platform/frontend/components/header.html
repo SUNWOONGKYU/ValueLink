@@ -186,7 +186,7 @@
 <header class="main-header">
     <div class="header-left">
         <!-- 로고 -->
-        <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="logo-container">
+        <a href="index.html" class="logo-container">
             <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
                 <!-- 배경 -->
                 <rect width="500" height="100" fill="#FFFFFF"/>
@@ -213,10 +213,10 @@
 
         <!-- 메인 메뉴 -->
         <nav class="main-menu">
-            <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
+            <a href="index.html" class="menu-item active" id="menu-valuation">
                 Valuation
             </a>
-            <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
+            <a href="app/mockup-deal.html" class="menu-item" id="menu-deal">
                 Deal
             </a>
         </nav>
@@ -236,11 +236,21 @@
 </header>
 
 <script>
-// 현재 페이지에 따라 active 메뉴 설정
+// 현재 페이지에 따라 경로 및 active 메뉴 설정
 document.addEventListener('DOMContentLoaded', () => {
     const currentPath = window.location.pathname;
+    const isInAppFolder = currentPath.includes('/app/');
+
+    // 로고 링크 업데이트
+    const logoLink = document.querySelector('.logo-container');
+    logoLink.href = isInAppFolder ? '../index.html' : 'index.html';
+
+    // 메뉴 링크 업데이트
     const menuValuation = document.getElementById('menu-valuation');
     const menuDeal = document.getElementById('menu-deal');
+
+    menuValuation.href = isInAppFolder ? '../index.html' : 'index.html';
+    menuDeal.href = isInAppFolder ? 'mockup-deal.html' : 'app/mockup-deal.html';
 
     // 모든 메뉴 active 제거
     menuValuation.classList.remove('active');
