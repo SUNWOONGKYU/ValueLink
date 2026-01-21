@@ -58,17 +58,23 @@
         .logo-symbol { width: 44px; height: 44px; }
         .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
 
-        .breadcrumb {
+        .main-nav {
             display: flex;
-            align-items: center;
             gap: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
         }
 
-        .breadcrumb a {
-            color: var(--deep-blue);
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
             text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
         }
 
         /* MAIN */
@@ -576,7 +582,7 @@
     <!-- HEADER -->
     <header>
         <div class="header-left">
-            <a href="mockup-main.html" class="logo">
+            <a href="../index.html" class="logo">
                 <svg class="logo-symbol" viewBox="0 0 100 100">
                     <g transform="translate(15, 20)">
                         <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
@@ -586,11 +592,12 @@
                 </svg>
                 <span class="logo-text">ValueLink</span>
             </a>
-            <div class="breadcrumb">
-                <a href="project-dashboard.html">프로젝트 관리</a>
-                <span>›</span>
-                <span>SAMSU-2501191430-DC</span>
-            </div>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
+                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
+                <a href="project-create.html" class="nav-item">➕ 신규</a>
+                <a href="mockup-deal.html" class="nav-item">🤝 Deal</a>
+            </nav>
         </div>
     </header>
 

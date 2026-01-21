@@ -6,6 +6,58 @@
     <title>API 테스트</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --text-secondary: #374151;
+            --bg-light: #F3F4F6;
+        }
+
+        header {
+            background: #fff;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+        }
+
         body {
             font-family: monospace;
             padding: 40px;
@@ -48,6 +100,27 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-left">
+            <a href="../index.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
+                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
+                <a href="project-create.html" class="nav-item">➕ 신규</a>
+                <a href="mockup-deal.html" class="nav-item">🤝 Deal</a>
+            </nav>
+        </div>
+    </header>
+
     <h1>🔍 Supabase API 연동 테스트</h1>
 
     <button onclick="runAllTests()">전체 테스트 실행</button>

@@ -70,11 +70,8 @@
             transition: all 0.2s ease;
         }
 
-        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
-        .nav-item.link { color: var(--amber); }
-        .nav-item.link:hover { background: #FEF3C7; }
-        .nav-item.deal { color: var(--amber); }
-        .nav-item.deal:hover { background: #FEF3C7; }
+        .nav-item { color: var(--text-secondary); }
+        .nav-item:hover { background: var(--bg-light); }
 
         /* HERO */
         .hero {
@@ -521,7 +518,7 @@
     <!-- HEADER -->
     <header>
         <div class="header-left">
-            <a href="mockup-main.html" class="logo">
+            <a href="../index.html" class="logo">
                 <svg class="logo-symbol" viewBox="0 0 100 100">
                     <g transform="translate(15, 20)">
                         <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
@@ -532,8 +529,10 @@
                 <span class="logo-text">ValueLink</span>
             </a>
             <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item valuation">Valuation</a>
-                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+                <a href="mockup-valuation.html" class="nav-item">평가방법</a>
+                <a href="valuation-list.html" class="nav-item">프로젝트 목록</a>
+                <a href="project-create.html" class="nav-item">신규</a>
+                <a href="mockup-deal.html" class="nav-item">Deal</a>
             </nav>
         </div>
     </header>
@@ -543,6 +542,7 @@
         <div class="hero-badge">RELATIVE VALUATION</div>
         <h1>상대가치 평가</h1>
         <p>유사기업 비교를 통한 시장 멀티플 기반 기업가치 산정</p>
+        <a href="relative-portal.html" style="display: inline-block; margin-top: 20px; padding: 12px 32px; background: #10B981; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">📁 평가 신청하기</a>
     </section>
 
     <!-- MAIN -->
