@@ -197,6 +197,11 @@
             <h2 class="section-title">회사 기본 정보</h2>
             <form id="companyForm">
                 <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">업종</label>
+                        <input type="text" class="form-input" id="industry" placeholder="예: 소프트웨어 개발">
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label">회사명 *</label>
                         <input type="text" class="form-input" id="companyName" placeholder="예: (주)밸류링크" required>
@@ -217,14 +222,9 @@
                         <input type="date" class="form-input" id="foundedDate">
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label">업종</label>
-                        <input type="text" class="form-input" id="industry" placeholder="예: 소프트웨어 개발">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">전화번호</label>
-                        <input type="tel" class="form-input" id="phone" placeholder="예: 02-1234-5678">
+                    <div class="form-group full-width">
+                        <label class="form-label">회사 홈페이지</label>
+                        <input type="url" class="form-input" id="companyWebsite" placeholder="예: https://www.valuelink.com">
                     </div>
 
                     <div class="form-group full-width">
@@ -232,9 +232,14 @@
                         <input type="text" class="form-input" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123">
                     </div>
 
-                    <div class="form-group full-width">
-                        <label class="form-label">회사 이메일</label>
-                        <input type="email" class="form-input" id="companyEmail" placeholder="예: contact@valuelink.com">
+                    <div class="form-group">
+                        <label class="form-label">전화번호</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="예: 02-1234-5678">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">팩스 번호</label>
+                        <input type="tel" class="form-input" id="fax" placeholder="예: 02-1234-5679">
                     </div>
                 </div>
 
@@ -320,16 +325,18 @@
             e.preventDefault();
 
             const formData = {
+                industry: document.getElementById('industry').value,
                 companyName: document.getElementById('companyName').value,
                 ceoName: document.getElementById('ceoName').value,
                 businessNumber: document.getElementById('businessNumber').value,
                 foundedDate: document.getElementById('foundedDate').value,
-                industry: document.getElementById('industry').value,
-                phone: document.getElementById('phone').value,
+                companyWebsite: document.getElementById('companyWebsite').value,
                 address: document.getElementById('address').value,
-                companyEmail: document.getElementById('companyEmail').value
+                phone: document.getElementById('phone').value,
+                fax: document.getElementById('fax').value
             };
 
+            localStorage.setItem('companyInfo', JSON.stringify(formData));
             console.log('회사 정보 저장:', formData);
             alert('회사 정보가 저장되었습니다.');
         });
@@ -364,39 +371,21 @@
             document.getElementById('companyForm').reset();
         }
 
-        // 로컬 스토리지에서 회사 정보 불러오기 (예시)
+        // 로컬 스토리지에서 회사 정보 불러오기
         window.addEventListener('load', function() {
             const savedData = localStorage.getItem('companyInfo');
             if (savedData) {
                 const data = JSON.parse(savedData);
+                document.getElementById('industry').value = data.industry || '';
                 document.getElementById('companyName').value = data.companyName || '';
                 document.getElementById('ceoName').value = data.ceoName || '';
                 document.getElementById('businessNumber').value = data.businessNumber || '';
                 document.getElementById('foundedDate').value = data.foundedDate || '';
-                document.getElementById('industry').value = data.industry || '';
-                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('companyWebsite').value = data.companyWebsite || '';
                 document.getElementById('address').value = data.address || '';
-                document.getElementById('companyEmail').value = data.companyEmail || '';
+                document.getElementById('phone').value = data.phone || '';
+                document.getElementById('fax').value = data.fax || '';
             }
-        });
-
-        // 저장 시 로컬 스토리지에 보관
-        document.getElementById('companyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = {
-                companyName: document.getElementById('companyName').value,
-                ceoName: document.getElementById('ceoName').value,
-                businessNumber: document.getElementById('businessNumber').value,
-                foundedDate: document.getElementById('foundedDate').value,
-                industry: document.getElementById('industry').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                companyEmail: document.getElementById('companyEmail').value
-            };
-
-            localStorage.setItem('companyInfo', JSON.stringify(formData));
-            alert('회사 정보가 저장되었습니다.');
         });
     </script>
 </body>
