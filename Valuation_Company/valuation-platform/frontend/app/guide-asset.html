@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자산가치평가법 안내 - ValueLink</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #F9FAFB;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        .main-area {
+            flex: 1;
+        }
+
+        .learning-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .learning-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .learning-content h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+            margin-top: 28px;
+            margin-bottom: 12px;
+        }
+
+        .learning-content p {
+            margin-bottom: 16px;
+        }
+
+        .learning-content ul {
+            margin-left: 20px;
+            margin-bottom: 16px;
+        }
+
+        .learning-content li {
+            margin-bottom: 8px;
+        }
+
+        .simulation-section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #1D4ED8;
+        }
+
+        .input-hint {
+            font-size: 13px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 20px;
+        }
+
+        .btn-calculate:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .result-box {
+            background: #F0F9FF;
+            border: 2px solid #BFDBFE;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1E40AF;
+            margin-bottom: 12px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1D4ED8;
+        }
+
+        .result-breakdown {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #BFDBFE;
+            font-size: 14px;
+            color: #1E40AF;
+        }
+
+        .result-breakdown div {
+            margin-bottom: 6px;
+        }
+
+        .next-step-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn-next-step {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: #059669;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-next-step:hover {
+            background: #047857;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-step {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .process-step:hover {
+            background: #F3F4F6;
+        }
+
+        .process-step.active {
+            background: #DBEAFE;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .process-step.active .step-number {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 영역 -->
+        <div class="main-area">
+            <!-- 학습 자료 섹션 -->
+            <div class="learning-section">
+                <h2 class="section-title">🏢 자산가치평가법이란?</h2>
+                <div class="learning-content">
+                    <p><strong>자산가치평가법</strong>은 기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다.</p>
+
+                    <h3>📌 핵심 개념</h3>
+                    <ul>
+                        <li><strong>순자산가치 (NAV):</strong> 총자산 - 총부채</li>
+                        <li><strong>시장가치 조정:</strong> 장부가액을 현재 시장가치로 재평가</li>
+                        <li><strong>청산가치:</strong> 기업을 청산할 경우 회수 가능한 금액</li>
+                        <li><strong>계속기업가치:</strong> 사업을 계속할 경우의 자산 가치</li>
+                    </ul>
+
+                    <h3>✅ 언제 사용하나요?</h3>
+                    <ul>
+                        <li>부동산, 유형자산이 많은 기업</li>
+                        <li>금융지주회사, 벤처캐피탈</li>
+                        <li>M&A 시 최소 가치 산정</li>
+                        <li>청산 가능성이 있는 기업</li>
+                        <li>보수적 가치 평가가 필요한 경우</li>
+                    </ul>
+
+                    <h3>⚠️ 주의사항</h3>
+                    <ul>
+                        <li>미래 수익 창출 능력이 반영되지 않습니다</li>
+                        <li>무형자산(브랜드, 특허)의 가치 평가가 어렵습니다</li>
+                        <li>성장 기업에는 적합하지 않을 수 있습니다</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 시뮬레이션 섹션 -->
+            <div class="simulation-section">
+                <h2 class="section-title">🧮 간단 시뮬레이션 (순자산가치법)</h2>
+
+                <div class="input-group">
+                    <label class="input-label">총자산 (장부가액)</label>
+                    <input type="number" id="totalAssets" class="input-field" placeholder="예: 10000000000">
+                    <div class="input-hint">단위: 원 (예: 100억 = 10,000,000,000)</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">총부채</label>
+                    <input type="number" id="totalLiabilities" class="input-field" placeholder="예: 4000000000">
+                    <div class="input-hint">단위: 원</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">시장가치 조정률 (%)</label>
+                    <input type="number" id="adjustmentRate" class="input-field" placeholder="예: 20" step="0.1">
+                    <div class="input-hint">장부가액 대비 시장가치 증가율 (부동산, 유형자산 등)</div>
+                </div>
+
+                <button class="btn-calculate" onclick="calculateAssetValue()">기업가치 계산하기</button>
+
+                <div id="resultBox" class="result-box">
+                    <div class="result-title">순자산가치 (NAV)</div>
+                    <div class="result-value" id="resultValue">-</div>
+                    <div class="result-breakdown">
+                        <div>장부상 순자산: <span id="bookNAV">-</span></div>
+                        <div>시장가치 조정: <span id="adjustment">-</span></div>
+                        <div>조정 후 순자산가치: <span id="adjustedNAV">-</span></div>
+                    </div>
+                    <p style="margin-top: 12px; color: #6B7280; font-size: 14px;">
+                        * 이 값은 간단한 시뮬레이션 결과입니다. 정확한 평가를 위해서는 전문 감정평가가 필요합니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 다음 단계 버튼 -->
+            <div class="next-step-section">
+                <a href="valuation-request.html" class="btn-next-step">
+                    <span>📝</span>
+                    <span>평가 요청하기 (다음 단계)</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 우측 사이드바 - 프로세스 -->
+        <aside class="sidebar">
+            <div class="sidebar-title">평가 진행 단계</div>
+            <div class="process-steps">
+                <div class="process-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">안내문 보기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">평가 요청하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">관리자 승인 대기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">자료 제출하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">평가 결과 미리보기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text">수정 요청하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-text">최종 결과 보기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">8</div>
+                    <div class="step-text">보고서 발행 요청</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 자산가치 계산 함수
+        function calculateAssetValue() {
+            const totalAssets = parseFloat(document.getElementById('totalAssets').value);
+            const totalLiabilities = parseFloat(document.getElementById('totalLiabilities').value);
+            const adjustmentRate = parseFloat(document.getElementById('adjustmentRate').value) / 100;
+
+            if (!totalAssets || !totalLiabilities || adjustmentRate === undefined) {
+                alert('모든 값을 입력해주세요.');
+                return;
+            }
+
+            // 장부상 순자산
+            const bookNAV = totalAssets - totalLiabilities;
+
+            // 시장가치 조정액
+            const adjustment = totalAssets * adjustmentRate;
+
+            // 조정 후 순자산가치
+            const adjustedNAV = bookNAV + adjustment;
+
+            // 결과 표시
+            document.getElementById('resultValue').textContent =
+                adjustedNAV.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+            document.getElementById('bookNAV').textContent =
+                bookNAV.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+            document.getElementById('adjustment').textContent =
+                '+' + adjustment.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+            document.getElementById('adjustedNAV').textContent =
+                adjustedNAV.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+            document.getElementById('resultBox').classList.add('show');
+        }
+    </script>
+</body>
+</html>
