@@ -34,14 +34,14 @@
     .header-left {
         display: flex;
         align-items: center;
-        gap: 32px;
+        gap: 48px;
     }
 
     /* 로고 */
     .logo-container {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
         text-decoration: none;
     }
 
@@ -50,23 +50,10 @@
         height: 48px;
     }
 
-    .logo-text-wrapper {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-    }
-
     .logo-text {
         font-size: 28px;
         font-weight: 700;
-        color: var(--text-primary);
-        line-height: 1;
-    }
-
-    .logo-tagline {
-        font-size: 12px;
-        color: var(--text-secondary);
-        font-weight: 500;
+        color: #1E3A5F;
     }
 
     /* 메인 메뉴 */
@@ -94,18 +81,6 @@
     .menu-item.active {
         color: var(--deep-blue);
         background: #DBEAFE;
-    }
-
-    .menu-item.active::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 3px;
-        background: var(--deep-blue);
-        border-radius: 2px 2px 0 0;
     }
 
     /* 오른쪽 영역 */
@@ -209,10 +184,6 @@
             font-size: 24px;
         }
 
-        .logo-tagline {
-            display: none;
-        }
-
         .menu-item {
             padding: 8px 16px;
             font-size: 14px;
@@ -236,16 +207,13 @@
                     <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
                 </g>
             </svg>
-            <div class="logo-text-wrapper">
-                <div class="logo-text">ValueLink</div>
-                <div class="logo-tagline">정확한 가치, 신뢰할 수 있는 평가</div>
-            </div>
+            <span class="logo-text">ValueLink</span>
         </a>
 
         <!-- 메인 메뉴 (2개) -->
         <nav class="main-menu">
             <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
-                평가
+                Valuation
             </a>
             <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
                 Deal
