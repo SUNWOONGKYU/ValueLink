@@ -217,9 +217,6 @@
             <a href="app/mockup-deal.html" class="menu-item" id="menu-deal">
                 Deal News
             </a>
-            <a href="app/learning-content.html" class="menu-item" id="menu-learning">
-                학습 콘텐츠
-            </a>
         </nav>
 
         <!-- 알람 -->
@@ -247,22 +244,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // 메뉴 링크 업데이트
     const menuValuation = document.getElementById('menu-valuation');
     const menuDeal = document.getElementById('menu-deal');
-    const menuLearning = document.getElementById('menu-learning');
 
     menuValuation.href = isInAppFolder ? '../index.html' : 'index.html';
     menuDeal.href = isInAppFolder ? 'mockup-deal.html' : 'app/mockup-deal.html';
-    menuLearning.href = isInAppFolder ? 'learning-content.html' : 'app/learning-content.html';
 
     // 모든 메뉴 active 제거
     menuValuation.classList.remove('active');
     menuDeal.classList.remove('active');
-    menuLearning.classList.remove('active');
 
     // 현재 페이지에 따라 active 추가
     if (currentPath.includes('deal')) {
         menuDeal.classList.add('active');
-    } else if (currentPath.includes('learning')) {
-        menuLearning.classList.add('active');
     } else {
         menuValuation.classList.add('active');
     }
