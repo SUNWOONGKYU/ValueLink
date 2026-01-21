@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가 프로젝트 목록 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* HEADER */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol { width: 44px; height: 44px; }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+
+        .main-nav { display: flex; gap: 8px; }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
+        .nav-item.deal { color: var(--amber); }
+        .nav-item.deal:hover { background: #FEF3C7; }
+
+        /* MAIN */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        /* FILTERS */
+        .filters {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            border: 1px solid #E5E7EB;
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--bg-light);
+        }
+
+        .filter-btn.active {
+            background: var(--deep-blue);
+            color: var(--white);
+            border-color: var(--deep-blue);
+        }
+
+        .stats {
+            margin-left: auto;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* PROJECT GRID */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            border-color: var(--deep-blue);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(29, 78, 216, 0.15);
+        }
+
+        .project-card.verified {
+            border-left: 4px solid var(--deep-green);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .method-badge {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+        }
+
+        .verified-badge {
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 4px;
+            background: var(--deep-green);
+            color: var(--white);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .card-values {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .value-item {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .value-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .value-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-footer {
+            padding-top: 16px;
+            border-top: 1px solid #E5E7EB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .status-completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-evaluating {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-requested {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .card-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            border: 3px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-left">
+            <a href="mockup-main.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="valuation-list.html" class="nav-item valuation">Valuation</a>
+                <a href="mockup-deal.html" class="nav-item deal">Deal</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <div class="container">
+        <div class="page-header">
+            <h1>평가 프로젝트 목록</h1>
+            <p>실제 검증 사례 5건 포함, 총 25건의 프로젝트</p>
+        </div>
+
+        <!-- FILTERS -->
+        <div class="filters">
+            <div class="filter-group">
+                <button class="filter-btn active" data-method="all">전체</button>
+                <button class="filter-btn" data-method="dcf">DCF평가법</button>
+                <button class="filter-btn" data-method="relative">상대가치</button>
+                <button class="filter-btn" data-method="capital_market_law">본질가치</button>
+                <button class="filter-btn" data-method="asset">자산가치</button>
+                <button class="filter-btn" data-method="inheritance_tax_law">상증세법</button>
+            </div>
+            <div class="stats">
+                총 <strong id="total-count">0</strong>건
+            </div>
+        </div>
+
+        <!-- LOADING -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>데이터를 불러오는 중...</p>
+        </div>
+
+        <!-- PROJECT GRID -->
+        <div class="project-grid" id="project-grid" style="display: none;">
+            <!-- 카드가 동적으로 추가됩니다 -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <h3>프로젝트가 없습니다</h3>
+            <p>해당 조건의 평가 프로젝트가 없습니다.</p>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 설정
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allProjects = [];
+        let currentFilter = 'all';
+
+        // 평가법 한글명 매핑
+        const methodNames = {
+            'dcf': 'DCF평가법',
+            'relative': '상대가치평가법',
+            'capital_market_law': '본질가치평가법',
+            'asset': '자산가치평가법',
+            'inheritance_tax_law': '상증세법평가법'
+        };
+
+        // 상태 한글명 매핑
+        const statusNames = {
+            'requested': '평가 요청',
+            'evaluating': '평가 진행중',
+            'completed': '평가 완료'
+        };
+
+        // 실제 검증 사례 ID 목록
+        const verifiedCases = [
+            'DCF-ENKINOAI-001',
+            'REL-SAMSUNG-001',
+            'CML-KAKAO-001',
+            'NAV-CLASSYS-001',
+            'ITL-CASE-001'
+        ];
+
+        // 숫자 포맷팅
+        function formatNumber(num) {
+            if (num >= 1000000000000) {
+                return (num / 1000000000000).toFixed(1) + '조';
+            } else if (num >= 100000000) {
+                return (num / 100000000).toFixed(0) + '억';
+            } else {
+                return num.toLocaleString() + '원';
+            }
+        }
+
+        // 데이터 로드
+        async function loadProjects() {
+            try {
+                // Projects와 Valuation Results를 조인해서 가져오기
+                const { data: projects, error } = await supabase
+                    .from('projects')
+                    .select(`
+                        *,
+                        valuation_results (*)
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allProjects = projects;
+                renderProjects(projects);
+                updateStats(projects.length);
+
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                document.getElementById('loading').innerHTML = `
+                    <p style="color: #DC2626;">데이터 로드 실패: ${error.message}</p>
+                `;
+            }
+        }
+
+        // 프로젝트 렌더링
+        function renderProjects(projects) {
+            const grid = document.getElementById('project-grid');
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('empty-state');
+
+            loading.style.display = 'none';
+
+            if (projects.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+
+            projects.forEach(project => {
+                const result = project.valuation_results?.[0];
+                if (!result) return;
+
+                const isVerified = verifiedCases.includes(project.project_id);
+
+                const card = document.createElement('div');
+                card.className = `project-card ${isVerified ? 'verified' : ''}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="method-badge">${methodNames[result.method] || result.method}</span>
+                        ${isVerified ? '<span class="verified-badge">실제 사례</span>' : ''}
+                    </div>
+                    <div class="card-title">${project.company_name_kr}</div>
+                    <div class="card-subtitle">${project.company_name_en || ''}</div>
+                    <div class="card-values">
+                        <div class="value-item">
+                            <div class="value-label">기업가치</div>
+                            <div class="value-amount">${formatNumber(result.enterprise_value)}</div>
+                        </div>
+                        <div class="value-item">
+                            <div class="value-label">주당가치</div>
+                            <div class="value-amount">${result.value_per_share?.toLocaleString()}원</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="status-badge status-${project.status}">${statusNames[project.status]}</span>
+                        <span class="card-date">${new Date(project.created_at).toLocaleDateString('ko-KR')}</span>
+                    </div>
+                `;
+
+                // 클릭 시 상세 정보 표시 (추후 구현)
+                card.addEventListener('click', () => {
+                    console.log('Project details:', project);
+                });
+
+                grid.appendChild(card);
+            });
+        }
+
+        // 통계 업데이트
+        function updateStats(count) {
+            document.getElementById('total-count').textContent = count;
+        }
+
+        // 필터링
+        function filterProjects(method) {
+            currentFilter = method;
+
+            const filtered = method === 'all'
+                ? allProjects
+                : allProjects.filter(p => p.valuation_results?.[0]?.method === method);
+
+            renderProjects(filtered);
+            updateStats(filtered.length);
+        }
+
+        // 필터 버튼 이벤트
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                filterProjects(btn.dataset.method);
+            });
+        });
+
+        // 페이지 로드 시 데이터 로드
+        loadProjects();
+    </script>
+</body>
+</html>

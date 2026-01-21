@@ -1,20 +1,56 @@
-fastapi
-uvicorn[standard]
-python-dotenv
-anthropic
-google-generativeai
-openai
-pydantic
-pydantic-settings
-httpx
-python-multipart
+# FastAPI Framework
+# 5가지 평가법: 1.DCF평가법 2.상대가치평가법 3.본질가치평가법 4.자산가치평가법 5.상증세법평가법
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
 
-# Database (Supabase)
-supabase
+# Database
+sqlalchemy==2.0.23
+psycopg2-binary==2.9.9
+alembic==1.12.1
 
-# Scheduler
-apscheduler
+# Pydantic (Data Validation)
+pydantic==2.5.0
+pydantic[email]==2.5.0
 
-# Web Scraping
-beautifulsoup4
-lxml
+# Environment Variables
+python-dotenv==1.0.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+
+# HTTP Client
+httpx==0.25.2
+requests==2.31.0
+
+# Data Processing
+pandas==2.1.3
+numpy==1.26.2
+
+# Excel/CSV Processing
+openpyxl==3.1.2
+
+# PDF Generation
+reportlab==4.0.7
+pypdf2==3.0.1
+
+# OCR (Optional)
+pytesseract==0.3.10
+pillow==10.1.0
+
+# Caching (Optional)
+redis==5.0.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# Code Quality
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1
+
+# Logging
+python-json-logger==2.0.7

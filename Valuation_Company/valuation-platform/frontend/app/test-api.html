@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 40px;
+            background: #1a1a1a;
+            color: #00ff00;
+        }
+        h1 { color: #00ff00; }
+        .test-result {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-left: 4px solid #00ff00;
+        }
+        .error {
+            border-left-color: #ff0000;
+            color: #ff0000;
+        }
+        .success {
+            border-left-color: #00ff00;
+            color: #00ff00;
+        }
+        pre {
+            background: #000;
+            padding: 10px;
+            overflow-x: auto;
+            color: #00ff00;
+        }
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Supabase API 연동 테스트</h1>
+
+    <button onclick="runAllTests()">전체 테스트 실행</button>
+    <button onclick="testConnection()">연결 테스트</button>
+    <button onclick="testProjects()">프로젝트 조회</button>
+    <button onclick="testValuations()">평가 결과 조회</button>
+    <button onclick="testFilters()">필터링 테스트</button>
+
+    <div id="results"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const resultsDiv = document.getElementById('results');
+
+        function addResult(title, success, data) {
+            const div = document.createElement('div');
+            div.className = `test-result ${success ? 'success' : 'error'}`;
+            div.innerHTML = `
+                <h3>${success ? '✅' : '❌'} ${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            resultsDiv.appendChild(div);
+            return success;
+        }
+
+        async function testConnection() {
+            try {
+                const { data, error } = await supabase.from('projects').select('count');
+                if (error) throw error;
+                addResult('Supabase 연결 테스트', true, { message: '연결 성공!' });
+                return true;
+            } catch (error) {
+                addResult('Supabase 연결 테스트', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function testProjects() {
+            try {
+                const { data, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .limit(5);
+
+                if (error) throw error;
+
+                addResult('프로젝트 조회 테스트', true, {
+                    count: data.length,
+                    sample: data[0]
+                });
+                return true;
+            } catch (error) {
+                addResult('프로젝트 조회 테스트', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function testValuations() {
+            try {
+                const { data, error } = await supabase
+                    .from('valuation_results')
+                    .select('*')
+                    .limit(5);
+
+                if (error) throw error;
+
+                addResult('평가 결과 조회 테스트', true, {
+                    count: data.length,
+                    sample: data[0]
+                });
+                return true;
+            } catch (error) {
+                addResult('평가 결과 조회 테스트', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function testFilters() {
+            try {
+                const methods = ['dcf', 'relative', 'capital_market_law', 'asset', 'inheritance_tax_law'];
+                const results = {};
+
+                for (const method of methods) {
+                    const { data, error } = await supabase
+                        .from('valuation_results')
+                        .select('project_id')
+                        .eq('method', method);
+
+                    if (error) throw error;
+                    results[method] = data.length;
+                }
+
+                const allEqual = Object.values(results).every(count => count === 5);
+
+                addResult('평가법별 필터링 테스트', allEqual, {
+                    results,
+                    expected: 5,
+                    status: allEqual ? '모든 평가법이 5건씩 있음' : '건수가 일치하지 않음'
+                });
+                return allEqual;
+            } catch (error) {
+                addResult('평가법별 필터링 테스트', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function testJoin() {
+            try {
+                const { data, error } = await supabase
+                    .from('projects')
+                    .select(`
+                        project_id,
+                        company_name_kr,
+                        valuation_results (
+                            method,
+                            enterprise_value,
+                            value_per_share
+                        )
+                    `)
+                    .limit(3);
+
+                if (error) throw error;
+
+                addResult('JOIN 조회 테스트', true, {
+                    count: data.length,
+                    sample: data[0]
+                });
+                return true;
+            } catch (error) {
+                addResult('JOIN 조회 테스트', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function testVerifiedCases() {
+            try {
+                const verifiedIds = [
+                    'DCF-ENKINOAI-001',
+                    'REL-SAMSUNG-001',
+                    'CML-KAKAO-001',
+                    'NAV-CLASSYS-001',
+                    'ITL-CASE-001'
+                ];
+
+                const results = [];
+                for (const id of verifiedIds) {
+                    const { data, error } = await supabase
+                        .from('projects')
+                        .select(`
+                            project_id,
+                            company_name_kr,
+                            valuation_results (
+                                enterprise_value,
+                                value_per_share
+                            )
+                        `)
+                        .eq('project_id', id)
+                        .single();
+
+                    if (error) throw error;
+                    results.push(data);
+                }
+
+                addResult('실제 검증 사례 조회', true, {
+                    count: results.length,
+                    cases: results.map(r => ({
+                        id: r.project_id,
+                        name: r.company_name_kr,
+                        value_per_share: r.valuation_results[0]?.value_per_share
+                    }))
+                });
+                return true;
+            } catch (error) {
+                addResult('실제 검증 사례 조회', false, { error: error.message });
+                return false;
+            }
+        }
+
+        async function runAllTests() {
+            resultsDiv.innerHTML = '<h2>🚀 전체 테스트 실행 중...</h2>';
+
+            const tests = [
+                testConnection,
+                testProjects,
+                testValuations,
+                testFilters,
+                testJoin,
+                testVerifiedCases
+            ];
+
+            let passCount = 0;
+            for (const test of tests) {
+                const result = await test();
+                if (result) passCount++;
+            }
+
+            const summaryDiv = document.createElement('div');
+            summaryDiv.className = `test-result ${passCount === tests.length ? 'success' : 'error'}`;
+            summaryDiv.innerHTML = `
+                <h2>📊 테스트 요약</h2>
+                <pre>통과: ${passCount}/${tests.length}
+성공률: ${(passCount/tests.length*100).toFixed(1)}%</pre>
+            `;
+            resultsDiv.insertBefore(summaryDiv, resultsDiv.firstChild);
+        }
+
+        // 페이지 로드 시 자동 실행
+        window.addEventListener('load', () => {
+            console.log('API 테스트 페이지 로드 완료');
+        });
+    </script>
+</body>
+</html>
