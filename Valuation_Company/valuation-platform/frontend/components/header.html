@@ -1,0 +1,294 @@
+<!-- 공통 헤더 컴포넌트 -->
+<style>
+    :root {
+        --deep-blue: #1D4ED8;
+        --deep-green: #166534;
+        --amber: #F59E0B;
+        --text-primary: #111827;
+        --text-secondary: #6B7280;
+        --white: #FFFFFF;
+        --border: #E5E7EB;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+        font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: #F9FAFB;
+    }
+
+    .main-header {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        padding: 0 40px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+
+    /* 로고 */
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-decoration: none;
+    }
+
+    .logo-symbol {
+        width: 48px;
+        height: 48px;
+    }
+
+    .logo-text-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .logo-text {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+    }
+
+    .logo-tagline {
+        font-size: 12px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    /* 메인 메뉴 */
+    .main-menu {
+        display: flex;
+        gap: 8px;
+    }
+
+    .menu-item {
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--text-secondary);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .menu-item:hover {
+        background: #F3F4F6;
+        color: var(--text-primary);
+    }
+
+    .menu-item.active {
+        color: var(--deep-blue);
+        background: #DBEAFE;
+    }
+
+    .menu-item.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 3px;
+        background: var(--deep-blue);
+        border-radius: 2px 2px 0 0;
+    }
+
+    /* 오른쪽 영역 */
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    /* 알람 */
+    .notification-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s ease;
+    }
+
+    .notification-btn:hover {
+        background: #F3F4F6;
+    }
+
+    .notification-icon {
+        font-size: 24px;
+        color: var(--text-secondary);
+    }
+
+    .notification-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        width: 18px;
+        height: 18px;
+        background: #EF4444;
+        border-radius: 50%;
+        color: white;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+    }
+
+    /* 로그인/회원가입 버튼 */
+    .auth-buttons {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-login {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        background: transparent;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-login:hover {
+        border-color: var(--deep-blue);
+        color: var(--deep-blue);
+        background: #F0F9FF;
+    }
+
+    .btn-signup {
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        color: white;
+        background: var(--deep-blue);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-signup:hover {
+        background: #1E40AF;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+    }
+
+    /* 반응형 */
+    @media (max-width: 768px) {
+        .main-header {
+            padding: 0 20px;
+            height: 64px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+        }
+
+        .logo-tagline {
+            display: none;
+        }
+
+        .menu-item {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<header class="main-header">
+    <div class="header-left">
+        <!-- 로고 -->
+        <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="logo-container">
+            <svg class="logo-symbol" viewBox="0 0 100 100">
+                <g transform="translate(15, 20)">
+                    <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                    <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                    <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                </g>
+            </svg>
+            <div class="logo-text-wrapper">
+                <div class="logo-text">ValueLink</div>
+                <div class="logo-tagline">정확한 가치, 신뢰할 수 있는 평가</div>
+            </div>
+        </a>
+
+        <!-- 메인 메뉴 (2개) -->
+        <nav class="main-menu">
+            <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
+                평가
+            </a>
+            <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
+                Deal
+            </a>
+        </nav>
+    </div>
+
+    <div class="header-right">
+        <!-- 알람 -->
+        <button class="notification-btn" onclick="toggleNotifications()">
+            <span class="notification-icon">🔔</span>
+            <span class="notification-badge">3</span>
+        </button>
+
+        <!-- 로그인/회원가입 -->
+        <div class="auth-buttons">
+            <button class="btn-login" onclick="location.href='/login'">로그인</button>
+            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
+        </div>
+    </div>
+</header>
+
+<script>
+// 현재 페이지에 따라 active 메뉴 설정
+document.addEventListener('DOMContentLoaded', () => {
+    const currentPath = window.location.pathname;
+    const menuValuation = document.getElementById('menu-valuation');
+    const menuDeal = document.getElementById('menu-deal');
+
+    // 모든 메뉴 active 제거
+    menuValuation.classList.remove('active');
+    menuDeal.classList.remove('active');
+
+    // 현재 페이지에 따라 active 추가
+    if (currentPath.includes('deal')) {
+        menuDeal.classList.add('active');
+    } else {
+        menuValuation.classList.add('active');
+    }
+});
+
+// 알람 토글
+function toggleNotifications() {
+    alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+}
+</script>
