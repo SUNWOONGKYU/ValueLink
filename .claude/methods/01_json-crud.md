@@ -8,8 +8,58 @@
 
 ```
 ✅ AI가 Edit 도구로 JSON 파일 직접 수정!
-✅ JSON 파일 위치: method/json/data/in_progress/project_sal_grid.json
+✅ 프로젝트 메타데이터: method/json/data/index.json
+✅ 개별 Task 파일: method/json/data/grid_records/{TaskID}.json
 ✅ 수정 후 반드시 저장 확인!
+```
+
+---
+
+## JSON 폴더 구조 (개별 파일 방식)
+
+```
+{project-root}/Process/S0_Project-SAL-Grid_생성/method/json/data/
+├── index.json             ← 프로젝트 메타데이터 + task_ids 배열
+└── grid_records/          ← 개별 Task JSON 파일
+    ├── S1BI1.json
+    ├── S1BI2.json
+    ├── S2F1.json
+    └── ... (Task ID별 파일)
+```
+
+---
+
+## index.json 구조
+
+```json
+{
+  "project_id": "프로젝트ID",
+  "project_name": "프로젝트명",
+  "total_tasks": 66,
+  "task_ids": ["S1BI1", "S1BI2", "S1D1", ...]
+}
+```
+
+---
+
+## 개별 Task JSON 구조 (grid_records/{TaskID}.json)
+
+```json
+{
+  "task_id": "S1F1",
+  "task_name": "로그인 페이지 구현",
+  "stage": 1,
+  "area": "F",
+  "task_status": "Pending",
+  "task_progress": 0,
+  "verification_status": "Not Verified",
+  "dependencies": "",
+  "task_instruction": "Task 수행 지침",
+  "task_agent": "frontend-developer",
+  "verification_instruction": "검증 지침",
+  "verification_agent": "code-reviewer",
+  ...
+}
 ```
 
 ---
@@ -17,46 +67,12 @@
 ## JSON 파일 수정 프로세스
 
 ```
-1. JSON 파일 읽기 (Read 도구)
+1. 해당 Task의 JSON 파일 읽기 (Read 도구)
+   → grid_records/{TaskID}.json
      ↓
-2. 해당 Task 객체 찾기
+2. 필드 값 수정 (Edit 도구)
      ↓
-3. 필드 값 수정 (Edit 도구)
-     ↓
-4. 저장 확인
-```
-
----
-
-## JSON 파일 위치
-
-```
-{project-root}/S0_Project-SAL-Grid_생성/method/json/data/in_progress/project_sal_grid.json
-```
-
----
-
-## JSON 파일 구조
-
-```json
-{
-  "project_id": "프로젝트ID",
-  "project_name": "프로젝트명",
-  "created_at": "2025-01-01T00:00:00Z",
-  "updated_at": "2025-01-01T00:00:00Z",
-  "tasks": [
-    {
-      "task_id": "S1F1",
-      "task_name": "로그인 페이지 구현",
-      "stage": 1,
-      "area": "F",
-      "task_status": "Pending",
-      "task_progress": 0,
-      "verification_status": "Not Verified",
-      ...
-    }
-  ]
-}
+3. 저장 확인
 ```
 
 ---
@@ -65,11 +81,15 @@
 
 ```javascript
 const fs = require('fs');
-const jsonPath = 'S0_Project-SAL-Grid_생성/method/json/data/in_progress/project_sal_grid.json';
-const data = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+const path = require('path');
 
-// tasks 배열에서 특정 Task 찾기
-const task = data.tasks.find(t => t.task_id === 'S1F1');
+// index.json 읽기 (Task ID 목록 확인)
+const indexPath = path.join(__dirname, 'Process/S0_Project-SAL-Grid_생성/method/json/data/index.json');
+const indexData = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+
+// 개별 Task 파일 읽기
+const taskPath = path.join(__dirname, 'Process/S0_Project-SAL-Grid_생성/method/json/data/grid_records/S1F1.json');
+const taskData = JSON.parse(fs.readFileSync(taskPath, 'utf-8'));
 ```
 
 ---
@@ -77,18 +97,11 @@ const task = data.tasks.find(t => t.task_id === 'S1F1');
 ## 수정 (Update)
 
 ```javascript
-// 특정 Task 찾기
-const taskIndex = data.tasks.findIndex(t => t.task_id === 'S1F1');
-
-if (taskIndex !== -1) {
-    // 필드 수정
-    data.tasks[taskIndex].task_status = 'Completed';
-    data.tasks[taskIndex].task_progress = 100;
-    data.tasks[taskIndex].verification_status = 'Verified';
-}
-
-// updated_at 갱신
-data.updated_at = new Date().toISOString();
+// 개별 Task 파일 직접 수정
+taskData.task_status = 'Completed';
+taskData.task_progress = 100;
+taskData.verification_status = 'Verified';
+taskData.updated_at = new Date().toISOString();
 ```
 
 ---
@@ -96,8 +109,32 @@ data.updated_at = new Date().toISOString();
 ## 쓰기 (Write)
 
 ```javascript
-// JSON 파일 저장 (pretty print)
-fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
+// 개별 Task JSON 파일 저장 (pretty print)
+fs.writeFileSync(taskPath, JSON.stringify(taskData, null, 2), 'utf-8');
+```
+
+---
+
+## Task 추가 시
+
+```javascript
+// 1. index.json의 task_ids 배열에 추가
+indexData.task_ids.push('S4F5');
+indexData.total_tasks = indexData.task_ids.length;
+fs.writeFileSync(indexPath, JSON.stringify(indexData, null, 2), 'utf-8');
+
+// 2. 새 Task JSON 파일 생성
+const newTaskData = {
+    task_id: 'S4F5',
+    task_name: 'Task 이름',
+    stage: 4,
+    area: 'F',
+    task_status: 'Pending',
+    task_progress: 0,
+    verification_status: 'Not Verified'
+};
+const newTaskPath = path.join(__dirname, 'Process/S0_Project-SAL-Grid_생성/method/json/data/grid_records/S4F5.json');
+fs.writeFileSync(newTaskPath, JSON.stringify(newTaskData, null, 2), 'utf-8');
 ```
 
 ---
@@ -106,9 +143,8 @@ fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 
 - JSON 문법 오류 방지 (쉼표, 중괄호 등)
 - UTF-8 인코딩 유지
-- tasks 배열 구조 유지
+- index.json과 grid_records/ 동기화 유지
 - 수정 후 반드시 저장 확인
-- `updated_at` 필드 갱신 잊지 말기
 
 ---
 
@@ -117,8 +153,9 @@ fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf-8');
 Claude Code의 Edit 도구로 직접 수정할 때:
 
 ```
-1. Read 도구로 JSON 파일 읽기
-2. 수정할 Task 객체의 필드 위치 파악
+1. Read 도구로 해당 Task JSON 파일 읽기
+   → grid_records/{TaskID}.json
+2. 수정할 필드 위치 파악
 3. Edit 도구로 해당 필드 값만 변경
 4. JSON 문법이 깨지지 않도록 주의
 ```

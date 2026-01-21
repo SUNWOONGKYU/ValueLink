@@ -222,7 +222,12 @@
                         <input type="date" class="form-input" id="foundedDate">
                     </div>
 
-                    <div class="form-group full-width">
+                    <div class="form-group">
+                        <label class="form-label">직원 수</label>
+                        <input type="number" class="form-input" id="employees" placeholder="예: 50">
+                    </div>
+
+                    <div class="form-group">
                         <label class="form-label">회사 홈페이지</label>
                         <input type="url" class="form-input" id="companyWebsite" placeholder="예: https://www.valuelink.com">
                     </div>
@@ -330,6 +335,7 @@
                 ceoName: document.getElementById('ceoName').value,
                 businessNumber: document.getElementById('businessNumber').value,
                 foundedDate: document.getElementById('foundedDate').value,
+                employees: document.getElementById('employees').value,
                 companyWebsite: document.getElementById('companyWebsite').value,
                 address: document.getElementById('address').value,
                 phone: document.getElementById('phone').value,
@@ -381,6 +387,7 @@
                 document.getElementById('ceoName').value = data.ceoName || '';
                 document.getElementById('businessNumber').value = data.businessNumber || '';
                 document.getElementById('foundedDate').value = data.foundedDate || '';
+                document.getElementById('employees').value = data.employees || '';
                 document.getElementById('companyWebsite').value = data.companyWebsite || '';
                 document.getElementById('address').value = data.address || '';
                 document.getElementById('phone').value = data.phone || '';
