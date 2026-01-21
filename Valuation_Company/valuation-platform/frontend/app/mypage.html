@@ -322,6 +322,19 @@
             .then(response => response.text())
             .then(data => {
                 document.getElementById('header-container').innerHTML = data;
+
+                // 헤더 로드 후 메뉴 링크 수정 (마이 페이지는 /app/ 폴더 내부)
+                const menuValuation = document.getElementById('menu-valuation');
+                const menuDeal = document.getElementById('menu-deal');
+                const logoLink = document.querySelector('.logo-container');
+
+                if (menuValuation) menuValuation.href = '../index.html';
+                if (menuDeal) menuDeal.href = 'mockup-deal.html';
+                if (logoLink) logoLink.href = '../index.html';
+
+                // 현재 페이지가 마이 페이지이므로 메뉴 active 제거
+                if (menuValuation) menuValuation.classList.remove('active');
+                if (menuDeal) menuDeal.classList.remove('active');
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 

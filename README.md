@@ -143,18 +143,27 @@ Get-Content scripts/auto-commit.log -Tail 20
 
 ---
 
-## 📊 Data Files (JSON Method)
+## 📊 Data Files (JSON Method - 개별 파일 방식)
 
 **위치:** `Process/S0_Project-SAL-Grid_생성/method/json/data/`
 
-### 폴더 구조
+### 폴더 구조 (Dev Package 표준)
 ```
 method/json/data/
-├── in_progress/           ← 진행 중인 프로젝트
-│   └── project_sal_grid.json
-├── completed/             ← 완료된 프로젝트
+├── index.json             ← 프로젝트 메타데이터 + task_ids 배열
+├── grid_records/          ← 개별 Task JSON 파일
+│   ├── S1BI1.json
+│   ├── S1BI2.json
+│   ├── S2F1.json
+│   └── ... (Task ID별 파일)
+├── completed/             ← 완료된 프로젝트 보관
 └── users/                 ← 사용자별 데이터
 ```
+
+**핵심:**
+- `index.json` = 프로젝트 정보 + Task ID 목록
+- `grid_records/{TaskID}.json` = 개별 Task 데이터
+- Viewer는 `index.json` 먼저 로드 → `task_ids`로 개별 파일 병렬 로드
 
 ---
 
