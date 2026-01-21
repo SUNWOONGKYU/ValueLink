@@ -67,6 +67,78 @@
             margin-bottom: 8px;
         }
 
+        /* 더 보기 콘텐츠 링크 */
+        .content-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .content-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: #F9FAFB;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .content-link:hover {
+            border-color: #1D4ED8;
+            background: #F0F9FF;
+            transform: translateX(4px);
+        }
+
+        .content-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .content-info {
+            flex: 1;
+        }
+
+        .content-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 4px;
+        }
+
+        .content-desc {
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
         .simulation-section {
             background: white;
             border-radius: 16px;
@@ -304,9 +376,37 @@
                 </div>
             </div>
 
+            <!-- 더 보기 섹션 -->
+            <div class="learning-section">
+                <h2 class="section-title">📖 더 보기</h2>
+                <div class="content-links">
+                    <a href="#" class="content-link">
+                        <span class="content-icon">📄</span>
+                        <div class="content-info">
+                            <div class="content-title">PER/PBR/PSR 배수 완전 가이드</div>
+                            <div class="content-desc">각 지표의 의미와 활용법</div>
+                        </div>
+                    </a>
+                    <a href="#" class="content-link">
+                        <span class="content-icon">🎥</span>
+                        <div class="content-info">
+                            <div class="content-title">유사 기업 선정 방법 (유튜브)</div>
+                            <div class="content-desc">Comparable Companies Analysis 실습</div>
+                        </div>
+                    </a>
+                    <a href="#" class="content-link">
+                        <span class="content-icon">📊</span>
+                        <div class="content-info">
+                            <div class="content-title">EV/EBITDA 배수 분석</div>
+                            <div class="content-desc">기업가치 기반 평가 방법론</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
             <!-- 시뮬레이션 섹션 -->
             <div class="simulation-section">
-                <h2 class="section-title">🧮 간단 시뮬레이션</h2>
+                <h2 class="section-title">🧮 시뮬레이션</h2>
 
                 <div class="input-group">
                     <label class="input-label">평가 지표 선택</label>
@@ -329,13 +429,13 @@
                     <div class="input-hint">유사 기업들의 평균 PER, PBR, PSR 값</div>
                 </div>
 
-                <button class="btn-calculate" onclick="calculateRelative()">기업가치 계산하기</button>
+                <button class="btn-calculate" onclick="calculateRelative()">시뮬레이션 실행하기</button>
 
                 <div id="resultBox" class="result-box">
-                    <div class="result-title">예상 기업가치 (시가총액)</div>
+                    <div class="result-title">시뮬레이션 결과</div>
                     <div class="result-value" id="resultValue">-</div>
                     <p style="margin-top: 12px; color: #6B7280; font-size: 14px;">
-                        * 이 값은 간단한 시뮬레이션 결과입니다. 정확한 평가를 위해서는 전문가의 검토가 필요합니다.
+                        * 이 값은 간단한 시뮬레이션 결과입니다. 정확한 평가를 위해서는 정식으로 평가를 신청하여 주십시오.
                     </p>
                 </div>
             </div>
@@ -351,6 +451,11 @@
 
         <!-- 우측 사이드바 - 프로세스 -->
         <aside class="sidebar">
+            <a href="valuation-list.html" class="btn-mypage">
+                <span>👤</span>
+                <span>마이 페이지</span>
+            </a>
+
             <div class="sidebar-title">평가 진행 단계</div>
             <div class="process-steps">
                 <div class="process-step active">

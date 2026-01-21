@@ -21,7 +21,7 @@
         background: var(--white);
         border-bottom: 1px solid var(--border);
         padding: 0 40px;
-        height: 80px;
+        height: 90px;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -39,24 +39,22 @@
 
     /* 로고 */
     .logo-container {
+        text-decoration: none;
+        display: block;
+    }
+
+    .logo-svg {
+        height: 75px;
+        width: auto;
+    }
+
+    /* 메인 메뉴 + 알람 */
+    .menu-with-notification {
         display: flex;
         align-items: center;
-        gap: 12px;
-        text-decoration: none;
+        gap: 24px;
     }
 
-    .logo-symbol {
-        width: 48px;
-        height: 48px;
-    }
-
-    .logo-text {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1E3A5F;
-    }
-
-    /* 메인 메뉴 */
     .main-menu {
         display: flex;
         gap: 8px;
@@ -81,13 +79,6 @@
     .menu-item.active {
         color: var(--deep-blue);
         background: #DBEAFE;
-    }
-
-    /* 오른쪽 영역 */
-    .header-right {
-        display: flex;
-        align-items: center;
-        gap: 20px;
     }
 
     /* 알람 */
@@ -131,12 +122,14 @@
         border: 2px solid white;
     }
 
-    /* 로그인/회원가입 버튼 */
-    .auth-buttons {
+    /* 오른쪽 영역 */
+    .header-right {
         display: flex;
+        align-items: center;
         gap: 12px;
     }
 
+    /* 로그인/회원가입 버튼 */
     .btn-login {
         padding: 10px 20px;
         font-size: 14px;
@@ -177,11 +170,11 @@
     @media (max-width: 768px) {
         .main-header {
             padding: 0 20px;
-            height: 64px;
+            height: 70px;
         }
 
-        .logo-text {
-            font-size: 24px;
+        .logo-svg {
+            height: 45px;
         }
 
         .menu-item {
@@ -200,39 +193,53 @@
     <div class="header-left">
         <!-- 로고 -->
         <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="logo-container">
-            <svg class="logo-symbol" viewBox="0 0 100 100">
-                <g transform="translate(15, 20)">
+            <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
+                <!-- 배경 -->
+                <rect width="500" height="100" fill="#FFFFFF"/>
+
+                <!-- V + L 심볼 (높이 50px) -->
+                <g transform="translate(50, 25)">
+                    <!-- 선1: 기업 - 딥그린 -->
                     <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+
+                    <!-- 선2: 평가 - 딥블루 -->
                     <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                    <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+
+                    <!-- 선3: 연결 - 앰버 -->
+                    <line x1="35" y1="50" x2="105" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
                 </g>
+
+                <!-- 텍스트: ValueLink -->
+                <text x="180" y="42" font-family="Arial, sans-serif" font-size="34" font-weight="bold" fill="#1E3A5F">ValueLink</text>
+
+                <!-- 슬로건 -->
+                <text x="180" y="81" font-family="Arial, sans-serif" font-size="15" fill="#666666">기업의 가치를 평가하여 투자자와 연결하다</text>
             </svg>
-            <span class="logo-text">ValueLink</span>
         </a>
 
-        <!-- 메인 메뉴 (2개) -->
-        <nav class="main-menu">
-            <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
-                Valuation
-            </a>
-            <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
-                Deal
-            </a>
-        </nav>
+        <!-- 알람 + 메인 메뉴 -->
+        <div class="menu-with-notification">
+            <!-- 알람 -->
+            <button class="notification-btn" onclick="toggleNotifications()">
+                <span class="notification-icon">🔔</span>
+                <span class="notification-badge">3</span>
+            </button>
+
+            <nav class="main-menu">
+                <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
+                    Valuation
+                </a>
+                <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
+                    Deal
+                </a>
+            </nav>
+        </div>
     </div>
 
     <div class="header-right">
-        <!-- 알람 -->
-        <button class="notification-btn" onclick="toggleNotifications()">
-            <span class="notification-icon">🔔</span>
-            <span class="notification-badge">3</span>
-        </button>
-
         <!-- 로그인/회원가입 -->
-        <div class="auth-buttons">
-            <button class="btn-login" onclick="location.href='/login'">로그인</button>
-            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
-        </div>
+        <button class="btn-login" onclick="location.href='/login'">로그인</button>
+        <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
     </div>
 </header>
 
