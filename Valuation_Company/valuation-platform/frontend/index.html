@@ -24,12 +24,22 @@
             flex: 1;
         }
 
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
         .page-title {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: #111827;
-            margin-bottom: 40px;
-            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #6B7280;
+            font-weight: 500;
         }
 
         /* 평가법 목록 */
@@ -219,7 +229,10 @@
     <div class="container">
         <!-- 메인 영역 -->
         <div class="main-area">
-            <h1 class="page-title">기업가치 평가방법</h1>
+            <div class="page-header">
+                <h1 class="page-title">기업가치 평가</h1>
+                <p class="page-subtitle">5가지 평가 방법</p>
+            </div>
 
             <div class="valuation-methods">
                 <!-- DCF평가법 -->
