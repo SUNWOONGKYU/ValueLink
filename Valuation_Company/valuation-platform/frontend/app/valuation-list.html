@@ -343,6 +343,7 @@
                 <button class="filter-btn" data-method="asset">자산가치</button>
                 <button class="filter-btn" data-method="inheritance_tax_law">상증세법</button>
             </div>
+            <a href="project-create.html" style="padding: 10px 24px; background: #1D4ED8; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">➕ 신규 프로젝트</a>
             <div class="stats">
                 총 <strong id="total-count">0</strong>건
             </div>
@@ -487,9 +488,9 @@
                     </div>
                 `;
 
-                // 클릭 시 상세 정보 표시 (추후 구현)
+                // 클릭 시 상세 페이지로 이동
                 card.addEventListener('click', () => {
-                    console.log('Project details:', project);
+                    window.location.href = `project-detail.html?id=${project.project_id}`;
                 });
 
                 grid.appendChild(card);

@@ -695,6 +695,19 @@
                 // 실제로는 여기서 테이블 필터링
             });
         });
+
+        // 테이블 행 클릭 시 project-detail.html로 이동
+        document.querySelectorAll('.project-table tbody tr').forEach(row => {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', (e) => {
+                // 작업 버튼 클릭 시에는 행 클릭 이벤트 무시
+                if (e.target.classList.contains('action-btn') || e.target.closest('.actions')) {
+                    return;
+                }
+                const projectId = row.querySelector('.project-id').textContent;
+                window.location.href = `project-detail.html?id=${projectId}`;
+            });
+        });
     </script>
 </body>
 </html>

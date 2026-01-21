@@ -57,17 +57,54 @@
         .logo-symbol { width: 44px; height: 44px; }
         .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
 
+        .main-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb-container {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 40px;
+        }
+
         .breadcrumb {
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 14px;
             color: var(--text-muted);
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .breadcrumb a {
             color: var(--deep-blue);
             text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--deep-blue-light);
+        }
+
+        .breadcrumb span {
+            color: var(--text-muted);
         }
 
         /* MAIN */
@@ -407,6 +444,17 @@
             </nav>
         </div>
     </header>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">
+            <a href="../index.html">홈</a>
+            <span>></span>
+            <a href="mockup-valuation.html">평가방법</a>
+            <span>></span>
+            <span>DCF평가법</span>
+        </div>
+    </div>
 
     <!-- MAIN -->
     <main class="main-content">

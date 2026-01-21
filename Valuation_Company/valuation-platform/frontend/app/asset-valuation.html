@@ -73,6 +73,37 @@
         .nav-item { color: var(--text-secondary); }
         .nav-item:hover { background: var(--bg-light); }
 
+        /* BREADCRUMB */
+        .breadcrumb-container {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 40px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: var(--deep-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--deep-blue-light);
+        }
+
+        .breadcrumb span {
+            color: var(--text-muted);
+        }
+
         /* HERO */
         .hero {
             background: var(--deep-blue);
@@ -481,6 +512,17 @@
             </nav>
         </div>
     </header>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">
+            <a href="../index.html">홈</a>
+            <span>></span>
+            <a href="mockup-valuation.html">평가방법</a>
+            <span>></span>
+            <span>자산가치평가법</span>
+        </div>
+    </div>
 
     <!-- HERO -->
     <section class="hero">

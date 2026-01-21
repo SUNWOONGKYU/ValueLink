@@ -20,6 +20,16 @@
         .user-name { font-size: 14px; font-weight: 600; }
         .user-company { font-size: 12px; color: var(--text-muted); }
         .btn-logout { padding: 8px 16px; font-size: 14px; color: var(--text-muted); background: transparent; border: 1px solid #E5E7EB; border-radius: 8px; cursor: pointer; }
+        .main-nav { display: flex; gap: 8px; }
+        .nav-item { padding: 10px 20px; font-size: 15px; font-weight: 600; text-decoration: none; color: var(--text-secondary); border-radius: 8px; transition: all 0.2s ease; }
+        .nav-item:hover { background: var(--bg-light); }
+
+        /* BREADCRUMB */
+        .breadcrumb-container { background: var(--white); border-bottom: 1px solid #E5E7EB; padding: 12px 40px; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); max-width: 1200px; margin: 0 auto; }
+        .breadcrumb a { color: var(--deep-blue); text-decoration: none; transition: color 0.2s ease; }
+        .breadcrumb a:hover { color: #1E40AF; }
+        .breadcrumb span { color: var(--text-muted); }
         .main-content { max-width: 1200px; margin: 0 auto; padding: 40px; }
         .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
@@ -104,6 +114,19 @@
             <button class="btn-logout">로그아웃</button>
         </div>
     </header>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">
+            <a href="../index.html">홈</a>
+            <span>></span>
+            <a href="mockup-valuation.html">평가방법</a>
+            <span>></span>
+            <a href="mockup-valuation.html#relative">상대가치평가법</a>
+            <span>></span>
+            <span>자료제출</span>
+        </div>
+    </div>
 
     <main class="main-content">
         <section class="project-info-card">

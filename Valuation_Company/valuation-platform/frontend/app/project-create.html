@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>신규 프로젝트 생성 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -559,13 +560,18 @@
             <p>고객에게 자료 제출 안내 메일이 발송됩니다</p>
             <div class="project-id" id="modalProjectId">SAMSU-2501191430-DC</div>
             <div class="btn-group">
-                <button class="btn btn-secondary" onclick="location.href='project-dashboard.html'">목록으로</button>
-                <button class="btn btn-primary" onclick="location.href='project-detail.html'">프로젝트 보기</button>
+                <button class="btn btn-secondary" onclick="location.href='valuation-list.html'">목록으로</button>
+                <button class="btn btn-primary" id="goToPortalBtn">자료 제출하기</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Supabase 클라이언트 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // 영문명에서 5글자 코드 추출
         function getCompanyCode(englishName) {
             if (!englishName) return 'XXXXX';
@@ -609,8 +615,8 @@
             document.getElementById('projectIdPreview').textContent = projectId;
         }
 
-        // 프로젝트 생성
-        function createProject() {
+        // 프로젝트 생성/수정
+        async function createProject() {
             // 필수 입력 검증
             const companyNameKr = document.getElementById('companyNameKr').value;
             const companyNameEn = document.getElementById('companyNameEn').value;
@@ -626,30 +632,172 @@
                 return;
             }
 
-            // 프로젝트 ID 생성
+            // 프로젝트 ID
             const projectId = document.getElementById('projectIdPreview').textContent;
 
-            // 모달에 표시
-            document.getElementById('modalProjectId').textContent = projectId;
-            document.getElementById('successModal').classList.add('show');
+            // 평가법 코드 매핑
+            const methodCodeMap = {
+                'DC': 'dcf',
+                'RV': 'relative',
+                'IP': 'capital_market_law',
+                'AV': 'asset',
+                'TX': 'inheritance_tax_law'
+            };
 
-            // 실제로는 여기서 API 호출하여 DB에 저장
-            console.log('프로젝트 생성:', {
-                projectId: projectId,
-                companyNameKr: companyNameKr,
-                companyNameEn: companyNameEn,
-                method: method.value,
-                valuationDate: document.getElementById('valuationDate').value,
-                purpose: document.getElementById('purpose').value,
-                assignedAccountant: document.getElementById('assignedAccountant').value
-            });
+            // 수정 모드 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const isEditMode = urlParams.has('edit');
+
+            try {
+                if (isEditMode) {
+                    // 수정 모드: 프로젝트 업데이트
+                    const { data: project, error: projectError } = await supabase
+                        .from('projects')
+                        .update({
+                            company_name_kr: companyNameKr,
+                            company_name_en: companyNameEn,
+                            valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
+                            purpose: document.getElementById('purpose').value,
+                            assigned_accountant: document.getElementById('assignedAccountant').value
+                        })
+                        .eq('project_id', projectId)
+                        .select();
+
+                    if (projectError) throw projectError;
+
+                    alert('프로젝트가 수정되었습니다.');
+                    location.href = `project-detail.html?id=${projectId}`;
+
+                } else {
+                    // 신규 생성 모드
+                    // 1. projects 테이블에 프로젝트 생성
+                    const { data: project, error: projectError } = await supabase
+                        .from('projects')
+                        .insert([{
+                            project_id: projectId,
+                            company_name_kr: companyNameKr,
+                            company_name_en: companyNameEn,
+                            valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
+                            purpose: document.getElementById('purpose').value,
+                            assigned_accountant: document.getElementById('assignedAccountant').value,
+                            status: 'pending'
+                        }])
+                        .select();
+
+                    if (projectError) throw projectError;
+
+                    // 2. valuation_results 테이블에 초기 데이터 생성
+                    const { data: result, error: resultError } = await supabase
+                        .from('valuation_results')
+                        .insert([{
+                            project_id: projectId,
+                            method: methodCodeMap[method.value],
+                            enterprise_value: 0,
+                            value_per_share: 0,
+                            status: 'pending'
+                        }])
+                        .select();
+
+                    if (resultError) throw resultError;
+
+                    console.log('프로젝트 생성 성공:', project, result);
+
+                    // 평가법에 따른 포털 URL 매핑
+                    const portalUrls = {
+                        'DC': 'dcf-portal.html',
+                        'RV': 'relative-portal.html',
+                        'IP': 'ipo-portal.html',
+                        'AV': 'asset-portal.html',
+                        'TX': 'tax-portal.html'
+                    };
+
+                    // 모달에 표시
+                    document.getElementById('modalProjectId').textContent = projectId;
+
+                    // 자료 제출 버튼에 해당 포털로 이동하는 이벤트 설정
+                    const portalBtn = document.getElementById('goToPortalBtn');
+                    portalBtn.onclick = () => {
+                        location.href = portalUrls[method.value] || 'customer-portal.html';
+                    };
+
+                    document.getElementById('successModal').classList.add('show');
+                }
+
+            } catch (error) {
+                console.error('프로젝트 저장 실패:', error);
+                alert('프로젝트 저장 중 오류가 발생했습니다: ' + error.message);
+            }
         }
 
-        // 1초마다 시간 업데이트
-        setInterval(updateProjectId, 1000);
+        // 수정 모드: 프로젝트 데이터 로드
+        async function loadProjectForEdit(projectId) {
+            try {
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select(`
+                        *,
+                        valuation_results (*)
+                    `)
+                    .eq('project_id', projectId)
+                    .single();
 
-        // 초기 실행
-        updateProjectId();
+                if (error) throw error;
+
+                if (project) {
+                    // 폼에 데이터 채우기
+                    document.getElementById('companyNameKr').value = project.company_name_kr;
+                    document.getElementById('companyNameEn').value = project.company_name_en;
+                    document.getElementById('valuationDate').value = project.valuation_date;
+                    document.getElementById('purpose').value = project.purpose || '';
+                    document.getElementById('assignedAccountant').value = project.assigned_accountant || '';
+
+                    // 평가 방법 선택
+                    if (project.valuation_results && project.valuation_results.length > 0) {
+                        const method = project.valuation_results[0].method;
+                        const methodCodeMap = {
+                            'dcf': 'DC',
+                            'relative': 'RV',
+                            'capital_market_law': 'IP',
+                            'asset': 'AV',
+                            'inheritance_tax_law': 'TX'
+                        };
+                        const methodCode = methodCodeMap[method];
+                        if (methodCode) {
+                            const radio = document.querySelector(`input[value="${methodCode}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    }
+
+                    // 버튼 텍스트 변경
+                    document.querySelector('.btn-primary').textContent = '프로젝트 수정';
+                    document.querySelector('.page-title h1').textContent = '프로젝트 수정';
+
+                    // 프로젝트 ID 미리보기 비활성화 (수정 모드에서는 변경 불가)
+                    document.getElementById('projectIdPreview').textContent = projectId;
+                    document.getElementById('projectIdPreview').style.color = '#9CA3AF';
+                }
+            } catch (error) {
+                console.error('프로젝트 로드 실패:', error);
+                alert('프로젝트 데이터를 불러오는 중 오류가 발생했습니다.');
+                location.href = 'valuation-list.html';
+            }
+        }
+
+        // URL 파라미터 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        if (editId) {
+            // 수정 모드
+            loadProjectForEdit(editId);
+            // 시간 업데이트 중지 (수정 모드에서는 ID 변경 안 함)
+        } else {
+            // 신규 생성 모드
+            // 1초마다 시간 업데이트
+            setInterval(updateProjectId, 1000);
+            // 초기 실행
+            updateProjectId();
+        }
     </script>
 </body>
 </html>
