@@ -24,45 +24,80 @@
             flex: 1;
         }
 
-        /* 5개 평가법 */
-        .methods-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 40px;
+            text-align: center;
         }
 
-        .method-btn {
-            background: white;
-            border: 2px solid #E5E7EB;
-            border-radius: 12px;
-            padding: 24px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
+        /* 평가법 목록 */
+        .valuation-methods {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            gap: 24px;
         }
 
-        .method-btn:hover {
+        .method-card {
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
             border-color: #1D4ED8;
             box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
-            transform: translateY(-2px);
         }
 
         .method-icon {
-            font-size: 40px;
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+
+        .method-info {
+            flex: 1;
         }
 
         .method-name {
-            font-size: 15px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
             color: #111827;
+            margin-bottom: 12px;
         }
 
-        /* 우측 사이드바 - 프로세스 */
+        .method-summary {
+            font-size: 15px;
+            color: #6B7280;
+            line-height: 1.6;
+        }
+
+        .btn-detail {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-detail:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 우측 사이드바 */
         .sidebar {
             width: 280px;
             background: white;
@@ -72,6 +107,32 @@
             height: fit-content;
             position: sticky;
             top: 100px;
+        }
+
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
         }
 
         .sidebar-title {
@@ -110,10 +171,6 @@
             font-weight: 600;
         }
 
-        .process-step.completed {
-            color: #059669;
-        }
-
         .step-number {
             width: 24px;
             height: 24px;
@@ -133,40 +190,8 @@
             color: white;
         }
 
-        .process-step.completed .step-number {
-            background: #059669;
-            color: white;
-        }
-
         .step-text {
             flex: 1;
-        }
-
-        /* 내 프로젝트 */
-        .my-projects {
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .btn-my-projects {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #1D4ED8;
-            background: white;
-            border: 2px solid #1D4ED8;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-        .btn-my-projects:hover {
-            background: #1D4ED8;
-            color: white;
         }
 
         /* 반응형 */
@@ -180,14 +205,9 @@
                 position: static;
             }
 
-            .methods-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 640px) {
-            .methods-container {
-                grid-template-columns: 1fr;
+            .method-card {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
@@ -199,45 +219,78 @@
     <div class="container">
         <!-- 메인 영역 -->
         <div class="main-area">
-            <!-- 5개 평가법 -->
-            <div class="methods-container">
-                <a href="app/guide-dcf.html" class="method-btn">
-                    <div class="method-icon">💰</div>
-                    <div class="method-name">DCF평가법</div>
-                </a>
+            <h1 class="page-title">기업가치 평가방법</h1>
 
-                <a href="app/guide-relative.html" class="method-btn">
-                    <div class="method-icon">📊</div>
-                    <div class="method-name">상대가치평가법</div>
-                </a>
+            <div class="valuation-methods">
+                <!-- DCF평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">📈</div>
+                    <div class="method-info">
+                        <div class="method-name">DCF평가법</div>
+                        <div class="method-summary">
+                            기업이 미래에 창출할 현금흐름을 현재 가치로 환산하여 기업 가치를 산정하는 방법입니다. 성장 가능성이 있는 기업, M&A 및 투자 의사결정에 주로 사용됩니다.
+                        </div>
+                    </div>
+                    <a href="app/guide-dcf.html" class="btn-detail">상세보기</a>
+                </div>
 
-                <a href="app/guide-intrinsic.html" class="method-btn">
-                    <div class="method-icon">🚀</div>
-                    <div class="method-name">본질가치평가법</div>
-                </a>
+                <!-- 상대가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">⚖️</div>
+                    <div class="method-info">
+                        <div class="method-name">상대가치평가법</div>
+                        <div class="method-summary">
+                            유사한 기업들의 시장 가치를 비교하여 평가 대상 기업의 가치를 산정하는 방법입니다. PER, PBR, EV/EBITDA 등의 배수를 활용하여 빠르고 직관적인 평가가 가능합니다.
+                        </div>
+                    </div>
+                    <a href="app/guide-relative.html" class="btn-detail">상세보기</a>
+                </div>
 
-                <a href="app/guide-asset.html" class="method-btn">
-                    <div class="method-icon">🏢</div>
-                    <div class="method-name">자산가치평가법</div>
-                </a>
+                <!-- 본질가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">💎</div>
+                    <div class="method-info">
+                        <div class="method-name">본질가치평가법</div>
+                        <div class="method-summary">
+                            자본시장법에 따른 공모 시 사용되는 평가 방법으로, 유사 상장기업의 주가를 기준으로 1대 1.5 원칙을 적용합니다. IPO 준비 기업의 공모가 산정에 필수적입니다.
+                        </div>
+                    </div>
+                    <a href="app/guide-intrinsic.html" class="btn-detail">상세보기</a>
+                </div>
 
-                <a href="app/guide-tax.html" class="method-btn">
-                    <div class="method-icon">📋</div>
-                    <div class="method-name">상증세법평가법</div>
-                </a>
-            </div>
+                <!-- 자산가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">🏦</div>
+                    <div class="method-info">
+                        <div class="method-name">자산가치평가법</div>
+                        <div class="method-summary">
+                            기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다. 부동산, 유형자산이 많은 기업이나 M&A 시 최소 가치 산정에 적합합니다.
+                        </div>
+                    </div>
+                    <a href="app/guide-asset.html" class="btn-detail">상세보기</a>
+                </div>
 
-            <!-- 내 프로젝트 -->
-            <div class="my-projects">
-                <a href="app/valuation-list.html" class="btn-my-projects">
-                    <span>📂</span>
-                    <span>내 프로젝트 보기</span>
-                </a>
+                <!-- 상증세법평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">📜</div>
+                    <div class="method-info">
+                        <div class="method-name">상증세법평가법</div>
+                        <div class="method-summary">
+                            상속세 및 증여세법에서 정한 방법으로 비상장주식의 가치를 산정하는 법정 평가 방법입니다. 비상장주식 증여, 상속, 임직원 스톡옵션 행사 시 사용됩니다.
+                        </div>
+                    </div>
+                    <a href="app/guide-tax.html" class="btn-detail">상세보기</a>
+                </div>
             </div>
         </div>
 
-        <!-- 우측 사이드바 - 프로세스 -->
+        <!-- 우측 사이드바 -->
         <aside class="sidebar">
+            <a href="app/valuation-list.html" class="btn-mypage">
+                <span>👤</span>
+                <span>마이 페이지</span>
+            </a>
+
             <div class="sidebar-title">평가 진행 단계</div>
             <div class="process-steps">
                 <div class="process-step active">

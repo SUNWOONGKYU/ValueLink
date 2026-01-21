@@ -48,13 +48,7 @@
         width: auto;
     }
 
-    /* 메인 메뉴 + 알람 */
-    .menu-with-notification {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-    }
-
+    /* 메인 메뉴 */
     .main-menu {
         display: flex;
         gap: 8px;
@@ -217,26 +211,24 @@
             </svg>
         </a>
 
-        <!-- 알람 + 메인 메뉴 -->
-        <div class="menu-with-notification">
-            <!-- 알람 -->
-            <button class="notification-btn" onclick="toggleNotifications()">
-                <span class="notification-icon">🔔</span>
-                <span class="notification-badge">3</span>
-            </button>
-
-            <nav class="main-menu">
-                <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
-                    Valuation
-                </a>
-                <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
-                    Deal
-                </a>
-            </nav>
-        </div>
+        <!-- 메인 메뉴 -->
+        <nav class="main-menu">
+            <a href="/Valuation_Company/valuation-platform/frontend/index.html" class="menu-item active" id="menu-valuation">
+                Valuation
+            </a>
+            <a href="/Valuation_Company/valuation-platform/frontend/app/mockup-deal.html" class="menu-item" id="menu-deal">
+                Deal
+            </a>
+        </nav>
     </div>
 
     <div class="header-right">
+        <!-- 알람 -->
+        <button class="notification-btn" onclick="toggleNotifications()">
+            <span class="notification-icon">🔔</span>
+            <span class="notification-badge">3</span>
+        </button>
+
         <!-- 로그인/회원가입 -->
         <button class="btn-login" onclick="location.href='/login'">로그인</button>
         <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
