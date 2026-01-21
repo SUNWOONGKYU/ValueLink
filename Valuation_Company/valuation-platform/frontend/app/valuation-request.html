@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가 요청하기 | ValueLink</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            background: #F9FAFB;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* 메인 영역 */
+        .main-area {
+            flex: 1;
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .step-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #166534 0%, #15803D 100%);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: #6B7280;
+            line-height: 1.6;
+        }
+
+        /* 평가 방법 선택 */
+        .method-selection {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .method-card {
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .method-card:hover {
+            border-color: #166534;
+            background: #F0FDF4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.1);
+        }
+
+        .method-card.selected {
+            border-color: #166534;
+            background: #F0FDF4;
+        }
+
+        .method-card input[type="radio"] {
+            display: none;
+        }
+
+        .method-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .method-name-en {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 12px;
+        }
+
+        .method-description {
+            font-size: 14px;
+            color: #6B7280;
+            line-height: 1.6;
+        }
+
+        /* 기업 정보 입력 */
+        .company-info {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: #DC2626;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #166534;
+            box-shadow: 0 0 0 3px rgba(22, 101, 52, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* 버튼 */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #166534;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #15803D;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #374151;
+            border: 1px solid #D1D5DB;
+        }
+
+        .btn-secondary:hover {
+            background: #F3F4F6;
+        }
+
+        /* 우측 사이드바 - 프로세스 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+            align-self: flex-start;
+            max-height: calc(100vh - 130px);
+            overflow-y: auto;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .process-step.active {
+            background: #DCFCE7;
+            border-left: 3px solid #166534;
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        .process-step.active .step-number {
+            background: #166534;
+            color: white;
+        }
+
+        .step-text {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .process-step.active .step-text {
+            color: #166534;
+            font-weight: 600;
+        }
+
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px 0;
+            margin-bottom: 24px;
+            background: white;
+            border: 1.5px solid #166534;
+            border-radius: 8px;
+            color: #166534;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-mypage:hover {
+            background: #F0FDF4;
+            transform: translateY(-1px);
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 영역 -->
+        <div class="main-area">
+            <!-- 페이지 헤더 -->
+            <div class="page-header">
+                <div class="step-badge">STEP 1</div>
+                <h1 class="page-title">평가 요청하기</h1>
+                <p class="page-description">
+                    평가 방법을 선택하고 기본 정보를 입력하여 기업가치평가를 신청합니다.
+                    선택한 평가 방법에 따라 필요한 자료가 다를 수 있습니다.
+                </p>
+            </div>
+
+            <!-- 평가 방법 선택 -->
+            <div class="method-selection">
+                <h2 class="section-title">평가 방법 선택</h2>
+                <div class="method-grid">
+                    <label class="method-card">
+                        <input type="radio" name="method" value="dcf">
+                        <div class="method-name">DCF 평가법</div>
+                        <div class="method-name-en">Discounted Cash Flow</div>
+                        <p class="method-description">
+                            미래 현금흐름을 할인하여 기업가치를 산정. 성장 기업에 적합
+                        </p>
+                    </label>
+
+                    <label class="method-card">
+                        <input type="radio" name="method" value="relative">
+                        <div class="method-name">상대가치 평가법</div>
+                        <div class="method-name-en">Relative Valuation</div>
+                        <p class="method-description">
+                            유사 기업의 밸류에이션 배수를 활용. 상장 유사기업 존재 시 적합
+                        </p>
+                    </label>
+
+                    <label class="method-card">
+                        <input type="radio" name="method" value="intrinsic">
+                        <div class="method-name">본질가치 평가법</div>
+                        <div class="method-name-en">Intrinsic Value</div>
+                        <p class="method-description">
+                            배당, 이익, 성장성 등을 종합 고려. 안정적 배당 기업에 적합
+                        </p>
+                    </label>
+
+                    <label class="method-card">
+                        <input type="radio" name="method" value="asset">
+                        <div class="method-name">자산가치 평가법</div>
+                        <div class="method-name-en">Asset-based Valuation</div>
+                        <p class="method-description">
+                            순자산가치(NAV)로 평가. 부동산, 금융 자산 보유 기업에 적합
+                        </p>
+                    </label>
+
+                    <label class="method-card">
+                        <input type="radio" name="method" value="tax">
+                        <div class="method-name">상증세법 평가법</div>
+                        <div class="method-name-en">Tax Law Valuation</div>
+                        <p class="method-description">
+                            상증세법 기준 평가. 비상장주식 상속/증여 시 사용
+                        </p>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 기업 정보 입력 -->
+            <div class="company-info">
+                <h2 class="section-title">기업 기본 정보</h2>
+                <form id="requestForm">
+                    <div class="form-group">
+                        <label class="form-label required">회사명</label>
+                        <input type="text" class="form-input" id="companyName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">대표자명</label>
+                        <input type="text" class="form-input" id="ceoName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">업종</label>
+                        <input type="text" class="form-input" id="industry" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">평가 목적</label>
+                        <select class="form-select" id="purpose" required>
+                            <option value="">선택하세요</option>
+                            <option value="ma">M&A / 인수합병</option>
+                            <option value="investment">투자 유치</option>
+                            <option value="tax">상속/증여세 신고</option>
+                            <option value="litigation">소송/분쟁</option>
+                            <option value="internal">내부 관리</option>
+                            <option value="other">기타</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">추가 요청사항</label>
+                        <textarea class="form-textarea" id="additionalRequest" placeholder="평가 시 특별히 고려해야 할 사항이나 질문사항을 입력하세요"></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            취소
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            평가 신청하기
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 우측 사이드바 - 프로세스 -->
+        <aside class="sidebar">
+            <a href="mypage.html" class="btn-mypage">
+                <span>👤</span>
+                <span>마이 페이지</span>
+            </a>
+
+            <div class="sidebar-title">평가 진행 단계</div>
+            <div class="process-steps">
+                <div class="process-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">평가 요청하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">관리자 승인 대기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">자료 제출하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">평가 결과 미리보기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">수정 요청하기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text">최종 결과 보기</div>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-text">보고서 발행 요청</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+
+                const menuValuation = document.getElementById('menu-valuation');
+                const menuDeal = document.getElementById('menu-deal');
+                const menuLearning = document.getElementById('menu-learning');
+                const logoLink = document.querySelector('.logo-container');
+
+                if (menuValuation) menuValuation.href = '../index.html';
+                if (menuDeal) menuDeal.href = 'mockup-deal.html';
+                if (menuLearning) menuLearning.href = 'learning-content.html';
+                if (logoLink) logoLink.href = '../index.html';
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 평가 방법 선택
+        document.querySelectorAll('.method-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                card.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // 폼 제출
+        document.getElementById('requestForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const selectedMethod = document.querySelector('input[name="method"]:checked');
+            if (!selectedMethod) {
+                alert('평가 방법을 선택해주세요.');
+                return;
+            }
+
+            const formData = {
+                method: selectedMethod.value,
+                companyName: document.getElementById('companyName').value,
+                ceoName: document.getElementById('ceoName').value,
+                industry: document.getElementById('industry').value,
+                purpose: document.getElementById('purpose').value,
+                additionalRequest: document.getElementById('additionalRequest').value,
+                timestamp: new Date().toISOString()
+            };
+
+            // 로컬 스토리지에 저장
+            localStorage.setItem('valuationRequest', JSON.stringify(formData));
+
+            // 다음 단계로 이동 (관리자 승인 대기)
+            alert('평가 신청이 완료되었습니다.\n관리자 승인 후 다음 단계로 진행됩니다.');
+            window.location.href = 'valuation-pending.html';
+        });
+
+        // 마이페이지 데이터가 있으면 자동 입력
+        const companyInfo = localStorage.getItem('companyInfo');
+        if (companyInfo) {
+            const data = JSON.parse(companyInfo);
+            if (data.companyName) document.getElementById('companyName').value = data.companyName;
+            if (data.ceoName) document.getElementById('ceoName').value = data.ceoName;
+            if (data.industry) document.getElementById('industry').value = data.industry;
+        }
+    </script>
+</body>
+</html>
