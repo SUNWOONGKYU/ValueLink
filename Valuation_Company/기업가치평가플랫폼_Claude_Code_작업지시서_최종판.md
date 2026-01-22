@@ -77,7 +77,7 @@
 언어: Python 3.11+
 프레임워크: FastAPI
 데이터베이스: Supabase (PostgreSQL)
-ORM: Prisma
+ORM: SQLAlchemy
 AI: Claude API (Anthropic)
 ```
 
@@ -134,77 +134,22 @@ valuation-platform/
 │   │   └── utils/          # 유틸리티
 │   └── tests/              # 테스트
 │
-├── database/
-│   └── schema.prisma       # Prisma 스키마
-│
-└── docs/
+├── docs/
     └── api-docs.md         # API 문서
 ```
 
 ---
 
-## 💾 데이터베이스 스키마 (Prisma)
+## 💾 데이터베이스 스키마 (SQLAlchemy)
 
-```prisma
-// schema.prisma
+데이터베이스 스키마는 `backend/app/models/` 디렉토리 내의 Python 클래스들을 통해 SQLAlchemy 모델로 정의됩니다. Prisma 스키마 파일은 사용하지 않습니다.
 
-generator client {
-  provider = "prisma-client-py"
-}
+주요 모델:
+- `Company`
+- `Evaluation`
+- `User`
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model Company {
-  id              String   @id @default(uuid())
-  name            String
-  businessNumber  String   @unique
-  industry        String
-  establishedDate DateTime
-  ceo             String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  evaluations     Evaluation[]
-}
-
-model Evaluation {
-  id              String   @id @default(uuid())
-  companyId       String
-  evaluationType  String   // "DCF", "COMPARABLE", "IPO", "TAX", "NAV"
-  evaluationDate  DateTime
-  status          String   // "REQUESTED", "IN_PROGRESS", "COMPLETED"
-  
-  // 평가 결과
-  enterpriseValue Float?
-  equityValue     Float?
-  sharePrice      Float?
-  
-  // 파일 경로
-  excelFilePath   String?
-  pdfFilePath     String?
-  
-  // 추가 데이터 (JSON)
-  inputData       Json
-  assumptions     Json?
-  results         Json?
-  
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  company         Company  @relation(fields: [companyId], references: [id])
-}
-
-model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  name            String
-  role            String   // "COMPANY", "INVESTOR", "ADMIN"
-  createdAt       DateTime @default(now())
-}
-```
+(자세한 필드는 `backend/app/models/` 내부 파일 참조)
 
 ---
 
@@ -751,7 +696,7 @@ export function DCFCalculator() {
 ```sql
 -- Supabase에서 실행할 SQL
 
--- 1. 테이블 생성 (Prisma 대신 직접)
+-- 1. 테이블 생성 (SQLAlchemy 모델 기반)
 CREATE TABLE companies (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
@@ -814,7 +759,7 @@ vercel --prod
 - [ ] Supabase 프로젝트 생성 및 DB 스키마 설정
 - [ ] Tailwind + shadcn/ui 설정
 - [ ] FastAPI 백엔드 기본 구조
-- [ ] Prisma 설정
+- [ ] SQLAlchemy 설정
 
 ### Week 2: DCF 평가 시스템
 - [ ] DCF 계산 로직 구현

@@ -33,7 +33,7 @@ ValueLink/
 │       │   ├── schemas/            ← Pydantic 스키마 (9개)
 │       │   ├── routers/            ← API 라우터
 │       │   └── services/           ← 비즈니스 로직
-│       ├── frontend/               ← HTML + JavaScript
+│       ├── frontend/               ← Next.js + React
 │       │   ├── app/                ← 페이지
 │       │   └── components/         ← UI 컴포넌트
 │       └── docs/                   ← 프로젝트 문서
