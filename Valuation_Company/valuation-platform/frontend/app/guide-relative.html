@@ -19,10 +19,12 @@
             gap: 40px;
         }
 
+        /* 메인 영역 */
         .main-area {
             flex: 1;
         }
 
+        /* 학습 자료 섹션 */
         .learning-section {
             background: white;
             border-radius: 16px;
@@ -113,32 +115,7 @@
             color: #6B7280;
         }
 
-        /* 마이 페이지 버튼 */
-        .btn-mypage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            color: white;
-            background: #1D4ED8;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            margin-bottom: 24px;
-        }
-
-        .btn-mypage:hover {
-            background: #1E40AF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
-        }
-
+        /* 시뮬레이션 섹션 */
         .simulation-section {
             background: white;
             border-radius: 16px;
@@ -177,10 +154,6 @@
             font-size: 13px;
             color: #6B7280;
             margin-top: 4px;
-        }
-
-        select.input-field {
-            cursor: pointer;
         }
 
         .btn-calculate {
@@ -229,6 +202,7 @@
             color: #1D4ED8;
         }
 
+        /* 다음 단계 버튼 */
         .next-step-section {
             text-align: center;
             margin-top: 40px;
@@ -256,6 +230,7 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
+        /* 우측 사이드바 - 프로세스 */
         .sidebar {
             width: 280px;
             background: white;
@@ -306,6 +281,10 @@
             font-weight: 600;
         }
 
+        .process-step.completed {
+            color: #059669;
+        }
+
         .step-number {
             width: 24px;
             height: 24px;
@@ -325,10 +304,42 @@
             color: white;
         }
 
+        .process-step.completed .step-number {
+            background: #059669;
+            color: white;
+        }
+
         .step-text {
             flex: 1;
         }
 
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 반응형 */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
@@ -340,8 +351,76 @@
             }
         }
     </style>
-</head>
-<body>
+        <style>
+            .accordion {
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .accordion-item {
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .accordion-item:last-child {
+                border-bottom: none;
+            }
+            .accordion-header {
+                background-color: #f9fafb;
+                padding: 16px 24px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+                transition: background-color 0.2s ease;
+            }
+            .accordion-header:hover {
+                background-color: #f3f4f6;
+            }
+            .accordion-title {
+                flex-grow: 1;
+            }
+            .youtube-notice {
+                font-size: 14px;
+                font-weight: 500;
+                color: #6b7280;
+                margin-right: 16px;
+            }
+            .accordion-icon {
+                font-size: 24px;
+                font-weight: 500;
+                transition: transform 0.3s ease;
+            }
+            .accordion-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+                background-color: white;
+            }
+            .learning-content-detail {
+                padding: 24px;
+                font-size: 16px;
+                line-height: 1.8;
+                color: #374151;
+            }
+            .learning-content-detail h4 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+                margin-top: 24px;
+                margin-bottom: 10px;
+            }
+            .learning-content-detail p, .learning-content-detail ul {
+                margin-bottom: 16px;
+            }
+            .accordion-item.active .accordion-icon {
+                transform: rotate(45deg);
+            }
+        </style>
+    </head><body>
     <!-- 헤더 -->
     <div id="header-container"></div>
 
@@ -349,64 +428,563 @@
         <!-- 메인 영역 -->
         <div class="main-area">
             <!-- 학습 자료 섹션 -->
-            <!-- 학습용 콘텐츠 섹션 -->
             <div class="learning-section">
                 <h2 class="section-title">📚 상대가치평가법 학습 콘텐츠</h2>
-                <p style="color: #6B7280; margin-bottom: 24px;">
-                    시장접근법을 활용한 상대가치평가를 학습할 수 있는 7편의 영상 강의입니다.
-                </p>
+                
+                <div class="accordion">
+                    <!-- 제1편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제1편: 상대가치 평가법이란 무엇인가</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>1.1 정의와 핵심 개념</h4>
+                                <p><strong>상대가치평가(Relative Valuation)</strong>는 비슷한 기업이 시장에서 어떻게 평가받는지를 기준으로 대상 기업의 가치를 추정하는 방법입니다. 한마디로 "비슷한 회사가 10배에 거래되는데, 우리 회사는 얼마일까?"라는 질문에 답하는 것입니다.</p>
+                                <p>핵심은 <strong>멀티플(Multiples)</strong>, 즉 가치평가 배수입니다. PER(주가수익비율)이 15배라는 것은 투자자들이 1원의 이익을 내는 기업에 15원을 지불할 의향이 있다는 의미입니다. 마치 월세 100만원 받는 건물에 1억 5천만원을 낸다고 생각하면 됩니다. 15년이면 본전이죠. 이 배수를 우리 기업에 적용하면 가치가 나옵니다.</p>
+                                <p><strong>비교가능 기업 분석(Comparable Company Analysis)</strong>이 그 방법론입니다. 동일 산업의 상장기업들을 찾아 그들의 멀티플 평균을 구하고, 대상 기업의 재무지표에 곱하면 시장이 인정할 만한 가치가 산출됩니다. 시장이 이미 매긴 가격을 빌려오는 것이죠.</p>
+                                <p>예를 들어, 유사 화장품 기업들의 평균 PER이 12배이고 우리 기업의 순이익이 100억원이라면, 시장가치는 1,200억원으로 추정됩니다. 복잡한 미래 예측 없이도 현재 시장의 평가 기준을 활용할 수 있습니다.</p>
 
-                <div class="content-links">
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제13편 | 시장접근법 개요와 비교기업 선정</div>
-                            <div class="content-desc">⏱️ 15분 | Comparable Companies 선정 기준</div>
+                                <h4>1.2 왜 상대가치 평가법이 필요한가</h4>
+                                <p>DCF는 이론적으로 완벽하지만, 실제로는 <strong>시장이 다르게 평가</strong>할 수 있습니다. 아무리 내재가치가 높아도 시장이 인정하지 않으면 소용없죠. 상대가치평가는 바로 이 시장의 시각을 반영합니다.</p>
+                                <p>가장 큰 장점은 <strong>속도</strong>입니다. DCF는 5년 재무제표 추정, 할인율 계산, 영구가치 산정 등 며칠이 걸립니다. 하지만 상대가치평가는 비교기업 몇 개만 찾으면 몇 시간 안에 가능합니다. M&A 초기 검토나 빠른 의사결정이 필요할 때 필수적입니다.</p>
+                                <p><strong>실무 활용도</strong>도 높습니다. 투자은행의 IPO 공모가 산정, PE 펀드의 Exit 멀티플 설정, 애널리스트의 목표주가 제시 등 거의 모든 실무에서 사용됩니다. 국내 M&A 거래의 상당수가 상대가치평가를 주요 방법으로 활용하며, 특히 빠른 의사결정이 필요한 경우 선호됩니다.</p>
+                                <p>투자자 커뮤니케이션에도 효과적입니다. "우리 회사 내재가치는 WACC 8.5%에 영구성장률 2% 적용하면..."보다는 "동종 업계 평균 PER 15배 대비 우리는 10배로 저평가"가 훨씬 이해하기 쉽습니다.</p>
+
+                                <h4>1.3 다른 평가법과의 차이</h4>
+                                <p>DCF가 <strong>절대가치(Absolute Value)</strong>를 찾는다면, 상대가치는 <strong>상대가격(Relative Price)</strong>을 찾습니다. DCF는 "이 기업의 진짜 가치는 얼마인가?"를 묻지만, 상대가치는 "시장이 이 기업을 얼마로 평가할까?"를 묻습니다.</p>
+                                <p><strong>자산가치평가</strong>는 과거(현재 보유자산)를 보고, DCF는 미래(미래 현금흐름)를 보지만, 상대가치는 <strong>현재 시장</strong>을 봅니다. 지금 이 순간 투자자들이 비슷한 기업에 매기는 가격이 기준입니다.</p>
+                                <p>상대가치평가의 가장 큰 강점은 <strong>시장의 지혜 반영</strong>입니다. 수천 명의 투자자가 분석하고 거래한 결과가 멀티플에 녹아있습니다. 하지만 한계도 명확합니다. 시장 전체가 과열되거나 침체되면 멀티플도 왜곡됩니다. 2000년 닷컴버블 때 IT기업 PSR이 30배를 넘었듯이요.</p>
+                                <p>또한 <strong>완벽히 비슷한 기업은 없습니다</strong>. 삼성전자와 SK하이닉스도 사업구조가 다르고, 같은 화장품 회사라도 브랜드력, 유통채널, 해외비중이 다릅니다. 이런 차이를 조정하는 게 실무자의 역량입니다. 그래서 상대가치평가는 DCF와 함께 사용해 서로의 약점을 보완하는 게 정석입니다.</p>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제14편 | PER과 PBR 활용법</div>
-                            <div class="content-desc">⏱️ 15분 | 주가수익비율과 주가순자산비율</div>
+                    </div>
+
+                    <!-- 제2편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제2편: 상대가치 평가 1단계: 대상기업 재무제표 수집 및 정규화</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>개요: 상대가치평가 6단계 프로세스</h4>
+                                <p>상대가치평가는 다음 6단계로 진행됩니다. DCF처럼 복잡한 미래 예측은 없지만, 비교기업 선정과 조정 과정에서 전문성이 요구됩니다.</p>
+                                <pre><code>1단계: 평가 대상기업 재무제표 수집 및 정규화
+2단계: 비교가능 기업군(Peer Group) 선정
+3단계: 비교기업의 멀티플 계산
+4단계: 이상치 제거 및 대표값 산출
+5단계: 대상기업 특성 반영 조정
+6단계: 최종 가치 산출 및 범위 제시</code></pre>
+
+                                <h4>2.1.1 필요한 재무 데이터</h4>
+                                <p>상대가치평가에서 사용하는 핵심 재무지표는 다음과 같습니다.</p>
+                                <p><strong>손익계산서 항목:</strong></p>
+                                <ul>
+                                    <li>매출액 (Sales/Revenue)</li>
+                                    <li>영업이익 (Operating Income, EBIT)</li>
+                                    <li>당기순이익 (Net Income)</li>
+                                    <li>감가상각비 (Depreciation & Amortization) - EBITDA 계산용</li>
+                                </ul>
+                                <p><strong>재무상태표 항목:</strong></p>
+                                <ul>
+                                    <li>자기자본 (Shareholders' Equity, Book Value)</li>
+                                    <li>총자산 (Total Assets)</li>
+                                    <li>부채 (Total Debt): 단기차입금 + 장기차입금 + 유동성장기부채</li>
+                                    <li>현금성자산 (Cash and Cash Equivalents)</li>
+                                </ul>
+                                <p><strong>계산 지표:</strong></p>
+                                <pre><code>EBITDA = 영업이익(EBIT) + 감가상각비
+순부채 = 총차입금 - 현금성자산</code></pre>
+
+                                <h4>📌 LTM (Last Twelve Months) 개념</h4>
+                                <p>상대가치평가에서는 가능한 한 최신 실적을 반영하기 위해 <strong>LTM 실적</strong>을 사용합니다.</p>
+                                <p><strong>LTM이란?</strong><br>
+                                최근 12개월 실적을 반영한 "trailing" 재무수치입니다. 연간 재무제표에 최신 분기 실적을 반영하여 계산합니다.</p>
+                                <p><strong>계산 공식:</strong></p>
+                                <pre><code>LTM 순이익 (2025년 3월 기준)
+= 2024년 연간 순이익
+  + 2025년 1분기 순이익
+  - 2024년 1분기 순이익</code></pre>
+                                <p><strong>계산 예시:</strong></p>
+                                <pre><code>주어진 데이터:
+- 2024년 연간 순이익: 100억원
+- 2025년 1분기 순이익: 30억원
+- 2024년 1분기 순이익: 20억원
+
+LTM 순이익 계산:
+= 100억원 + 30억원 - 20억원
+= 110억원</code></pre>
+                                <p><strong>언제 사용하는가?</strong></p>
+                                <ul>
+                                    <li>상장사의 분기보고서가 발표된 경우</li>
+                                    <li>최신 실적 추세를 반영하고 싶을 때</li>
+                                    <li>비교기업도 동일한 기준으로 LTM 적용</li>
+                                    <li>연간 실적만 있으면 연간 실적 그대로 사용</li>
+                                </ul>
+                                <p><strong>주의사항:</strong></p>
+                                <ul>
+                                    <li>계절성이 강한 산업에서는 LTM 사용이 특히 중요 (예: 유통업, 관광업)</li>
+                                    <li>비교기업과 대상기업의 기준일을 통일해야 함</li>
+                                </ul>
+
+                                <h4>2.1.2 재무제표 정규화 (Normalization)</h4>
+                                <p>비교 가능성을 높이기 위해 일회성 항목을 제거합니다.</p>
+                                <p><strong>제거 대상:</strong></p>
+                                <ol>
+                                    <li><strong>비경상 손익</strong>
+                                        <ul>
+                                            <li>자산처분손익 (부동산 매각, 설비 처분)</li>
+                                            <li>투자자산 평가손익 (주식 시가평가)</li>
+                                            <li>외환차손익 (급격한 환율 변동)</li>
+                                            <li>소송 관련 손해배상금</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>일회성 비용</strong>
+                                        <ul>
+                                            <li>구조조정비용 (희망퇴직, 사업 철수)</li>
+                                            <li>대규모 광고비 (신제품 런칭 캠페인)</li>
+                                            <li>손상차손 (자산 장부가액 감액)</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>회계정책 차이 조정</strong>
+                                        <ul>
+                                            <li>감가상각 방법 (정액법 vs 정률법)</li>
+                                            <li>R&D 비용 처리 (비용 vs 자산화)</li>
+                                            <li>재고평가 방법 (선입선출 vs 평균법)</li>
+                                        </ul>
+                                    </li>
+                                </ol>
+                                <p><strong>정규화 예시: A사 2024년</strong></p>
+                                <table class="styled-table">
+                                    <thead>
+                                        <tr>
+                                            <th>항목</th>
+                                            <th>보고 금액</th>
+                                            <th>조정</th>
+                                            <th>정규화 금액</th>
+                                            <th>근거</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>매출액</td>
+                                            <td>1,500</td>
+                                            <td>-</td>
+                                            <td>1,500</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>영업이익</td>
+                                            <td>150</td>
+                                            <td>+20</td>
+                                            <td>170</td>
+                                            <td>본사 이전비용 제거</td>
+                                        </tr>
+                                        <tr>
+                                            <td>순이익</td>
+                                            <td>120</td>
+                                            <td>+30</td>
+                                            <td>150</td>
+                                            <td>구 공장 매각익 50억 제거, 이전비용 20억 가산</td>
+                                        </tr>
+                                        <tr>
+                                            <td>감가상각비</td>
+                                            <td>30</td>
+                                            <td>-</td>
+                                            <td>30</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>정규화 EBITDA</strong></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><strong>200</strong></td>
+                                            <td>170 + 30</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제15편 | EV/EBITDA 심화 이해</div>
-                            <div class="content-desc">⏱️ 15분 | 기업가치 기반 밸류에이션 배수</div>
+                    </div>
+
+                    <!-- 제3편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제3편: 상대가치 평가 2단계: 비교가능 기업군(Peer Group) 선정</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.2.1 비교기업 선정 기준 (5가지 필수 체크)</h4>
+                                <p><strong>기준 1: 산업 동질성 (가장 중요)</strong></p>
+                                <pre><code>우선순위 1: KSIC 소분류 (4자리) 동일
+우선순위 2: KSIC 중분류 (3자리) 동일
+우선순위 3: 사업 모델 유사성 (B2B vs B2C, 제조 vs 유통)</code></pre>
+                                <p><strong>기준 2: 매출 규모 유사성</strong><br>
+                                대상기업 매출의 ±50% 범위 내가 이상적입니다.</p>
+                                <p><strong>기준 3: 성장성 유사성</strong><br>
+                                최근 3년 평균 매출 성장률이 ±10%p 이내가 적합합니다.</p>
+                                <p><strong>기준 4: 수익성 패턴</strong><br>
+                                영업이익률이 비슷한 기업을 우선 선정합니다.</p>
+                                <p><strong>기준 5: 지리적·시장 환경</strong><br>
+                                국내 상장사 vs 국내 비상장사, 국내 기업 vs 글로벌 기업, 코스피 vs 코스닥 등 환경을 고려합니다.</p>
+
+                                <h4>2.2.2 비교기업 선정 실무 프로세스</h4>
+                                <p><strong>Step 1: 1차 스크리닝 (산업 필터)</strong><br>
+                                KIND 또는 FnGuide에서 업종 검색 후 KSIC 중분류 또는 소분류로 필터링하여 상장사 30~50개 리스트를 확보합니다.</p>
+                                <p><strong>Step 2: 2차 필터링 (정량 지표)</strong><br>
+                                매출액, 성장률, 영업이익률 등 정량 지표를 기준으로 부적합한 기업을 제외합니다.</p>
+                                <p><strong>Step 3: 최종 선정 (5~7개 확정)</strong><br>
+                                최소 3개 이상, 이상적으로 5~7개의 비교기업을 최종 선정합니다. 10개 이상은 비효율적입니다.</p>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제16편 | EV/Sales와 기타 배수</div>
-                            <div class="content-desc">⏱️ 15분 | 매출 기반 배수와 다양한 멀티플</div>
+                    </div>
+
+                    <!-- 제4편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제4편: 상대가치 평가 3단계: 비교기업의 멀티플 계산</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <p>각 비교기업의 주요 멀티플을 계산합니다. 일반적으로 PER, PBR, PSR, EV/EBITDA 4가지 멀티플을 모두 산출합니다.</p>
+
+                                <h4>2.3.1 PER (Price to Earnings Ratio, 주가수익비율)</h4>
+                                <p><strong>공식:</strong> <code>PER = 시가총액 / 당기순이익</code> 또는 <code>PER = 주가 / 주당순이익(EPS)</code></p>
+                                <p><strong>해석:</strong> 투자자들이 1원 순이익에 대해 얼마를 지불할 의향이 있는지를 나타냅니다.</p>
+                                <p><strong>적합 산업:</strong> 안정적 수익 기업, 성숙 산업 (제조, 유통, 금융). 적자 기업이나 초기 스타트업에는 부적합합니다.</p>
+
+                                <h4>2.3.2 PBR (Price to Book Ratio, 주가순자산비율)</h4>
+                                <p><strong>공식:</strong> <code>PBR = 시가총액 / 자기자본 (순자산)</code> 또는 <code>PBR = 주가 / 주당순자산(BPS)</code></p>
+                                <p><strong>해석:</strong> 기업의 순자산 1원당 시장이 얼마를 지불하는지를 나타냅니다.</p>
+                                <p><strong>적합 산업:</strong> 금융업 (은행, 보험), 부동산, 자본집약 산업. 무형자산 중심의 기업에는 부적합합니다.</p>
+
+                                <h4>2.3.3 PSR (Price to Sales Ratio, 주가매출액비율)</h4>
+                                <p><strong>공식:</strong> <code>PSR = 시가총액 / 매출액</code></p>
+                                <p><strong>해석:</strong> 매출 1원당 시가총액이 얼마인지를 나타냅니다. 순이익률이 낮거나 적자인 성장기업에 유용합니다.</p>
+                                <p><strong>적합 산업:</strong> 적자 스타트업, 고성장 IT/바이오, SaaS. 성숙 제조업에는 PER이 더 적합합니다.</p>
+
+                                <h4>2.3.4 EV/EBITDA (Enterprise Value to EBITDA)</h4>
+                                <p><strong>공식:</strong> <code>EV = 시가총액 + 순부채</code>, <code>순부채 = 총차입금 - 현금성자산</code>, <code>EV/EBITDA = EV / EBITDA</code></p>
+                                <p><strong>해석:</strong> 영업현금흐름(EBITDA) 1원당 기업가치가 얼마인지를 나타냅니다. 부채 수준 차이를 제거하여 순수한 영업가치만 비교할 수 있습니다.</p>
+                                <p><strong>적합 산업:</strong> 제조업, 인프라, 자본집약 산업, M&A 평가. 금융업에는 부적합합니다.</p>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제17편 | PSR과 매출 기반 평가</div>
-                            <div class="content-desc">⏱️ 15분 | Price to Sales Ratio 활용</div>
+                    </div>
+
+                    <!-- 제5편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제5편: 상대가치 평가 4단계: 이상치 제거 및 대표값 산출</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.4.1 이상치(Outlier) 제거 방법</h4>
+                                <p>비교기업 멀티플 데이터에서 통계적으로 너무 높거나 낮은 이상치를 제거하여 대표값의 신뢰도를 높입니다.</p>
+                                <ul>
+                                    <li><strong>방법 1: 통계적 방법 (표준편차 기준):</strong> 평균(μ) ± 2 × 표준편차(σ) 범위 밖의 데이터를 제거합니다.</li>
+                                    <li><strong>방법 2: 백분위 제거 (실무에서 가장 많이 사용):</strong> 데이터를 크기순으로 정렬한 후 상위 10%와 하위 10%를 제거하고 나머지 데이터로 대표값을 산출합니다.</li>
+                                    <li><strong>방법 3: 정성적 판단:</strong> 수치는 정상 범위지만, 최근 M&A, 회계 정책 변경, 사업 구조 차이 등으로 인해 멀티플이 왜곡된 기업은 제외할 수 있습니다.</li>
+                                </ul>
+
+                                <h4>2.4.2 대표값 선택: 평균 vs 중위값 vs 가중평균</h4>
+                                <ul>
+                                    <li><strong>산술평균 (Arithmetic Mean):</strong> 계산이 간단하고 직관적이지만 이상치에 민감합니다. 표본이 균질하고 이상치 제거 완료 시 사용합니다.</li>
+                                    <li><strong>중위값 (Median):</strong> 이상치에 강건하며, 표본 수가 적거나 이상치가 의심될 때 사용합니다.</li>
+                                    <li><strong>시가총액 가중평균 (Market Cap Weighted Average):</strong> 시장에서 더 중요한 기업에 높은 가중치를 부여합니다. 상장사 평가 시 시장 중심 접근에 유용합니다.</li>
+                                </ul>
+                                <p><strong>실무 권장:</strong> 기본적으로 이상치 제거 후 **산술평균**을 사용하고, **중위값**으로 검증하며, 상장사 평가 시 **가중평균**을 고려합니다.</p>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제18편 | 배수 정규화와 조정 기법</div>
-                            <div class="content-desc">⏱️ 15분 | Multiple Normalization 방법론</div>
+                    </div>
+
+                    <!-- 제6편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제6편: 상대가치 평가 5단계: 대상기업 특성 반영 조정</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <p>비교기업 평균 멀티플을 그대로 사용하기보다는, 대상기업의 고유한 특성(성장성, 수익성, 리스크, 시장 지위 등)을 반영하여 멀티플을 조정해야 합니다.</p>
+
+                                <h4>2.5.1 조정 방법론</h4>
+                                <ul>
+                                    <li><strong>방법 A: 정성적 프리미엄/할인:</strong> 대상기업의 성장성, 수익성, 재무건전성, 시장 지위 등을 비교기업 평균과 비교하여 프리미엄(가산) 또는 할인(차감)을 적용합니다.</li>
+                                    <li><strong>방법 B: 회귀분석 (Regression Analysis):</strong> 비교기업의 멀티플과 재무지표(성장률, ROE, 부채비율 등) 간의 관계를 회귀식으로 도출하여 대상기업의 멀티플을 예측합니다. 통계적 근거를 제공하지만, 데이터가 충분해야 합니다.</li>
+                                    <li><strong>방법 C: PEG Ratio (성장성 반영):</strong> <code>PEG = PER / 성장률</code> 공식을 활용하여 성장성이 높은 기업의 PER을 조정합니다. 성장률이 높으면 높은 PER이 정당화될 수 있습니다.</li>
+                                </ul>
+                                <p>실무에서는 주로 정성적 프리미엄/할인 방법을 사용하며, 회귀분석은 보조적으로 활용하거나 데이터가 풍부한 경우에 적용합니다.</p>
+                            </div>
                         </div>
-                    </a>
-                    <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                        <span class="content-icon">🎥</span>
-                        <div class="content-info">
-                            <div class="content-title">제19편 | 산업별 멀티플 특성과 활용</div>
-                            <div class="content-desc">⏱️ 15분 | 업종별 적정 배수 선택</div>
+                    </div>
+
+                    <!-- 제7편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제7편: 상대가치 평가 6단계: 최종 가치 산출 및 범위 제시</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <p>조정된 멀티플을 대상기업의 재무지표에 적용하여 가치를 산출하고, 최종적으로 가치 범위를 제시합니다.</p>
+
+                                <h4>2.6.1 멀티플별 가치 계산</h4>
+                                <ul>
+                                    <li><strong>PER 방식:</strong> <code>시가총액 = 순이익 × 조정 PER</code></li>
+                                    <li><strong>PBR 방식:</strong> <code>시가총액 = 자기자본 × 조정 PBR</code></li>
+                                    <li><strong>PSR 방식:</strong> <code>시가총액 = 매출액 × 조정 PSR</code></li>
+                                    <li><strong>EV/EBITDA 방식:</strong> <code>EV = EBITDA × 조정 EV/EBITDA</code>, 이후 <code>시가총액 = EV - 순부채</code>로 전환</li>
+                                </ul>
+
+                                <h4>2.6.2 최종 가치 범위 제시</h4>
+                                <p>산출된 각 멀티플별 가치에 적절한 가중치를 부여하여 통합 가치를 산출합니다. 일반적으로 주 지표에 높은 가중치를 부여하고, 보조 지표에도 가중치를 부여하여 교차 검증합니다.</p>
+                                <p>최종적으로는 단일 값이 아닌 '가치 범위'(예: ±15% 밴드)를 제시하고, 중심값과 주당 가치를 함께 산출합니다. 이는 시장의 불확실성과 평가 가정의 민감도를 반영하기 위함입니다.</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
+
+                    <!-- 제8편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제8편: 상대가치 평가 계산 공식과 단계 (요약 정리)</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>주요 멀티플 계산식</h4>
+                                <p><strong>자기자본 배수:</strong></p>
+                                <ul>
+                                    <li><code>PER = 시가총액 / 순이익</code></li>
+                                    <li><code>PBR = 시가총액 / 자기자본</code></li>
+                                    <li><code>PSR = 시가총액 / 매출액</code></li>
+                                </ul>
+                                <p><strong>기업가치 배수:</strong></p>
+                                <ul>
+                                    <li><code>EV = 시가총액 + 순부채</code></li>
+                                    <li><code>순부채 = 총차입금 - 현금성자산</code></li>
+                                    <li><code>EBITDA = 영업이익 + 감가상각비</code></li>
+                                    <li><code>EV/EBITDA = EV / EBITDA</code></li>
+                                    <li><code>EV/Sales = EV / 매출액</code></li>
+                                </ul>
+
+                                <h4>멀티플 선택 의사결정 가이드</h4>
+                                <p>실무에서 어떤 멀티플을 사용할지 다음 플로우차트를 따라 결정하세요:</p>
+                                <ul>
+                                    <li><strong>1단계: 수익성 확인</strong>
+                                        <ul>
+                                            <li>기업이 흑자인가?
+                                                <ul>
+                                                    <li>YES → PER 우선 사용 (안정적 수익 기업, 성숙 산업)</li>
+                                                    <li>NO (적자) → 2단계로</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>2단계: 산업 특성 확인</strong>
+                                        <ul>
+                                            <li>자산집약적 산업인가? (제조, 부동산, 인프라)
+                                                <ul>
+                                                    <li>YES → EV/EBITDA 우선 (EBITDA가 플러스면 사용 가능)</li>
+                                                    <li>NO → PSR 사용 (적자 IT/바이오 스타트업, 고성장 SaaS 기업)</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>3단계: 산업별 특수 케이스</strong>
+                                        <ul>
+                                            <li>금융업인가? → PBR 우선 (ROE 교차 검증 필수)</li>
+                                            <li>무형자산 중심인가? (IT, 컨설팅) → PSR 또는 EV/Sales</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <p><strong>멀티플 병행 사용 원칙:</strong> 실무에서는 최소 2~3개 멀티플을 동시에 계산하여 교차 검증하고, 각 멀티플에 가중치를 부여하여 최종 가치를 산출합니다.</p>
+
+                                <h4>6단계 체크리스트</h4>
+                                <ul>
+                                    <li>[ ] 1단계: 대상기업 재무제표 정규화 완료</li>
+                                    <li>[ ] 2단계: 비교기업 5~7개 선정 (산업, 규모, 성장성 유사)</li>
+                                    <li>[ ] 3단계: 각 비교기업의 멀티플 계산 (PER, PBR, PSR, EV/EBITDA)</li>
+                                    <li>[ ] 4단계: 이상치 제거 및 대표값 산출 (평균/중위값/가중평균)</li>
+                                    <li>[ ] 5단계: 대상기업 특성 반영 조정 (성장성, 수익성, 리스크)</li>
+                                    <li>[ ] 6단계: 최종 가치 산출 및 범위 제시 (±15% 밴드)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제9편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제9편: 상대가치 평가 필요한 데이터 및 수집 방법</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.8.1 대상 기업 재무 데이터</h4>
+                                <p><strong>필수 재무제표 (최근 연도 + 과거 3년):</strong> 손익계산서, 재무상태표, 주요 계산 지표(EBITDA, 순부채, ROE, 영업이익률 등)를 확보합니다. 비상장기업의 경우 외부감사 재무제표, 경영진 제공 자료, 국세청 신고서 등을 활용합니다. 일회성 항목 제거 등 정규화가 필수적입니다.</p>
+
+                                <h4>2.8.2 비교기업 데이터 수집</h4>
+                                <p>각 비교기업별로 주가(1개월 평균), 시가총액, 발행주식수, 순이익(LTM), 자기자본, 매출액(LTM), EBITDA, 총차입금, 현금성자산 등을 수집합니다. LTM(Last Twelve Months) 개념을 적용하여 최신 실적을 반영합니다.</p>
+
+                                <h4>2.8.3 시장 데이터 수집</h4>
+                                <p>평가기준일 기준의 주가 데이터를 수집합니다. 일반적으로 1개월 평균 주가를 사용하며, 특정일 종가나 거래량 가중평균 주가(VWAP)를 활용하기도 합니다. 시가총액은 <code>평균주가 × 발행주식총수</code>로 계산합니다.</p>
+
+                                <h4>2.8.4 데이터 수집 출처 및 접근 방법</h4>
+                                <ul>
+                                    <li><strong>국내 상장사 데이터:</strong> 전자공시(DART), KIND(한국거래소), FnGuide, 네이버금융 등을 활용합니다.</li>
+                                    <li><strong>비상장기업 데이터:</strong> NICE신용평가, KIS채권평가, 경영진 직접 제공 자료 등을 활용합니다.</li>
+                                    <li><strong>글로벌 기업 데이터:</strong> Bloomberg Terminal, Capital IQ, Yahoo Finance 등을 활용합니다.</li>
+                                </ul>
+
+                                <h4>2.8.5 산업 평균 멀티플 참고 데이터</h4>
+                                <p>한국은행 기업경영분석, 한국거래소 통계, 금융감독원 공시, 증권사 리서치 등을 통해 산업별 평균 멀티플(PER, PBR, EV/EBITDA 등)을 참고하여 평가의 합리성을 높입니다.</p>
+
+                                <h4>2.8.6 데이터 수집 체크리스트</h4>
+                                <p>평가 시작 전 대상기업 및 비교기업의 재무제표, 최신 실적, 주가 데이터, 발행주식수 등을 확보하고, 데이터 업데이트 시점을 통일하며, 데이터 품질 검증(합계 검산, 이상 수치 확인, 회계기준 확인 등)을 수행해야 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제10편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제10편: 실제 계산 예시: 화장품 제조기업 A사 종합 평가</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>사례 개요</h4>
+                                <p><strong>평가 대상: (주)뷰티코리아 (가명, A사)</strong><br>
+                                - 업종: 화장품 ODM 제조 (KSIC 20422)<br>
+                                - 상태: 비상장, 코스닥 IPO 준비 중<br>
+                                - 평가목적: 공모가 산정을 위한 적정 시장가치 추정<br>
+                                - 평가기준일: 2024년 12월 31일</p>
+                                <p><strong>A사 재무 현황 (2024년, 단위: 억원)</strong></p>
+                                <table class="styled-table">
+                                    <thead>
+                                        <tr>
+                                            <th>구분</th>
+                                            <th>금액</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>매출액</td>
+                                            <td>1,500</td>
+                                        </tr>
+                                        <tr>
+                                            <td>영업이익</td>
+                                            <td>170</td>
+                                        </tr>
+                                        <tr>
+                                            <td>당기순이익</td>
+                                            <td>150</td>
+                                        </tr>
+                                        <tr>
+                                            <td>감가상각비</td>
+                                            <td>30</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>EBITDA</strong></td>
+                                            <td><strong>200</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>자기자본</td>
+                                            <td>800</td>
+                                        </tr>
+                                        <tr>
+                                            <td>총차입금</td>
+                                            <td>200</td>
+                                        </tr>
+                                        <tr>
+                                            <td>현금성자산</td>
+                                            <td>100</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>순부채</strong></td>
+                                            <td><strong>100</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td>발행주식수</td>
+                                            <td>200만주</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <h4>STEP 1: 비교기업 선정 및 데이터 수집</h4>
+                                <p>산업 동질성(KSIC 20422), 매출 규모(A사 ±50%), 성장률(A사 12% 기준 2~22%) 등을 기준으로 코스맥스, 한국콜마, 코스메카코리아, 한국화장품, 에이피알 5개사를 선정합니다.</p>
+
+                                <h4>STEP 2: 비교기업 멀티플 계산 (2024년 12월 31일 기준)</h4>
+                                <p>선정된 5개 비교기업의 시가총액, 순이익, 자기자본, 매출, EV, EBITDA 등을 수집하여 PER, PBR, PSR, EV/EBITDA 멀티플을 계산합니다.</p>
+
+                                <h4>STEP 3: 이상치 제거 및 대표값 산출</h4>
+                                <p>각 멀티플 데이터에서 이상치(예: 한국콜마의 낮은 PER)를 제거하고, 산술평균, 중위값 등을 고려하여 최종 대표값을 채택합니다. (예: PER 14.5배, PBR 1.9배, EV/EBITDA 15.7배)</p>
+
+                                <h4>STEP 4: 대상기업 특성 반영 조정</h4>
+                                <p>A사의 성장률, 영업이익률, ROE, 부채비율 등을 비교기업 평균과 비교하여 프리미엄 또는 할인을 적용하여 멀티플을 조정합니다. (예: A사의 우수한 수익성 및 재무건전성을 반영하여 PER, PBR, EV/EBITDA에 프리미엄 적용)</p>
+                                <ul>
+                                    <li><strong>조정 PER:</strong> 14.5배 → 17배</li>
+                                    <li><strong>조정 PBR:</strong> 1.9배 → 2.2배</li>
+                                    <li><strong>조정 EV/EBITDA:</strong> 15.7배 → 16.5배</li>
+                                </ul>
+
+                                <h4>STEP 5: 최종 가치 산출</h4>
+                                <p>조정된 멀티플을 A사의 재무 데이터에 적용하여 각 멀티플별 시가총액을 계산합니다.</p>
+                                <ul>
+                                    <li><strong>PER 방식:</strong> 150억원 × 17배 = 2,550억원</li>
+                                    <li><strong>PBR 방식:</strong> 800억원 × 2.2배 = 1,760억원</li>
+                                    <li><strong>EV/EBITDA 방식:</strong> (200억원 × 16.5배) - 100억원 = 3,200억원</li>
+                                </ul>
+
+                                <h4>STEP 6: 가치 범위 및 주당가치 산출</h4>
+                                <p>각 멀티플별 시가총액에 적절한 가중치(예: PER 50%, PBR 20%, EV/EBITDA 30%)를 부여하여 통합 가치를 산출합니다. (총 2,587억원)</p>
+                                <p>최종적으로는 단일 값이 아닌 '가치 범위'(예: 2,300억원 ~ 2,900억원)를 제시하고, 중심값(2,600억원)과 주당 가치(130,000원/주)를 함께 산출합니다.</p>
+                                <p>IPO 공모가 밴드 제안 시에는 시장 변동성 등을 고려하여 희망 공모가 범위를 제시합니다. (예: 115,000원 ~ 130,000원)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제11편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제11편: 상대가치 평가법의 실전 활용 및 주의사항</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>3.1 실무 적용 사례</h4>
+                                <ul>
+                                    <li><strong>상장기업 주가 적정성 분석:</strong> 글로벌 경쟁사와의 멀티플 비교를 통해 주가 저평가 여부를 판단하고 목표주가 제시.</li>
+                                    <li><strong>Pre-IPO 기업 가치평가:</strong> 코스닥 상장 비교기업의 멀티플을 활용하여 희망공모가 산정.</li>
+                                    <li><strong>산업별 특화 멀티플 활용:</strong> SaaS 기업은 ARR(연간반복매출) 기반 EV/ARR, 온라인 커머스는 GMV(총거래액) 기반 EV/GMV 등 산업 특성에 맞는 멀티플 적용.</li>
+                                </ul>
+
+                                <h4>3.2 주의사항과 팁</h4>
+                                <p><strong>흔한 실수 TOP 3:</strong></p>
+                                <ol>
+                                    <li><strong>부적절한 비교기업 선정:</strong> 산업 동질성, 사업 모델 유사성 등을 면밀히 검토해야 합니다.</li>
+                                    <li><strong>회계 차이 미반영:</strong> 감가상각 방법, R&D 비용 처리, 재고평가 방법 등 회계정책 차이를 조정해야 합니다. EBITDA와 같이 비현금비용을 제거한 지표 사용이 도움이 됩니다.</li>
+                                    <li><strong>시장 사이클 무시:</strong> 멀티플은 시장 상황에 따라 변동하므로, 최근 3~5년 평균 또는 경기정상화 시점 기준을 사용해야 합니다.</li>
+                                </ol>
+                                <p><strong>실무 팁 BEST 5:</strong></p>
+                                <ol>
+                                    <li><strong>산업별 멀티플 선택:</strong> 성숙산업은 PER·PBR, 성장산업은 PSR·EV/Sales, 자본집약산업은 EV/EBITDA 우선.</li>
+                                    <li><strong>이상치 제거:</strong> 실적 급변동 기업 제외, 통계적 방법(상하위 10% 또는 평균±2표준편차) 활용.</li>
+                                    <li><strong>정규화 방법:</strong> 일회성 손익 제거, 비영업자산 분리평가, 관계사 거래 조정.</li>
+                                    <li><strong>멀티플 사용 시점:</strong> M&A, IPO, 투자 등 목적에 맞는 평가기준일의 멀티플 사용.</li>
+                                    <li><strong>DCF 교차검증:</strong> 상대가치평가 결과와 DCF 결과를 교차 검증하여 신뢰도 확보.</li>
+                                </ol>
+                                <p><strong>언제 상대가치평가를 사용하는가:</strong> 비교기업이 충분히 존재하고, 시장이 효율적이며, 빠른 의사결정이 필요하거나 투자자 커뮤니케이션 목적일 때 적합합니다. 반대로 신산업, 시장 혼란기, 특수상황에서는 DCF나 자산가치평가를 우선 고려해야 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <p style="text-align: center; margin-top: 30px; font-size: 15px; color: #6B7280;">* 본 학습 콘텐츠의 모든 YouTube 영상은 현재 준비 중입니다.</p>
             </div>
 
             <!-- 시뮬레이션 섹션 -->
@@ -414,27 +992,36 @@
                 <h2 class="section-title">🧮 시뮬레이션</h2>
 
                 <div class="input-group">
-                    <label class="input-label">평가 지표 선택</label>
-                    <select id="multipleType" class="input-field">
-                        <option value="per">PER (주가수익비율)</option>
-                        <option value="pbr">PBR (주가순자산비율)</option>
-                        <option value="psr">PSR (주가매출비율)</option>
-                    </select>
+                    <label class="input-label">비교기업 평균 PER</label>
+                    <input type="number" id="peerPer" class="input-field" placeholder="예: 15" step="0.1">
+                    <div class="input-hint">동종업계 상장사들의 평균 PER</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">우리 기업 실적</label>
-                    <input type="number" id="companyMetric" class="input-field" placeholder="순이익, 순자산, 매출액 중 선택한 지표 입력">
-                    <div class="input-hint">단위: 원 (예: 10억 = 1,000,000,000)</div>
+                    <label class="input-label">대상기업 순이익 (억원)</label>
+                    <input type="number" id="targetNetIncome" class="input-field" placeholder="예: 100" step="1">
+                    <div class="input-hint">단위: 억원</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">유사 기업 평균 배수</label>
-                    <input type="number" id="peerMultiple" class="input-field" placeholder="예: 15" step="0.1">
-                    <div class="input-hint">유사 기업들의 평균 PER, PBR, PSR 값</div>
+                    <label class="input-label">비교기업 평균 EV/EBITDA</label>
+                    <input type="number" id="peerEvEbitda" class="input-field" placeholder="예: 7.5" step="0.1">
+                    <div class="input-hint">동종업계 상장사들의 평균 EV/EBITDA</div>
                 </div>
 
-                <button class="btn-calculate" onclick="calculateRelative()">시뮬레이션 실행하기</button>
+                <div class="input-group">
+                    <label class="input-label">대상기업 EBITDA (억원)</label>
+                    <input type="number" id="targetEbitda" class="input-field" placeholder="예: 150" step="1">
+                    <div class="input-hint">단위: 억원</div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label">대상기업 순부채 (억원)</label>
+                    <input type="number" id="targetNetDebt" class="input-field" placeholder="예: 50" step="1">
+                    <div class="input-hint">단위: 억원 (총차입금 - 현금성자산)</div>
+                </div>
+
+                <button class="btn-calculate" onclick="calculateRelativeValuation()">시뮬레이션 실행하기</button>
 
                 <div id="resultBox" class="result-box">
                     <div class="result-title">시뮬레이션 결과</div>
@@ -443,14 +1030,6 @@
                         * 이 값은 간단한 시뮬레이션 결과입니다. 정확한 평가를 위해서는 정식으로 평가를 신청하여 주십시오.
                     </p>
                 </div>
-            </div>
-
-            <!-- 다음 단계 버튼 -->
-            <div class="next-step-section">
-                <a href="valuation-request.html" class="btn-next-step">
-                    <span>📝</span>
-                    <span>평가 요청하기 (다음 단계)</span>
-                </a>
             </div>
         </div>
 
@@ -517,24 +1096,54 @@
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 
-        // 상대가치 계산 함수
-        function calculateRelative() {
-            const metric = parseFloat(document.getElementById('companyMetric').value);
-            const multiple = parseFloat(document.getElementById('peerMultiple').value);
+        // 상대가치평가 시뮬레이션 함수
+        function calculateRelativeValuation() {
+            const peerPer = parseFloat(document.getElementById('peerPer').value);
+            const targetNetIncome = parseFloat(document.getElementById('targetNetIncome').value);
+            const peerEvEbitda = parseFloat(document.getElementById('peerEvEbitda').value);
+            const targetEbitda = parseFloat(document.getElementById('targetEbitda').value);
+            const targetNetDebt = parseFloat(document.getElementById('targetNetDebt').value);
 
-            if (!metric || !multiple) {
+            if (!peerPer || !targetNetIncome || !peerEvEbitda || !targetEbitda || isNaN(targetNetDebt)) {
                 alert('모든 값을 입력해주세요.');
                 return;
             }
 
-            // 기업가치 = 실적 × 배수
-            const marketCap = metric * multiple;
+            // PER 방식 시가총액
+            const equityValuePer = targetNetIncome * peerPer;
 
-            // 결과 표시
+            // EV/EBITDA 방식 시가총액
+            const enterpriseValueEvEbitda = targetEbitda * peerEvEbitda;
+            const equityValueEvEbitda = enterpriseValueEvEbitda - targetNetDebt;
+
+            // 두 방식의 평균 (간단한 예시)
+            const averageEquityValue = (equityValuePer + equityValueEvEbitda) / 2;
+
             document.getElementById('resultValue').textContent =
-                marketCap.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+                averageEquityValue.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 억원';
             document.getElementById('resultBox').classList.add('show');
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accordionItems = document.querySelectorAll('.accordion-item');
+
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    const content = item.querySelector('.accordion-content');
+                    
+                    // Toggle active class
+                    item.classList.toggle('active');
+
+                    if (item.classList.contains('active')) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    } else {
+                        content.style.maxHeight = '0px';
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

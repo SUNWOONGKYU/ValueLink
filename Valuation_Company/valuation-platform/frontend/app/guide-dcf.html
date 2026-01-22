@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCF평가법 안내 - ValueLink</title>
+    <title>DCF 평가법 안내 - ValueLink</title>
     <style>
         body {
             margin: 0;
@@ -351,8 +351,76 @@
             }
         }
     </style>
-</head>
-<body>
+        <style>
+            .accordion {
+                border: 1px solid #e5e7eb;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+            .accordion-item {
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .accordion-item:last-child {
+                border-bottom: none;
+            }
+            .accordion-header {
+                background-color: #f9fafb;
+                padding: 16px 24px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+                transition: background-color 0.2s ease;
+            }
+            .accordion-header:hover {
+                background-color: #f3f4f6;
+            }
+            .accordion-title {
+                flex-grow: 1;
+            }
+            .youtube-notice {
+                font-size: 14px;
+                font-weight: 500;
+                color: #6b7280;
+                margin-right: 16px;
+            }
+            .accordion-icon {
+                font-size: 24px;
+                font-weight: 500;
+                transition: transform 0.3s ease;
+            }
+            .accordion-content {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+                background-color: white;
+            }
+            .learning-content-detail {
+                padding: 24px;
+                font-size: 16px;
+                line-height: 1.8;
+                color: #374151;
+            }
+            .learning-content-detail h4 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #111827;
+                margin-top: 24px;
+                margin-bottom: 10px;
+            }
+            .learning-content-detail p, .learning-content-detail ul {
+                margin-bottom: 16px;
+            }
+            .accordion-item.active .accordion-icon {
+                transform: rotate(45deg);
+            }
+        </style>
+    </head><body>
     <!-- 헤더 -->
     <div id="header-container"></div>
 
@@ -360,108 +428,289 @@
         <!-- 메인 영역 -->
         <div class="main-area">
             <!-- 학습 자료 섹션 -->
-            <!-- 학습용 콘텐츠 섹션 -->
             <div class="learning-section">
-                <h2 class="section-title">📚 DCF평가법 학습 콘텐츠</h2>
-                <p style="color: #6B7280; margin-bottom: 24px;">
-                    DCF평가법을 체계적으로 학습할 수 있는 12편의 영상 강의입니다. 기초부터 심화까지 단계별로 구성되어 있습니다.
-                </p>
+                <h2 class="section-title">📚 DCF 평가법 학습 콘텐츠</h2>
+                
+                <div class="accordion">
+                    <!-- 제1편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제1편: DCF 평가법이란 무엇인가</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>1.1 정의와 핵심 개념</h4>
+                                <p><strong>DCF(Discounted Cash Flow) 평가법</strong>은 기업이나 자산이 미래에 창출할 현금흐름을 현재가치로 환산하여 가치를 평가하는 방법입니다. 기업가치평가 실무에서 가장 광범위하게 사용되는 방법론입니다.</p>
+                                <p>DCF의 핵심은 <strong>화폐의 시간가치(Time Value of Money)</strong> 원리입니다. 오늘의 100만원과 5년 후의 100만원은 가치가 다릅니다. 오늘 받은 100만원은 투자하여 수익을 낼 수 있고, 인플레이션과 위험도 고려해야 하기 때문입니다.</p>
+                                <p><strong>기본 공식:</strong></p>
+                                <pre><code>기업가치(Enterprise Value) = Σ[FCFt / (1+WACC)^t] + Terminal Value / (1+WACC)^n</code></pre>
+                                <p>여기서:</p>
+                                <ul>
+                                    <li>FCF (Free Cash Flow): 기업이 영업활동으로 창출한 잉여현금흐름</li>
+                                    <li>WACC (Weighted Average Cost of Capital): 가중평균자본비용 (할인율)</li>
+                                    <li>Terminal Value: 추정기간 이후의 영속가치</li>
+                                    <li>n: 추정기간 (통상 5~10년)</li>
+                                </ul>
 
-                <div style="margin-bottom: 32px;">
-                    <h3 style="font-size: 18px; font-weight: 700; color: #1D4ED8; margin-bottom: 16px;">🎯 기초 과정 (3편)</h3>
-                    <div class="content-links">
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제1편 | 가치평가 개요와 목적</div>
-                                <div class="content-desc">⏱️ 15분 | 가치평가의 기본 개념과 5가지 핵심 목적</div>
+                                <h4>1.2 DCF 평가법이 필요한 이유</h4>
+                                <ul>
+                                    <li><strong>내재가치(Intrinsic Value) 발견:</strong> 주가나 시장 분위기와 무관하게 기업의 본질적 가치 산출, 기업의 현금창출능력에 기반한 객관적 평가가 가능합니다.</li>
+                                    <li><strong>투자 의사결정의 근거:</strong> VC/PE 투자 타당성 검증, M&A 가격 협상의 기준점 설정, IPO 공모가 산정 등에 활용됩니다.</li>
+                                    <li><strong>법적/제도적 요구사항 충족:</strong> 자본시장법상 외부평가의견서 제출(비상장주식 발행 시), 상증세법상 보충적 평가방법으로 활용, 금융감독원 "기업평가방법 수행기준" 준수 등에 필요합니다.</li>
+                                </ul>
+
+                                <h4>1.3 다른 평가법과의 차이</h4>
+                                <p>DCF는 미래 현금흐름의 현재가치를 평가하는 수익접근법으로, 논리적 엄밀성과 미래지향적이라는 장점이 있습니다. 안정적 수익 기업이나 성장기업에 적합하며, 계산이 복잡하고 가정에 민감하다는 단점이 있습니다. 이는 비교기업 배수를 활용하는 상대가치평가나 순자산 공정가치를 평가하는 자산가치평가와는 다른 접근 방식을 가집니다.</p>
+                                <p><strong>DCF가 적합한 경우:</strong> 합병, 중요한 영업/자산 양수도 시(자본시장법 제161조), 합병비율 평가(비상장주식 평가방법론) 등에서 주로 활용됩니다.</p>
                             </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제2편 | 3대 접근법 체계와 선택기준</div>
-                                <div class="content-desc">⏱️ 15분 | 수익·시장·원가 접근법 비교</div>
+                        </div>
+                    </div>
+
+                    <!-- 제2편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제2편: DCF 평가 5단계 프로세스</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>개요: DCF 평가 5단계 프로세스</h4>
+                                <p>DCF 평가는 다음 5단계로 진행됩니다. 각 단계는 재무제표 분석부터 최종 가치 산출까지 체계적으로 연결됩니다.</p>
+                                <pre><code>1단계: 재무제표 수집 및 과거 실적 분석
+2단계: 미래 현금흐름 추정 (FCF 계산)
+3단계: 할인율 산정 (WACC 계산)
+4단계: Terminal Value 계산
+5단계: 현재가치 할인 및 기업가치/주식가치 도출</code></pre>
                             </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제3편 | 가치평가 프로세스와 실사</div>
-                                <div class="content-desc">⏱️ 15분 | 평가 프로세스 6단계와 실사 방법</div>
+                        </div>
+                    </div>
+
+                    <!-- 제3편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제3편: 1단계: 재무제표 수집 및 과거 실적 분석</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.1.1 필요한 재무제표와 데이터 출처</h4>
+                                <p>DCF 평가를 위해서는 최소 과거 3~5개년의 재무상태표, 손익계산서, 현금흐름표가 필요합니다. 상장사의 경우 DART, KIND 등에서 데이터를 얻을 수 있으며, 비상장사는 경영진 제공 자료나 외부감사보고서를 활용합니다.</p>
+
+                                <h4>2.1.2 과거 실적 분석 및 정규화 (Normalization)</h4>
+                                <p>재무제표에는 일회성 항목, 비경상적 손익 등이 포함되어 있으므로, DCF 평가의 핵심인 "지속가능한 영업 현금흐름"을 위해 이러한 왜곡 요소를 제거하는 정규화 과정이 필수적입니다. 비경상적 손익(자산처분손익, 외환차손익, 소송 관련 손익 등)과 일회성 수익/비용(정부 보조금, 대규모 광고비 등)을 조정하여 정규화 EBIT를 계산합니다.</p>
+                                <p>정규화된 재무제표를 바탕으로 매출 성장률, 영업이익률, EBITDA 마진, CapEx/매출액 비율 등 주요 지표의 과거 추이를 분석하여 기업의 성장성과 수익성, 자산 효율성을 파악합니다.</p>
                             </div>
-                        </a>
+                        </div>
+                    </div>
+
+                    <!-- 제4편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제4편: 2단계: 미래 현금흐름 추정 (FCFF 계산)</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.2.1 FCFF (Free Cash Flow to Firm) 개념</h4>
+                                <p>FCFF는 기업이 영업활동으로 창출한 현금 중, 운영 유지에 필요한 투자를 하고 남은 "주주와 채권자 모두에게 배분 가능한 현금"입니다. 기업 전체 가치 평가 시 사용되며 기업가치(EV) 산출의 기초가 됩니다.</p>
+
+                                <h4>2.2.2 FCFF 계산 공식</h4>
+                                <pre><code>FCFF = NOPLAT + 감가상각비 및 무형자산상각비 - 자본적지출 (CapEx) - 순운전자본 증가액 (ΔNWC)</code></pre>
+                                <ul>
+                                    <li><strong>NOPLAT (Net Operating Profit Less Adjusted Taxes):</strong> 세후영업이익으로, <code>EBIT × (1 - 실효세율)</code>로 계산합니다.</li>
+                                    <li><strong>감가상각비 및 무형자산상각비:</strong> 비현금비용이므로 다시 더해줍니다.</li>
+                                    <li><strong>자본적지출 (CapEx):</strong> 유형자산 및 무형자산 취득에 사용된 현금으로, 미래 매출액 비례법이나 경영진 사업계획을 통해 추정합니다.</li>
+                                    <li><strong>순운전자본 증가액 (ΔNWC):</strong> 영업 관련 유동자산에서 영업 관련 유동부채를 차감한 순운전자본의 변동액입니다. 운전자본 증가는 현금 유출로 간주하여 차감합니다.</li>
+                                </ul>
+                                <p>이러한 구성요소들을 바탕으로 향후 5개년 이상의 FCFF를 추정합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제5편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제5편: 3단계: 할인율 산정 (WACC 계산)</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.3.1 WACC 개념과 구성</h4>
+                                <p><strong>WACC (Weighted Average Cost of Capital)</strong>는 기업이 자금을 조달하는 데 드는 가중평균비용입니다. 주주(자기자본)와 채권자(타인자본) 모두에게 지급해야 하는 요구수익률의 가중평균입니다.</p>
+                                <pre><code>WACC = (E / V) × Re + (D / V) × Rd × (1 - T)</code></pre>
+                                <p>여기서 Re는 자기자본비용, Rd는 타인자본비용, T는 실효세율, E/V와 D/V는 자기자본과 타인자본의 비중을 나타냅니다.</p>
+
+                                <h4>2.3.2 자기자본비용 (Re) 계산: CAPM 모형</h4>
+                                <p>자기자본비용은 <strong>CAPM (Capital Asset Pricing Model)</strong>을 사용하여 산정합니다. <code>Re = Rf + β × ERP + (SRP)</code> 공식에 따라 무위험이자율(Rf), 베타(β), 시장위험프리미엄(ERP), 그리고 선택적으로 규모위험프리미엄(SRP)을 결정합니다. 비상장사의 베타는 유사 상장사의 베타를 수집하여 Unlevered Beta를 계산한 후, 평가대상사의 자본구조로 Re-levering하여 산출합니다.</p>
+
+                                <h4>2.3.3 타인자본비용 (Rd) 계산</h4>
+                                <p>타인자본비용은 기업이 차입에 대해 지급하는 평균 이자율입니다. 재무제표 기준, 신규 차입금리 기준, 신용등급 기반 추정 등 다양한 방법으로 산정할 수 있으며, 미래 평가이므로 신규 차입금리 기준을 권장합니다.</p>
+
+                                <h4>2.3.4 자본구조 (E/V, D/V) 결정</h4>
+                                <p>DCF는 미래 현금흐름 평가이므로, "미래의 자본구조"를 반영해야 합니다. 비상장사의 경우 유사 상장사의 평균 자본구조를 목표 자본구조로 설정하는 것이 일반적입니다.</p>
+
+                                <h4>2.3.5 WACC 최종 계산</h4>
+                                <p>산정된 자기자본비용, 타인자본비용, 자본구조 비중, 실효세율을 바탕으로 WACC를 최종 계산합니다. WACC는 DCF 평가의 핵심 할인율로 사용됩니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제6편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제6편: 4단계: Terminal Value (영구가치) 계산</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.4.1 Terminal Value의 개념과 중요성</h4>
+                                <p><strong>Terminal Value (TV)</strong>는 명시적 추정기간(5~10년) 이후 기업이 창출하는 모든 미래 현금흐름의 현재가치입니다. DCF 기업가치의 60~80%를 차지할 정도로 중요하며, M&A 협상에서 가장 논쟁이 되는 부분 중 하나입니다.</p>
+
+                                <h4>2.4.2 TV 계산 방법 1: 영구성장모형 (Gordon Growth Model)</h4>
+                                <p>가장 많이 사용되는 방법으로, <code>TV = FCF(n+1) / (WACC - g)</code> 공식에 따라 계산합니다. 여기서 FCF(n+1)은 추정 마지막 해 다음 년도의 현금흐름, g는 영구성장률입니다. WACC는 영구성장률보다 커야 합니다.</p>
+
+                                <h4>2.4.3 영구성장률 (g) 설정 가이드</h4>
+                                <p>영구성장률은 보수적으로 설정하는 것이 원칙이며, 명목 GDP 성장률을 초과할 수 없습니다. 일반적으로 0~2% 수준으로 설정하며, 산업별 특성과 인플레이션을 고려하여 결정합니다.</p>
+
+                                <h4>2.4.4 TV 계산 방법 2: Exit Multiple 방식</h4>
+                                <p>VC/PE 투자나 경기순환 산업 등 특정 상황에서 사용되는 방법으로, <code>TV = EBITDA(n) × Exit Multiple</code> 또는 <code>TV = EBIT(n) × Exit Multiple</code> 공식에 따라 계산합니다. Gordon Model과 병행하여 범위 제시 용도로 활용됩니다.</p>
+
+                                <h4>2.4.5 TV 합리성 검증 (Sanity Check)</h4>
+                                <p>TV가 전체 기업가치에서 차지하는 비중(정상 범위 60~80%)과 Implied Exit Multiple을 계산하여 TV의 합리성을 검증합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제7편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제7편: 5단계: 현재가치 할인 및 기업가치/주식가치 도출</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.5.1 현재가치 할인 (Discounting to Present Value)</h4>
+                                <p>각 연도의 FCFF와 Terminal Value를 WACC로 할인하여 현재가치를 구합니다. 할인계수(Discount Factor)를 사용하여 각 현금흐름의 현재가치를 계산한 후 모두 합산하여 기업가치(Enterprise Value)를 산출합니다.</p>
+
+                                <h4>2.5.2 기업가치에서 자기자본가치로 전환</h4>
+                                <p>기업가치(EV)에서 순부채(총차입금 - 현금및현금성자산 - 단기금융상품)를 차감하고, 비영업자산(투자부동산, 상장주식 투자 등)을 가산하여 자기자본가치(Equity Value)를 산출합니다.</p>
+
+                                <h4>2.5.3 자기자본가치 및 주당가치 계산</h4>
+                                <p>산출된 자기자본가치를 발행주식수로 나누어 주당가치를 계산합니다. 스톡옵션 등이 있는 경우 완전희석주식수를 반영하여 희석주당가치를 산출할 수도 있습니다.</p>
+
+                                <h4>2.5.4 가치 범위 (Valuation Range) 제시</h4>
+                                <p>실무에서는 단일 값이 아닌, WACC 및 영구성장률 민감도 분석 등을 통해 산출된 시나리오별 자기자본가치를 바탕으로 가치 범위를 제시합니다. 확률 가중 평균을 통해 기대가치를 산출하기도 합니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제8편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제8편: DCF 평가 체크리스트 및 실무 가이드</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>2.6.1 단계별 검증 체크리스트</h4>
+                                <p>재무제표 분석, FCFF 추정, WACC 계산, Terminal Value 산정, 최종 가치 산출 등 각 단계별로 정확성과 합리성을 검증하기 위한 체크리스트를 활용합니다. 예를 들어, 과거 3~5개년 재무제표 확보 여부, 비경상적 손익 제거 완료 여부, WACC 최종값의 합리성(8~12% 범위) 등을 확인합니다.</p>
+
+                                <h4>2.6.2 흔한 실수와 해결법</h4>
+                                <ul>
+                                    <li><strong>영구성장률 과대 설정:</strong> 영구성장률은 명목 GDP 성장률을 초과할 수 없으므로, 0~2% 범위 내에서 보수적으로 설정하고 Implied Multiple로 검증합니다.</li>
+                                    <li><strong>CapEx와 감가상각비 불일치:</strong> 성장기에는 CapEx가 감가상각비보다 커야 하며(1.5~2배), 성숙기에는 유사한 수준으로 수렴하는 것이 일반적입니다.</li>
+                                    <li><strong>운전자본 변동 무시:</strong> 매출 증가 시 운전자본도 증가하여 현금이 묶이므로, 순운전자본 변동액을 정확히 추정하여 FCFF에 반영해야 합니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제9편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제9편: 실제 계산 예시: 제조업체 A사 종합 평가</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>사례: 제조업체 A사의 DCF 종합 평가</h4>
+                                <p>제조업을 영위하는 A사의 DCF 평가 과정을 종합적으로 살펴보겠습니다. 평가기준일은 2024년 12월 31일, 발행주식수는 200만주로 가정합니다.</p>
+
+                                <h5>1. 재무제표 정규화 및 과거 실적 분석</h5>
+                                <p>A사의 2024년 손익계산서를 정규화한 결과, 영업이익(EBIT)은 220억원으로 조정됩니다. 이는 신제품 런칭 마케팅비, 유휴부동산 매각 이익, 희망퇴직비용 등 비경상적 항목을 제거한 결과입니다. 과거 3개년 매출은 연 8.5% 성장, 영업이익은 13.9% 성장하여 수익성이 개선되고 있음을 확인합니다.</p>
+
+                                <h5>2. 미래 현금흐름 (FCFF) 추정</h5>
+                                <p>추정기간(2025E~2029E) 동안의 FCFF를 계산합니다. 2025년 FCFF 계산 예시는 다음과 같습니다.</p>
+                                <ul>
+                                    <li>EBIT: 238억원 (매출 1,080억 × 영업이익률 22%)</li>
+                                    <li>실효세율: 23.3% (과거 3년 평균)</li>
+                                    <li>NOPLAT: 182억원 (238억 × (1 - 0.233))</li>
+                                    <li>감가상각비: 54억원 (매출액의 5%)</li>
+                                    <li>CapEx: 99억원 (매출액의 9.2%)</li>
+                                    <li>순운전자본 증가액 (ΔNWC): 13억원 (NWC 16.6% × 매출 증가 80억)</li>
+                                    <li><strong>FCFF: 124억원</strong> (182 + 54 - 99 - 13)</li>
+                                </ul>
+                                <p>이러한 방식으로 5개년 FCFF를 추정하면, 2029년 FCFF는 170억원으로 예상됩니다.</p>
+
+                                <h5>3. 할인율 (WACC) 산정</h5>
+                                <p>A사의 WACC는 10.9%로 산정됩니다. 이는 자기자본비용(Re) 12.4%와 타인자본비용(Rd) 5.0%를 자기자본 비중 82%, 타인자본 비중 18%로 가중평균하고 실효세율 23.3%를 반영한 결과입니다.</p>
+                                <ul>
+                                    <li><strong>자기자본비용 (Re):</strong> 무위험이자율(3.5%) + 베타(1.05) × 시장위험프리미엄(8.5%) = 12.4%</li>
+                                    <li><strong>타인자본비용 (Rd):</strong> 신규 차입금리 기준 5.0%</li>
+                                </ul>
+
+                                <h5>4. Terminal Value (영구가치) 계산</h5>
+                                <p>영구성장률(g)을 2.0%로 가정하여 Terminal Value를 계산합니다. 2029년 FCFF 170억원을 바탕으로 2030년 FCFF는 173.4억원으로 추정되며, 이를 WACC(10.9%)와 g(2.0%)를 적용하여 영구성장모형으로 계산하면 Terminal Value는 1,949억원으로 산출됩니다. 이 Terminal Value의 현재가치는 1,179억원입니다.</p>
+
+                                <h5>5. 현재가치 할인 및 기업가치/주식가치 도출</h5>
+                                <p>각 연도 FCFF와 Terminal Value의 현재가치를 합산하여 기업가치(EV)를 산출합니다. A사의 기업가치는 1,696억원으로 평가됩니다.</p>
+                                <p>기업가치에서 순부채(650억원)를 차감하고 비영업자산(120억원)을 가산하여 자기자본가치 1,166억원을 도출합니다. 이를 발행주식수 200만주로 나누면 **주당가치는 58,300원**이 됩니다.</p>
+
+                                <h5>6. 가치 범위 제시 및 민감도 분석</h5>
+                                <p>WACC와 영구성장률의 변동에 따른 민감도 분석을 통해 A사의 자기자본가치는 1,050억원 ~ 1,300억원 범위로 평가되며, 중심값은 1,166억원입니다. 주당가치로는 52,500원 ~ 65,000원 범위, 중심값 58,300원입니다.</p>
+                                <p><strong>[여기서 DCF 가치를 직접 계산해보세요](링크 추후 추가)</strong><br>
+                                시뮬레이터에서는 다양한 가정(FCFF, WACC, 영구성장률 등)을 입력하여 DCF 가치가 어떻게 변화하는지 실습할 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제10편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제10편: DCF 평가법의 실전 활용</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>3.1 실무 적용 사례</h4>
+                                <ul>
+                                    <li><strong>M&A 가격 결정:</strong> 유통기업 D사가 식품제조사 E사를 인수할 때, DCF를 통해 Stand-alone 가치와 시너지 가치를 반영하여 인수가격을 결정합니다.</li>
+                                    <li><strong>스타트업 투자 (Series A):</strong> SaaS 스타트업 B사의 투자 유치 시, VC Method와 DCF를 병행하여 Exit 시점의 기업가치를 추정하고 투자 타당성을 검증합니다.</li>
+                                    <li><strong>손상평가 (Impairment):</strong> 신약 개발 자회사의 임상 실패와 같은 상황에서, DCF를 통해 사업계획 하향 및 할인율 상향을 반영하여 자산의 사용가치를 재평가하고 손상차손을 인식합니다.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제11편 -->
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            <span class="accordion-title">제11편: DCF와 다른 평가법 병행 및 주의사항</span>
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-content">
+                            <div class="learning-content-detail">
+                                <h4>3.2 DCF와 다른 평가법 병행</h4>
+                                <p>실무에서는 DCF의 한계를 보완하고 평가 결과의 신뢰성을 높이기 위해 상대가치평가, 자산가치평가 등 다른 평가법을 병행하여 교차 검증(Cross-Check)합니다. 각 평가법의 결과를 종합하여 가중평균하거나, 최종 평가 범위를 제시하는 데 활용합니다.</p>
+
+                                <h4>3.3 주의사항</h4>
+                                <p>DCF는 미래 예측의 불확실성, 가정 의존성(WACC, 영구성장률 민감), 경영진의 낙관 편향 등의 한계를 가집니다. 따라서 초기 스타트업(현금흐름 마이너스), 경기순환 극심 산업, 부실기업 등에는 DCF가 부적합할 수 있으며, VC Method, 실물옵션, 청산가치 등 대안적인 평가 방법을 고려해야 합니다.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div>
-                    <h3 style="font-size: 18px; font-weight: 700; color: #1D4ED8; margin-bottom: 16px;">💰 DCF 심화 과정 (9편)</h3>
-                    <div class="content-links">
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제4편 | DCF 이론과 현재가치 개념</div>
-                                <div class="content-desc">⏱️ 15분 | DCF의 핵심 이론과 할인율</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제5편 | FCFF vs FCFE 개념과 산출법</div>
-                                <div class="content-desc">⏱️ 15분 | 기업 자유현금흐름과 자기자본 자유현금흐름</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제6편 | 매출 추정과 성장률 시나리오</div>
-                                <div class="content-desc">⏱️ 15분 | 매출 예측 방법론과 성장률 산정</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제7편 | 영업이익률과 원가구조 분석</div>
-                                <div class="content-desc">⏱️ 15분 | 수익성 분석과 원가 추정</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제8편 | 운전자본과 자본적지출 추정</div>
-                                <div class="content-desc">⏱️ 15분 | Working Capital과 CAPEX 계산</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제9편 | WACC 산정 - CAPM과 자기자본비용</div>
-                                <div class="content-desc">⏱️ 15분 | 가중평균자본비용 계산 (실제 사례)</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제10편 | 베타 추정과 타인자본비용</div>
-                                <div class="content-desc">⏱️ 15분 | Beta 계산과 Size Risk Premium</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제11편 | 영구가치 산정법</div>
-                                <div class="content-desc">⏱️ 15분 | Terminal Value 계산 (실제 사례: 787억~958억)</div>
-                            </div>
-                        </a>
-                        <a href="#" class="content-link" onclick="alert('유튜브 영상 준비 중입니다'); return false;">
-                            <span class="content-icon">🎥</span>
-                            <div class="content-info">
-                                <div class="content-title">제12편 | DCF 민감도 분석과 시나리오</div>
-                                <div class="content-desc">⏱️ 15분 | Sensitivity Analysis와 시나리오 분석</div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                <p style="text-align: center; margin-top: 30px; font-size: 15px; color: #6B7280;">* 본 학습 콘텐츠의 모든 YouTube 영상은 현재 준비 중입니다.</p>
             </div>
 
             <!-- 시뮬레이션 섹션 -->
@@ -469,30 +718,36 @@
                 <h2 class="section-title">🧮 시뮬레이션</h2>
 
                 <div class="input-group">
-                    <label class="input-label">연간 자유현금흐름 (FCF)</label>
-                    <input type="number" id="fcf" class="input-field" placeholder="예: 1000000000">
-                    <div class="input-hint">단위: 원 (예: 10억 = 1,000,000,000)</div>
+                    <label class="input-label">추정기간 FCFF 합계 (억원)</label>
+                    <input type="number" id="fcfSum" class="input-field" placeholder="예: 534" step="1">
+                    <div class="input-hint">추정기간(예: 5년) 동안의 FCFF 현재가치 합계</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">성장률 (%)</label>
-                    <input type="number" id="growthRate" class="input-field" placeholder="예: 5" step="0.1">
-                    <div class="input-hint">향후 5년간 예상 성장률</div>
+                    <label class="input-label">Terminal Value 현재가치 (억원)</label>
+                    <input type="number" id="tvPv" class="input-field" placeholder="예: 1162" step="1">
+                    <div class="input-hint">Terminal Value를 현재가치로 할인한 값</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">할인율 (WACC, %)</label>
-                    <input type="number" id="wacc" class="input-field" placeholder="예: 10" step="0.1">
-                    <div class="input-hint">가중평균자본비용 (일반적으로 8~12%)</div>
+                    <label class="input-label">순부채 (억원)</label>
+                    <input type="number" id="netDebt" class="input-field" placeholder="예: 650" step="1">
+                    <div class="input-hint">총차입금 - 현금및현금성자산 - 단기금융상품</div>
                 </div>
 
                 <div class="input-group">
-                    <label class="input-label">영구성장률 (%)</label>
-                    <input type="number" id="terminalGrowth" class="input-field" placeholder="예: 2" step="0.1">
-                    <div class="input-hint">예측 기간 이후의 성장률 (일반적으로 2~3%)</div>
+                    <label class="input-label">비영업자산 (억원)</label>
+                    <input type="number" id="nonOperatingAssets" class="input-field" placeholder="예: 120" step="1">
+                    <div class="input-hint">투자부동산, 상장주식 투자 등 영업과 무관한 자산</div>
                 </div>
 
-                <button class="btn-calculate" onclick="calculateDCF()">시뮬레이션 실행하기</button>
+                <div class="input-group">
+                    <label class="input-label">발행주식수 (만주)</label>
+                    <input type="number" id="sharesOutstanding" class="input-field" placeholder="예: 200" step="1">
+                    <div class="input-hint">총 발행주식수 (단위: 만주)</div>
+                </div>
+
+                <button class="btn-calculate" onclick="calculateDcfValuation()">시뮬레이션 실행하기</button>
 
                 <div id="resultBox" class="result-box">
                     <div class="result-title">시뮬레이션 결과</div>
@@ -567,44 +822,48 @@
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 
-        // DCF 계산 함수
-        function calculateDCF() {
-            const fcf = parseFloat(document.getElementById('fcf').value);
-            const growthRate = parseFloat(document.getElementById('growthRate').value) / 100;
-            const wacc = parseFloat(document.getElementById('wacc').value) / 100;
-            const terminalGrowth = parseFloat(document.getElementById('terminalGrowth').value) / 100;
+        // DCF 시뮬레이션 함수
+        function calculateDcfValuation() {
+            const fcfSum = parseFloat(document.getElementById('fcfSum').value) * 100000000; // 억원 단위를 원 단위로
+            const tvPv = parseFloat(document.getElementById('tvPv').value) * 100000000; // 억원 단위를 원 단위로
+            const netDebt = parseFloat(document.getElementById('netDebt').value) * 100000000; // 억원 단위를 원 단위로
+            const nonOperatingAssets = parseFloat(document.getElementById('nonOperatingAssets').value) * 100000000; // 억원 단위를 원 단위로
+            const sharesOutstanding = parseFloat(document.getElementById('sharesOutstanding').value) * 10000; // 만주 단위를 주 단위로
 
-            if (!fcf || !growthRate || !wacc || !terminalGrowth) {
-                alert('모든 값을 입력해주세요.');
+            if (isNaN(fcfSum) || isNaN(tvPv) || isNaN(netDebt) || isNaN(nonOperatingAssets) || isNaN(sharesOutstanding) || sharesOutstanding <= 0) {
+                alert('모든 값을 올바르게 입력해주세요.');
                 return;
             }
 
-            if (wacc <= terminalGrowth) {
-                alert('할인율은 영구성장률보다 커야 합니다.');
-                return;
-            }
+            const enterpriseValue = fcfSum + tvPv;
+            const equityValue = enterpriseValue - netDebt + nonOperatingAssets;
+            const valuePerShare = equityValue / sharesOutstanding;
 
-            // 5년간 현금흐름 현재가치 계산
-            let pvCashFlows = 0;
-            for (let year = 1; year <= 5; year++) {
-                const futureFCF = fcf * Math.pow(1 + growthRate, year);
-                const pv = futureFCF / Math.pow(1 + wacc, year);
-                pvCashFlows += pv;
-            }
-
-            // 영구가치 계산
-            const year5FCF = fcf * Math.pow(1 + growthRate, 5);
-            const terminalValue = (year5FCF * (1 + terminalGrowth)) / (wacc - terminalGrowth);
-            const pvTerminalValue = terminalValue / Math.pow(1 + wacc, 5);
-
-            // 기업가치
-            const enterpriseValue = pvCashFlows + pvTerminalValue;
-
-            // 결과 표시
             document.getElementById('resultValue').textContent =
-                enterpriseValue.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원';
+                valuePerShare.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원/주';
             document.getElementById('resultBox').classList.add('show');
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const accordionItems = document.querySelectorAll('.accordion-item');
+
+            accordionItems.forEach(item => {
+                const header = item.querySelector('.accordion-header');
+                header.addEventListener('click', () => {
+                    const content = item.querySelector('.accordion-content');
+                    
+                    // Toggle active class
+                    item.classList.toggle('active');
+
+                    if (item.classList.contains('active')) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    } else {
+                        content.style.maxHeight = '0px';
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
