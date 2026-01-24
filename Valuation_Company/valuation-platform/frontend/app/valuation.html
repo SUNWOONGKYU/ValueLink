@@ -183,7 +183,6 @@
             padding: 40px 40px 50px 40px;
             text-align: center;
             color: white;
-            margin: -40px -40px 40px -40px;
         }
 
         .hero-title {
@@ -294,39 +293,15 @@
             top: 100px;
         }
 
-        /* 마이 페이지 버튼 */
-        .btn-mypage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            color: white;
-            background: #1D4ED8;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            margin-bottom: 24px;
-        }
-
-        .btn-mypage:hover {
-            background: #1E40AF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
-        }
 
         .sidebar-title {
             font-size: 18px;
             font-weight: 700;
-            color: #111827;
+            color: var(--deep-green);
+            background: #D1FAE5;
             margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #E5E7EB;
+            padding: 12px 16px;
+            border-radius: 8px;
         }
 
         .process-steps {
@@ -444,7 +419,7 @@
                             기업이 미래에 창출할 현금흐름을 현재 가치로 환산하여 기업 가치를 산정하는 방법입니다. 성장 가능성이 있는 기업, M&A 및 투자 의사결정에 주로 사용됩니다.
                         </div>
                     </div>
-                    <a href="app/valuation/guides/guide-dcf.html" class="btn-detail">상세보기</a>
+                    <a href="valuation/guides/guide-dcf.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 상대가치평가법 -->
@@ -456,7 +431,7 @@
                             유사한 기업들의 시장 가치를 비교하여 평가 대상 기업의 가치를 산정하는 방법입니다. PER, PBR, EV/EBITDA 등의 배수를 활용하여 빠르고 직관적인 평가가 가능합니다.
                         </div>
                     </div>
-                    <a href="app/valuation/guides/guide-relative.html" class="btn-detail">상세보기</a>
+                    <a href="valuation/guides/guide-relative.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 본질가치평가법 -->
@@ -468,7 +443,7 @@
                             기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. 비상장법인의 주식 매수청구권 행사 시 행사가격, M&A 시 합병가액을 산정하는 데 사용되며, IPO 공모가 산정에서도 중요한 기준으로 활용됩니다.
                         </div>
                     </div>
-                    <a href="app/valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
+                    <a href="valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 자산가치평가법 -->
@@ -480,7 +455,7 @@
                             기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다. 부동산, 유형자산이 많은 기업이나 M&A 시 최소 가치 산정에 적합합니다.
                         </div>
                     </div>
-                    <a href="app/valuation/guides/guide-asset.html" class="btn-detail">상세보기</a>
+                    <a href="valuation/guides/guide-asset.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 상증세법평가법 -->
@@ -492,21 +467,16 @@
                             상속세 및 증여세법에서 정한 방법으로 비상장주식의 가치를 산정하는 법정 평가 방법입니다. 비상장주식 증여, 상속, 임직원 스톡옵션 행사 시 사용됩니다.
                         </div>
                     </div>
-                    <a href="app/valuation/guides/guide-tax.html" class="btn-detail">상세보기</a>
+                    <a href="valuation/guides/guide-tax.html" class="btn-detail">상세보기</a>
                 </div>
             </div>
         </div>
 
         <!-- 우측 사이드바 -->
         <aside class="sidebar">
-            <a href="app/core/mypage.html" class="btn-mypage">
-                <span>👤</span>
-                <span>마이 페이지</span>
-            </a>
-
-            <div class="sidebar-title">평가 진행 단계</div>
+            <div class="sidebar-title">평가 진행 프로세스</div>
             <div class="process-steps">
-                <a href="app/valuation/guides/mockup-valuation.html" class="process-step active">
+                <a href="valuation/guides/mockup-valuation.html" class="process-step active">
                     <div class="step-number">1</div>
                     <div class="step-text">안내문 보기</div>
                 </a>
