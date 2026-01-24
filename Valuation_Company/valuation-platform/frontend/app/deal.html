@@ -597,22 +597,20 @@
         fetch('../components/header.html')
             .then(response => response.text())
             .then(data => {
-                document.getElementById('header-container').innerHTML = data;
+                const container = document.getElementById('header-container');
+                container.innerHTML = data;
 
-                // 헤더 로드 후 메뉴 링크 수정
-                const menuValuation = document.getElementById('menu-valuation');
-                const menuDeal = document.getElementById('menu-deal');
-                const logoLink = document.querySelector('.logo-container');
-
-                if (menuValuation) menuValuation.href = '../index.html';
-                if (menuDeal) {
-                    menuDeal.href = 'deal.html';
-                    menuDeal.classList.add('active'); // Deal News 페이지 active
-                }
-                if (logoLink) logoLink.href = '../index.html';
-
-                // Valuation 메뉴 active 제거
-                if (menuValuation) menuValuation.classList.remove('active');
+                // 삽입된 script 태그를 수동으로 실행
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 
