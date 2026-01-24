@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link - 투자·제휴·서포터 연결 | ValueLink</title>
+    <style>
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+        }
+
+        /* Header placeholder */
+        #header-container {
+            min-height: 90px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--amber) 0%, #FBBF24 100%);
+            padding: 80px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        /* Connection Cards */
+        .connection-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+
+        .connection-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .connection-card:hover {
+            border-color: var(--amber);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .connection-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .connection-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .connection-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .connection-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: var(--amber);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Company Grid */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .company-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+
+        .company-card:hover {
+            border-color: var(--deep-green);
+            box-shadow: 0 4px 16px rgba(22, 101, 52, 0.15);
+        }
+
+        .company-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .company-info h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .company-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .company-valuation {
+            background: #DCFCE7;
+            color: var(--deep-green);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .company-summary {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .company-needs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .need-tag {
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .company-footer {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .btn-contact {
+            flex: 1;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--amber);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-contact:hover {
+            background: #D97706;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .connection-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">💎 Link</h1>
+        <p class="hero-subtitle">평가받은 스타트업을 위한 투자·제휴·서포터 연결 플랫폼</p>
+        <p class="hero-description">
+            평가받은 스타트업은 찾아다니지 않습니다.<br>
+            투자자가, 파트너가, 서포터가 당신을 찾아옵니다.
+        </p>
+    </section>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Connection Types -->
+        <h2 class="section-title">어떤 연결을 찾고 계신가요?</h2>
+        <div class="connection-grid">
+            <!-- Investment -->
+            <div class="connection-card">
+                <div class="connection-icon">💰</div>
+                <h3 class="connection-title">Investment</h3>
+                <p class="connection-subtitle">투자 연결</p>
+                <p class="connection-description">
+                    평가받은 기업에 투자하고 싶으신가요?<br>
+                    VC, 엔젤, 기관투자자 모두 환영합니다.
+                </p>
+                <a href="#companies" class="btn-primary">투자할 기업 찾기</a>
+            </div>
+
+            <!-- Partnership -->
+            <div class="connection-card">
+                <div class="connection-icon">🤝</div>
+                <h3 class="connection-title">Partnership</h3>
+                <p class="connection-subtitle">제휴 연결</p>
+                <p class="connection-description">
+                    비즈니스 파트너를 찾고 계신가요?<br>
+                    기술 협력, 유통 계약, 공동 사업 제안하세요.
+                </p>
+                <a href="#companies" class="btn-primary">제휴할 기업 찾기</a>
+            </div>
+
+            <!-- Support -->
+            <div class="connection-card">
+                <div class="connection-icon">🌟</div>
+                <h3 class="connection-title">Support</h3>
+                <p class="connection-subtitle">서포터 연결</p>
+                <p class="connection-description">
+                    스타트업을 돕고 싶으신가요?<br>
+                    멘토링, 자문, 네트워크로 도와주세요.
+                </p>
+                <a href="#companies" class="btn-primary">도울 기업 찾기</a>
+            </div>
+        </div>
+
+        <!-- Company List -->
+        <h2 class="section-title" id="companies">👑 평가받은 기업 (VIP)</h2>
+        <div class="company-grid">
+            <!-- Sample Company 1 -->
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">🚀</div>
+                    <div class="company-info">
+                        <h3>AI 물류 최적화 솔루션</h3>
+                        <p>IT/소프트웨어 • 설립 2023년</p>
+                    </div>
+                </div>
+                <div class="company-valuation">
+                    기업가치: 150억원 (DCF평가법)
+                </div>
+                <p class="company-summary">
+                    AI 기반 물류 경로 최적화로 운송비 30% 절감. 현대물류, CJ대한통운 등과 PoC 진행 중.
+                </p>
+                <div class="company-needs">
+                    <span class="need-tag">💰 투자 필요</span>
+                    <span class="need-tag">🤝 제휴 필요</span>
+                </div>
+                <div class="company-footer">
+                    <a href="#" class="btn-secondary">상세보기</a>
+                    <a href="#" class="btn-contact">연락하기</a>
+                </div>
+            </div>
+
+            <!-- Sample Company 2 -->
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">🏥</div>
+                    <div class="company-info">
+                        <h3>AI 의료 진단 플랫폼</h3>
+                        <p>헬스케어 • 설립 2022년</p>
+                    </div>
+                </div>
+                <div class="company-valuation">
+                    기업가치: 200억원 (상대가치평가법)
+                </div>
+                <p class="company-summary">
+                    AI 영상 분석으로 암 조기 진단 정확도 95%. FDA 승인 진행 중, 국내 대형병원 10곳 도입.
+                </p>
+                <div class="company-needs">
+                    <span class="need-tag">💰 투자 필요</span>
+                    <span class="need-tag">🌟 서포터 필요</span>
+                </div>
+                <div class="company-footer">
+                    <a href="#" class="btn-secondary">상세보기</a>
+                    <a href="#" class="btn-contact">연락하기</a>
+                </div>
+            </div>
+
+            <!-- Sample Company 3 -->
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">🌱</div>
+                    <div class="company-info">
+                        <h3>친환경 패키징 솔루션</h3>
+                        <p>제조/소재 • 설립 2021년</p>
+                    </div>
+                </div>
+                <div class="company-valuation">
+                    기업가치: 80억원 (자산가치평가법)
+                </div>
+                <p class="company-summary">
+                    100% 생분해 포장재. 대형 유통사 3곳과 공급계약, 월 매출 3억원 달성.
+                </p>
+                <div class="company-needs">
+                    <span class="need-tag">🤝 제휴 필요</span>
+                    <span class="need-tag">🌟 서포터 필요</span>
+                </div>
+                <div class="company-footer">
+                    <a href="#" class="btn-secondary">상세보기</a>
+                    <a href="#" class="btn-contact">연락하기</a>
+                </div>
+            </div>
+
+            <!-- Sample Company 4 -->
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-logo">📱</div>
+                    <div class="company-info">
+                        <h3>모바일 결제 플랫폼</h3>
+                        <p>핀테크 • 설립 2023년</p>
+                    </div>
+                </div>
+                <div class="company-valuation">
+                    기업가치: 120억원 (DCF평가법)
+                </div>
+                <p class="company-summary">
+                    QR 간편결제 + 포인트 적립. MAU 50만명 돌파, 연 거래액 500억원.
+                </p>
+                <div class="company-needs">
+                    <span class="need-tag">💰 투자 필요</span>
+                    <span class="need-tag">🤝 제휴 필요</span>
+                    <span class="need-tag">🌟 서포터 필요</span>
+                </div>
+                <div class="company-footer">
+                    <a href="#" class="btn-secondary">상세보기</a>
+                    <a href="#" class="btn-contact">연락하기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+</body>
+</html>

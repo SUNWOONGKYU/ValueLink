@@ -214,7 +214,10 @@
             <a href="index.html" class="menu-item active" id="menu-valuation">
                 Valuation
             </a>
-            <a href="app/mockup-deal.html" class="menu-item" id="menu-deal">
+            <a href="app/link.html" class="menu-item" id="menu-link">
+                Link
+            </a>
+            <a href="app/deal.html" class="menu-item" id="menu-deal">
                 Deal News
             </a>
         </nav>
@@ -243,17 +246,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 메뉴 링크 업데이트
     const menuValuation = document.getElementById('menu-valuation');
+    const menuLink = document.getElementById('menu-link');
     const menuDeal = document.getElementById('menu-deal');
 
-    menuValuation.href = isInAppFolder ? '../index.html' : 'index.html';
-    menuDeal.href = isInAppFolder ? 'mockup-deal.html' : 'app/mockup-deal.html';
+    menuValuation.href = isInAppFolder ? 'valuation.html' : 'app/valuation.html';
+    menuLink.href = isInAppFolder ? 'link.html' : 'app/link.html';
+    menuDeal.href = isInAppFolder ? 'deal.html' : 'app/deal.html';
 
     // 모든 메뉴 active 제거
     menuValuation.classList.remove('active');
+    menuLink.classList.remove('active');
     menuDeal.classList.remove('active');
 
     // 현재 페이지에 따라 active 추가
-    if (currentPath.includes('deal')) {
+    if (currentPath.includes('link')) {
+        menuLink.classList.add('active');
+    } else if (currentPath.includes('deal')) {
         menuDeal.classList.add('active');
     } else {
         menuValuation.classList.add('active');

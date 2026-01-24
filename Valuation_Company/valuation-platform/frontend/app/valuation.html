@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValueLink - 기업가치평가 플랫폼</title>
+    <style>
+        /* Header Styles */
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #F9FAFB;
+        }
+
+        .main-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            text-decoration: none;
+            display: block;
+        }
+
+        .logo-svg {
+            height: 75px;
+            width: auto;
+        }
+
+        .main-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: #F3F4F6;
+            color: var(--text-primary);
+        }
+
+        .menu-item.active {
+            color: var(--deep-blue);
+            background: #DBEAFE;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .notification-btn:hover {
+            background: #F3F4F6;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            background: #EF4444;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-login {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            border-color: var(--deep-blue);
+            color: var(--deep-blue);
+            background: #F0F9FF;
+        }
+
+        .btn-signup {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-signup:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Body Styles */
+
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* 메인 영역 */
+        .main-area {
+            flex: 1;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        /* 평가법 목록 */
+        .valuation-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 16px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
+            border-color: #1D4ED8;
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
+        }
+
+        .method-icon {
+            font-size: 48px;
+            flex-shrink: 0;
+        }
+
+        .method-info {
+            flex: 1;
+        }
+
+        .method-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .method-summary {
+            font-size: 15px;
+            color: #6B7280;
+            line-height: 1.6;
+        }
+
+        .btn-detail {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-detail:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 우측 사이드바 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-step {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .process-step:hover {
+            background: #F3F4F6;
+        }
+
+        .process-step.active {
+            background: #DBEAFE;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .process-step.active .step-number {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .method-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 20px;
+                height: 70px;
+            }
+
+            .logo-svg {
+                height: 45px;
+            }
+
+            .menu-item {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .btn-login, .btn-signup {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="main-header">
+        <div class="header-left">
+            <!-- 로고 -->
+            <a href="index.html" class="logo-container">
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
+                    <!-- 배경 -->
+                    <rect width="500" height="100" fill="#FFFFFF"/>
+
+                    <!-- V + L 심볼 (높이 40px, 균형 조정) -->
+                    <g transform="translate(50, 30)">
+                        <!-- 선1: 평가 - 딥블루 (왼쪽) -->
+                        <line x1="0" y1="0" x2="28" y2="40" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
+
+                        <!-- 선2: 연결 - 앰버 (오른쪽) -->
+                        <line x1="56" y1="0" x2="28" y2="40" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
+
+                        <!-- 선3: 기업 - 딥그린 (아래) -->
+                        <line x1="28" y1="40" x2="84" y2="40" stroke="#166534" stroke-width="12" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- 텍스트: ValueLink (세로 중앙 정렬) -->
+                    <text x="155" y="50" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1E3A5F" dominant-baseline="middle">ValueLink</text>
+                </svg>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <!-- 메인 메뉴 -->
+            <nav class="main-menu">
+                <a href="index.html" class="menu-item active" id="menu-valuation">
+                    Valuation
+                </a>
+                <a href="app/link.html" class="menu-item" id="menu-link">
+                    Link
+                </a>
+                <a href="app/deal.html" class="menu-item" id="menu-deal">
+                    Deal News
+                </a>
+            </nav>
+
+            <!-- 알람 -->
+            <button class="notification-btn" onclick="toggleNotifications()">
+                <span class="notification-icon">🔔</span>
+                <span class="notification-badge">3</span>
+            </button>
+
+            <!-- 로그인/회원가입 -->
+            <button class="btn-login" onclick="location.href='/login'">로그인</button>
+            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 메인 영역 -->
+        <div class="main-area">
+            <div class="page-header">
+                <h1 class="page-title">기업가치 평가</h1>
+                <p class="page-subtitle">5가지 평가 방법</p>
+            </div>
+
+            <div class="valuation-methods">
+                <!-- DCF평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">📈</div>
+                    <div class="method-info">
+                        <div class="method-name">DCF평가법</div>
+                        <div class="method-summary">
+                            기업이 미래에 창출할 현금흐름을 현재 가치로 환산하여 기업 가치를 산정하는 방법입니다. 성장 가능성이 있는 기업, M&A 및 투자 의사결정에 주로 사용됩니다.
+                        </div>
+                    </div>
+                    <a href="app/valuation/guides/guide-dcf.html" class="btn-detail">상세보기</a>
+                </div>
+
+                <!-- 상대가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">⚖️</div>
+                    <div class="method-info">
+                        <div class="method-name">상대가치평가법</div>
+                        <div class="method-summary">
+                            유사한 기업들의 시장 가치를 비교하여 평가 대상 기업의 가치를 산정하는 방법입니다. PER, PBR, EV/EBITDA 등의 배수를 활용하여 빠르고 직관적인 평가가 가능합니다.
+                        </div>
+                    </div>
+                    <a href="app/valuation/guides/guide-relative.html" class="btn-detail">상세보기</a>
+                </div>
+
+                <!-- 본질가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">💎</div>
+                    <div class="method-info">
+                        <div class="method-name">본질가치평가법</div>
+                        <div class="method-summary">
+                            기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. 비상장법인의 주식 매수청구권 행사 시 행사가격, M&A 시 합병가액을 산정하는 데 사용되며, IPO 공모가 산정에서도 중요한 기준으로 활용됩니다.
+                        </div>
+                    </div>
+                    <a href="app/valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
+                </div>
+
+                <!-- 자산가치평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">🏦</div>
+                    <div class="method-info">
+                        <div class="method-name">자산가치평가법</div>
+                        <div class="method-summary">
+                            기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다. 부동산, 유형자산이 많은 기업이나 M&A 시 최소 가치 산정에 적합합니다.
+                        </div>
+                    </div>
+                    <a href="app/valuation/guides/guide-asset.html" class="btn-detail">상세보기</a>
+                </div>
+
+                <!-- 상증세법평가법 -->
+                <div class="method-card">
+                    <div class="method-icon">📜</div>
+                    <div class="method-info">
+                        <div class="method-name">상증세법평가법</div>
+                        <div class="method-summary">
+                            상속세 및 증여세법에서 정한 방법으로 비상장주식의 가치를 산정하는 법정 평가 방법입니다. 비상장주식 증여, 상속, 임직원 스톡옵션 행사 시 사용됩니다.
+                        </div>
+                    </div>
+                    <a href="app/valuation/guides/guide-tax.html" class="btn-detail">상세보기</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 우측 사이드바 -->
+        <aside class="sidebar">
+            <a href="app/core/mypage.html" class="btn-mypage">
+                <span>👤</span>
+                <span>마이 페이지</span>
+            </a>
+
+            <div class="sidebar-title">평가 진행 단계</div>
+            <div class="process-steps">
+                <a href="app/valuation/guides/mockup-valuation.html" class="process-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">안내문 보기</div>
+                </a>
+                <a href="app/projects/project-create.html" class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">평가 요청하기</div>
+                </a>
+                <a href="app/core/project-dashboard.html" class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">관리자 승인 대기</div>
+                </a>
+                <a href="app/valuation/portals/dcf-portal.html" class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">자료 제출하기</div>
+                </a>
+                <a href="app/valuation/results/dcf-valuation.html" class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">평가 결과 미리보기</div>
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text">수정 요청하기</div>
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-text">최종 결과 보기</div>
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">8</div>
+                    <div class="step-text">보고서 발행 요청</div>
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <script>
+        // 알람 토글
+        function toggleNotifications() {
+            alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+        }
+
+        // 현재 페이지에 따라 active 메뉴 설정 (index.html이므로 Valuation이 active)
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuValuation = document.getElementById('menu-valuation');
+            const menuDeal = document.getElementById('menu-deal');
+
+            // index.html은 항상 Valuation이 active
+            menuValuation.classList.add('active');
+            menuDeal.classList.remove('active');
+        });
+    </script>
+</body>
+</html>
