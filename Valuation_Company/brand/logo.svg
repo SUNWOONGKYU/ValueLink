@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
+  <!-- 배경 -->
+  <rect width="500" height="100" fill="#FFFFFF"/>
+
+  <!-- V + L 심볼 (높이 40px, 균형 조정) -->
+  <g transform="translate(50, 30)">
+    <!-- 선1: 평가 - 딥블루 (왼쪽) -->
+    <line x1="0" y1="0" x2="28" y2="40" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
+
+    <!-- 선2: 연결 - 앰버 (오른쪽) -->
+    <line x1="56" y1="0" x2="28" y2="40" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
+
+    <!-- 선3: 기업 - 딥그린 (아래) -->
+    <line x1="28" y1="40" x2="84" y2="40" stroke="#166534" stroke-width="12" stroke-linecap="round"/>
+  </g>
+
+  <!-- 텍스트: ValueLink (세로 중앙 정렬) -->
+  <text x="155" y="50" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1E3A5F" dominant-baseline="middle">ValueLink</text>
+</svg>
