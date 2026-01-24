@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(python:*)",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ]
   }
 }
