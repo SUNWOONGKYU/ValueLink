@@ -420,13 +420,127 @@
 
         .footer-logo { font-size: 18px; font-weight: 700; }
         .footer-text { font-size: 13px; opacity: 0.7; }
+        /* 우측 사이드바 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-step {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .process-step:hover {
+            background: #F3F4F6;
+        }
+
+        .process-step.active {
+            background: #DBEAFE;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .process-step.active .step-number {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .method-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
     </style>
 </head>
 <body>
     <!-- HEADER -->
     <header>
         <div class="header-left">
-            <a href="../index.html" class="logo">
+            <a href="../../../app/core/index.html" class="logo">
                 <svg class="logo-symbol" viewBox="0 0 100 100">
                     <g transform="translate(15, 20)">
                         <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
@@ -437,10 +551,10 @@
                 <span class="logo-text">ValueLink</span>
             </a>
             <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item link">평가방법</a>
-                <a href="valuation-list.html" class="nav-item link">프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item link">신규</a>
-                <a href="mockup-deal.html" class="nav-item link">Deal</a>
+                <a href="../../../app/valuation/guides/mockup-valuation.html" class="nav-item link">평가방법</a>
+                <a href="../../../app/core/valuation-list.html" class="nav-item link">프로젝트 목록</a>
+                <a href="../../../app/projects/project-create.html" class="nav-item link">신규</a>
+                <a href="../../../app/dev/mockup-deal.html" class="nav-item link">Deal</a>
             </nav>
         </div>
     </header>
@@ -448,254 +562,298 @@
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
         <div class="breadcrumb">
-            <a href="../index.html">홈</a>
+            <a href="../../../app/core/index.html">홈</a>
             <span>></span>
-            <a href="mockup-valuation.html">평가방법</a>
+            <a href="../guides/mockup-valuation.html">평가방법</a>
             <span>></span>
             <span>DCF평가법</span>
         </div>
     </div>
 
-    <!-- MAIN -->
-    <main class="main-content">
-        <div class="page-title">
-            <div class="page-title-content">
-                <h1>DCF 기업가치 평가</h1>
-                <p>현금흐름할인법(Discounted Cash Flow)으로 기업의 본질가치를 산정합니다</p>
-            </div>
-            <a href="dcf-portal.html" class="btn-portal">
-                <span>📁</span> 자료 업로드
-            </a>
-        </div>
-
-        <div class="form-container">
-            <!-- 기본 정보 -->
-            <div class="form-section">
-                <h2>기본 정보</h2>
-                <div class="form-group">
-                    <label>회사명</label>
-                    <input type="text" id="companyName" placeholder="평가 대상 회사명">
-                </div>
-                <div class="form-group">
-                    <label>평가 기준일</label>
-                    <input type="date" id="valuationDate" value="2025-01-01">
-                </div>
-                <div class="form-group">
-                    <label>발행주식수</label>
-                    <input type="number" id="sharesOutstanding" placeholder="1,000,000" value="1000000">
-                    <div class="unit">주</div>
-                </div>
-            </div>
-
-            <!-- 할인율 (WACC) -->
-            <div class="form-section">
-                <h2>할인율 (WACC)</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>무위험이자율 (Rf)</label>
-                        <input type="number" id="riskFreeRate" step="0.01" value="3.5" placeholder="3.5">
-                        <div class="unit">%</div>
+        <!-- MAIN -->
+        <div class="container">
+            <div class="main-area">
+                <div class="page-title">
+                    <div class="page-title-content">
+                        <h1>DCF 기업가치 평가</h1>
+                        <p>현금흐름할인법(Discounted Cash Flow)으로 기업의 본질가치를 산정합니다</p>
                     </div>
-                    <div class="form-group">
-                        <label>시장위험프리미엄 (MRP)</label>
-                        <input type="number" id="marketRiskPremium" step="0.01" value="6.0" placeholder="6.0">
-                        <div class="unit">%</div>
-                    </div>
+                    <a href="dcf-portal.html" class="btn-portal">
+                        <span>📁</span> 자료 업로드
+                    </a>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>레버리지 베타 (β)</label>
-                        <input type="number" id="leveredBeta" step="0.01" value="1.2" placeholder="1.2">
+    
+                <div class="form-container">
+                    <!-- 기본 정보 -->
+                    <div class="form-section">
+                        <h2>기본 정보</h2>
+                        <div class="form-group">
+                            <label>회사명</label>
+                            <input type="text" id="companyName" placeholder="평가 대상 회사명">
+                        </div>
+                        <div class="form-group">
+                            <label>평가 기준일</label>
+                            <input type="date" id="valuationDate" value="2025-01-01">
+                        </div>
+                        <div class="form-group">
+                            <label>발행주식수</label>
+                            <input type="number" id="sharesOutstanding" placeholder="1,000,000" value="1000000">
+                            <div class="unit">주</div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>규모 프리미엄</label>
-                        <input type="number" id="sizePremium" step="0.01" value="2.0" placeholder="2.0">
-                        <div class="unit">%</div>
+    
+                    <!-- 할인율 (WACC) -->
+                    <div class="form-section">
+                        <h2>할인율 (WACC)</h2>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>무위험이자율 (Rf)</label>
+                                <input type="number" id="riskFreeRate" step="0.01" value="3.5" placeholder="3.5">
+                                <div class="unit">%</div>
+                            </div>
+                            <div class="form-group">
+                                <label>시장위험프리미엄 (MRP)</label>
+                                <input type="number" id="marketRiskPremium" step="0.01" value="6.0" placeholder="6.0">
+                                <div class="unit">%</div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>레버리지 베타 (β)</label>
+                                <input type="number" id="leveredBeta" step="0.01" value="1.2" placeholder="1.2">
+                            </div>
+                            <div class="form-group">
+                                <label>규모 프리미엄</label>
+                                <input type="number" id="sizePremium" step="0.01" value="2.0" placeholder="2.0">
+                                <div class="unit">%</div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>세전 타인자본비용</label>
+                                <input type="number" id="costOfDebt" step="0.01" value="5.0" placeholder="5.0">
+                                <div class="unit">%</div>
+                            </div>
+                            <div class="form-group">
+                                <label>법인세율</label>
+                                <input type="number" id="taxRate" step="0.01" value="22.0" placeholder="22.0">
+                                <div class="unit">%</div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>자기자본 비중</label>
+                                <input type="number" id="equityRatio" step="0.01" value="70.0" placeholder="70.0">
+                                <div class="unit">%</div>
+                            </div>
+                            <div class="form-group">
+                                <label>타인자본 비중</label>
+                                <input type="number" id="debtRatio" step="0.01" value="30.0" placeholder="30.0">
+                                <div class="unit">%</div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 16px; padding: 12px; background: var(--deep-blue-pale); border-radius: 8px;">
+                            <label style="color: var(--deep-blue);">계산된 WACC</label>
+                            <div style="font-size: 24px; font-weight: 700; color: var(--deep-blue);" id="calculatedWacc">12.87%</div>
+                        </div>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>세전 타인자본비용</label>
-                        <input type="number" id="costOfDebt" step="0.01" value="5.0" placeholder="5.0">
-                        <div class="unit">%</div>
-                    </div>
-                    <div class="form-group">
-                        <label>법인세율</label>
-                        <input type="number" id="taxRate" step="0.01" value="22.0" placeholder="22.0">
-                        <div class="unit">%</div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>자기자본 비중</label>
-                        <input type="number" id="equityRatio" step="0.01" value="70.0" placeholder="70.0">
-                        <div class="unit">%</div>
-                    </div>
-                    <div class="form-group">
-                        <label>타인자본 비중</label>
-                        <input type="number" id="debtRatio" step="0.01" value="30.0" placeholder="30.0">
-                        <div class="unit">%</div>
-                    </div>
-                </div>
-                <div class="form-group" style="margin-top: 16px; padding: 12px; background: var(--deep-blue-pale); border-radius: 8px;">
-                    <label style="color: var(--deep-blue);">계산된 WACC</label>
-                    <div style="font-size: 24px; font-weight: 700; color: var(--deep-blue);" id="calculatedWacc">12.87%</div>
-                </div>
-            </div>
-
-            <!-- FCFF 추정 (5년) -->
-            <div class="form-section" style="grid-column: 1 / -1;">
-                <h2>FCFF 추정 (5개년)</h2>
-                <table class="projection-table">
-                    <thead>
-                        <tr>
-                            <th>항목</th>
-                            <th>1년차</th>
-                            <th>2년차</th>
-                            <th>3년차</th>
-                            <th>4년차</th>
-                            <th>5년차</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>매출액</td>
-                            <td><input type="number" id="revenue1" value="10000000000"></td>
-                            <td><input type="number" id="revenue2" value="12000000000"></td>
-                            <td><input type="number" id="revenue3" value="14400000000"></td>
-                            <td><input type="number" id="revenue4" value="17280000000"></td>
-                            <td><input type="number" id="revenue5" value="20736000000"></td>
-                        </tr>
-                        <tr>
-                            <td>EBIT</td>
-                            <td><input type="number" id="ebit1" value="1500000000"></td>
-                            <td><input type="number" id="ebit2" value="1800000000"></td>
-                            <td><input type="number" id="ebit3" value="2160000000"></td>
-                            <td><input type="number" id="ebit4" value="2592000000"></td>
-                            <td><input type="number" id="ebit5" value="3110400000"></td>
-                        </tr>
-                        <tr>
-                            <td>감가상각비</td>
-                            <td><input type="number" id="dep1" value="500000000"></td>
-                            <td><input type="number" id="dep2" value="550000000"></td>
-                            <td><input type="number" id="dep3" value="600000000"></td>
-                            <td><input type="number" id="dep4" value="650000000"></td>
-                            <td><input type="number" id="dep5" value="700000000"></td>
-                        </tr>
-                        <tr>
-                            <td>CAPEX</td>
-                            <td><input type="number" id="capex1" value="600000000"></td>
-                            <td><input type="number" id="capex2" value="700000000"></td>
-                            <td><input type="number" id="capex3" value="800000000"></td>
-                            <td><input type="number" id="capex4" value="900000000"></td>
-                            <td><input type="number" id="capex5" value="1000000000"></td>
-                        </tr>
-                        <tr>
-                            <td>운전자본 증감</td>
-                            <td><input type="number" id="wc1" value="200000000"></td>
-                            <td><input type="number" id="wc2" value="240000000"></td>
-                            <td><input type="number" id="wc3" value="288000000"></td>
-                            <td><input type="number" id="wc4" value="345600000"></td>
-                            <td><input type="number" id="wc5" value="414720000"></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 영구성장률 및 비영업 항목 -->
-            <div class="form-section">
-                <h2>Terminal Value</h2>
-                <div class="form-group">
-                    <label>영구성장률</label>
-                    <input type="number" id="terminalGrowth" step="0.01" value="1.0" placeholder="1.0">
-                    <div class="unit">%</div>
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2>비영업 항목</h2>
-                <div class="form-group">
-                    <label>비영업자산</label>
-                    <input type="number" id="nonOperatingAssets" value="500000000" placeholder="0">
-                    <div class="unit">원</div>
-                </div>
-                <div class="form-group">
-                    <label>이자부부채</label>
-                    <input type="number" id="interestBearingDebt" value="2000000000" placeholder="0">
-                    <div class="unit">원</div>
-                </div>
-            </div>
-
-            <!-- 계산 버튼 -->
-            <div style="grid-column: 1 / -1;">
-                <button class="btn-calculate" onclick="calculateDCF()">기업가치 평가 실행</button>
-            </div>
-
-            <!-- 결과 섹션 -->
-            <div class="result-section" id="resultSection">
-                <div class="result-header">
-                    <h2>DCF 평가 결과</h2>
-                    <span id="resultCompanyName"></span>
-                </div>
-
-                <div class="result-summary">
-                    <div class="summary-card">
-                        <label>영업가치</label>
-                        <div class="value" id="resultOperatingValue">-</div>
-                        <div class="sub">Operating Value</div>
-                    </div>
-                    <div class="summary-card">
-                        <label>기업가치</label>
-                        <div class="value" id="resultEnterpriseValue">-</div>
-                        <div class="sub">Enterprise Value</div>
-                    </div>
-                    <div class="summary-card">
-                        <label>주식가치</label>
-                        <div class="value" id="resultEquityValue">-</div>
-                        <div class="sub">Equity Value</div>
-                    </div>
-                    <div class="summary-card highlight">
-                        <label>주당가치</label>
-                        <div class="value" id="resultPerShare">-</div>
-                        <div class="sub">Value per Share</div>
-                    </div>
-                </div>
-
-                <div class="result-grid">
-                    <div class="result-table-section">
-                        <h3>FCFF 현재가치</h3>
-                        <table class="result-table">
-                            <thead>
-                                <tr>
-                                    <th>연도</th>
-                                    <th>FCFF</th>
-                                    <th>할인계수</th>
-                                    <th>현재가치</th>
-                                </tr>
-                            </thead>
-                            <tbody id="fcffTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="result-table-section">
-                        <h3>가치 산출</h3>
-                        <table class="result-table">
+    
+                    <!-- FCFF 추정 (5년) -->
+                    <div class="form-section" style="grid-column: 1 / -1;">
+                        <h2>FCFF 추정 (5개년)</h2>
+                        <table class="projection-table">
                             <thead>
                                 <tr>
                                     <th>항목</th>
-                                    <th>금액</th>
+                                    <th>1년차</th>
+                                    <th>2년차</th>
+                                    <th>3년차</th>
+                                    <th>4년차</th>
+                                    <th>5년차</th>
                                 </tr>
                             </thead>
-                            <tbody id="valueTableBody">
+                            <tbody>
+                                <tr>
+                                    <td>매출액</td>
+                                    <td><input type="number" id="revenue1" value="10000000000"></td>
+                                    <td><input type="number" id="revenue2" value="12000000000"></td>
+                                    <td><input type="number" id="revenue3" value="14400000000"></td>
+                                    <td><input type="number" id="revenue4" value="17280000000"></td>
+                                    <td><input type="number" id="revenue5" value="20736000000"></td>
+                                </tr>
+                                <tr>
+                                    <td>EBIT</td>
+                                    <td><input type="number" id="ebit1" value="1500000000"></td>
+                                    <td><input type="number" id="ebit2" value="1800000000"></td>
+                                    <td><input type="number" id="ebit3" value="2160000000"></td>
+                                    <td><input type="number" id="ebit4" value="2592000000"></td>
+                                    <td><input type="number" id="ebit5" value="3110400000"></td>
+                                </tr>
+                                <tr>
+                                    <td>감가상각비</td>
+                                    <td><input type="number" id="dep1" value="500000000"></td>
+                                    <td><input type="number" id="dep2" value="550000000"></td>
+                                    <td><input type="number" id="dep3" value="600000000"></td>
+                                    <td><input type="number" id="dep4" value="650000000"></td>
+                                    <td><input type="number" id="dep5" value="700000000"></td>
+                                </tr>
+                                <tr>
+                                    <td>CAPEX</td>
+                                    <td><input type="number" id="capex1" value="600000000"></td>
+                                    <td><input type="number" id="capex2" value="700000000"></td>
+                                    <td><input type="number" id="capex3" value="800000000"></td>
+                                    <td><input type="number" id="capex4" value="900000000"></td>
+                                    <td><input type="number" id="capex5" value="1000000000"></td>
+                                </tr>
+                                <tr>
+                                    <td>운전자본 증감</td>
+                                    <td><input type="number" id="wc1" value="200000000"></td>
+                                    <td><input type="number" id="wc2" value="240000000"></td>
+                                    <td><input type="number" id="wc3" value="288000000"></td>
+                                    <td><input type="number" id="wc4" value="345600000"></td>
+                                    <td><input type="number" id="wc5" value="414720000"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+    
+                    <!-- 영구성장률 및 비영업 항목 -->
+                    <div class="form-section">
+                        <h2>Terminal Value</h2>
+                        <div class="form-group">
+                            <label>영구성장률</label>
+                            <input type="number" id="terminalGrowth" step="0.01" value="1.0" placeholder="1.0">
+                            <div class="unit">%</div>
+                        </div>
+                    </div>
+    
+                    <div class="form-section">
+                        <h2>비영업 항목</h2>
+                        <div class="form-group">
+                            <label>비영업자산</label>
+                            <input type="number" id="nonOperatingAssets" value="500000000" placeholder="0">
+                            <div class="unit">원</div>
+                        </div>
+                        <div class="form-group">
+                            <label>이자부부채</label>
+                            <input type="number" id="interestBearingDebt" value="2000000000" placeholder="0">
+                            <div class="unit">원</div>
+                        </div>
+                    </div>
+    
+                    <!-- 계산 버튼 -->
+                    <div style="grid-column: 1 / -1;">
+                        <button class="btn-calculate" onclick="calculateDCF()">기업가치 평가 실행</button>
+                    </div>
+    
+                    <!-- 결과 섹션 -->
+                    <div class="result-section" id="resultSection">
+                        <div class="result-header">
+                            <h2>DCF 평가 결과</h2>
+                            <span id="resultCompanyName"></span>
+                        </div>
+    
+                        <div class="result-summary">
+                            <div class="summary-card">
+                                <label>영업가치</label>
+                                <div class="value" id="resultOperatingValue">-</div>
+                                <div class="sub">Operating Value</div>
+                            </div>
+                            <div class="summary-card">
+                                <label>기업가치</label>
+                                <div class="value" id="resultEnterpriseValue">-</div>
+                                <div class="sub">Enterprise Value</div>
+                            </div>
+                            <div class="summary-card">
+                                <label>주식가치</label>
+                                <div class="value" id="resultEquityValue">-</div>
+                                <div class="sub">Equity Value</div>
+                            </div>
+                            <div class="summary-card highlight">
+                                <label>주당가치</label>
+                                <div class="value" id="resultPerShare">-</div>
+                                <div class="sub">Value per Share</div>
+                            </div>
+                        </div>
+    
+                        <div class="result-grid">
+                            <div class="result-table-section">
+                                <h3>FCFF 현재가치</h3>
+                                <table class="result-table">
+                                    <thead>
+                                        <tr>
+                                            <th>연도</th>
+                                            <th>FCFF</th>
+                                            <th>할인계수</th>
+                                            <th>현재가치</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="fcffTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+    
+                            <div class="result-table-section">
+                                <h3>가치 산출</h3>
+                                <table class="result-table">
+                                    <thead>
+                                        <tr>
+                                            <th>항목</th>
+                                            <th>금액</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="valueTableBody">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+    
+            <!-- 우측 사이드바 -->
+            <aside class="sidebar">
+                            <a href="../../../app/core/mypage.html" class="btn-mypage">
+                                <span>👤</span>
+                                <span>마이 페이지</span>
+                            </a>
+                
+                            <div class="sidebar-title">평가 진행 단계</div>
+                            <div class="process-steps">
+                                <a href="../guides/guide-dcf.html" class="process-step active">
+                                    <div class="step-number">1</div>
+                                    <div class="step-text">안내문 보기</div>
+                                </a>
+                                <a href="../../../app/projects/project-create.html" class="process-step">
+                                    <div class="step-number">2</div>
+                                    <div class="step-text">평가 요청하기</div>
+                                </a>
+                                <a href="../../../app/core/project-dashboard.html" class="process-step">
+                                    <div class="step-number">3</div>
+                                    <div class="step-text">관리자 승인 대기</div>
+                                </a>
+                                <a href="../portals/dcf-portal.html" class="process-step">
+                                    <div class="step-number">4</div>
+                                    <div class="step-text">자료 제출하기</div>
+                                </a>
+                                <a href="dcf-valuation.html" class="process-step">
+                                    <div class="step-number">5</div>
+                                    <div class="step-text">평가 결과 미리보기</div>
+                                </a>
+                                <a href="../../../app/projects/project-detail.html" class="process-step">
+                                    <div class="step-number">6</div>
+                                    <div class="step-text">수정 요청하기</div>
+                                </a>
+                                <a href="../../../app/projects/project-detail.html" class="process-step">
+                                    <div class="step-number">7</div>
+                                    <div class="step-text">최종 결과 보기</div>
+                                </a>
+                                <a href="../../../app/projects/project-detail.html" class="process-step">
+                                    <div class="step-number">8</div>
+                                    <div class="step-text">보고서 발행 요청</div>
+                                </a>
+                            </div>            </aside>
         </div>
-    </main>
-
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ValueLink</div>

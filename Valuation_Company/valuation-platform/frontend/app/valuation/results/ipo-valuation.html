@@ -556,13 +556,126 @@
                 text-align: center;
             }
         }
+        /* 우측 사이드바 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        /* 마이 페이지 버튼 */
+        .btn-mypage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .btn-mypage:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .process-step {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6B7280;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .process-step:hover {
+            background: #F3F4F6;
+        }
+
+        .process-step.active {
+            background: #DBEAFE;
+            color: #1D4ED8;
+            font-weight: 600;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .process-step.active .step-number {
+            background: #1D4ED8;
+            color: white;
+        }
+
+        .step-text {
+            flex: 1;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .method-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- HEADER -->
     <header>
         <div class="header-left">
-            <a href="../index.html" class="logo">
+            <a href="../../../frontend/index.html" class="logo">
                 <svg class="logo-symbol" viewBox="0 0 100 100">
                     <g transform="translate(15, 20)">
                         <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
@@ -573,10 +686,10 @@
                 <span class="logo-text">ValueLink</span>
             </a>
             <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">평가방법</a>
-                <a href="valuation-list.html" class="nav-item">프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">신규</a>
-                <a href="mockup-deal.html" class="nav-item">Deal</a>
+                <a href="../guides/mockup-valuation.html" class="nav-item">평가방법</a>
+                <a href="../../core/valuation-list.html" class="nav-item">프로젝트 목록</a>
+                <a href="../../projects/project-create.html" class="nav-item">신규</a>
+                <a href="../../dev/mockup-deal.html" class="nav-item">Deal</a>
             </nav>
         </div>
     </header>
@@ -584,9 +697,9 @@
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
         <div class="breadcrumb">
-            <a href="../index.html">홈</a>
+            <a href="../../../frontend/index.html">홈</a>
             <span>></span>
-            <a href="mockup-valuation.html">평가방법</a>
+            <a href="../guides/mockup-valuation.html">평가방법</a>
             <span>></span>
             <span>자본시장법평가법</span>
         </div>
@@ -601,7 +714,9 @@
     </section>
 
     <!-- MAIN -->
-    <main class="main-content">
+    <!-- MAIN -->
+    <div class="container">
+        <div class="main-area">
         <!-- INFO BOX -->
         <div class="info-box">
             <h4>&#128161; IPO 공모가 산정이란?</h4>
@@ -934,7 +1049,51 @@
                 <div class="result-unit">원</div>
             </div>
         </section>
-    </main>
+    </div >
+        <!-- 우측 사이드바 -->
+        <aside class="sidebar">
+            <a href="../../../app/core/mypage.html" class="btn-mypage">
+                <span>👤</span>
+                <span>마이 페이지</span>
+            </a>
+
+            <div class="sidebar-title">평가 진행 단계</div>
+            <div class="process-steps">
+                <a href="../guides/guide-intrinsic.html" class="process-step active">
+                    <div class="step-number">1</div>
+                    <div class="step-text">안내문 보기</div>
+                </a>
+                <a href="../../../app/projects/project-create.html" class="process-step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">평가 요청하기</div>
+                </a>
+                <a href="../../../app/core/project-dashboard.html" class="process-step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">관리자 승인 대기</div>
+                </a>
+                <a href="../portals/ipo-portal.html" class="process-step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">자료 제출하기</div>
+                </a>
+                <a href="ipo-valuation.html" class="process-step">
+                    <div class="step-number">5</div>
+                    <div class="step-text">평가 결과 미리보기</div>
+                </a>
+                <a href="../../../app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">6</div>
+                    <div class="step-text">수정 요청하기</div>
+                </a>
+                <a href="../../../app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">7</div>
+                    <div class="step-text">최종 결과 보기</div>
+                </a>
+                <a href="../../../app/projects/project-detail.html" class="process-step">
+                    <div class="step-number">8</div>
+                    <div class="step-text">보고서 발행 요청</div>
+                </a>
+            </div>
+        </aside>
+    </div>
 
     <!-- FOOTER -->
     <footer>

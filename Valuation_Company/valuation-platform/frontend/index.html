@@ -5,11 +5,164 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ValueLink - 기업가치평가 플랫폼</title>
     <style>
+        /* Header Styles */
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
             background: #F9FAFB;
         }
+
+        .main-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container {
+            text-decoration: none;
+            display: block;
+        }
+
+        .logo-svg {
+            height: 75px;
+            width: auto;
+        }
+
+        .main-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .menu-item {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .menu-item:hover {
+            background: #F3F4F6;
+            color: var(--text-primary);
+        }
+
+        .menu-item.active {
+            color: var(--deep-blue);
+            background: #DBEAFE;
+        }
+
+        .notification-btn {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        .notification-btn:hover {
+            background: #F3F4F6;
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            color: var(--text-secondary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 18px;
+            height: 18px;
+            background: #EF4444;
+            border-radius: 50%;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-login {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-login:hover {
+            border-color: var(--deep-blue);
+            color: var(--deep-blue);
+            background: #F0F9FF;
+        }
+
+        .btn-signup {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-signup:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Body Styles */
 
         .container {
             display: flex;
@@ -220,11 +373,79 @@
                 text-align: center;
             }
         }
+
+        @media (max-width: 768px) {
+            .main-header {
+                padding: 0 20px;
+                height: 70px;
+            }
+
+            .logo-svg {
+                height: 45px;
+            }
+
+            .menu-item {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .btn-login, .btn-signup {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- 헤더 -->
-    <div id="header-container"></div>
+    <header class="main-header">
+        <div class="header-left">
+            <!-- 로고 -->
+            <a href="index.html" class="logo-container">
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
+                    <!-- 배경 -->
+                    <rect width="500" height="100" fill="#FFFFFF"/>
+
+                    <!-- V + L 심볼 (높이 50px) -->
+                    <g transform="translate(50, 25)">
+                        <!-- 선1: 기업 - 딥그린 -->
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+
+                        <!-- 선2: 평가 - 딥블루 -->
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+
+                        <!-- 선3: 연결 - 앰버 -->
+                        <line x1="35" y1="50" x2="105" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- 텍스트: ValueLink -->
+                    <text x="180" y="55" font-family="Arial, sans-serif" font-size="34" font-weight="bold" fill="#1E3A5F">ValueLink</text>
+                </svg>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <!-- 메인 메뉴 -->
+            <nav class="main-menu">
+                <a href="index.html" class="menu-item active" id="menu-valuation">
+                    Valuation
+                </a>
+                <a href="app/mockup-deal.html" class="menu-item" id="menu-deal">
+                    Deal News
+                </a>
+            </nav>
+
+            <!-- 알람 -->
+            <button class="notification-btn" onclick="toggleNotifications()">
+                <span class="notification-icon">🔔</span>
+                <span class="notification-badge">3</span>
+            </button>
+
+            <!-- 로그인/회원가입 -->
+            <button class="btn-login" onclick="location.href='/login'">로그인</button>
+            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
+        </div>
+    </header>
 
     <div class="container">
         <!-- 메인 영역 -->
@@ -244,7 +465,7 @@
                             기업이 미래에 창출할 현금흐름을 현재 가치로 환산하여 기업 가치를 산정하는 방법입니다. 성장 가능성이 있는 기업, M&A 및 투자 의사결정에 주로 사용됩니다.
                         </div>
                     </div>
-                    <a href="app/guide-dcf.html" class="btn-detail">상세보기</a>
+                    <a href="app/valuation/guides/guide-dcf.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 상대가치평가법 -->
@@ -256,7 +477,7 @@
                             유사한 기업들의 시장 가치를 비교하여 평가 대상 기업의 가치를 산정하는 방법입니다. PER, PBR, EV/EBITDA 등의 배수를 활용하여 빠르고 직관적인 평가가 가능합니다.
                         </div>
                     </div>
-                    <a href="app/guide-relative.html" class="btn-detail">상세보기</a>
+                    <a href="app/valuation/guides/guide-relative.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 본질가치평가법 -->
@@ -265,10 +486,10 @@
                     <div class="method-info">
                         <div class="method-name">본질가치평가법</div>
                         <div class="method-summary">
-                            자본시장법에 따른 공모 시 사용되는 평가 방법으로, 유사 상장기업의 주가를 기준으로 1대 1.5 원칙을 적용합니다. IPO 준비 기업의 공모가 산정에 필수적입니다.
+                            기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. 비상장법인의 주식 매수청구권 행사 시 행사가격, M&A 시 합병가액을 산정하는 데 사용되며, IPO 공모가 산정에서도 중요한 기준으로 활용됩니다.
                         </div>
                     </div>
-                    <a href="app/guide-intrinsic.html" class="btn-detail">상세보기</a>
+                    <a href="app/valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 자산가치평가법 -->
@@ -280,7 +501,7 @@
                             기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다. 부동산, 유형자산이 많은 기업이나 M&A 시 최소 가치 산정에 적합합니다.
                         </div>
                     </div>
-                    <a href="app/guide-asset.html" class="btn-detail">상세보기</a>
+                    <a href="app/valuation/guides/guide-asset.html" class="btn-detail">상세보기</a>
                 </div>
 
                 <!-- 상증세법평가법 -->
@@ -292,64 +513,71 @@
                             상속세 및 증여세법에서 정한 방법으로 비상장주식의 가치를 산정하는 법정 평가 방법입니다. 비상장주식 증여, 상속, 임직원 스톡옵션 행사 시 사용됩니다.
                         </div>
                     </div>
-                    <a href="app/guide-tax.html" class="btn-detail">상세보기</a>
+                    <a href="app/valuation/guides/guide-tax.html" class="btn-detail">상세보기</a>
                 </div>
             </div>
         </div>
 
         <!-- 우측 사이드바 -->
         <aside class="sidebar">
-            <a href="app/mypage.html" class="btn-mypage">
+            <a href="app/core/mypage.html" class="btn-mypage">
                 <span>👤</span>
                 <span>마이 페이지</span>
             </a>
 
             <div class="sidebar-title">평가 진행 단계</div>
             <div class="process-steps">
-                <div class="process-step active">
+                <a href="app/valuation/guides/mockup-valuation.html" class="process-step active">
                     <div class="step-number">1</div>
                     <div class="step-text">안내문 보기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/projects/project-create.html" class="process-step">
                     <div class="step-number">2</div>
                     <div class="step-text">평가 요청하기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/core/project-dashboard.html" class="process-step">
                     <div class="step-number">3</div>
                     <div class="step-text">관리자 승인 대기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/valuation/portals/dcf-portal.html" class="process-step">
                     <div class="step-number">4</div>
                     <div class="step-text">자료 제출하기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/valuation/results/dcf-valuation.html" class="process-step">
                     <div class="step-number">5</div>
                     <div class="step-text">평가 결과 미리보기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
                     <div class="step-number">6</div>
                     <div class="step-text">수정 요청하기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
                     <div class="step-number">7</div>
                     <div class="step-text">최종 결과 보기</div>
-                </div>
-                <div class="process-step">
+                </a>
+                <a href="app/projects/project-detail.html" class="process-step">
                     <div class="step-number">8</div>
                     <div class="step-text">보고서 발행 요청</div>
-                </div>
+                </a>
             </div>
         </aside>
     </div>
 
     <script>
-        // 헤더 로드
-        fetch('components/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-container').innerHTML = data;
-            })
-            .catch(error => console.error('헤더 로드 실패:', error));
+        // 알람 토글
+        function toggleNotifications() {
+            alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+        }
+
+        // 현재 페이지에 따라 active 메뉴 설정 (index.html이므로 Valuation이 active)
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuValuation = document.getElementById('menu-valuation');
+            const menuDeal = document.getElementById('menu-deal');
+
+            // index.html은 항상 Valuation이 active
+            menuValuation.classList.add('active');
+            menuDeal.classList.remove('active');
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,48 @@
+### **자산가치 평가법 영상 1편 (개요) 시각 자료 제작을 위한 Gemini 프롬프트 (강화된 텍스트 지시 포함)**
+
+**[영상 제목]**: 자산가치 평가법 마스터 1편: 기업의 현재 자산으로 가치 분석! (개요)
+
+**[스크립트 섹션]**: (00:00 - 00:30) 도입 - 후킹
+*   **[Gemini 프롬프트]**:
+    1.  **인트로**: "A sleek, professional animated logo reveal for 'ValueLink'. High-resolution, suitable for video editing."
+    2.  **질문 텍스트**: "Create a visual for a screen overlay. It must prominently display the exact Korean text '기업을 해체했을 때 얼마를 건질 수 있을까?' in a bold, clear, modern sans-serif font. The text should be perfectly legible, centered, and without any typos or distortions. It should appear with a subtle, engaging fade-in animation. The background must be clean and neutral to ensure text visibility."
+    3.  **개념 아이콘**: "Generate a series of distinct, modern, minimalist icons. Each icon must represent one of the following concepts: '기업 청산 (Corporate Liquidation)', '파산 (Bankruptcy)', '자산 매각 (Asset Sale)'. **Ensure no embedded text in the icons themselves, only the visual concept.** Each icon must be easily distinguishable and animated to appear sequentially for a few seconds before fading out. Transparent background."
+
+**[스크립트 섹션]**: (00:30 - 02:00) 자산가치 평가법이란 무엇인가?
+*   **[Gemini 프롬프트]**:
+    1.  **제목 텍스트**: "Create a clean, prominent screen overlay text '자산가치 평가법이란 무엇인가?'. **The text must be perfectly legible, clear, and without any typos or distortions, in a professional, centered font.**"
+    2.  **정의 시각화**: "Generate an image of various tangible assets (e.g., factory building, machinery, cash stacks) neatly organized within a company boundary, representing '기업의 현재 자산 (Current Assets of a Company)'. **The exact Korean text '자산 (Assets)' must be clearly and legibly integrated. All text must be perfectly legible, clear, and without any typos or distortions.** The visual should convey a focus on physical assets."
+    3.  **순자산가치 애니메이션**: "Create an animated graphic illustrating '순자산가치 (Net Asset Value)'. Show a large, positive stack of '자산 (Assets)' icons (e.g., buildings, cash) being reduced by a smaller, negative stack of '부채 (Liabilities)' icons (e.g., loan documents). The remaining positive value is highlighted as '순자산 (Net Assets)'. **All text must be perfectly legible, clear, and without any typos or distortions, in clear, financial icons.**"
+    4.  **조정의 중요성**: "Design an animated graphic contrasting '장부가액 (Book Value)' (represented by an old, dusty ledger book with outdated numbers) and '시가/공정가치 (Market Value/Fair Value)' (represented by a vibrant, real-time stock ticker or price tag). Show an arrow or a transformation from book value to market value, emphasizing the '조정 (Adjustment)' process. **The exact Korean text '조정 (Adjustment)' must be clearly and legibly integrated. All text must be perfectly legible, clean, and without any typos or distortions.**"
+    5.  **핵심 텍스트**: "Create a prominent screen overlay text '조정된 순자산 (Adjusted Net Assets)'. **The text must be perfectly legible, clear, and without any typos or distortions, in a bold, professional font.**"
+
+**[스크립트 섹션]**: (02:00 - 04:00) 자산가치 평가법이 왜 필요한가?
+*   **[Gemini 프롬프트]**:
+    1.  **제목 텍스트**: "Create a clean, prominent screen overlay text '자산가치 평가법이 왜 필요한가?'. **The text must be perfectly legible, clear, and without any typos or distortions, in a professional, centered font.**"
+    2.  **청산가치 파악**: "Generate an animated graphic of a company building disassembling into its constituent assets (e.g., bricks, machinery, cash). These individual assets are then shown being sold off, with the net proceeds representing '청산가치 (Liquidation Value)'. **The exact Korean text '청산가치 (Liquidation Value)' must be clearly and legibly integrated. All text must be perfectly legible, clear, and without any typos or distortions.** The visual emphasizes asset disposition."
+    3.  **미래 수익 예측 어려움**: "Design a graphic showing a foggy, uncertain future timeline or a blurred profit graph. Icons for '적자 부실 기업 (Loss-making Distressed Company)' and '사업 초기 스타트업 (Early-Stage Startup)' appear, with a question mark over their future. **The exact Korean text '보수적인 가치 산정 (Conservative Valuation)' must be highlighted and perfectly legible, clear, and without any typos or distortions.**"
+    4.  **담보/지분 거래**: "Create icons for '담보 대출 (Collateral Loan)' (e.g., a hand receiving money in exchange for an asset icon) and 'M&A 최저가치 기준 (Minimum M&A Value Criterion)' (e.g., a floor price tag). **All text must be perfectly legible, clear, and without any typos or distortions.** These visuals illustrate the practical applications in conservative financial transactions."
+
+**[스크립트 섹션]**: (04:00 - 07:00) 다른 평가법과의 차이
+*   **[Gemini 프롬프트]**:
+    1.  **제목 텍스트**: "Create a clean, prominent screen overlay text '다른 평가법과의 차이'. **The text must be perfectly legible, clear, and without any typos or distortions, in a professional, centered font.**"
+    2.  **평가법 비교표**: "Generate a sophisticated, minimalist comparison table graphic with four columns. The column headers must be the exact Korean text: '자산가치 평가 (Asset Valuation)', 'DCF (Discounted Cash Flow)', '상대가치 평가 (Relative Valuation)', '본질가치 평가 (Intrinsic Valuation)'. For each, use a distinct icon and summarize core characteristics (e.g., '현재 시점, 유형적 자산, 보수적' for Asset Valuation, '미래 성장, 현금흐름' for DCF). **All text, including headers and bullet points, must be perfectly legible, clean, and without any typos or distortions. Use a clear, professional font.** Clearly differentiate the focus of each method."
+    3.  **한계**: "Create a graphic illustrating the limitations. Show a blurred or faded image of '브랜드 로고 (Brand Logo)', '특허 증서 (Patent Certificate)', '기술력 (Technology)', '인적 자원 (Human Capital)', symbolizing '무형자산 미반영 (No Intangible Asset Reflection)' and '미래 성장성 과소평가 (Underestimation of Future Growth)'. **All Korean text labels must be perfectly legible, clear, and without any typos or distortions.**"
+    4.  **교차 검증 다이어그램**: "Design a diagram where distinct valuation method icons (Asset, DCF, Relative) are shown interconnecting or complementing each other around a central concept. **The central concept must be clearly labeled with the exact Korean text '종합적 가치 판단 (Comprehensive Value Judgment)'. All text must be perfectly legible, clear, and without any typos or distortions.** This illustrates how they are used together for robust analysis."
+
+**[스크립트 섹션]**: (07:00 - 09:00) 자산가치 평가 3단계 프로세스 요약
+*   **[Gemini 프롬프트]**:
+    1.  **제목 텍스트**: "Create a clean, prominent screen overlay text '자산가치 평가 3단계 프로세스 요약'. **The text must be perfectly legible, clear, and without any typos or distortions, in a professional, centered font.**"
+    2.  **3단계 플로우차트 애니메이션**: "Generate an animated, minimalist flowchart representing the '자산가치 평가 3단계 프로세스 (Asset Valuation 3-Step Process)'. Each step should appear sequentially. **All text within the flowchart (step titles and any keywords) must be the exact Korean text provided, perfectly legible, clean, and without any typos or distortions. Use a clear, modern sans-serif font.**
+        *   Step 1: '재무 데이터 수집 및 기초 분석 (Financial Data Collection & Analysis)' with a magnifying glass icon over a document.
+        *   Step 2: '자산 및 부채의 공정가치 평가 및 조정 (Fair Value Assessment & Adjustment of Assets & Liabilities)' with a balanced scale icon and an adjustment knob.
+        *   Step 3: '순자산가치 산정 및 주당가치 도출 (Net Asset Value Calculation & Per Share Value Determination)' with a money bag icon and a share certificate.
+        The animation should clearly show the progression from one step to the next. Clean, modern design."
+    3.  **예고 텍스트**: "Create a screen overlay text '다음 영상에서 각 단계를 자세히 살펴보겠습니다! (We will examine each step in detail in the next video!)'. **The text must be perfectly legible, clear, and without any typos or distortions, in a clear, encouraging font.**"
+
+**[스크립트 섹션]**: (09:00 - 10:00) 마무리 및 CTA
+*   **[Gemini 프롬프트]**:
+    1.  **영상 요약 그래픽**: "Design a clean summary graphic for the video. Highlight key terms: '자산가치 (Asset Value)', '현재 가치 (Current Value)', '보수적 평가 (Conservative Valuation)'. **All text, including the key terms, must be the exact Korean text provided, perfectly legible, clean, and without any typos or distortions.** Use icons or subtle visual cues for each term. Professional, concise layout."
+    2.  **다음 영상 예고**: "Create a visually appealing 'Next Video Preview' graphic. It should feature a compelling still image or a very short, dynamic clip from the upcoming '자산가치 평가법 2편 (프로세스)' video, along with the exact Korean text '다음 영상에서 만나요! (See you in the next video!)' and the video title. **All text must be perfectly legible, clear, and without any typos or distortions, in a clear, engaging font.** Dynamic, engaging."
+    3.  **CTA 그래픽**: "Generate an animated call-to-action graphic. It must clearly display the 'ValueLink' channel logo. Prominent, clickable-style buttons must feature the exact Korean text: '구독 (Subscribe)', '좋아요 (Like)', and '알림 설정 (Notifications)'. Below these buttons, a text prompt must display the exact Korean text: '궁금한 점은 언제든지 댓글로 남겨주세요! (Feel free to leave any questions in the comments!)'. **All text must be perfectly legible, clean, and without any typos or distortions, in a professional, encouraging font.** Professional, encouraging design with subtle interactive elements."
+    4.  **엔딩 영상**: "A final, professional ending screen with the 'ValueLink' logo prominently displayed. Could include subtle animation or a fade out effect. Ensure no embedded text in this final image apart from the logo."
