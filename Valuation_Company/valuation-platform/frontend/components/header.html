@@ -65,13 +65,34 @@
     }
 
     .menu-item:hover {
-        background: #F3F4F6;
         color: var(--text-primary);
     }
 
-    .menu-item.active {
+    /* Valuation 메뉴 - 파란색 (시스템) */
+    #menu-valuation.active {
         color: var(--deep-blue);
-        background: #DBEAFE;
+    }
+
+    #menu-valuation:hover {
+        color: var(--deep-blue);
+    }
+
+    /* Link 메뉴 - 주황색 (연결) */
+    #menu-link.active {
+        color: var(--amber);
+    }
+
+    #menu-link:hover {
+        color: var(--amber);
+    }
+
+    /* Deals 메뉴 - 초록색 (기업) */
+    #menu-deal.active {
+        color: var(--deep-green);
+    }
+
+    #menu-deal:hover {
+        color: var(--deep-green);
     }
 
     /* 알람 */
@@ -141,12 +162,13 @@
         background: #F0F9FF;
     }
 
+    /* 회원가입 버튼 - 초록색 (기업 활동) */
     .btn-signup {
         padding: 10px 20px;
         font-size: 14px;
         font-weight: 600;
         color: white;
-        background: var(--deep-blue);
+        background: var(--deep-green);
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -154,9 +176,9 @@
     }
 
     .btn-signup:hover {
-        background: #1E40AF;
+        background: #15803D;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
     }
 
     /* 반응형 */
