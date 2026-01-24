@@ -61,8 +61,59 @@
             font-size: 32px;
             font-weight: 700;
             color: var(--text-primary);
-            text-align: center;
-            margin-bottom: 48px;
+            text-align: left;
+            margin-bottom: 24px;
+        }
+
+        /* Company Table */
+        .company-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .company-table th {
+            background: #F9FAFB;
+            padding: 16px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .company-table td {
+            padding: 20px 16px;
+            border-bottom: 1px solid #F3F4F6;
+            color: var(--text-primary);
+        }
+
+        .company-table tr:hover {
+            background: #F9FAFB;
+        }
+
+        .company-link {
+            color: var(--deep-green);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .company-link:hover {
+            color: #15803D;
+            text-decoration: underline;
+        }
+
+        .need-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            margin: 2px;
+            background: #F3F4F6;
+            border-radius: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
 
         /* Connection Cards */
@@ -287,108 +338,54 @@
     <div class="container">
         <!-- Company List -->
         <h2 class="section-title" id="companies">평가받은 기업 목록</h2>
-        <div class="company-grid">
-            <!-- Sample Company 1 -->
-            <div class="company-card">
-                <div class="company-header">
-                    <div class="company-logo">🚀</div>
-                    <div class="company-info">
-                        <h3>AI 물류 최적화 솔루션</h3>
-                        <p>IT/소프트웨어 • 설립 2023년</p>
-                    </div>
-                </div>
-                <div class="company-valuation">
-                    기업가치: 150억원 (DCF평가법)
-                </div>
-                <p class="company-summary">
-                    AI 기반 물류 경로 최적화로 운송비 30% 절감. 현대물류, CJ대한통운 등과 PoC 진행 중.
-                </p>
-                <div class="company-needs">
-                    <span class="need-tag">💰 투자 필요</span>
-                    <span class="need-tag">🤝 제휴 필요</span>
-                </div>
-                <div class="company-footer">
-                    <a href="#" class="btn-secondary">상세보기</a>
-                    <a href="#" class="btn-contact">연락하기</a>
-                </div>
-            </div>
 
-            <!-- Sample Company 2 -->
-            <div class="company-card">
-                <div class="company-header">
-                    <div class="company-logo">🏥</div>
-                    <div class="company-info">
-                        <h3>AI 의료 진단 플랫폼</h3>
-                        <p>헬스케어 • 설립 2022년</p>
-                    </div>
-                </div>
-                <div class="company-valuation">
-                    기업가치: 200억원 (상대가치평가법)
-                </div>
-                <p class="company-summary">
-                    AI 영상 분석으로 암 조기 진단 정확도 95%. FDA 승인 진행 중, 국내 대형병원 10곳 도입.
-                </p>
-                <div class="company-needs">
-                    <span class="need-tag">💰 투자 필요</span>
-                    <span class="need-tag">🌟 서포터 필요</span>
-                </div>
-                <div class="company-footer">
-                    <a href="#" class="btn-secondary">상세보기</a>
-                    <a href="#" class="btn-contact">연락하기</a>
-                </div>
-            </div>
-
-            <!-- Sample Company 3 -->
-            <div class="company-card">
-                <div class="company-header">
-                    <div class="company-logo">🌱</div>
-                    <div class="company-info">
-                        <h3>친환경 패키징 솔루션</h3>
-                        <p>제조/소재 • 설립 2021년</p>
-                    </div>
-                </div>
-                <div class="company-valuation">
-                    기업가치: 80억원 (자산가치평가법)
-                </div>
-                <p class="company-summary">
-                    100% 생분해 포장재. 대형 유통사 3곳과 공급계약, 월 매출 3억원 달성.
-                </p>
-                <div class="company-needs">
-                    <span class="need-tag">🤝 제휴 필요</span>
-                    <span class="need-tag">🌟 서포터 필요</span>
-                </div>
-                <div class="company-footer">
-                    <a href="#" class="btn-secondary">상세보기</a>
-                    <a href="#" class="btn-contact">연락하기</a>
-                </div>
-            </div>
-
-            <!-- Sample Company 4 -->
-            <div class="company-card">
-                <div class="company-header">
-                    <div class="company-logo">📱</div>
-                    <div class="company-info">
-                        <h3>모바일 결제 플랫폼</h3>
-                        <p>핀테크 • 설립 2023년</p>
-                    </div>
-                </div>
-                <div class="company-valuation">
-                    기업가치: 120억원 (DCF평가법)
-                </div>
-                <p class="company-summary">
-                    QR 간편결제 + 포인트 적립. MAU 50만명 돌파, 연 거래액 500억원.
-                </p>
-                <div class="company-needs">
-                    <span class="need-tag">💰 투자 필요</span>
-                    <span class="need-tag">🤝 제휴 필요</span>
-                    <span class="need-tag">🌟 서포터 필요</span>
-                </div>
-                <div class="company-footer">
-                    <a href="#" class="btn-secondary">상세보기</a>
-                    <a href="#" class="btn-contact">연락하기</a>
-                </div>
-            </div>
-        </div>
+        <table class="company-table">
+            <thead>
+                <tr>
+                    <th>기업명</th>
+                    <th>업종</th>
+                    <th>설립</th>
+                    <th>기업가치</th>
+                    <th>평가방법</th>
+                    <th>필요한 연결</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="link-company-detail.html?id=1" class="company-link">AI 물류 최적화 솔루션</a></td>
+                    <td>IT/소프트웨어</td>
+                    <td>2023년</td>
+                    <td>150억원</td>
+                    <td>DCF평가법</td>
+                    <td><span class="need-tag">💰 투자</span> <span class="need-tag">🤝 제휴</span></td>
+                </tr>
+                <tr>
+                    <td><a href="link-company-detail.html?id=2" class="company-link">AI 의료 진단 플랫폼</a></td>
+                    <td>헬스케어</td>
+                    <td>2022년</td>
+                    <td>200억원</td>
+                    <td>상대가치평가법</td>
+                    <td><span class="need-tag">💰 투자</span> <span class="need-tag">🌟 서포터</span></td>
+                </tr>
+                <tr>
+                    <td><a href="link-company-detail.html?id=3" class="company-link">친환경 패키징 솔루션</a></td>
+                    <td>제조/소재</td>
+                    <td>2021년</td>
+                    <td>80억원</td>
+                    <td>자산가치평가법</td>
+                    <td><span class="need-tag">🤝 제휴</span> <span class="need-tag">🌟 서포터</span></td>
+                </tr>
+                <tr>
+                    <td><a href="link-company-detail.html?id=4" class="company-link">모바일 결제 플랫폼</a></td>
+                    <td>핀테크</td>
+                    <td>2023년</td>
+                    <td>120억원</td>
+                    <td>DCF평가법</td>
+                    <td><span class="need-tag">💰 투자</span> <span class="need-tag">🤝 제휴</span> <span class="need-tag">🌟 서포터</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
     </div>
 
     <script>
