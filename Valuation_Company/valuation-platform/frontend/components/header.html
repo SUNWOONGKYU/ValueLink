@@ -58,41 +58,51 @@
         font-size: 16px;
         font-weight: 600;
         text-decoration: none;
-        color: var(--text-secondary);
         border-radius: 8px;
         transition: all 0.2s ease;
         position: relative;
     }
 
-    .menu-item:hover {
-        color: var(--text-primary);
+    /* Valuation 메뉴 - 파란색 (시스템) */
+    #menu-valuation {
+        color: var(--deep-blue);
     }
 
-    /* Valuation 메뉴 - 파란색 (시스템) */
     #menu-valuation.active {
         color: var(--deep-blue);
+        font-weight: 700;
     }
 
     #menu-valuation:hover {
-        color: var(--deep-blue);
+        opacity: 0.7;
     }
 
     /* Link 메뉴 - 주황색 (연결) */
+    #menu-link {
+        color: var(--amber);
+    }
+
     #menu-link.active {
         color: var(--amber);
+        font-weight: 700;
     }
 
     #menu-link:hover {
-        color: var(--amber);
+        opacity: 0.7;
     }
 
     /* Deals 메뉴 - 초록색 (기업) */
-    #menu-deal.active {
+    #menu-deal {
         color: var(--deep-green);
     }
 
-    #menu-deal:hover {
+    #menu-deal.active {
         color: var(--deep-green);
+        font-weight: 700;
+    }
+
+    #menu-deal:hover {
+        opacity: 0.7;
     }
 
     /* 알람 */
