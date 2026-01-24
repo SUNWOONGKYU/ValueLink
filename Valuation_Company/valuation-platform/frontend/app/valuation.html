@@ -398,57 +398,7 @@
 </head>
 <body>
     <!-- 헤더 -->
-    <header class="main-header">
-        <div class="header-left">
-            <!-- 로고 -->
-            <a href="index.html" class="logo-container">
-                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
-                    <!-- 배경 -->
-                    <rect width="500" height="100" fill="#FFFFFF"/>
-
-                    <!-- V + L 심볼 (높이 40px, 균형 조정) -->
-                    <g transform="translate(50, 30)">
-                        <!-- 선1: 평가 - 딥블루 (왼쪽) -->
-                        <line x1="0" y1="0" x2="28" y2="40" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
-
-                        <!-- 선2: 연결 - 앰버 (오른쪽) -->
-                        <line x1="56" y1="0" x2="28" y2="40" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
-
-                        <!-- 선3: 기업 - 딥그린 (아래) -->
-                        <line x1="28" y1="40" x2="84" y2="40" stroke="#166534" stroke-width="12" stroke-linecap="round"/>
-                    </g>
-
-                    <!-- 텍스트: ValueLink (세로 중앙 정렬) -->
-                    <text x="155" y="50" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1E3A5F" dominant-baseline="middle">ValueLink</text>
-                </svg>
-            </a>
-        </div>
-
-        <div class="header-right">
-            <!-- 메인 메뉴 -->
-            <nav class="main-menu">
-                <a href="index.html" class="menu-item active" id="menu-valuation">
-                    Valuation
-                </a>
-                <a href="app/link.html" class="menu-item" id="menu-link">
-                    Link
-                </a>
-                <a href="app/deal.html" class="menu-item" id="menu-deal">
-                    Deal News
-                </a>
-            </nav>
-
-            <!-- 알람 -->
-            <button class="notification-btn" onclick="toggleNotifications()">
-                <span class="notification-icon">🔔</span>
-                <span class="notification-badge">3</span>
-            </button>
-
-            <!-- 로그인/회원가입 -->
-            <button class="btn-login" onclick="location.href='/login'">로그인</button>
-            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
-        </div>
-    </header>
+    <div id="header-container"></div>
 
     <div class="container">
         <!-- 메인 영역 -->
@@ -567,20 +517,13 @@
     </div>
 
     <script>
-        // 알람 토글
-        function toggleNotifications() {
-            alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
-        }
-
-        // 현재 페이지에 따라 active 메뉴 설정 (index.html이므로 Valuation이 active)
-        document.addEventListener('DOMContentLoaded', () => {
-            const menuValuation = document.getElementById('menu-valuation');
-            const menuDeal = document.getElementById('menu-deal');
-
-            // index.html은 항상 Valuation이 active
-            menuValuation.classList.add('active');
-            menuDeal.classList.remove('active');
-        });
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

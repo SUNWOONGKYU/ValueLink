@@ -267,38 +267,42 @@
 </header>
 
 <script>
-// 현재 페이지에 따라 경로 및 active 메뉴 설정
-document.addEventListener('DOMContentLoaded', () => {
+// 현재 페이지에 따라 경로 및 active 메뉴 설정 (즉시 실행)
+(function() {
     const currentPath = window.location.pathname;
     const isInAppFolder = currentPath.includes('/app/');
 
     // 로고 링크 업데이트
     const logoLink = document.querySelector('.logo-container');
-    logoLink.href = isInAppFolder ? '../index.html' : 'index.html';
+    if (logoLink) {
+        logoLink.href = isInAppFolder ? '../index.html' : 'index.html';
+    }
 
     // 메뉴 링크 업데이트
     const menuValuation = document.getElementById('menu-valuation');
     const menuLink = document.getElementById('menu-link');
     const menuDeal = document.getElementById('menu-deal');
 
-    menuValuation.href = isInAppFolder ? 'valuation.html' : 'app/valuation.html';
-    menuLink.href = isInAppFolder ? 'link.html' : 'app/link.html';
-    menuDeal.href = isInAppFolder ? 'deal.html' : 'app/deal.html';
+    if (menuValuation) menuValuation.href = isInAppFolder ? 'valuation.html' : 'app/valuation.html';
+    if (menuLink) menuLink.href = isInAppFolder ? 'link.html' : 'app/link.html';
+    if (menuDeal) menuDeal.href = isInAppFolder ? 'deal.html' : 'app/deal.html';
 
     // 모든 메뉴 active 제거
-    menuValuation.classList.remove('active');
-    menuLink.classList.remove('active');
-    menuDeal.classList.remove('active');
+    if (menuValuation) menuValuation.classList.remove('active');
+    if (menuLink) menuLink.classList.remove('active');
+    if (menuDeal) menuDeal.classList.remove('active');
 
     // 현재 페이지에 따라 active 추가
     if (currentPath.includes('link')) {
-        menuLink.classList.add('active');
+        if (menuLink) menuLink.classList.add('active');
     } else if (currentPath.includes('deal')) {
-        menuDeal.classList.add('active');
+        if (menuDeal) menuDeal.classList.add('active');
+    } else if (currentPath.includes('valuation')) {
+        if (menuValuation) menuValuation.classList.add('active');
     } else {
-        menuValuation.classList.add('active');
+        // 인트로 화면에서는 아무 메뉴도 active 안 함
     }
-});
+})();
 
 // 알람 토글
 function toggleNotifications() {
