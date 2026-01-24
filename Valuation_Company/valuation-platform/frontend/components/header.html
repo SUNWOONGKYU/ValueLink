@@ -105,6 +105,20 @@
         opacity: 0.7;
     }
 
+    /* My Page 메뉴 - 초록색 (고객 활동) */
+    #menu-mypage {
+        color: var(--deep-green);
+    }
+
+    #menu-mypage.active {
+        color: var(--deep-green);
+        font-weight: 700;
+    }
+
+    #menu-mypage:hover {
+        opacity: 0.7;
+    }
+
     /* 알람 */
     .notification-btn {
         position: relative;
@@ -172,13 +186,13 @@
         background: #F0F9FF;
     }
 
-    /* 회원가입 버튼 - 초록색 (기업 활동) */
+    /* 회원가입 버튼 - 파란색 (시스템/플랫폼) */
     .btn-signup {
         padding: 10px 20px;
         font-size: 14px;
         font-weight: 600;
         color: white;
-        background: var(--deep-green);
+        background: var(--deep-blue);
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -186,9 +200,9 @@
     }
 
     .btn-signup:hover {
-        background: #15803D;
+        background: #1E40AF;
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     }
 
     /* 반응형 */
@@ -252,6 +266,9 @@
             <a href="app/deal.html" class="menu-item" id="menu-deal">
                 Deals
             </a>
+            <a href="app/mypage.html" class="menu-item" id="menu-mypage">
+                My Page
+            </a>
         </nav>
 
         <!-- 알람 -->
@@ -282,21 +299,26 @@
     const menuValuation = document.getElementById('menu-valuation');
     const menuLink = document.getElementById('menu-link');
     const menuDeal = document.getElementById('menu-deal');
+    const menuMypage = document.getElementById('menu-mypage');
 
     if (menuValuation) menuValuation.href = isInAppFolder ? 'valuation.html' : 'app/valuation.html';
     if (menuLink) menuLink.href = isInAppFolder ? 'link.html' : 'app/link.html';
     if (menuDeal) menuDeal.href = isInAppFolder ? 'deal.html' : 'app/deal.html';
+    if (menuMypage) menuMypage.href = isInAppFolder ? 'mypage.html' : 'app/mypage.html';
 
     // 모든 메뉴 active 제거
     if (menuValuation) menuValuation.classList.remove('active');
     if (menuLink) menuLink.classList.remove('active');
     if (menuDeal) menuDeal.classList.remove('active');
+    if (menuMypage) menuMypage.classList.remove('active');
 
     // 현재 페이지에 따라 active 추가
     if (currentPath.includes('link')) {
         if (menuLink) menuLink.classList.add('active');
     } else if (currentPath.includes('deal')) {
         if (menuDeal) menuDeal.classList.add('active');
+    } else if (currentPath.includes('mypage')) {
+        if (menuMypage) menuMypage.classList.add('active');
     } else if (currentPath.includes('valuation')) {
         if (menuValuation) menuValuation.classList.add('active');
     } else {
