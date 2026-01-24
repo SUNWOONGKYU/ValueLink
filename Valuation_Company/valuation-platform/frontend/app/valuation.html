@@ -438,7 +438,7 @@
                     <div class="method-info">
                         <div class="method-name">본질가치평가법</div>
                         <div class="method-summary">
-                            기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. 비상장법인의 주식 매수청구권 행사 시 행사가격, M&A 시 합병가액을 산정하는 데 사용되며, IPO 공모가 산정에서도 중요한 기준으로 활용됩니다.
+                            기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. IPO 공모가 산정에서 중요한 기준으로 활용됩니다.
                         </div>
                     </div>
                     <a href="./valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
@@ -510,6 +510,9 @@
         </aside>
     </div>
 
+    <!-- 푸터 -->
+    <div id="footer-container"></div>
+
     <script>
         // 헤더 로드
         fetch('../components/header.html')
@@ -531,6 +534,27 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 푸터 로드
+        fetch('../components/footer.html')
+            .then(response => response.text())
+            .then(data => {
+                const container = document.getElementById('footer-container');
+                container.innerHTML = data;
+
+                // 삽입된 script 태그를 수동으로 실행
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('푸터 로드 실패:', error));
     </script>
 </body>
 </html>
