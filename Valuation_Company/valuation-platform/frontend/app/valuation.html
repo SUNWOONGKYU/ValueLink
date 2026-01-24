@@ -177,6 +177,34 @@
             flex: 1;
         }
 
+        /* Hero Section - 파란색 (평가 시스템) */
+        .hero {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            padding: 80px 40px;
+            text-align: center;
+            color: white;
+            margin: -40px -40px 40px -40px;
+        }
+
+        .hero-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.7;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
         .page-header {
             text-align: center;
             margin-bottom: 40px;
@@ -400,13 +428,20 @@
     <!-- 헤더 -->
     <div id="header-container"></div>
 
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-icon">📊</div>
+        <h1 class="hero-title">Valuation</h1>
+        <p class="hero-description">
+            DCF 등 5가지 평가방법을 적용해서<br>
+            AI를 활용하여 빠르고 낮은 비용으로<br>
+            기업의 가치를 평가합니다
+        </p>
+    </section>
+
     <div class="container">
         <!-- 메인 영역 -->
         <div class="main-area">
-            <div class="page-header">
-                <h1 class="page-title">기업가치 평가</h1>
-                <p class="page-subtitle">5가지 평가 방법</p>
-            </div>
 
             <div class="valuation-methods">
                 <!-- DCF평가법 -->

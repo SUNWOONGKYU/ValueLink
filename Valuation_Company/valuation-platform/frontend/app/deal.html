@@ -31,30 +31,28 @@
         /* HERO - Deals Theme (주황색 - 투자 정보) */
         .hero {
             background: linear-gradient(135deg, var(--amber) 0%, #F59E0B 100%);
-            padding: 60px 40px;
+            padding: 80px 40px;
             text-align: center;
             color: var(--white);
         }
 
-        .hero-badge {
-            display: inline-block;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        .hero-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
         }
 
-        .hero h1 {
-            font-size: 42px;
+        .hero-title {
+            font-size: 48px;
             font-weight: 700;
             margin-bottom: 16px;
         }
 
-        .hero p {
+        .hero-description {
             font-size: 18px;
+            line-height: 1.7;
             opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         /* STATS */
@@ -463,9 +461,13 @@
 
     <!-- HERO -->
     <section class="hero">
-        <div class="hero-badge">DEAL NEWS</div>
-        <h1>투자받은 스타트업</h1>
-        <p>최신 투자 유치 소식을 추적하고 투자 정보를 확인합니다</p>
+        <div class="hero-icon">📰</div>
+        <h1 class="hero-title">Deals</h1>
+        <p class="hero-description">
+            투자유치 뉴스를 추적하여<br>
+            투자받은 기업의 현황 및 IR 정보를<br>
+            함께 제공합니다
+        </p>
     </section>
 
     <!-- STATS (2026.01.19 기준 정확한 집계) -->
