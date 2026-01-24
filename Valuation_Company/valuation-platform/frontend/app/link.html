@@ -320,6 +320,25 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* FOOTER */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -388,8 +407,12 @@
     </div>
     </div>
 
-    <!-- 푸터 -->
-    <div id="footer-container"></div>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
 
     <script>
         // 헤더 로드
@@ -412,27 +435,6 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
-
-        // 푸터 로드
-        fetch('../components/footer.html')
-            .then(response => response.text())
-            .then(data => {
-                const container = document.getElementById('footer-container');
-                container.innerHTML = data;
-
-                // 삽입된 script 태그를 수동으로 실행
-                const scripts = container.querySelectorAll('script');
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    if (script.src) {
-                        newScript.src = script.src;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
-                    document.body.appendChild(newScript);
-                });
-            })
-            .catch(error => console.error('푸터 로드 실패:', error));
     </script>
 </body>
 </html>

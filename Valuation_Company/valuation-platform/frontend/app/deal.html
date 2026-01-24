@@ -575,9 +575,6 @@
         </div>
     </footer>
 
-    <!-- 푸터 -->
-    <div id="footer-container"></div>
-
     <script>
         // 헤더 로드
         fetch('../components/header.html')
@@ -599,27 +596,6 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
-
-        // 푸터 로드
-        fetch('../components/footer.html')
-            .then(response => response.text())
-            .then(data => {
-                const container = document.getElementById('footer-container');
-                container.innerHTML = data;
-
-                // 삽입된 script 태그를 수동으로 실행
-                const scripts = container.querySelectorAll('script');
-                scripts.forEach(script => {
-                    const newScript = document.createElement('script');
-                    if (script.src) {
-                        newScript.src = script.src;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
-                    document.body.appendChild(newScript);
-                });
-            })
-            .catch(error => console.error('푸터 로드 실패:', error));
 
         const API_BASE = 'http://localhost:8000/api/v1/investment-tracker';
 
