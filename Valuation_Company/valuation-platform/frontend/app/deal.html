@@ -338,6 +338,7 @@
         .deals-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: auto;
         }
 
         .deals-table th {
@@ -350,15 +351,40 @@
             white-space: nowrap;
         }
 
+        /* 컬럼별 너비 조정 */
+        .deals-table th:nth-child(1) { width: 10%; } /* 기업명 */
+        .deals-table th:nth-child(2) { width: 8%; }  /* 대표자 */
+        .deals-table th:nth-child(3) { width: 10%; } /* 업종 */
+        .deals-table th:nth-child(4) { width: 8%; }  /* 설립일 */
+        .deals-table th:nth-child(5) { width: 6%; }  /* 지역 */
+        .deals-table th:nth-child(6) { width: 6%; }  /* 직원수 */
+        .deals-table th:nth-child(7) { width: 8%; }  /* 투자단계 */
+        .deals-table th:nth-child(8) { width: 18%; } /* 투자자 */
+        .deals-table th:nth-child(9) { width: 10%; } /* 투자금액 */
+        .deals-table th:nth-child(10) { width: 10%; } /* 누적투자액 */
+        .deals-table th:nth-child(11) { width: 6%; } /* 뉴스 */
+
         .deals-table td {
-            padding: 16px 12px;
+            padding: 12px 10px;
             font-size: 13px;
             border-bottom: 1px solid #F3F4F6;
-            vertical-align: middle;
+            vertical-align: top;
         }
 
         .deals-table tr:hover {
             background: #FEFCE8;
+        }
+
+        /* 투자자 셀 스타일 */
+        .deal-investors {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 200px;
+        }
+
+        .deal-investors > div {
+            padding: 2px 0;
         }
 
         .deal-company {
@@ -788,7 +814,7 @@
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
-                        <th>누적투자</th>
+                        <th>누적투자액</th>
                         <th>뉴스</th>
                     </tr>
                 </thead>
@@ -1031,6 +1057,12 @@
                 const employees = news.employees || '-';
                 const region = news.region || '-';
 
+                // 투자자를 쉼표로 분리하여 한 줄씩 표시
+                const investorList = investor === '-' ? '-' :
+                    investor.split(',').map(inv =>
+                        `<div style="white-space: nowrap;">${escapeHtml(inv.trim())}</div>`
+                    ).join('');
+
                 return `
                     <tr>
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
@@ -1040,9 +1072,9 @@
                         <td data-label="지역" class="deal-region">${escapeHtml(region)}</td>
                         <td data-label="직원수" class="deal-employees">${escapeHtml(employees)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
-                        <td data-label="투자자" class="deal-investors">${escapeHtml(investor)}</td>
+                        <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="누적투자" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
+                        <td data-label="누적투자액" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
                         <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
