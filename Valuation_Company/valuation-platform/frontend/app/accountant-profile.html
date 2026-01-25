@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>담당 공인회계사 - ValueLink</title>
+    <style>
+        :root {
+            --deep-blue: #1D4ED8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #F9FAFB;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 프로필 카드 */
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .profile-avatar {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .profile-credentials {
+            font-size: 16px;
+            color: #6B7280;
+            margin-bottom: 32px;
+        }
+
+        /* 질문하기 버튼 */
+        .btn-question {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 32px;
+        }
+
+        .btn-question:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 학력/경력 섹션 */
+        .section {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            background: #DBEAFE;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .section-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .section-content li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .section-content li:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: var(--deep-blue);
+            font-weight: 700;
+        }
+
+        /* 학력 영역 (3줄) */
+        .education-area {
+            min-height: 90px;
+        }
+
+        /* 경력 영역 (10줄) */
+        .career-area {
+            min-height: 300px;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .profile-card {
+                padding: 24px;
+            }
+
+            .profile-avatar {
+                font-size: 60px;
+            }
+
+            .profile-name {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                padding: 10px 14px;
+            }
+
+            .section-content {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <div class="container">
+        <div class="profile-card">
+            <!-- 프로필 헤더 -->
+            <div class="profile-avatar">👤</div>
+            <h1 class="profile-name">선웅규 공인회계사</h1>
+            <div class="profile-credentials">CPA | 평가 경력 15년</div>
+
+            <!-- 질문하기 버튼 -->
+            <button class="btn-question" onclick="openQuestionModal()">
+                💬 담당 공인회계사에게 질문하기
+            </button>
+
+            <!-- 학력 섹션 -->
+            <div class="section">
+                <div class="section-title">📚 학력</div>
+                <div class="section-content education-area">
+                    <ul>
+                        <li>연세대학교 경영학과 졸업 (2005)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 경력 섹션 -->
+            <div class="section">
+                <div class="section-title">💼 경력</div>
+                <div class="section-content career-area">
+                    <ul>
+                        <li><strong>2020년 - 현재:</strong> ValueLink 수석회계사</li>
+                        <li><strong>2015년 - 2020년:</strong> 호수회계법인 Manager</li>
+                        <li><strong>2012년 - 2015년:</strong> 안근회계법인 Senior</li>
+                        <li><strong>2010년 - 2012년:</strong> 세화회계법인 Staff</li>
+                        <li><strong>2008년 - 2010년:</strong> 삼일회계법인 Junior</li>
+                        <li><strong>주요 프로젝트:</strong>
+                            <ul style="margin-top: 8px;">
+                                <li>○○테크 IPO 기업가치평가 (2023)</li>
+                                <li>△△바이오 M&A 자문 및 평가 (2022)</li>
+                                <li>××스타트업 투자유치 평가 (2021)</li>
+                            </ul>
+                        </li>
+                        <li><strong>평가 완료 건수:</strong> 150+ 건</li>
+                        <li><strong>전문 분야:</strong> DCF평가, 스타트업 기업가치평가, IPO 준비</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 질문하기 모달 (간단하게)
+        function openQuestionModal() {
+            alert('질문하기 기능은 개발 중입니다.\n곧 이용하실 수 있습니다.');
+            // TODO: 모달 또는 별도 페이지로 연결
+        }
+    </script>
+</body>
+</html>

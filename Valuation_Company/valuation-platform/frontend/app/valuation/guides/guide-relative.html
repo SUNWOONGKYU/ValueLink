@@ -345,6 +345,46 @@
             box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
         }
 
+        /* 담당 공인회계사 섹션 */
+        .accountant-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .accountant-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #F9FAFB;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .accountant-link:hover {
+            background: #EFF6FF;
+            border-color: #BFDBFE;
+        }
+
+        .accountant-icon {
+            font-size: 24px;
+        }
+
+        .accountant-name {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .arrow {
+            font-size: 16px;
+            color: #1D4ED8;
+        }
+
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
@@ -1176,6 +1216,16 @@ LTM 순이익 계산:
                     <div class="step-number">8</div>
                     <div class="step-text">보고서 발행 요청</div>
                 </div>
+            </div>
+
+            <!-- 담당 공인회계사 섹션 -->
+            <div class="accountant-section">
+                <div class="sidebar-title">담당 공인회계사</div>
+                <a href="../../accountant-profile.html" class="accountant-link">
+                    <span class="accountant-icon">👤</span>
+                    <span class="accountant-name">선웅규 회계사</span>
+                    <span class="arrow">→</span>
+                </a>
             </div>
         </aside>
     </div>
