@@ -63,9 +63,17 @@
 
         /* Container */
         .container {
-            max-width: 1200px;
+            display: flex;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 60px 40px;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* 메인 영역 */
+        .main-area {
+            flex: 1;
+            min-width: 0;
         }
 
         /* Section Title */
@@ -521,6 +529,165 @@
             }
         }
 
+        /* 우측 사이드바 */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 110px;
+        }
+
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--deep-green);
+            background: #DCFCE7;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-title-icon {
+            font-size: 18px;
+        }
+
+        .org-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .org-item {
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .org-item:hover {
+            background: #ECFDF5;
+            color: var(--deep-green);
+        }
+
+        .org-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .org-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .org-type {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #F3F4F6;
+            color: var(--text-secondary);
+        }
+
+        .org-item.hidden {
+            display: none;
+        }
+
+        .btn-more {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-green);
+            background: #ECFDF5;
+            border: 1px solid #BBF7D0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-more:hover {
+            background: #DCFCE7;
+            border-color: var(--deep-green);
+        }
+
+        .btn-more .arrow {
+            transition: transform 0.2s ease;
+        }
+
+        .btn-more.expanded .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* 반응형 - 사이드바 */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                order: -1;
+            }
+
+            .sidebar-card {
+                position: static;
+            }
+
+            .org-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .org-item.hidden {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .org-list {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar-card {
+                padding: 20px;
+            }
+
+            .sidebar-title {
+                font-size: 15px;
+                padding: 10px 14px;
+            }
+        }
+
         /* FOOTER */
         footer {
             background: #1E3A5F;
@@ -555,10 +722,12 @@
 
     <!-- Container -->
     <div class="container">
-        <!-- Company List -->
-        <h2 class="section-title" id="companies">평가받은 기업 목록</h2>
+        <!-- 메인 영역 -->
+        <div class="main-area">
+            <!-- Company List -->
+            <h2 class="section-title" id="companies">평가받은 기업 목록</h2>
 
-        <table class="company-table">
+            <table class="company-table">
             <thead>
                 <tr>
                     <th>기업명</th>
@@ -643,7 +812,89 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+        </div>
+
+        <!-- 우측 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-title">
+                    <span class="sidebar-title-icon">🔗</span>
+                    Link 기관 바로가기
+                </div>
+                <div class="org-list">
+                    <!-- 1-10: 기본 표시 -->
+                    <a href="https://www.kvca.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🏛️</div>
+                        <span class="org-name">한국벤처캐피탈협회</span>
+                        <span class="org-type">VC</span>
+                    </a>
+                    <a href="https://www.kban.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">👼</div>
+                        <span class="org-name">한국엔젤투자협회</span>
+                        <span class="org-type">엔젤</span>
+                    </a>
+                    <a href="https://www.k-vic.co.kr" target="_blank" class="org-item">
+                        <div class="org-icon">💼</div>
+                        <span class="org-name">한국벤처투자</span>
+                        <span class="org-type">모펀드</span>
+                    </a>
+                    <a href="https://www.kibo.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🏦</div>
+                        <span class="org-name">기술보증기금</span>
+                        <span class="org-type">보증</span>
+                    </a>
+                    <a href="https://www.kodit.co.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🏦</div>
+                        <span class="org-name">신용보증기금</span>
+                        <span class="org-type">보증</span>
+                    </a>
+                    <a href="https://www.semas.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🏢</div>
+                        <span class="org-name">소상공인시장진흥공단</span>
+                        <span class="org-type">지원</span>
+                    </a>
+                    <a href="https://www.kosmes.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🏭</div>
+                        <span class="org-name">중소벤처기업진흥공단</span>
+                        <span class="org-type">지원</span>
+                    </a>
+                    <a href="https://www.kised.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🚀</div>
+                        <span class="org-name">창업진흥원</span>
+                        <span class="org-type">창업</span>
+                    </a>
+                    <a href="https://www.nipa.kr" target="_blank" class="org-item">
+                        <div class="org-icon">💻</div>
+                        <span class="org-name">정보통신산업진흥원</span>
+                        <span class="org-type">IT</span>
+                    </a>
+                    <a href="https://www.ksia.or.kr" target="_blank" class="org-item">
+                        <div class="org-icon">🌱</div>
+                        <span class="org-name">한국초기투자협회</span>
+                        <span class="org-type">초기</span>
+                    </a>
+                    <!-- 11-12: 더보기 시 표시 -->
+                    <a href="https://www.kita.net" target="_blank" class="org-item hidden">
+                        <div class="org-icon">🚢</div>
+                        <span class="org-name">한국무역협회</span>
+                        <span class="org-type">무역</span>
+                    </a>
+                    <a href="https://www.kstartup.go.kr" target="_blank" class="org-item hidden">
+                        <div class="org-icon">🎯</div>
+                        <span class="org-name">K-Startup</span>
+                        <span class="org-type">창업</span>
+                    </a>
+                    <a href="https://www.tips.or.kr" target="_blank" class="org-item hidden">
+                        <div class="org-icon">⭐</div>
+                        <span class="org-name">TIPS 프로그램</span>
+                        <span class="org-type">투자</span>
+                    </a>
+                </div>
+                <button class="btn-more" id="btnMoreOrg">
+                    더보기 <span class="arrow">▼</span>
+                </button>
+            </div>
+        </aside>
     </div>
 
     <footer>
@@ -674,6 +925,28 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 더보기 버튼 토글
+        const btnMore = document.getElementById('btnMoreOrg');
+        const hiddenItems = document.querySelectorAll('.org-item.hidden');
+        let isExpanded = false;
+
+        btnMore.addEventListener('click', function() {
+            isExpanded = !isExpanded;
+
+            hiddenItems.forEach(item => {
+                if (isExpanded) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+
+            btnMore.classList.toggle('expanded', isExpanded);
+            btnMore.innerHTML = isExpanded
+                ? '접기 <span class="arrow">▼</span>'
+                : '더보기 <span class="arrow">▼</span>';
+        });
     </script>
 </body>
 </html>
