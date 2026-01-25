@@ -564,11 +564,11 @@
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodIP" value="IP" onchange="updateProjectId()">
-                        <label for="methodIP">
-                            <span class="icon">🚀</span>
-                            <span class="name">IPO</span>
-                            <span class="code">IP</span>
+                        <input type="radio" name="method" id="methodIV" value="IV" onchange="updateProjectId()">
+                        <label for="methodIV">
+                            <span class="icon">💎</span>
+                            <span class="name">본질가치평가법</span>
+                            <span class="code">IV</span>
                         </label>
                     </div>
                     <div class="method-option">
@@ -735,7 +735,7 @@
             const methodCodeMap = {
                 'DC': 'dcf',
                 'RV': 'relative',
-                'IP': 'capital_market_law',
+                'IV': 'intrinsic',
                 'AV': 'asset',
                 'TX': 'inheritance_tax_law'
             };
@@ -802,7 +802,7 @@
                     const portalUrls = {
                         'DC': 'dcf-portal.html',
                         'RV': 'relative-portal.html',
-                        'IP': 'ipo-portal.html',
+                        'IV': 'intrinsic-portal.html',
                         'AV': 'asset-portal.html',
                         'TX': 'tax-portal.html'
                     };
@@ -853,7 +853,7 @@
                         const methodCodeMap = {
                             'dcf': 'DC',
                             'relative': 'RV',
-                            'capital_market_law': 'IP',
+                            'intrinsic': 'IV',
                             'asset': 'AV',
                             'inheritance_tax_law': 'TX'
                         };
