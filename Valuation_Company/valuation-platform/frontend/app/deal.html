@@ -698,12 +698,17 @@
                         <th>설립일</th>
                         <th>지역</th>
                         <th>직원수</th>
+                        <th>투자단계</th>
+                        <th>투자자</th>
+                        <th>투자금액</th>
+                        <th>누적투자</th>
+                        <th>뉴스</th>
                     </tr>
                 </thead>
                 <tbody id="deals-tbody">
                     <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #6B7280;">
+                        <td colspan="11" style="text-align: center; padding: 40px; color: #6B7280;">
                             데이터 로딩 중...
                         </td>
                     </tr>
@@ -881,7 +886,12 @@
             tbody.innerHTML = newsItems.map(news => {
                 const company = news.company || extractCompanyName(news.title);
                 const ceo = news.ceo || '-';
+                const url = news.source_url || '#';
                 const industry = news.industry || extractIndustry(news.title);
+                const stage = news.stage || extractStage(news.title);
+                const amount = news.amount || extractAmount(news.title);
+                const totalFunding = news.totalFunding || '-';
+                const investor = news.investor || '-';
                 const founded = news.founded || '-';
                 const employees = news.employees || '-';
                 const region = news.region || '-';
@@ -894,6 +904,11 @@
                         <td data-label="설립일" class="deal-founded">${escapeHtml(founded)}</td>
                         <td data-label="지역" class="deal-region">${escapeHtml(region)}</td>
                         <td data-label="직원수" class="deal-employees">${escapeHtml(employees)}</td>
+                        <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
+                        <td data-label="투자자" class="deal-investors">${escapeHtml(investor)}</td>
+                        <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
+                        <td data-label="누적투자" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
+                        <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
             }).join('');
