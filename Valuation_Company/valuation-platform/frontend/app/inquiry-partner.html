@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>제휴 문의 | ValueLink</title>
+    <style>
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header-container { min-height: 90px; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--deep-green) 0%, #15803D 100%);
+            padding: 40px 40px 50px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-icon { font-size: 48px; margin-bottom: 16px; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-description { font-size: 16px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            flex: 1;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--deep-green);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #EF4444;
+            margin-left: 4px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--deep-green);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #F9FAFB;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--deep-green);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--deep-green);
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .company-info-box {
+            background: #DCFCE7;
+            border: 2px solid var(--deep-green);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .company-info-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--deep-green);
+            margin-bottom: 12px;
+        }
+
+        .company-info-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .company-info-box .company-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: var(--deep-green);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: #15803D;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(22, 101, 52, 0.3);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 24px;
+            transition: color 0.2s ease;
+        }
+
+        .btn-back:hover {
+            color: var(--deep-green);
+        }
+
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 768px) {
+            .hero { padding: 24px 20px 32px 20px; }
+            .hero-icon { font-size: 36px; }
+            .hero-title { font-size: 28px; }
+            .hero-description { font-size: 14px; }
+            .container { padding: 32px 20px; }
+            .form-card { padding: 24px; }
+            .form-row { grid-template-columns: 1fr; }
+            .checkbox-group { flex-direction: column; }
+            .checkbox-item { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <section class="hero">
+        <div class="hero-icon">🤝</div>
+        <h1 class="hero-title">제휴 문의</h1>
+        <p class="hero-description">
+            기업과의 비즈니스 제휴를 희망하시면 아래 양식을 작성해 주세요
+        </p>
+    </section>
+
+    <div class="container">
+        <a href="link.html" class="btn-back">← 목록으로 돌아가기</a>
+
+        <div class="company-info-box" id="companyInfoBox">
+            <h3>문의 대상 기업</h3>
+            <p class="company-name" id="targetCompany">-</p>
+            <p id="companyDetails">기업가치: - | 평가방법: -</p>
+        </div>
+
+        <div class="form-card">
+            <form id="partnerForm">
+                <div class="form-section">
+                    <h3 class="form-section-title">제휴 희망 기업/기관 정보</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">회사/기관명<span class="required">*</span></label>
+                            <input type="text" class="form-input" name="companyName" required placeholder="ABC 주식회사">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">담당자명<span class="required">*</span></label>
+                            <input type="text" class="form-input" name="name" required placeholder="홍길동">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">이메일<span class="required">*</span></label>
+                            <input type="email" class="form-input" name="email" required placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">연락처<span class="required">*</span></label>
+                            <input type="tel" class="form-input" name="phone" required placeholder="010-1234-5678">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">업종<span class="required">*</span></label>
+                            <input type="text" class="form-input" name="industry" required placeholder="IT/소프트웨어">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">기업 규모</label>
+                            <select class="form-select" name="companySize">
+                                <option value="">선택해주세요</option>
+                                <option value="startup">스타트업 (10인 미만)</option>
+                                <option value="small">소기업 (10~50인)</option>
+                                <option value="medium">중기업 (50~300인)</option>
+                                <option value="large">대기업 (300인 이상)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">회사 소개</label>
+                        <textarea class="form-textarea" name="companyIntro" placeholder="귀사에 대해 간략히 소개해 주세요"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">제휴 희망 내용</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">희망 제휴 유형<span class="required">*</span></label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_tech" name="partnerType" value="tech">
+                                <label for="type_tech">기술 제휴</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_sales" name="partnerType" value="sales">
+                                <label for="type_sales">판매/유통 제휴</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_marketing" name="partnerType" value="marketing">
+                                <label for="type_marketing">마케팅 제휴</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_research" name="partnerType" value="research">
+                                <label for="type_research">공동 연구개발</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_supply" name="partnerType" value="supply">
+                                <label for="type_supply">공급/구매 제휴</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="type_other" name="partnerType" value="other">
+                                <label for="type_other">기타</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">제휴 제안 내용<span class="required">*</span></label>
+                        <textarea class="form-textarea" name="proposal" required placeholder="구체적인 제휴 제안 내용을 작성해 주세요&#10;- 제휴 목적&#10;- 기대 효과&#10;- 제안하는 협력 방식"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">귀사가 제공할 수 있는 가치</label>
+                        <textarea class="form-textarea" name="valueOffer" placeholder="제휴를 통해 귀사가 제공할 수 있는 자원, 기술, 네트워크 등을 설명해 주세요"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">추가 문의 사항</label>
+                        <textarea class="form-textarea" name="additionalNotes" placeholder="기타 문의 사항이 있으면 작성해 주세요"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">제휴 문의 보내기</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) newScript.src = script.src;
+                    else newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                });
+            });
+
+        // URL 파라미터에서 기업 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const companyId = urlParams.get('company');
+        const companyName = urlParams.get('name') || '-';
+        const companyValue = urlParams.get('value') || '-';
+        const companyMethod = urlParams.get('method') || '-';
+
+        document.getElementById('targetCompany').textContent = decodeURIComponent(companyName);
+        document.getElementById('companyDetails').textContent = `기업가치: ${decodeURIComponent(companyValue)} | 평가방법: ${decodeURIComponent(companyMethod)}`;
+
+        // 폼 제출
+        document.getElementById('partnerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('제휴 문의가 접수되었습니다.\n담당자가 확인 후 연락드리겠습니다.');
+            window.location.href = 'link.html';
+        });
+    </script>
+</body>
+</html>

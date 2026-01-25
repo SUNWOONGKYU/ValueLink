@@ -276,6 +276,40 @@
             border-radius: 6px;
             background: #FEF3C7;
             color: #D97706;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .need-tag:hover {
+            background: #FDE68A;
+            transform: translateY(-1px);
+        }
+
+        .need-tag.invest {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .need-tag.invest:hover {
+            background: #FDE68A;
+        }
+
+        .need-tag.partner {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .need-tag.partner:hover {
+            background: #BBF7D0;
+        }
+
+        .need-tag.supporter {
+            background: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        .need-tag.supporter:hover {
+            background: #DDD6FE;
         }
 
         .company-footer {
@@ -535,7 +569,7 @@
                     <th>직원수</th>
                     <th>기업가치</th>
                     <th>평가방법</th>
-                    <th>필요한 연결</th>
+                    <th>연결 문의하기</th>
                 </tr>
             </thead>
             <tbody>
@@ -548,7 +582,10 @@
                     <td>-</td>
                     <td>163억원</td>
                     <td>DCF평가법</td>
-                    <td><span class="need-tag">💰 투자</span> <span class="need-tag">🤝 제휴</span></td>
+                    <td>
+                        <a href="inquiry-invest.html?name=엔키노에이아이&value=163억원&method=DCF평가법" class="need-tag invest">💰 투자</a>
+                        <a href="inquiry-partner.html?name=엔키노에이아이&value=163억원&method=DCF평가법" class="need-tag partner">🤝 제휴</a>
+                    </td>
                 </tr>
                 <tr>
                     <td><a href="link-company-detail.html?id=REL-SAMSUNG-001" class="company-link">삼성전자</a></td>
@@ -559,7 +596,9 @@
                     <td>267,800명</td>
                     <td>578조원</td>
                     <td>상대가치평가법</td>
-                    <td><span class="need-tag">🤝 제휴</span></td>
+                    <td>
+                        <a href="inquiry-partner.html?name=삼성전자&value=578조원&method=상대가치평가법" class="need-tag partner">🤝 제휴</a>
+                    </td>
                 </tr>
                 <tr>
                     <td><a href="link-company-detail.html?id=CML-KAKAO-001" class="company-link">카카오</a></td>
@@ -570,7 +609,10 @@
                     <td>7,500명</td>
                     <td>3.1조원</td>
                     <td>본질가치평가법</td>
-                    <td><span class="need-tag">🤝 제휴</span> <span class="need-tag">🌟 서포터</span></td>
+                    <td>
+                        <a href="inquiry-partner.html?name=카카오&value=3.1조원&method=본질가치평가법" class="need-tag partner">🤝 제휴</a>
+                        <a href="inquiry-supporter.html?name=카카오&value=3.1조원&method=본질가치평가법" class="need-tag supporter">🌟 서포터</a>
+                    </td>
                 </tr>
                 <tr>
                     <td><a href="link-company-detail.html?id=NAV-CLASSYS-001" class="company-link">클래시스</a></td>
@@ -581,7 +623,10 @@
                     <td>-</td>
                     <td>2,835억원</td>
                     <td>자산가치평가법</td>
-                    <td><span class="need-tag">💰 투자</span> <span class="need-tag">🤝 제휴</span></td>
+                    <td>
+                        <a href="inquiry-invest.html?name=클래시스&value=2,835억원&method=자산가치평가법" class="need-tag invest">💰 투자</a>
+                        <a href="inquiry-partner.html?name=클래시스&value=2,835억원&method=자산가치평가법" class="need-tag partner">🤝 제휴</a>
+                    </td>
                 </tr>
                 <tr>
                     <td><a href="link-company-detail.html?id=ITL-CASE-001" class="company-link">비상장법인</a></td>
@@ -592,7 +637,9 @@
                     <td>-</td>
                     <td>495억원</td>
                     <td>상증세법평가법</td>
-                    <td><span class="need-tag">💰 투자</span></td>
+                    <td>
+                        <a href="inquiry-invest.html?name=비상장법인&value=495억원&method=상증세법평가법" class="need-tag invest">💰 투자</a>
+                    </td>
                 </tr>
             </tbody>
         </table>
