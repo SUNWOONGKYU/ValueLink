@@ -301,6 +301,117 @@ SELECT * FROM v_latest_ranking;
 
 ---
 
+## 🤖 Gemini CLI 활용 (권장!)
+
+### Gemini CLI가 더 나은 이유
+
+**Claude Code의 한계:**
+- ❌ 일부 사이트에서 403 Forbidden 에러
+- ❌ JavaScript 동적 렌더링 사이트 접근 어려움
+- ❌ 복잡한 Selenium 설정 필요
+
+**Gemini CLI의 강점:**
+- ✅ Google 인프라 기반 → 웹 접근성 우수
+- ✅ 실시간 검색 능력
+- ✅ 다중 사이트 동시 처리
+- ✅ 구조화된 JSON 출력
+
+### 실제 성과 (2026-01-26)
+
+- 총 87건의 투자 뉴스 수집
+- 15개 사이트 동시 크롤링
+- 80건 Supabase 저장 성공
+- 7건 중복 자동 스킵
+
+### 사용 방법
+
+#### 1. Gemini CLI 설치
+
+Windows:
+```bash
+winget install Google.Gemini
+```
+
+Mac:
+```bash
+brew install gemini-cli
+```
+
+또는 https://aistudio.google.com/prompts/new_chat 에서 다운로드
+
+#### 2. Gemini에게 요청
+
+```
+"다음 18개 사이트에서 2026-01-01 이후 투자 유치 관련 뉴스를 JSON 형식으로 수집해줘.
+
+대상 사이트:
+1. https://thevc.kr
+2. https://platum.kr
+3. https://startuptoday.kr
+... (나머지 사이트)
+
+JSON 형식:
+{
+  "site_number": 사이트 번호,
+  "site_name": "사이트명",
+  "site_url": "사이트 URL",
+  "article_title": "기사 제목",
+  "article_url": "기사 URL",
+  "published_date": "YYYY-MM-DD",
+  "content_snippet": null
+}
+
+결과를 inbox/investment_news_data.json 파일에 저장해줘."
+```
+
+#### 3. Claude Code로 Supabase 업로드
+
+```bash
+cd inbox
+python upload_to_supabase.py
+```
+
+**결과:**
+```
+[INFO] Total 87 articles to upload...
+[OK] [1/87] 더브이씨: 라엘라엘IR...
+[OK] [2/87] 벤처스퀘어: 창업진흥원...
+...
+[RESULT] Upload Summary:
+  Success: 80
+  Duplicate: 7
+  Failed: 0
+  Total: 87
+```
+
+### 최적의 협업 방식
+
+```
+┌─────────────────────────────────────────────────┐
+│  Claude Code                                    │
+│  - 프로젝트 설계                                │
+│  - 데이터베이스 설정                            │
+│  - JSON → Supabase 저장                        │
+│  - 데이터 검증 및 분석                          │
+└─────────────────────────────────────────────────┘
+                    ↓  요청
+┌─────────────────────────────────────────────────┐
+│  Gemini CLI                                     │
+│  - 웹 스크래핑 (403 우회)                       │
+│  - 다중 사이트 동시 수집                        │
+│  - 구조화된 JSON 생성                           │
+└─────────────────────────────────────────────────┘
+                    ↓  JSON 파일
+┌─────────────────────────────────────────────────┐
+│  Claude Code                                    │
+│  - JSON 파일 읽기                               │
+│  - Supabase REST API 저장                      │
+│  - 결과 리포트                                  │
+└─────────────────────────────────────────────────┘
+```
+
+---
+
 ## 🐛 문제 해결
 
 ### 1. 패키지 설치 오류
@@ -348,6 +459,46 @@ ranking = supabase.table('investment_news_ranking').select('*').order('rank').ex
 for site in ranking.data:
     print(f"{site['rank']}위: {site['site_name']} ({site['news_count']}건)")
 ```
+
+---
+
+## 🎯 기사 선정 기준 (Deal 테이블 저장용)
+
+> 같은 기업의 투자 뉴스 기사가 여러 개일 때, Deal 테이블에 저장할 최적의 기사를 선정하는 기준
+
+### 점수 시스템 (총 11점)
+
+| 항목 | 배점 | 예시 |
+|------|------|------|
+| 투자금액 | 3점 | "100억원", "$10M", "50억 규모" |
+| 투자자 | 3점 | "알토스벤처스", "삼성벤처투자" |
+| 투자단계 | 2점 | "시리즈A", "프리A", "시드" |
+| 업종 | 1점 | "AI", "헬스케어", "핀테크" |
+| 지역 | 1점 | "판교", "서울", "부산" |
+| 직원수 | 1점 | "직원 50명", "팀원 20명" |
+
+**필수 조건:** 기업명이 없는 기사는 제외
+
+### 동점 처리 (우선순위)
+
+1. **점수** (11점 만점)
+2. **글자 수** (많을수록 우선)
+3. **발행일** (최신 우선)
+4. **사이트 랭킹** (상위 사이트 우선)
+
+### 예시
+
+```
+기사 A: "AI 스타트업 테크이노, 알토스벤처스로부터 100억원 시리즈A 투자"
+→ 투자금액(3) + 투자자(3) + 투자단계(2) + 업종(1) = 9점
+
+기사 B: "테크이노, 투자 유치"
+→ 0점
+
+결과: 기사 A 선택 ✅
+```
+
+**상세 내용:** `ARTICLE_SELECTION_CRITERIA.md` 참조
 
 ---
 

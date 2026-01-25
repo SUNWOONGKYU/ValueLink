@@ -14,7 +14,7 @@ from typing import List, Dict, Optional
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from supabase import create_client, Client
+# from supabase import create_client, Client
 
 # 환경변수 로드
 load_dotenv()
@@ -42,7 +42,7 @@ SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise ValueError("환경변수 SUPABASE_URL과 SUPABASE_KEY를 .env 파일에 설정해주세요.")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 대상 사이트 목록
 SITES = [
@@ -342,7 +342,11 @@ def scrape_site_dispatch(site: Dict) -> List[Dict]:
 
     try:
         # 사이트 메인 페이지 요청
-        response = requests.get(site_url, headers=HEADERS, timeout=10)
+        # 벤처경영신문 (www.vmnews.co.kr)의 SSL 오류를 우회하기 위해 verify=False 추가
+        if site_url == 'https://www.vmnews.co.kr':
+            response = requests.get(site_url, headers=HEADERS, timeout=10, verify=False)
+        else:
+            response = requests.get(site_url, headers=HEADERS, timeout=10)
         response.raise_for_status()
         # TODO: 대부분의 한국어 사이트는 EUC-KR 또는 CP949를 사용할 수 있으므로,
         #       response.encoding을 'utf-8'로 강제하기 전에 requests가 자동으로 감지하도록 하거나,
@@ -376,29 +380,43 @@ def scrape_site_dispatch(site: Dict) -> List[Dict]:
 
 def save_to_supabase(articles: List[Dict]) -> int:
     """
-    수집된 기사를 Supabase에 저장
-    중복 URL은 자동으로 무시됨 (UNIQUE 제약)
+    수집된 기사를 Supabase에 저장 (REST API 직접 호출)
     """
     if not articles:
         return 0
 
     saved_count = 0
-
-    # 배치 처리 (100건씩)
     batch_size = 100
+
+    # REST API 엔드포인트
+    api_url = f"{SUPABASE_URL}/rest/v1/investment_news_articles"
+    headers = {
+        'apikey': SUPABASE_KEY,
+        'Authorization': f'Bearer {SUPABASE_KEY}',
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+    }
+
     for i in range(0, len(articles), batch_size):
         batch = articles[i:i + batch_size]
 
         try:
-            response = supabase.table('investment_news_articles').insert(batch).execute()
-            saved_count += len(batch)
-            logger.info(f"💾 Supabase 저장: {len(batch)}건 (누적: {saved_count}건)")
-        except Exception as e:
-            # 중복 URL 에러는 무시
-            if 'duplicate' in str(e).lower() or 'unique' in str(e).lower():
+            # REST API POST 요청
+            response = requests.post(api_url, json=batch, headers=headers, timeout=30)
+
+            if response.status_code == 201:
+                saved_count += len(batch)
+                logger.info(f"💾 Supabase 저장: {len(batch)}건 (누적: {saved_count}건)")
+            elif response.status_code == 409:
+                # 중복 URL
                 logger.warning(f"⚠️  중복 URL 감지, 스킵: {len(batch)}건")
             else:
-                logger.error(f"❌ Supabase 저장 실패: {e}")
+                logger.error(f"❌ Supabase 저장 실패 (HTTP {response.status_code}): {response.text}")
+
+        except requests.RequestException as e:
+            logger.error(f"❌ Supabase 저장 요청 실패: {e}")
+        except Exception as e:
+            logger.error(f"❌ Supabase 저장 오류: {e}")
 
     return saved_count
 

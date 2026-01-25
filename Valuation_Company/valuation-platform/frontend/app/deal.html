@@ -722,18 +722,6 @@
         </p>
     </section>
 
-    <!-- STATS (2026.01.19 기준 정확한 집계) -->
-    <div class="stats-bar">
-        <div class="stat-item">
-            <div class="stat-value">3</div>
-            <div class="stat-label">지난주 투자유치 기업 수</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">18</div>
-            <div class="stat-label">금년 누적 투자유치 기업 수</div>
-        </div>
-    </div>
-
     <!-- MAIN -->
     <main class="main-content">
         <div class="content-main">
@@ -832,47 +820,64 @@
 
         <!-- 우측 사이드바 -->
         <aside class="sidebar">
+            <!-- 투자 통계 -->
+            <div style="margin-bottom: 24px;">
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-yesterday" style="font-size: 28px; font-weight: 700; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">어제 투자유치 기업 수</div>
+                </div>
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-last-week" style="font-size: 28px; font-weight: 700; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">지난주 투자유치 기업 수</div>
+                </div>
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-year-total" style="font-size: 28px; font-weight: 700; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">금년 누적 투자유치 기업 수</div>
+                </div>
+            </div>
+
             <div class="sidebar-title">뉴스 제공사 Top 10</div>
-            <div class="news-provider-list">
-                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">1</span>
-                    <span class="provider-name">더브이씨</span>
-                </a>
+            <div class="news-provider-list" id="news-provider-list">
+                <!-- 실제 순위 (2026-01-26 기준) -->
                 <a href="https://www.venturesquare.net" target="_blank" class="news-provider-item">
-                    <span class="provider-number">2</span>
+                    <span class="provider-number">1</span>
                     <span class="provider-name">벤처스퀘어</span>
                 </a>
-                <a href="https://platum.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">3</span>
-                    <span class="provider-name">플래텀</span>
-                </a>
                 <a href="https://startuptoday.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">4</span>
+                    <span class="provider-number">2</span>
                     <span class="provider-name">스타트업투데이</span>
                 </a>
-                <a href="https://startupn.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">5</span>
-                    <span class="provider-name">스타트업엔</span>
-                </a>
                 <a href="https://outstanding.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">6</span>
+                    <span class="provider-number">3</span>
                     <span class="provider-name">아웃스탠딩</span>
                 </a>
-                <a href="https://mobiinside.co.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">7</span>
-                    <span class="provider-name">모비인사이드</span>
-                </a>
-                <a href="https://www.zdnet.co.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">8</span>
-                    <span class="provider-name">지디넷코리아</span>
-                </a>
                 <a href="https://www.thebell.co.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">9</span>
+                    <span class="provider-number">4</span>
                     <span class="provider-name">더벨</span>
                 </a>
-                <a href="https://nextunicorn.kr" target="_blank" class="news-provider-item">
+                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">5</span>
+                    <span class="provider-name">더브이씨</span>
+                </a>
+                <a href="https://startupn.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">6</span>
+                    <span class="provider-name">스타트업엔</span>
+                </a>
+                <a href="https://www.bloter.net" target="_blank" class="news-provider-item">
+                    <span class="provider-number">7</span>
+                    <span class="provider-name">블로터</span>
+                </a>
+                <a href="https://www.economist.co.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">8</span>
+                    <span class="provider-name">이코노미스트</span>
+                </a>
+                <a href="https://platum.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">9</span>
+                    <span class="provider-name">플래텀</span>
+                </a>
+                <a href="https://www.aitimes.com" target="_blank" class="news-provider-item">
                     <span class="provider-number">10</span>
-                    <span class="provider-name">넥스트유니콘</span>
+                    <span class="provider-name">AI타임스</span>
                 </a>
             </div>
         </aside>
@@ -950,6 +955,8 @@
             // API 호출 시도
             loadDashboardStats();
             loadLatestNews();
+            loadNewsProviders(); // Top 10 랭킹 로드
+            loadInvestmentStats(); // 투자 통계 로드
         });
 
         // 대시보드 통계 로드
@@ -1165,6 +1172,113 @@
                 '투자': 'stage-seed'
             };
             return classes[stage] || 'stage-seed';
+        }
+
+        // Top 10 뉴스 제공사 로드 (Supabase에서 동적 로딩)
+        async function loadNewsProviders() {
+            try {
+                const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxODkwNDksImV4cCI6MjA1Mjc2NTA0OX0.Fhio-bpGAXaAOH8pAqiVwqZDEv7DUb7L3sRq6pLHOtk';
+
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_ranking?select=*&order=rank.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const providers = await response.json();
+                    if (providers && providers.length > 0) {
+                        renderNewsProviders(providers);
+                        console.log('Top 10 랭킹 로드 성공:', providers);
+                    }
+                } else {
+                    console.log('Top 10 랭킹 API 실패, 기본 데이터 사용');
+                }
+            } catch (error) {
+                console.log('Top 10 랭킹 로드 실패, 기본 데이터 사용:', error);
+            }
+        }
+
+        // Top 10 뉴스 제공사 렌더링
+        function renderNewsProviders(providers) {
+            const container = document.getElementById('news-provider-list');
+            if (!container) return;
+
+            container.innerHTML = providers.map(provider => `
+                <a href="${escapeHtml(provider.site_url)}" target="_blank" class="news-provider-item">
+                    <span class="provider-number">${provider.rank}</span>
+                    <span class="provider-name">${escapeHtml(provider.site_name)}</span>
+                </a>
+            `).join('');
+        }
+
+        // 투자 통계 로드 (어제, 지난주, 금년)
+        async function loadInvestmentStats() {
+            try {
+                const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxODkwNDksImV4cCI6MjA1Mjc2NTA0OX0.Fhio-bpGAXaAOH8pAqiVwqZDEv7DUb7L3sRq6pLHOtk';
+
+                // 모든 기사 가져오기
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=published_date`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const articles = await response.json();
+
+                    // 날짜 계산
+                    const today = new Date();
+                    const yesterday = new Date(today);
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const lastWeek = new Date(today);
+                    lastWeek.setDate(lastWeek.getDate() - 7);
+                    const yearStart = new Date('2026-01-01');
+
+                    // 날짜 형식 (YYYY-MM-DD)
+                    const yesterdayStr = yesterday.toISOString().split('T')[0];
+                    const lastWeekStr = lastWeek.toISOString().split('T')[0];
+
+                    // 기사 수 집계
+                    let yesterdayCount = 0;
+                    let lastWeekCount = 0;
+                    let yearCount = 0;
+
+                    articles.forEach(article => {
+                        const pubDate = article.published_date;
+
+                        // 어제
+                        if (pubDate === yesterdayStr) {
+                            yesterdayCount++;
+                        }
+
+                        // 지난주 (최근 7일)
+                        if (pubDate >= lastWeekStr) {
+                            lastWeekCount++;
+                        }
+
+                        // 금년
+                        if (pubDate >= '2026-01-01') {
+                            yearCount++;
+                        }
+                    });
+
+                    // HTML 업데이트
+                    document.getElementById('stat-yesterday').textContent = yesterdayCount;
+                    document.getElementById('stat-last-week').textContent = lastWeekCount;
+                    document.getElementById('stat-year-total').textContent = yearCount;
+
+                    console.log('투자 통계 로드 성공:', { yesterdayCount, lastWeekCount, yearCount });
+                } else {
+                    console.log('통계 로드 실패, 기본값 유지');
+                }
+            } catch (error) {
+                console.log('통계 로드 오류:', error);
+            }
         }
     </script>
 </body>
