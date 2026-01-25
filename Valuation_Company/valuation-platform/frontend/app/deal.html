@@ -708,6 +708,137 @@
             outline: none;
             border-color: var(--amber);
         }
+
+        /* 더보기 버튼 */
+        .btn-see-more {
+            padding: 8px 20px;
+            background: var(--amber);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-see-more:hover {
+            background: var(--amber-dark);
+            transform: translateX(4px);
+        }
+
+        /* 뉴스 모달 */
+        .news-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .news-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .news-modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .news-modal-close {
+            font-size: 32px;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .news-modal-close:hover {
+            background: #F3F4F6;
+            color: var(--text-primary);
+        }
+
+        .news-modal-body {
+            padding: 24px 32px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .modal-news-item {
+            padding: 20px;
+            border-bottom: 1px solid #E5E7EB;
+            transition: all 0.3s;
+        }
+
+        .modal-news-item:hover {
+            background: var(--amber-pale);
+        }
+
+        .modal-news-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-news-date {
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 4px;
+        }
+
+        .modal-news-site {
+            display: inline-block;
+            font-size: 11px;
+            color: var(--amber-dark);
+            background: var(--amber-pale);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .modal-news-title {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .modal-news-title a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .modal-news-title a:hover {
+            color: var(--amber-dark);
+        }
     </style>
 </head>
 <body>
@@ -726,12 +857,15 @@
     <main class="main-content">
         <div class="content-main">
             <!-- 최신 투자유치 뉴스 -->
-            <div class="section-header">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>최신 투자유치 뉴스</h2>
+                <button class="btn-see-more" onclick="openNewsModal()">
+                    더보기 →
+                </button>
             </div>
 
         <div class="news-grid" id="news-grid">
-            <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
+            <!-- 실제 데이터가 JavaScript로 로드됩니다 (최신 3개만) -->
             <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6B7280;">
                 데이터 로딩 중...
             </div>
@@ -961,6 +1095,8 @@
             loadLatestNews();
             loadNewsProviders(); // Top 10 랭킹 로드
             loadInvestmentStats(); // 투자 통계 로드
+            loadDeals(); // Deal 테이블 로드
+            setupFilters(); // 필터 이벤트 리스너 설정
         });
 
         // 대시보드 통계 로드
@@ -986,25 +1122,43 @@
         // 최신 뉴스 로드 - API 실패 시 정적 데이터 사용
         async function loadLatestNews() {
             try {
-                console.log('뉴스 API 호출 중...');
-                const res = await fetch(`${API_BASE}/news?page_size=20`);
-                const data = await res.json();
-                console.log('뉴스 데이터:', data);
+                console.log('최신 뉴스 로딩 중...');
 
-                if (data.items && data.items.length > 0) {
-                    renderNewsCards(data.items.slice(0, 3));
-                    renderNewsTable(data.items);
+                // Supabase에서 최신 3개 뉴스 가져오기
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=*&order=published_date.desc&limit=3`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const articles = await response.json();
+                    console.log('Supabase 뉴스:', articles);
+
+                    if (articles && articles.length > 0) {
+                        // Supabase 데이터를 기존 형식에 맞게 변환
+                        const formattedNews = articles.map(article => ({
+                            title: article.article_title,
+                            source: article.site_name,
+                            source_url: article.article_url,
+                            date: article.published_date,
+                            company: article.company_name || extractCompanyName(article.article_title),
+                            industry: extractIndustry(article.article_title),
+                            amount: extractAmount(article.article_title)
+                        }));
+                        renderNewsCards(formattedNews);
+                    } else {
+                        console.log('DB에 뉴스 없음, 정적 데이터 사용');
+                        renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                    }
                 } else {
-                    // API 응답은 왔지만 데이터가 없으면 정적 데이터 사용
-                    console.log('API 데이터 없음, 정적 데이터 사용');
+                    console.log('Supabase 조회 실패, 정적 데이터 사용');
                     renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
-                    renderNewsTable(STATIC_NEWS_DATA);
                 }
             } catch (err) {
-                // API 연결 실패 시 정적 데이터로 표시
-                console.log('API 연결 실패, 정적 데이터 사용:', err.message);
+                console.log('뉴스 로딩 실패, 정적 데이터 사용:', err.message);
                 renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
-                renderNewsTable(STATIC_NEWS_DATA);
             }
         }
 
@@ -1087,6 +1241,142 @@
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
                         <td data-label="누적투자액" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
                         <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Deal 테이블 로드 (Supabase에서)
+        async function loadDeals() {
+            try {
+                console.log('Deal 테이블 로딩 중...');
+
+                // Supabase에서 Deal 데이터 가져오기 (최신순 정렬)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const deals = await response.json();
+                    console.log('Deal 데이터:', deals);
+
+                    if (deals && deals.length > 0) {
+                        renderDealsTable(deals);
+                    } else {
+                        console.log('DB에 Deal 없음');
+                        const tbody = document.getElementById('deals-tbody');
+                        if (tbody) {
+                            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
+                        }
+                    }
+                } else {
+                    console.log('Deal 조회 실패');
+                }
+            } catch (err) {
+                console.log('Deal 로딩 실패:', err.message);
+            }
+        }
+
+        // 필터 설정
+        function setupFilters() {
+            const filterSelects = document.querySelectorAll('.filter-select');
+            filterSelects.forEach(select => {
+                select.addEventListener('change', filterDeals);
+            });
+        }
+
+        // Deal 필터링
+        async function filterDeals() {
+            const industryFilter = document.querySelectorAll('.filter-select')[0].value;
+            const stageFilter = document.querySelectorAll('.filter-select')[1].value;
+            const locationFilter = document.querySelectorAll('.filter-select')[2].value;
+            const periodFilter = document.querySelectorAll('.filter-select')[3].value;
+
+            // 기간 계산
+            const now = new Date();
+            let dateFilter = null;
+            if (periodFilter === '최근 1주') {
+                dateFilter = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            } else if (periodFilter === '최근 1개월') {
+                dateFilter = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            } else if (periodFilter === '최근 3개월') {
+                dateFilter = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+            } else if (periodFilter === '최근 1년') {
+                dateFilter = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+            }
+
+            // Supabase 쿼리 생성
+            let query = `${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc`;
+
+            if (industryFilter) {
+                query += `&industry=ilike.*${industryFilter}*`;
+            }
+            if (stageFilter) {
+                query += `&stage=ilike.*${stageFilter}*`;
+            }
+            if (locationFilter) {
+                query += `&location=ilike.*${locationFilter}*`;
+            }
+            if (dateFilter) {
+                const dateStr = dateFilter.toISOString().split('T')[0];
+                query += `&news_date=gte.${dateStr}`;
+            }
+
+            try {
+                const response = await fetch(query, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const deals = await response.json();
+                    renderDealsTable(deals);
+                }
+            } catch (err) {
+                console.error('필터링 오류:', err);
+            }
+        }
+
+        // Deal 테이블 렌더링
+        function renderDealsTable(deals) {
+            const tbody = document.getElementById('deals-tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = deals.map(deal => {
+                const company = deal.company_name || '-';
+                const industry = deal.industry || '-';
+                const stage = deal.stage || '-';
+                const amount = deal.amount ? `${deal.amount}억원` : '-';
+                const investors = deal.investors || '-';
+                const location = deal.location || '-';
+                const employees = deal.employees || '-';
+                const newsUrl = deal.news_url || '#';
+                const newsDate = deal.news_date || '';
+
+                // 투자자를 쉼표로 분리하여 한 줄씩 표시
+                const investorList = investors === '-' ? '-' :
+                    investors.split(',').map(inv =>
+                        `<div style="white-space: nowrap;">${escapeHtml(inv.trim())}</div>`
+                    ).join('');
+
+                return `
+                    <tr>
+                        <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
+                        <td data-label="대표자" class="deal-ceo">-</td>
+                        <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
+                        <td data-label="설립일" class="deal-founded">-</td>
+                        <td data-label="지역" class="deal-region">${escapeHtml(location)}</td>
+                        <td data-label="직원수" class="deal-employees">${employees || '-'}</td>
+                        <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
+                        <td data-label="투자자" class="deal-investors">${investorList}</td>
+                        <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
+                        <td data-label="누적투자액" class="deal-total-funding">-</td>
+                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
             }).join('');
@@ -1284,6 +1574,85 @@
                 console.log('통계 로드 오류:', error);
             }
         }
+
+        // 뉴스 모달 열기/닫기
+        function openNewsModal() {
+            document.getElementById('newsModal').style.display = 'flex';
+            loadAllNews();  // 전체 뉴스 로드
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').style.display = 'none';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('newsModal');
+            if (event.target === modal) {
+                closeNewsModal();
+            }
+        }
+
+        // 전체 뉴스 로드 (최근 1주일)
+        async function loadAllNews() {
+            try {
+                // 1주일 전 날짜 계산
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                const weekAgoStr = oneWeekAgo.toISOString().split('T')[0];
+
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=*&published_date=gte.${weekAgoStr}&order=published_date.desc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (response.ok) {
+                    const articles = await response.json();
+                    renderModalNews(articles);
+                } else {
+                    console.error('뉴스 로드 실패');
+                }
+            } catch (error) {
+                console.error('뉴스 로드 오류:', error);
+            }
+        }
+
+        // 모달에 뉴스 렌더링
+        function renderModalNews(articles) {
+            const container = document.getElementById('modal-news-list');
+            if (!articles || articles.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: #6B7280;">뉴스가 없습니다.</p>';
+                return;
+            }
+
+            container.innerHTML = articles.map(article => `
+                <div class="modal-news-item">
+                    <div class="modal-news-date">${article.published_date || '날짜 없음'}</div>
+                    <div class="modal-news-site">${escapeHtml(article.site_name || '')}</div>
+                    <h3 class="modal-news-title">
+                        <a href="${escapeHtml(article.article_url || '#')}" target="_blank">
+                            ${escapeHtml(article.article_title || '제목 없음')}
+                        </a>
+                    </h3>
+                </div>
+            `).join('');
+        }
     </script>
+
+    <!-- 뉴스 모달 -->
+    <div id="newsModal" class="news-modal">
+        <div class="news-modal-content">
+            <div class="news-modal-header">
+                <h2>최근 1주일 투자유치 뉴스</h2>
+                <button class="news-modal-close" onclick="closeNewsModal()">&times;</button>
+            </div>
+            <div class="news-modal-body" id="modal-news-list">
+                <!-- 뉴스 목록이 JavaScript로 로드됩니다 -->
+                <p style="text-align: center; padding: 40px; color: #6B7280;">로딩 중...</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
