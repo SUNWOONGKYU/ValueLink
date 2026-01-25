@@ -286,38 +286,13 @@
             color: #D97706;
             text-decoration: none;
             transition: all 0.2s ease;
+            border: 1px solid #FDE68A;
         }
 
         .need-tag:hover {
             background: #FDE68A;
             transform: translateY(-1px);
-        }
-
-        .need-tag.invest {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-
-        .need-tag.invest:hover {
-            background: #FDE68A;
-        }
-
-        .need-tag.partner {
-            background: #DCFCE7;
-            color: #166534;
-        }
-
-        .need-tag.partner:hover {
-            background: #BBF7D0;
-        }
-
-        .need-tag.supporter {
-            background: #EDE9FE;
-            color: #7C3AED;
-        }
-
-        .need-tag.supporter:hover {
-            background: #DDD6FE;
+            border-color: #D97706;
         }
 
         .company-footer {
@@ -548,8 +523,8 @@
         .sidebar-title {
             font-size: 16px;
             font-weight: 700;
-            color: var(--deep-green);
-            background: #DCFCE7;
+            color: #D97706;
+            background: #FEF3C7;
             margin-bottom: 16px;
             padding: 12px 16px;
             border-radius: 8px;
@@ -581,20 +556,12 @@
         }
 
         .org-item:hover {
-            background: #ECFDF5;
-            color: var(--deep-green);
+            background: #FEF3C7;
+            color: #D97706;
         }
 
         .org-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: #F3F4F6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
+            display: none;
         }
 
         .org-name {
@@ -622,9 +589,9 @@
             margin-top: 12px;
             font-size: 14px;
             font-weight: 600;
-            color: var(--deep-green);
-            background: #ECFDF5;
-            border: 1px solid #BBF7D0;
+            color: #D97706;
+            background: #FEF3C7;
+            border: 1px solid #FDE68A;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -635,8 +602,8 @@
         }
 
         .btn-more:hover {
-            background: #DCFCE7;
-            border-color: var(--deep-green);
+            background: #FDE68A;
+            border-color: #D97706;
         }
 
         .btn-more .arrow {
@@ -823,71 +790,58 @@
                 </div>
                 <div class="org-list">
                     <!-- 1-10: 기본 표시 -->
+                    <a href="https://kesia.or.kr" target="_blank" class="org-item">
+                        <span class="org-name">한국초기투자기관협회</span>
+                        <span class="org-type">초기</span>
+                    </a>
                     <a href="https://www.kvca.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🏛️</div>
                         <span class="org-name">한국벤처캐피탈협회</span>
                         <span class="org-type">VC</span>
                     </a>
                     <a href="https://www.kban.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">👼</div>
                         <span class="org-name">한국엔젤투자협회</span>
                         <span class="org-type">엔젤</span>
                     </a>
                     <a href="https://www.k-vic.co.kr" target="_blank" class="org-item">
-                        <div class="org-icon">💼</div>
                         <span class="org-name">한국벤처투자</span>
                         <span class="org-type">모펀드</span>
                     </a>
-                    <a href="https://www.kibo.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🏦</div>
-                        <span class="org-name">기술보증기금</span>
-                        <span class="org-type">보증</span>
+                    <a href="https://www.kstartup.go.kr" target="_blank" class="org-item">
+                        <span class="org-name">K-Startup</span>
+                        <span class="org-type">창업</span>
                     </a>
-                    <a href="https://www.kodit.co.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🏦</div>
-                        <span class="org-name">신용보증기금</span>
-                        <span class="org-type">보증</span>
+                    <a href="https://www.tips.or.kr" target="_blank" class="org-item">
+                        <span class="org-name">TIPS 프로그램</span>
+                        <span class="org-type">투자</span>
                     </a>
                     <a href="https://www.semas.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🏢</div>
                         <span class="org-name">소상공인시장진흥공단</span>
                         <span class="org-type">지원</span>
                     </a>
                     <a href="https://www.kosmes.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🏭</div>
                         <span class="org-name">중소벤처기업진흥공단</span>
                         <span class="org-type">지원</span>
                     </a>
                     <a href="https://www.kised.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🚀</div>
                         <span class="org-name">창업진흥원</span>
                         <span class="org-type">창업</span>
                     </a>
                     <a href="https://www.nipa.kr" target="_blank" class="org-item">
-                        <div class="org-icon">💻</div>
                         <span class="org-name">정보통신산업진흥원</span>
                         <span class="org-type">IT</span>
                     </a>
-                    <a href="https://www.ksia.or.kr" target="_blank" class="org-item">
-                        <div class="org-icon">🌱</div>
-                        <span class="org-name">한국초기투자협회</span>
-                        <span class="org-type">초기</span>
+                    <!-- 11-13: 더보기 시 표시 -->
+                    <a href="https://www.kibo.or.kr" target="_blank" class="org-item hidden">
+                        <span class="org-name">기술보증기금</span>
+                        <span class="org-type">보증</span>
                     </a>
-                    <!-- 11-12: 더보기 시 표시 -->
+                    <a href="https://www.kodit.co.kr" target="_blank" class="org-item hidden">
+                        <span class="org-name">신용보증기금</span>
+                        <span class="org-type">보증</span>
+                    </a>
                     <a href="https://www.kita.net" target="_blank" class="org-item hidden">
-                        <div class="org-icon">🚢</div>
                         <span class="org-name">한국무역협회</span>
                         <span class="org-type">무역</span>
-                    </a>
-                    <a href="https://www.kstartup.go.kr" target="_blank" class="org-item hidden">
-                        <div class="org-icon">🎯</div>
-                        <span class="org-name">K-Startup</span>
-                        <span class="org-type">창업</span>
-                    </a>
-                    <a href="https://www.tips.or.kr" target="_blank" class="org-item hidden">
-                        <div class="org-icon">⭐</div>
-                        <span class="org-name">TIPS 프로그램</span>
-                        <span class="org-type">투자</span>
                     </a>
                 </div>
                 <button class="btn-more" id="btnMoreOrg">
