@@ -87,6 +87,81 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 40px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .content-main {
+            flex: 1;
+        }
+
+        /* 우측 사이드바 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            height: fit-content;
+            position: sticky;
+            top: 24px;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--amber-dark);
+            background: var(--amber-pale);
+            margin-bottom: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .news-provider-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .news-provider-item {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .news-provider-item:hover {
+            background: var(--amber-pale);
+            color: var(--amber-dark);
+        }
+
+        .provider-number {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #E5E7EB;
+            color: #6B7280;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .news-provider-item:hover .provider-number {
+            background: var(--amber);
+            color: white;
+        }
+
+        .provider-name {
+            flex: 1;
         }
 
         /* 뉴스 섹션 */
@@ -406,6 +481,17 @@
         }
 
         /* MOBILE RESPONSIVE */
+        @media (max-width: 1024px) {
+            .main-content {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+
         @media (max-width: 768px) {
             /* Hero Section */
             .hero {
@@ -624,10 +710,11 @@
 
     <!-- MAIN -->
     <main class="main-content">
-        <!-- 최신 투자유치 뉴스 -->
-        <div class="section-header">
-            <h2>최신 투자유치 뉴스</h2>
-        </div>
+        <div class="content-main">
+            <!-- 최신 투자유치 뉴스 -->
+            <div class="section-header">
+                <h2>최신 투자유치 뉴스</h2>
+            </div>
 
         <div class="news-grid" id="news-grid">
             <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
@@ -715,6 +802,54 @@
                 </tbody>
             </table>
         </div>
+        </div>
+
+        <!-- 우측 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-title">뉴스 제공사 Top 10</div>
+            <div class="news-provider-list">
+                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">1</span>
+                    <span class="provider-name">더브이씨</span>
+                </a>
+                <a href="https://www.venturesquare.net" target="_blank" class="news-provider-item">
+                    <span class="provider-number">2</span>
+                    <span class="provider-name">벤처스퀘어</span>
+                </a>
+                <a href="https://platum.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">3</span>
+                    <span class="provider-name">플래텀</span>
+                </a>
+                <a href="https://startuptoday.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">4</span>
+                    <span class="provider-name">스타트업투데이</span>
+                </a>
+                <a href="https://startupn.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">5</span>
+                    <span class="provider-name">스타트업엔</span>
+                </a>
+                <a href="https://outstanding.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">6</span>
+                    <span class="provider-name">아웃스탠딩</span>
+                </a>
+                <a href="https://mobiinside.co.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">7</span>
+                    <span class="provider-name">모비인사이드</span>
+                </a>
+                <a href="https://www.zdnet.co.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">8</span>
+                    <span class="provider-name">지디넷코리아</span>
+                </a>
+                <a href="https://www.thebell.co.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">9</span>
+                    <span class="provider-name">더벨</span>
+                </a>
+                <a href="https://nextunicorn.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">10</span>
+                    <span class="provider-name">넥스트유니콘</span>
+                </a>
+            </div>
+        </aside>
     </main>
 
     <footer>
