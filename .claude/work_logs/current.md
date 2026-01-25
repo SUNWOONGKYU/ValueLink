@@ -1,5 +1,77 @@
 # Work Log - Valuation Platform Backend Development
 
+## 푸터 위치 하단 고정 완료 (2026-01-25) ⭐
+
+### 작업 상태: ✅ 완료
+
+### 작업 개요
+4개 페이지의 푸터가 페이지 중간에 떠 있는 문제 해결 - 푸터를 페이지 하단에 고정.
+
+---
+
+### 해결 방법
+
+**Flexbox를 사용한 Sticky Footer 구현**
+
+```css
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 메인 콘텐츠 영역 */
+.container,
+.hero,
+main {
+    flex: 1;  /* 남은 공간 모두 차지 */
+}
+
+/* 푸터는 자동으로 하단에 위치 */
+footer {
+    flex-shrink: 0;
+}
+```
+
+---
+
+### 수정된 파일 (4개)
+
+#### 1. index.html
+- body에 flexbox 추가
+- .hero에 flex: 1 적용
+- 푸터가 하단에 고정됨
+
+#### 2. app/valuation.html
+- body에 flexbox 추가
+- .container에 flex: 1 적용
+- 푸터가 하단에 고정됨
+
+#### 3. app/link.html
+- body에 flexbox 추가
+- .container에 flex: 1 적용
+- 푸터가 하단에 고정됨
+
+#### 4. app/deal.html
+- body에 flexbox 추가
+- main에 flex: 1 적용
+- 푸터가 하단에 고정됨
+
+---
+
+### 기술적 설명
+
+**문제**:
+- 푸터가 콘텐츠 바로 아래에 위치하여 중간에 떠 있음
+- 페이지 높이가 화면보다 작을 때 하단에 빈 공간 발생
+
+**해결**:
+- body를 flex container로 설정 (min-height: 100vh)
+- 메인 콘텐츠에 flex: 1 적용하여 남은 공간 차지
+- 푸터가 자동으로 페이지 하단에 위치
+
+---
+
 ## 푸터 간소화 작업 완료 (2026-01-25) ⭐
 
 ### 작업 상태: ✅ 완료
