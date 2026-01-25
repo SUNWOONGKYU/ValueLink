@@ -821,6 +821,10 @@
         <!-- 우측 사이드바 -->
         <aside class="sidebar">
             <!-- 투자 통계 (2026-01-26 기준) -->
+            <!-- TODO: 현재는 뉴스 기사 수로 표시. 나중에 Deal 테이블의 실제 투자 데이터로 변경 필요 -->
+            <!-- - Deal 테이블의 investment_date 필드 기준으로 계산 -->
+            <!-- - 중복 기업 제거 (같은 기업이 여러 투자 라운드 받은 경우) -->
+            <!-- - 정확한 투자유치 기업 수로 업데이트 -->
             <div style="margin-bottom: 24px;">
                 <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
                     <div class="stat-value" id="stat-yesterday" style="font-size: 28px; font-weight: 700; color: var(--amber-dark);">8</div>
