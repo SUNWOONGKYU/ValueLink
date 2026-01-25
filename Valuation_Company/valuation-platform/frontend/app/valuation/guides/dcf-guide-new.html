@@ -888,14 +888,14 @@
             .then(data => {
                 document.getElementById('header-container').innerHTML = data;
 
-                // 헤더 로드 후 메뉴 링크 수정
-                const menuValuation = document.getElementById('menu-valuation');
-                const menuDeal = document.getElementById('menu-deal');
-                const logoLink = document.querySelector('.logo-container');
-
-                if (menuValuation) menuValuation.href = '../index.html';
-                if (menuDeal) menuDeal.href = 'deal.html';
-                if (logoLink) logoLink.href = '../index.html';
+                // 헤더 내부 스크립트 실행
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) newScript.src = script.src;
+                    else newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 
