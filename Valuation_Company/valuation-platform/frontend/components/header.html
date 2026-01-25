@@ -349,12 +349,33 @@
 // 현재 페이지에 따라 경로 및 active 메뉴 설정 (즉시 실행)
 (function() {
     const currentPath = window.location.pathname;
-    const isInAppFolder = currentPath.includes('/app/');
 
-    // 로고 링크 업데이트
+    // /app/ 폴더 기준으로 깊이 계산
+    const appIndex = currentPath.indexOf('/app/');
+    let basePath = '';
+
+    if (appIndex !== -1) {
+        // /app/ 이후의 경로에서 폴더 깊이 계산
+        const afterApp = currentPath.substring(appIndex + 5); // '/app/' 이후
+        const depth = (afterApp.match(/\//g) || []).length; // 슬래시 개수 = 하위 폴더 깊이
+
+        // 깊이만큼 '../' 추가
+        basePath = '../'.repeat(depth);
+    } else {
+        // /app/ 폴더 밖 (예: index.html)
+        basePath = 'app/';
+    }
+
+    // 로고 링크 업데이트 (항상 루트의 index.html로)
     const logoLink = document.querySelector('.logo-container');
     if (logoLink) {
-        logoLink.href = isInAppFolder ? '../index.html' : 'index.html';
+        if (appIndex !== -1) {
+            const afterApp = currentPath.substring(appIndex + 5);
+            const depth = (afterApp.match(/\//g) || []).length;
+            logoLink.href = '../'.repeat(depth + 1) + 'index.html';
+        } else {
+            logoLink.href = 'index.html';
+        }
     }
 
     // 메뉴 링크 업데이트
@@ -363,10 +384,10 @@
     const menuDeal = document.getElementById('menu-deal');
     const menuMypage = document.getElementById('menu-mypage');
 
-    if (menuValuation) menuValuation.href = isInAppFolder ? 'valuation.html' : 'app/valuation.html';
-    if (menuLink) menuLink.href = isInAppFolder ? 'link.html' : 'app/link.html';
-    if (menuDeal) menuDeal.href = isInAppFolder ? 'deal.html' : 'app/deal.html';
-    if (menuMypage) menuMypage.href = isInAppFolder ? 'core/mypage.html' : 'app/core/mypage.html';
+    if (menuValuation) menuValuation.href = basePath + 'valuation.html';
+    if (menuLink) menuLink.href = basePath + 'link.html';
+    if (menuDeal) menuDeal.href = basePath + 'deal.html';
+    if (menuMypage) menuMypage.href = basePath + 'core/mypage.html';
 
     // 모든 메뉴 active 제거
     if (menuValuation) menuValuation.classList.remove('active');
@@ -375,13 +396,13 @@
     if (menuMypage) menuMypage.classList.remove('active');
 
     // 현재 페이지에 따라 active 추가
-    if (currentPath.includes('link')) {
+    if (currentPath.includes('link') || currentPath.includes('inquiry')) {
         if (menuLink) menuLink.classList.add('active');
     } else if (currentPath.includes('deal')) {
         if (menuDeal) menuDeal.classList.add('active');
     } else if (currentPath.includes('mypage')) {
         if (menuMypage) menuMypage.classList.add('active');
-    } else if (currentPath.includes('valuation')) {
+    } else if (currentPath.includes('valuation') || currentPath.includes('guide') || currentPath.includes('portal') || currentPath.includes('project')) {
         if (menuValuation) menuValuation.classList.add('active');
     } else {
         // 인트로 화면에서는 아무 메뉴도 active 안 함
