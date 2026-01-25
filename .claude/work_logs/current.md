@@ -1,5 +1,71 @@
 # Work Log - Valuation Platform Backend Development
 
+## GitHub Pages 404 에러 해결 (2026-01-25) ⭐
+
+### 작업 상태: ✅ 완료
+
+### 문제 상황
+- GitHub Pages에서 guides 폴더의 모든 HTML 파일이 404 에러 발생
+- URL: `https://sunwoongkyu.github.io/ValueLink/.../guides/guide-dcf.html` 등
+- 로컬에는 파일이 존재하고 git에도 추적됨
+- 원격 저장소에도 푸시됨
+
+---
+
+### 원인 분석
+
+**GitHub Pages의 Jekyll 처리 문제**
+
+- GitHub Pages는 기본적으로 Jekyll을 사용하여 사이트 빌드
+- Jekyll은 특정 폴더/파일 패턴을 무시하거나 변환
+- 일부 파일들이 빌드 과정에서 제외될 수 있음
+
+---
+
+### 해결 방법
+
+**`.nojekyll` 파일 추가**
+
+```bash
+# 루트 디렉토리에 .nojekyll 파일 생성
+touch .nojekyll
+
+# GitHub에 푸시
+git add .nojekyll
+git commit -m "fix: Add .nojekyll to disable Jekyll processing"
+git push
+```
+
+**`.nojekyll` 파일의 역할:**
+- GitHub Pages에게 Jekyll 처리를 건너뛰도록 지시
+- 모든 파일을 그대로 서빙
+- 폴더 구조와 파일명을 변경하지 않음
+
+---
+
+### 적용 결과
+
+- ✅ `.nojekyll` 파일 생성
+- ✅ GitHub에 푸시 완료
+- ⏳ GitHub Pages 재빌드 진행 중 (1-2분 소요)
+
+---
+
+### 확인 방법
+
+**1-2분 후 다음 URL 접속:**
+- https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/valuation/guides/guide-dcf.html
+- guide-asset.html
+- guide-intrinsic.html
+- guide-relative.html
+- guide-tax.html
+
+**정상 작동 시:**
+- 404 에러 해결
+- 모든 guides 페이지 접속 가능
+
+---
+
 ## 푸터 위치 하단 고정 완료 (2026-01-25) ⭐
 
 ### 작업 상태: ✅ 완료
