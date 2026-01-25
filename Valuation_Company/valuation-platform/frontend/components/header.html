@@ -209,25 +209,83 @@
         box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     }
 
-    /* 반응형 */
+    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
         .main-header {
-            padding: 0 20px;
-            height: 70px;
+            padding: 12px 20px;
+            height: auto;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-left {
+            flex: 1;
+            min-width: 150px;
         }
 
         .logo-svg {
-            height: 45px;
+            height: 40px;
+        }
+
+        .header-right {
+            width: 100%;
+            justify-content: space-between;
+            order: 3;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .main-menu {
+            flex: 1;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .menu-item {
-            padding: 8px 16px;
-            font-size: 14px;
+            padding: 6px 12px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        #menu-mypage {
+            margin-left: 0;
+        }
+
+        .notification-btn {
+            width: 36px;
+            height: 36px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+        }
+
+        .notification-badge {
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
         }
 
         .btn-login, .btn-signup {
-            padding: 8px 16px;
-            font-size: 13px;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+    }
+
+    /* Tablet (769px ~ 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .main-header {
+            padding: 0 32px;
+        }
+
+        .logo-svg {
+            height: 60px;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            font-size: 15px;
         }
     }
 </style>

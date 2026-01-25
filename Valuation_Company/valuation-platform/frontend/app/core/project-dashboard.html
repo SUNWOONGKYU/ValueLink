@@ -422,6 +422,129 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+                height: auto;
+                flex-direction: column;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .page-title h1 {
+                font-size: 22px;
+            }
+
+            .btn-new {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-card .number {
+                font-size: 24px;
+            }
+
+            .filters {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            .project-table {
+                min-width: 800px;
+            }
+
+            .project-table th,
+            .project-table td {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+
+            .project-id {
+                font-size: 11px;
+                padding: 3px 6px;
+            }
+
+            .company-name {
+                font-size: 13px;
+            }
+
+            .company-biz {
+                font-size: 11px;
+            }
+
+            .method-badge {
+                font-size: 11px;
+                padding: 3px 8px;
+            }
+
+            .status-badge {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .assignee-name {
+                display: none;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+        }
     </style>
 </head>
 <body>

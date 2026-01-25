@@ -321,6 +321,134 @@
 
         .footer-logo { font-size: 18px; font-weight: 700; }
         .footer-text { font-size: 13px; opacity: 0.7; }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 20px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding-top: 16px;
+                padding-bottom: 16px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .header-right {
+                width: 100%;
+                margin-top: 12px;
+            }
+
+            .btn-login,
+            .btn-signup {
+                flex: 1;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            .hero {
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .main-content {
+                padding: 40px 20px;
+            }
+
+            .section-title h2 {
+                font-size: 22px;
+            }
+
+            .section-title p {
+                font-size: 14px;
+            }
+
+            .method-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .method-card {
+                padding: 24px 16px;
+            }
+
+            .method-icon {
+                width: 56px;
+                height: 56px;
+                font-size: 24px;
+            }
+
+            .method-card h3 {
+                font-size: 16px;
+            }
+
+            .method-card p {
+                font-size: 12px;
+            }
+
+            .simulator-section {
+                padding: 32px 20px;
+            }
+
+            .simulator-info h2 {
+                font-size: 22px;
+            }
+
+            .simulator-info p {
+                font-size: 14px;
+            }
+
+            .simulator-list {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .simulator-list li {
+                width: 100%;
+                text-align: center;
+            }
+
+            .btn-simulator {
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            .simulator-preview {
+                height: 240px;
+            }
+
+            footer {
+                padding: 24px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>

@@ -717,16 +717,192 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            .upload-grid {
-                grid-template-columns: 1fr;
+            /* Header */
+            header {
+                padding: 0 20px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding-top: 16px;
+                padding-bottom: 16px;
             }
 
-            .form-grid {
-                grid-template-columns: 1fr;
+            .header-left {
+                width: 100%;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .main-nav {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .nav-item {
+                font-size: 13px;
+                padding: 8px 12px;
+            }
+
+            .header-right {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-info {
+                width: 100%;
+            }
+
+            .btn-logout {
+                width: 100%;
+            }
+
+            /* Breadcrumb */
+            .breadcrumb-container {
+                padding: 12px 20px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 20px;
+            }
+
+            /* Project Info */
+            .project-info-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .project-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .project-title {
+                font-size: 20px;
             }
 
             .project-meta {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            /* Progress Section */
+            .progress-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .progress-steps {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .progress-steps::before {
+                display: none;
+            }
+
+            .progress-step {
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+
+            .step-circle {
+                margin-bottom: 0;
+                margin-right: 12px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+
+            /* Upload Grid */
+            .upload-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .upload-card {
+                padding: 16px;
+            }
+
+            .upload-dropzone {
+                padding: 24px;
+            }
+
+            .dropzone-icon {
+                font-size: 36px;
+            }
+
+            /* Form Grid */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            /* Form Input - iOS 자동 확대 방지 */
+            .form-input,
+            textarea.form-input,
+            .form-select {
+                font-size: 16px;
+            }
+
+            /* Input Section */
+            .input-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            /* Submit Section */
+            .submit-section {
+                padding: 20px;
+            }
+
+            .submit-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-save-draft,
+            .btn-submit {
+                width: 100%;
+            }
+
+            /* Notice Box */
+            .notice-box {
+                padding: 12px 16px;
+            }
+
+            /* File Actions */
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .file-actions {
+                width: 100%;
+            }
+
+            .btn-file-action {
+                flex: 1;
+            }
+
+            /* Section Title */
+            .section-title {
+                font-size: 16px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 24px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
             }
         }
     </style>

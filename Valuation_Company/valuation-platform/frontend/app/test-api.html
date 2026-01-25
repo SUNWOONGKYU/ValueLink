@@ -97,6 +97,84 @@
         button:hover {
             background: #00cc00;
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            header {
+                padding: 0 15px;
+                height: auto;
+                min-height: 60px;
+                flex-wrap: wrap;
+            }
+
+            .header-left {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .logo {
+                gap: 8px;
+            }
+
+            .logo-symbol {
+                width: 36px;
+                height: 36px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 5px;
+                width: 100%;
+                margin-top: 10px;
+                padding-bottom: 10px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+
+            button {
+                padding: 12px 16px;
+                font-size: 16px;
+                margin: 5px 2px;
+                width: calc(50% - 4px);
+                display: inline-block;
+            }
+
+            .test-result {
+                margin: 15px 0;
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .test-result h2,
+            .test-result h3 {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+
+            pre {
+                padding: 10px;
+                font-size: 12px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
     </style>
 </head>
 <body>

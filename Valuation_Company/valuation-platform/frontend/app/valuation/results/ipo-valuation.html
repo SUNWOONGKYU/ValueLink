@@ -545,15 +545,174 @@
         }
 
         @media (max-width: 768px) {
+            /* Header */
+            header {
+                padding: 0 20px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px 20px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            /* Breadcrumb */
+            .breadcrumb-container {
+                padding: 10px 20px;
+            }
+
+            .breadcrumb {
+                font-size: 12px;
+                flex-wrap: wrap;
+            }
+
+            /* Hero */
+            .hero {
+                padding: 32px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 14px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 20px;
+            }
+
+            /* Section Card */
+            .section-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            /* Form Grid */
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
             }
+
+            .form-input {
+                font-size: 16px; /* iOS 자동 확대 방지 */
+                padding: 10px 14px;
+            }
+
+            /* Comparable Table */
+            .comparable-table {
+                font-size: 12px;
+            }
+
+            .comparable-table th,
+            .comparable-table td {
+                padding: 8px 6px;
+            }
+
+            .comparable-table input {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            /* Discount Grid */
+            .discount-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .discount-card {
+                padding: 16px;
+            }
+
+            /* Slider Container */
+            .slider-container {
+                margin-top: 20px;
+            }
+
+            /* Price Range */
             .price-range-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
             }
+
             .price-separator {
                 transform: rotate(90deg);
-                text-align: center;
+                font-size: 24px;
+            }
+
+            .price-box-value {
+                font-size: 28px;
+            }
+
+            /* Result Section */
+            .result-section {
+                padding: 24px 20px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .result-card {
+                padding: 16px;
+            }
+
+            .result-final {
+                padding: 24px;
+            }
+
+            .result-final .result-value {
+                font-size: 36px;
+            }
+
+            /* Buttons */
+            .btn-calculate,
+            .btn-add {
+                width: 100%;
+                padding: 14px;
+                font-size: 15px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 24px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            /* Sidebar */
+            .sidebar {
+                width: 100%;
+                position: static;
+                margin-top: 20px;
             }
         }
         /* 우측 사이드바 */
