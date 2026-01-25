@@ -405,6 +405,148 @@
             margin-top: 60px;
         }
 
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            /* Hero Section */
+            .hero {
+                padding: 24px 20px 32px 20px;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .hero-description {
+                font-size: 14px;
+            }
+
+            /* Stats Bar */
+            .stats-bar {
+                padding: 20px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 24px 20px;
+            }
+
+            /* News Grid - 1열로 변경 */
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            /* Section Title */
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .section-header h2 {
+                font-size: 20px;
+            }
+
+            /* Filter Bar - 세로 정렬 */
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 4px;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            /* Deals Section */
+            .deals-section {
+                padding: 20px;
+                overflow-x: auto;
+            }
+
+            /* 테이블을 카드 형식으로 변경 */
+            .deals-table {
+                display: block;
+            }
+
+            .deals-table thead {
+                display: none;
+            }
+
+            .deals-table tbody {
+                display: block;
+            }
+
+            .deals-table tr {
+                display: block;
+                margin-bottom: 16px;
+                padding: 16px;
+                background: var(--bg-light);
+                border-radius: 12px;
+                border: none;
+            }
+
+            .deals-table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid #E5E7EB;
+            }
+
+            .deals-table td:last-child {
+                border-bottom: none;
+            }
+
+            .deals-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--text-muted);
+                font-size: 12px;
+            }
+
+            .deal-company {
+                justify-content: flex-end;
+            }
+
+            /* Footer */
+            footer {
+                padding: 24px 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .footer-text {
+                font-size: 12px;
+            }
+        }
+
+        /* Tablet (768px ~ 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .news-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-content {
+                padding: 32px;
+            }
+        }
+
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
@@ -608,24 +750,72 @@
 
         // 실제 수집된 투자 뉴스 데이터 (2026년 1월 기준, 총 18개) - 뉴스 본문에서 추출한 상세 정보 포함
         const STATIC_NEWS_DATA = [
-            { company: "SDT", ceo: "윤지원", title: "SDT, 300억 원 투자 유치", industry: "양자기술", amount: "300억원", totalFunding: "-", stage: "투자", investor: "프랙시스캐피탈(리드), NH투자증권", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031956/" },
-            { company: "로그프레소", ceo: "양봉열", title: "로그프레소, 160억 원 투자 유치", industry: "보안/SIEM", amount: "160억원", totalFunding: "230억원", stage: "시리즈B", investor: "KB인베스트먼트 외", founded: "2013", employees: "-", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1019960/" },
-            { company: "한국딥러닝", ceo: "김지현", title: "한국딥러닝, 120억 원 투자 유치 완료", industry: "문서AI", amount: "120억원", totalFunding: "120억원", stage: "시리즈A", investor: "트랜스링크(리드), SV인베스트먼트, IBK, 산업은행", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031399/" },
-            { company: "아크리얼", ceo: "전승현", title: "아크리얼, 80억 원 투자 유치", industry: "덴탈AI", amount: "80억원", totalFunding: "141억원", stage: "프리A", investor: "DSC인베스트먼트, SDB인베스트먼트, 슈미트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019955/" },
-            { company: "콕스웨이브", ceo: "김주원", title: "콕스웨이브, 70억 원 투자 유치", industry: "AI분석", amount: "70억원", totalFunding: "125억원", stage: "프리A", investor: "L&S벤처캐피탈(리드), KB인베스트먼트, 현대기술투자", founded: "2021", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032568/" },
-            { company: "퓨어스페이스", ceo: "이선영", title: "퓨어스페이스, 60억 원 투자 유치", industry: "푸드테크", amount: "60억원", totalFunding: "-", stage: "시리즈A", investor: "알토스벤처스", founded: "2018", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019914/" },
-            { company: "주미당", ceo: "김동완", title: "주미당, 55억 원 투자 유치", industry: "향미AI", amount: "55억원", totalFunding: "-", stage: "프리A", investor: "알바트로스, 위벤처스, 인터밸류파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030380/" },
-            { company: "에디트콜렉티브", ceo: "전주형", title: "에디트콜렉티브, 55억 투자 유치", industry: "프롭테크", amount: "55억원", totalFunding: "55억원", stage: "시리즈A", investor: "본엔젤스, 해시드, 롯데벤처스, 스트롱벤처스", founded: "2021", employees: "14명", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017987/" },
-            { company: "그린다", ceo: "황규용", title: "그린다, 30억 투자 유치", industry: "친환경/SAF", amount: "30억원", totalFunding: "-", stage: "시리즈A", investor: "블루포인트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017460/" },
-            { company: "십일리터", ceo: "-", title: "십일리터, 누적 20억 원 투자 유치", industry: "IT", amount: "20억원", totalFunding: "20억원", stage: "투자", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030364/" },
-            { company: "위드포인츠", ceo: "-", title: "위드포인츠, 15억 원 투자 유치", industry: "IT", amount: "15억원", totalFunding: "-", stage: "투자", investor: "크릿벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030924/" },
-            { company: "에스와이유", ceo: "-", title: "에스와이유, 8억 원 시드 투자 유치", industry: "IT", amount: "8억원", totalFunding: "-", stage: "시드", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1033001/" },
-            { company: "코넥트", ceo: "-", title: "코넥트, 최대 2.5억 투자 확정", industry: "IT", amount: "2.5억원", totalFunding: "-", stage: "투자", investor: "Alcove", founded: "-", employees: "-", region: "경기", source: "venturesquare", source_url: "https://www.venturesquare.net/1019530/" },
-            { company: "엘바", ceo: "-", title: "엘바, 시드 투자 유치", industry: "영상AI", amount: "미공개", totalFunding: "-", stage: "시드", investor: "시리즈벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032554/" },
-            { company: "피키", ceo: "-", title: "피키, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "한리버파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1020468/" },
-            { company: "오비터스", ceo: "-", title: "오비터스, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "하나벤처스, 롯데벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017083/" },
-            { company: "아이피텍", ceo: "-", title: "아이피텍, 혁신 IP 펀드 투자 유치", industry: "IP/특허", amount: "미공개", totalFunding: "-", stage: "투자", investor: "케이그라운드벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032600/" },
-            { company: "KRG그룹(개런티즈)", ceo: "김준영, 김기성", title: "KRG그룹 개런티즈, 시리즈A 진행", industry: "프롭테크", amount: "미공개", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "2020", employees: "7명", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1011412/" }
+            { company: "SDT", ceo: "윤지원", title: "SDT, 300억 원 투자 유치", industry: "양자기술", amount: "300억원", totalFunding: "-", stage: "투자", investor: "프랙시스캐피탈(리드), NH투자증권", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031956/", date: "2026-01-19T10:00:00Z" },
+            { company: "로그프레소", ceo: "양봉열", title: "로그프레소, 160억 원 투자 유치", industry: "보안/SIEM", amount: "160억원", totalFunding: "230억원", stage: "시리즈B", investor: "KB인베스트먼트 외", founded: "2013", employees: "-", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1019960/", date: "2026-01-19T10:00:00Z" },
+            { company: "한국딥러닝", ceo: "김지현", title: "한국딥러닝, 120억 원 투자 유치 완료", industry: "문서AI", amount: "120억원", totalFunding: "120억원", stage: "시리즈A", investor: "트랜스링크(리드), SV인베스트먼트, IBK, 산업은행", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031399/", date: "2026-01-19T10:00:00Z" },
+            { company: "아크리얼", ceo: "전승현", title: "아크리얼, 80억 원 투자 유치", industry: "덴탈AI", amount: "80억원", totalFunding: "141억원", stage: "프리A", investor: "DSC인베스트먼트, SDB인베스트먼트, 슈미트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019955/", date: "2026-01-19T10:00:00Z" },
+            { company: "콕스웨이브", ceo: "김주원", title: "콕스웨이브, 70억 원 투자 유치", industry: "AI분석", amount: "70억원", totalFunding: "125억원", stage: "프리A", investor: "L&S벤처캐피탈(리드), KB인베스트먼트, 현대기술투자", founded: "2021", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032568/", date: "2026-01-19T10:00:00Z" },
+            { company: "퓨어스페이스", ceo: "이선영", title: "퓨어스페이스, 60억 원 투자 유치", industry: "푸드테크", amount: "60억원", totalFunding: "-", stage: "시리즈A", investor: "알토스벤처스", founded: "2018", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019914/", date: "2026-01-19T10:00:00Z" },
+            { company: "주미당", ceo: "김동완", title: "주미당, 55억 원 투자 유치", industry: "향미AI", amount: "55억원", totalFunding: "-", stage: "프리A", investor: "알바트로스, 위벤처스, 인터밸류파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030380/", date: "2026-01-19T10:00:00Z" },
+            { company: "에디트콜렉티브", ceo: "전주형", title: "에디트콜렉티브, 55억 투자 유치", industry: "프롭테크", amount: "55억원", totalFunding: "55억원", stage: "시리즈A", investor: "본엔젤스, 해시드, 롯데벤처스, 스트롱벤처스", founded: "2021", employees: "14명", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017987/", date: "2026-01-19T10:00:00Z" },
+            { company: "그린다", ceo: "황규용", title: "그린다, 30억 투자 유치", industry: "친환경/SAF", amount: "30억원", totalFunding: "-", stage: "시리즈A", investor: "블루포인트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017460/", date: "2026-01-19T10:00:00Z" },
+            { company: "십일리터", ceo: "-", title: "십일리터, 누적 20억 원 투자 유치", industry: "IT", amount: "20억원", totalFunding: "20억원", stage: "투자", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030364/", date: "2026-01-19T10:00:00Z" },
+            { company: "위드포인츠", ceo: "-", title: "위드포인츠, 15억 원 투자 유치", industry: "IT", amount: "15억원", totalFunding: "-", stage: "투자", investor: "크릿벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030924/", date: "2026-01-19T10:00:00Z" },
+            { company: "에스와이유", ceo: "-", title: "에스와이유, 8억 원 시드 투자 유치", industry: "IT", amount: "8억원", totalFunding: "-", stage: "시드", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1033001/", date: "2026-01-19T10:00:00Z" },
+            { company: "코넥트", ceo: "-", title: "코넥트, 최대 2.5억 투자 확정", industry: "IT", amount: "2.5억원", totalFunding: "-", stage: "투자", investor: "Alcove", founded: "-", employees: "-", region: "경기", source: "venturesquare", source_url: "https://www.venturesquare.net/1019530/", date: "2026-01-19T10:00:00Z" },
+            { company: "엘바", ceo: "-", title: "엘바, 시드 투자 유치", industry: "영상AI", amount: "미공개", totalFunding: "-", stage: "시드", investor: "시리즈벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032554/", date: "2026-01-19T10:00:00Z" },
+            { company: "피키", ceo: "-", title: "피키, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "한리버파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1020468/", date: "2026-01-19T10:00:00Z" },
+            { company: "오비터스", ceo: "-", title: "오비터스, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "하나벤처스, 롯데벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017083/", date: "2026-01-19T10:00:00Z" },
+            { company: "아이피텍", ceo: "-", title: "아이피텍, 혁신 IP 펀드 투자 유치", industry: "IP/특허", amount: "미공개", totalFunding: "-", stage: "투자", investor: "케이그라운드벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032600/", date: "2026-01-19T10:00:00Z" },
+            { company: "KRG그룹(개런티즈)", ceo: "김준영, 김기성", title: "KRG그룹 개런티즈, 시리즈A 진행", industry: "프롭테크", amount: "미공개", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "2020", employees: "7명", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1011412/", date: "2026-01-19T10:00:00Z" },
+            {
+                company: "리벨리온",
+                ceo: "-",
+                title: "리벨리온, 1650억 원 투자 유치",
+                industry: "AI 반도체",
+                amount: "1650억원",
+                totalFunding: "-",
+                stage: "시리즈B",
+                investor: "-",
+                founded: "-",
+                employees: "-",
+                region: "서울",
+                source: "wowtale",
+                source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/",
+                date: "2026-01-25T10:00:00Z"
+            },
+            {
+                company: "마이리얼트립",
+                ceo: "-",
+                title: "마이리얼트립, 756억 원 투자 유치",
+                industry: "여행",
+                amount: "756억원",
+                totalFunding: "-",
+                stage: "투자",
+                investor: "-",
+                founded: "-",
+                employees: "-",
+                region: "서울",
+                source: "wowtale",
+                source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/",
+                date: "2026-01-25T10:00:00Z"
+            },
+            {
+                company: "포스코어",
+                ceo: "-",
+                title: "포스코어, 10억 원 시드 투자 유치",
+                industry: "-",
+                amount: "10억원",
+                totalFunding: "-",
+                stage: "시드",
+                investor: "-",
+                founded: "-",
+                employees: "-",
+                region: "-",
+                source: "nextunicorn",
+                source_url: "https://www.nextunicorn.kr/news/single/20240125/11V4h5gSggq",
+                date: "2026-01-25T10:00:00Z"
+            }
         ];
 
         // 페이지 로드 시 실행
@@ -747,17 +937,17 @@
 
                 return `
                     <tr>
-                        <td><div class="deal-name">${escapeHtml(company)}</div></td>
-                        <td class="deal-ceo">${escapeHtml(ceo)}</td>
-                        <td class="deal-industry">${escapeHtml(industry)}</td>
-                        <td class="deal-founded">${escapeHtml(founded)}</td>
-                        <td class="deal-employees">${escapeHtml(employees)}</td>
-                        <td class="deal-region">${escapeHtml(region)}</td>
-                        <td><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
-                        <td class="deal-investors">${escapeHtml(investor)}</td>
-                        <td class="deal-amount">${escapeHtml(amount)}</td>
-                        <td class="deal-total-funding">${escapeHtml(totalFunding)}</td>
-                        <td><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
+                        <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
+                        <td data-label="대표" class="deal-ceo">${escapeHtml(ceo)}</td>
+                        <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
+                        <td data-label="설립" class="deal-founded">${escapeHtml(founded)}</td>
+                        <td data-label="직원" class="deal-employees">${escapeHtml(employees)}</td>
+                        <td data-label="지역" class="deal-region">${escapeHtml(region)}</td>
+                        <td data-label="투자 단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
+                        <td data-label="투자자" class="deal-investors">${escapeHtml(investor)}</td>
+                        <td data-label="투자 금액" class="deal-amount">${escapeHtml(amount)}</td>
+                        <td data-label="누적 투자" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
+                        <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
             }).join('');

@@ -358,6 +358,102 @@
         .modal .btn-group {
             justify-content: center;
         }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-title h1 {
+                font-size: 22px;
+            }
+
+            .page-title p {
+                font-size: 14px;
+            }
+
+            .project-id-preview {
+                padding: 16px;
+            }
+
+            .project-id-preview .id {
+                font-size: 18px;
+                word-break: break-all;
+            }
+
+            .form-card {
+                padding: 20px 16px;
+            }
+
+            .form-card h2 {
+                font-size: 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .method-selector {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .method-option label {
+                padding: 12px 8px;
+            }
+
+            .method-option .icon {
+                font-size: 24px;
+            }
+
+            .method-option .name {
+                font-size: 13px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .modal {
+                padding: 24px 20px;
+                width: 95%;
+            }
+        }
     </style>
 </head>
 <body>

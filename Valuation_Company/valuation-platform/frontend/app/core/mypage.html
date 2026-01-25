@@ -173,11 +173,59 @@
             text-decoration: underline;
         }
 
-        /* 반응형 */
+        /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
+            /* 컨테이너 패딩 축소 */
+            .container {
+                padding: 20px;
+            }
+
+            /* 페이지 헤더 */
+            .page-header {
+                margin-bottom: 24px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .page-subtitle {
+                font-size: 14px;
+            }
+
+            /* 섹션 패딩 축소 */
+            .section {
+                padding: 20px;
+                margin-bottom: 16px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding-bottom: 12px;
+            }
+
+            /* 그리드 1열로 변경 */
             .form-grid,
             .info-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            /* 버튼 그룹 세로 정렬 */
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* 폼 입력 필드 */
+            .form-input {
+                font-size: 16px; /* iOS 자동 확대 방지 */
             }
         }
     </style>

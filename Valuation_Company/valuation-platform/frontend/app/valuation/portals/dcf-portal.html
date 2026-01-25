@@ -128,7 +128,229 @@
         .result-value { font-size: 24px; font-weight: 700; color: var(--deep-blue); }
         .result-value.highlight { font-size: 32px; color: var(--deep-green); }
         .btn-close-modal { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 10px; cursor: pointer; }
-        @media (max-width: 768px) { .upload-grid, .form-grid { grid-template-columns: 1fr; } .project-meta { grid-template-columns: repeat(2, 1fr); } }
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            /* Header */
+            header {
+                padding: 0 20px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 16px 20px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+
+            .nav-item {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .header-right {
+                width: 100%;
+                margin-top: 12px;
+                justify-content: space-between;
+            }
+
+            .user-info {
+                font-size: 13px;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+            }
+
+            /* Breadcrumb */
+            .breadcrumb-container {
+                padding: 10px 20px;
+            }
+
+            .breadcrumb {
+                font-size: 12px;
+                flex-wrap: wrap;
+            }
+
+            /* Main Content */
+            .main-content {
+                padding: 20px;
+            }
+
+            /* Project Info Card */
+            .project-info-card {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .project-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .project-title {
+                font-size: 20px;
+            }
+
+            .project-id {
+                font-size: 12px;
+            }
+
+            .project-meta {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+                padding-top: 16px;
+            }
+
+            .meta-label {
+                font-size: 11px;
+            }
+
+            .meta-value {
+                font-size: 14px;
+            }
+
+            /* Upload Grid */
+            .upload-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+
+            .upload-card {
+                padding: 16px;
+            }
+
+            .upload-title {
+                font-size: 14px;
+            }
+
+            .upload-dropzone {
+                padding: 24px;
+            }
+
+            .dropzone-icon {
+                font-size: 36px;
+            }
+
+            .dropzone-text {
+                font-size: 13px;
+            }
+
+            .dropzone-hint {
+                font-size: 11px;
+            }
+
+            /* Form Grid */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .form-input {
+                font-size: 16px; /* iOS 자동 확대 방지 */
+            }
+
+            /* Section Titles */
+            .section-title {
+                font-size: 16px;
+                margin-bottom: 16px;
+            }
+
+            /* Input Section */
+            .input-section {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            /* Submit Section */
+            .submit-section {
+                padding: 20px;
+            }
+
+            .submit-actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn-save-draft,
+            .btn-submit,
+            .btn-calculate {
+                width: 100%;
+                padding: 14px;
+                text-align: center;
+            }
+
+            /* Notice Box */
+            .notice-box {
+                padding: 14px 16px;
+                margin-bottom: 16px;
+            }
+
+            .notice-title {
+                font-size: 13px;
+            }
+
+            .notice-text {
+                font-size: 12px;
+            }
+
+            /* Result Modal */
+            .result-content {
+                padding: 24px;
+                width: 95%;
+            }
+
+            .result-title {
+                font-size: 20px;
+            }
+
+            .result-value {
+                font-size: 20px;
+            }
+
+            .result-value.highlight {
+                font-size: 28px;
+            }
+
+            /* Footer */
+            footer {
+                padding: 24px 20px;
+                margin-top: 40px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+
+            .footer-text {
+                font-size: 12px;
+            }
+        }
+
+        /* Tablet (769px ~ 1024px) */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .upload-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .main-content {
+                padding: 32px;
+            }
+        }
     </style>
 </head>
 <body>
