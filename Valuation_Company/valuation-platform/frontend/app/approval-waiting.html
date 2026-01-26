@@ -474,11 +474,11 @@
 
                 let actionButton = '';
                 if (info.status === STATUS.APPROVED) {
-                    // 승인됨 → 평가 진행하기 버튼
+                    // 승인됨 → 선금 입금하기 버튼 (Step 3.5)
                     actionButton = `
-                        <a href="./valuation/guides/guide-${method}.html?projectId=${projectId}"
+                        <a href="./valuation/deposit-payment.html?projectId=${projectId}&method=${method}"
                            class="btn-proceed">
-                            평가 진행하기 →
+                            선금 입금하기 →
                         </a>
                     `;
                 }

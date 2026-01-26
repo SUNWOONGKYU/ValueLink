@@ -609,8 +609,8 @@
                 const estimatedMinutes = Math.ceil(remainingPercent / 5); // ~5% per minute
                 updateRemainingTime(estimatedMinutes);
 
-                // Step 7 이상이면 완료 (회계사 검토 단계로 이동)
-                if (data.current_step >= 7) {
+                // Step 12 완료 시 잔금 입금 페이지로 이동
+                if (data.current_step === 12) {
                     clearInterval(progressInterval);
 
                     // 모든 단계 완료 표시
@@ -628,10 +628,16 @@
                     updateProgressBar(100);
                     document.getElementById('timeRemaining').textContent = '완료';
 
-                    // 3초 후 다음 단계로 이동
+                    // 3초 후 잔금 입금 페이지로 이동 (Step 13)
                     setTimeout(() => {
-                        window.location.href = `./accountant-review.html?projectId=${projectId}&method=${method}`;
+                        window.location.href = `./balance-payment.html?projectId=${projectId}&method=${method}`;
                     }, 3000);
+                }
+                // Step 7-11: 회계사 검토 및 보고서 작성 진행 중
+                else if (data.current_step >= 7 && data.current_step < 12) {
+                    // 회계사 검토 단계 표시 (UI 업데이트만)
+                    const currentStepInfo = EVALUATION_STEPS[method] || EVALUATION_STEPS.dcf;
+                    console.log(`Step ${data.current_step}: 회계사 검토 진행 중...`);
                 }
             } catch (error) {
                 console.error('Evaluation progress polling error:', error);
