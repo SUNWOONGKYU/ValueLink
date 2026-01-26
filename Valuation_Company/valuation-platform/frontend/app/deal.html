@@ -1053,44 +1053,11 @@
         const API_BASE = 'http://localhost:8000/api/v1/investment-tracker';
 
         // 실제 수집된 투자 뉴스 데이터 (2026년 1월 기준, 총 18개) - 뉴스 본문에서 추출한 상세 정보 포함
-        const STATIC_NEWS_DATA = [
-            { company: "SDT", ceo: "윤지원", title: "SDT, 300억 원 투자 유치", industry: "양자기술", amount: "300억원", totalFunding: "-", stage: "투자", investor: "프랙시스캐피탈(리드), NH투자증권", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031956/", date: "2026-01-19T10:00:00Z" },
-            { company: "로그프레소", ceo: "양봉열", title: "로그프레소, 160억 원 투자 유치", industry: "보안/SIEM", amount: "160억원", totalFunding: "230억원", stage: "시리즈B", investor: "KB인베스트먼트 외", founded: "2013", employees: "-", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1019960/", date: "2026-01-19T10:00:00Z" },
-            { company: "한국딥러닝", ceo: "김지현", title: "한국딥러닝, 120억 원 투자 유치 완료", industry: "문서AI", amount: "120억원", totalFunding: "120억원", stage: "시리즈A", investor: "트랜스링크(리드), SV인베스트먼트, IBK, 산업은행", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1031399/", date: "2026-01-19T10:00:00Z" },
-            { company: "아크리얼", ceo: "전승현", title: "아크리얼, 80억 원 투자 유치", industry: "덴탈AI", amount: "80억원", totalFunding: "141억원", stage: "프리A", investor: "DSC인베스트먼트, SDB인베스트먼트, 슈미트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019955/", date: "2026-01-19T10:00:00Z" },
-            { company: "콕스웨이브", ceo: "김주원", title: "콕스웨이브, 45억 원 시드 투자 유치", industry: "AI분석", amount: "45억원", totalFunding: "125억원", stage: "시드", investor: "L&S벤처캐피탈(리드), KB인베스트먼트, 현대기술투자", founded: "2021", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/01/18/coxwave-seed-investment/", date: "2026-01-25T10:00:00Z" },
-            { company: "퓨어스페이스", ceo: "이선영", title: "퓨어스페이스, 60억 원 투자 유치", industry: "푸드테크", amount: "60억원", totalFunding: "-", stage: "시리즈A", investor: "알토스벤처스", founded: "2018", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1019914/", date: "2026-01-19T10:00:00Z" },
-            { company: "주미당", ceo: "김동완", title: "주미당, 55억 원 투자 유치", industry: "향미AI", amount: "55억원", totalFunding: "-", stage: "프리A", investor: "알바트로스, 위벤처스, 인터밸류파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030380/", date: "2026-01-19T10:00:00Z" },
-            { company: "에디트콜렉티브", ceo: "전주형", title: "에디트콜렉티브, 55억 투자 유치", industry: "프롭테크", amount: "55억원", totalFunding: "55억원", stage: "시리즈A", investor: "본엔젤스, 해시드, 롯데벤처스, 스트롱벤처스", founded: "2021", employees: "14명", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017987/", date: "2026-01-19T10:00:00Z" },
-            { company: "그린다", ceo: "황규용", title: "그린다, 30억 투자 유치", industry: "친환경/SAF", amount: "30억원", totalFunding: "-", stage: "시리즈A", investor: "블루포인트", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017460/", date: "2026-01-19T10:00:00Z" },
-            { company: "십일리터", ceo: "-", title: "십일리터, 누적 20억 원 투자 유치", industry: "IT", amount: "20억원", totalFunding: "20억원", stage: "투자", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030364/", date: "2026-01-19T10:00:00Z" },
-            { company: "위드포인츠", ceo: "-", title: "위드포인츠, 15억 원 투자 유치", industry: "IT", amount: "15억원", totalFunding: "-", stage: "투자", investor: "크릿벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1030924/", date: "2026-01-19T10:00:00Z" },
-            { company: "에스와이유", ceo: "-", title: "에스와이유, 8억 원 시드 투자 유치", industry: "IT", amount: "8억원", totalFunding: "-", stage: "시드", investor: "-", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1033001/", date: "2026-01-19T10:00:00Z" },
-            { company: "코넥트", ceo: "-", title: "코넥트, 최대 2.5억 투자 확정", industry: "IT", amount: "2.5억원", totalFunding: "-", stage: "투자", investor: "Alcove", founded: "-", employees: "-", region: "경기", source: "venturesquare", source_url: "https://www.venturesquare.net/1019530/", date: "2026-01-19T10:00:00Z" },
-            { company: "엘바", ceo: "-", title: "엘바, 시드 투자 유치", industry: "영상AI", amount: "미공개", totalFunding: "-", stage: "시드", investor: "시리즈벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032554/", date: "2026-01-19T10:00:00Z" },
-            { company: "피키", ceo: "-", title: "피키, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "한리버파트너스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1020468/", date: "2026-01-19T10:00:00Z" },
-            { company: "오비터스", ceo: "-", title: "오비터스, 투자 유치", industry: "IT", amount: "미공개", totalFunding: "-", stage: "투자", investor: "하나벤처스, 롯데벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1017083/", date: "2026-01-19T10:00:00Z" },
-            { company: "아이피텍", ceo: "-", title: "아이피텍, 혁신 IP 펀드 투자 유치", industry: "IP/특허", amount: "미공개", totalFunding: "-", stage: "투자", investor: "케이그라운드벤처스", founded: "-", employees: "-", region: "-", source: "venturesquare", source_url: "https://www.venturesquare.net/1032600/", date: "2026-01-19T10:00:00Z" },
-            { company: "KRG그룹(개런티즈)", ceo: "김준영, 김기성", title: "KRG그룹 개런티즈, 시리즈A 진행", industry: "프롭테크", amount: "미공개", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "2020", employees: "7명", region: "서울", source: "venturesquare", source_url: "https://www.venturesquare.net/1011412/", date: "2026-01-19T10:00:00Z" },
-            { company: "리벨리온", ceo: "-", title: "리벨리온, 1650억 원 투자 유치", industry: "AI 반도체", amount: "1650억원", totalFunding: "-", stage: "시리즈B", investor: "-", founded: "-", employees: "-", region: "서울", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "마이리얼트립", ceo: "-", title: "마이리얼트립, 756억 원 투자 유치", industry: "여행", amount: "756억원", totalFunding: "-", stage: "투자", investor: "-", founded: "-", employees: "-", region: "서울", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "포스코어", ceo: "-", title: "포스코어, 10억 원 시드 투자 유치", industry: "-", amount: "10억원", totalFunding: "-", stage: "시드", investor: "-", founded: "-", employees: "-", region: "-", source: "nextunicorn", source_url: "https://www.nextunicorn.kr/news/single/20240125/11V4h5gSggq", date: "2026-01-25T10:00:00Z" },
-            { company: "엘리스그룹", ceo: "-", title: "엘리스그룹, 200억 원 투자 유치", industry: "에듀테크", amount: "200억원", totalFunding: "-", stage: "투자", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "에니아이", ceo: "-", title: "에니아이, 157억 원 프리시리즈 A 투자 유치", industry: "로봇키친", amount: "157억원", totalFunding: "-", stage: "프리A", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "파일러", ceo: "-", title: "파일러, 105억 원 시리즈 A 투자 유치", industry: "AI 광고", amount: "105억원", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "비햅틱스", ceo: "-", title: "비햅틱스, 100억 원 시리즈 C 투자 유치", industry: "XR", amount: "100억원", totalFunding: "-", stage: "시리즈C", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "오렌지스퀘어", ceo: "-", title: "오렌지스퀘어, 100억 원 시리즈 B 투자 유치", industry: "핀테크", amount: "100억원", totalFunding: "-", stage: "시리즈B", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" },
-            { company: "진크래프트", ceo: "-", title: "진크래프트, 100억 원 시리즈 A 투자 유치", industry: "바이오", amount: "100억원", totalFunding: "-", stage: "시리즈A", investor: "-", founded: "-", employees: "-", region: "-", source: "wowtale", source_url: "https://wowtale.net/2024/02/01/2024-01-monthly-investment-10b/", date: "2026-01-25T10:00:00Z" }
-        ];
-
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', () => {
             console.log('페이지 로드됨');
-            // 먼저 정적 데이터로 표시
-            renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
-            renderNewsTable(STATIC_NEWS_DATA);
 
-            // API 호출 시도
+            // Supabase에서 데이터 로드
             loadDashboardStats();
             loadLatestNews();
             loadNewsProviders(); // Top 10 랭킹 로드
@@ -1149,17 +1116,29 @@
                         }));
                         renderNewsCards(formattedNews);
                     } else {
-                        console.log('DB에 뉴스 없음, 정적 데이터 사용');
-                        renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                        console.log('DB에 뉴스 없음');
+                        showNewsError('수집된 투자 뉴스가 없습니다.');
                     }
                 } else {
-                    console.log('Supabase 조회 실패, 정적 데이터 사용');
-                    renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                    console.log('Supabase 조회 실패:', response.status);
+                    showNewsError('데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
                 }
             } catch (err) {
-                console.log('뉴스 로딩 실패, 정적 데이터 사용:', err.message);
-                renderNewsCards(STATIC_NEWS_DATA.slice(0, 3));
+                console.log('뉴스 로딩 실패:', err.message);
+                showNewsError('데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
             }
+        }
+
+        // 뉴스 로딩 에러 표시
+        function showNewsError(message) {
+            const newsGrid = document.getElementById('news-grid');
+            if (!newsGrid) return;
+
+            newsGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6B7280;">
+                    <p>${message}</p>
+                </div>
+            `;
         }
 
         // 뉴스 카드 렌더링
