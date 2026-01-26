@@ -1138,48 +1138,9 @@
             </div>
         </section>
     </div >
-        <!-- 우측 사이드바 -->
-        <aside class="sidebar">
-            <a href="../../../app/core/mypage.html" class="btn-mypage">
-                <span>👤</span>
-                <span>마이 페이지</span>
-            </a>
-
-            <div class="sidebar-title">평가 진행 단계</div>
-            <div class="process-steps">
-                <a href="../guides/guide-relative.html" class="process-step active">
-                    <div class="step-number">1</div>
-                    <div class="step-text">안내문 보기</div>
-                </a>
-                <a href="../../../app/projects/project-create.html" class="process-step">
-                    <div class="step-number">2</div>
-                    <div class="step-text">평가 요청하기</div>
-                </a>
-                <a href="../../../app/core/project-dashboard.html" class="process-step">
-                    <div class="step-number">3</div>
-                    <div class="step-text">관리자 승인 대기</div>
-                </a>
-                <a href="../portals/relative-portal.html" class="process-step">
-                    <div class="step-number">4</div>
-                    <div class="step-text">자료 제출하기</div>
-                </a>
-                <a href="relative-valuation.html" class="process-step">
-                    <div class="step-number">5</div>
-                    <div class="step-text">평가 결과 미리보기</div>
-                </a>
-                <a href="../../../app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">6</div>
-                    <div class="step-text">수정 요청하기</div>
-                </a>
-                <a href="../../../app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">7</div>
-                    <div class="step-text">최종 결과 보기</div>
-                </a>
-                <a href="../../../app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">8</div>
-                    <div class="step-text">보고서 발행 요청</div>
-                </a>
-            </div>
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
         </aside>
     </div>
 
@@ -1417,6 +1378,29 @@
         // Initialize
         addInputListeners();
         updateWeights();
+    </script>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from '../../components/common-sidebar.js';
+        import { getCurrentProject, STATUS } from '../../components/project-status-checker.js';
+
+        async function initSidebar() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('projectId');
+            const method = urlParams.get('method') || 'relative';
+
+            const project = await getCurrentProject();
+
+            if (project && project.project_id === projectId) {
+                const currentStep = project.current_step || 6;
+                injectSidebar('sidebar-container', currentStep, STATUS.IN_PROGRESS, method, projectId);
+            } else {
+                injectSidebar('sidebar-container', 6, STATUS.IN_PROGRESS, 'relative', null);
+            }
+        }
+
+        initSidebar();
     </script>
 </body>
 </html>

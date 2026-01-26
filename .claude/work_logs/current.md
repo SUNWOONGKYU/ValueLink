@@ -1,5 +1,1079 @@
 # Work Log - Valuation Platform Backend Development
 
+## 평가보고서 DB 저장 및 개요 페이지 구현 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 작업 개요
+실제 평가받은 12개 기업의 보고서 데이터를 DB에 저장하고, link.html에서 평가보고서 개요를 볼 수 있는 기능 구현.
+
+### 생성된 파일
+
+#### 1. create_valuation_reports_table.sql
+**위치**: `valuation-platform/backend/database/create_valuation_reports_table.sql`
+
+**테이블 구조**:
+```sql
+valuation_reports (
+    - 기업 기본 정보: company_name, industry, ceo_name, location, employee_count
+    - 평가 정보: valuation_method, valuation_amount_krw, valuation_date, evaluator
+    - 9개 섹션: executive_summary, evaluation_overview, company_analysis,
+                financial_summary, methodology, valuation_results,
+                sensitivity_analysis, conclusion, appendix
+    - 외부 링크: report_url (DART/KIND), pdf_url
+    - 메타데이터: tags (배열), key_metrics (JSONB)
+)
+```
+
+#### 2. insert_sample_valuation_reports.sql
+**위치**: `valuation-platform/backend/database/insert_sample_valuation_reports.sql`
+
+**삽입된 12개 기업 데이터**:
+
+| # | 기업명 | 평가법 | 금액/특징 | 출처 |
+|---|--------|--------|-----------|------|
+| 1 | 시프트업-테이블원 | DCF | 합병 (무증자) | DART |
+| 2 | NC소프트 | DCF | 물적분할 | DART |
+| 3 | 두산로보틱스 | 상대가치 | PER 38배 | KIND |
+| 4 | 고려아연 | 상대가치 | 공개매수 83만원 | KIND |
+| 5 | 하이브-SM엔터 | 상대가치 | 지분취득 | DART |
+| 6 | RF시스템즈-교보SPAC | 본질가치 | (자산×1+수익×1.5)/2.5 | KIND |
+| 7 | 클래시스-이루다 | 자산가치 | 순자산 2,835억원 | KIND |
+| 8 | SK이노베이션-SK E&S | 자산가치 | 합병 (자산 100조) | KIND |
+| 9 | 비상장법인 | 상증세법 | 495억원 | 조세심판원 |
+| 10 | 엔키노에이아이 | DCF | 163억원 | 비상장 (실제) |
+| 11 | 삼성전자 | 상대가치 | 578조원 | 상장사 |
+| 12 | 카카오 | 본질가치 | 3.1조원 | 상장사 |
+
+#### 3. report-summary.html ✨ 신규
+**위치**: `valuation-platform/frontend/app/report-summary.html`
+
+**주요 기능**:
+- URL 파라미터로 기업명 받기 (`?company=두산로보틱스`)
+- Supabase에서 해당 기업 보고서 조회
+- 평가보고서 9개 섹션 중 주요 5개 섹션 표시:
+  1. 요약 (Executive Summary)
+  2. 평가 개요 (Evaluation Overview)
+  3. 평가 방법론 및 가정 (Methodology)
+  4. 평가 결과 (Valuation Results)
+  5. 결론 (Conclusion)
+- 주요 지표 카드 형태로 표시 (key_metrics)
+- 태그 표시 (tags)
+- 원본 공시 링크 (DART/KIND)
+
+### link.html 수정
+
+**변경 전**:
+```html
+<a href="link-company-detail.html?id=DCF-ENKINOAI-001">엔키노에이아이</a>
+<a href="https://dart.fss.or.kr/..." target="_blank">시프트업-테이블원</a>
+```
+
+**변경 후**:
+```html
+<a href="report-summary.html?company=엔키노에이아이">엔키노에이아이</a>
+<a href="report-summary.html?company=시프트업-테이블원">시프트업-테이블원</a>
+```
+
+**효과**: 모든 기업명 클릭 → 평가보고서 개요 페이지로 이동
+
+### 데이터 출처 및 실제성
+
+**공시 출처 (상장사)**:
+- DART (전자공시): 합병, 분할 등 공시 의무 있는 거래
+- KIND (한국거래소): 주식교환, 공개매수 등
+- 조세심판원: 상속세/증여세 관련 심판 사례
+
+**비상장 기업**:
+- 공시 의무 없음 (DART/KIND에 없음)
+- 실제 평가 받은 기업 (예: 엔키노에이아이)
+- 투자 유치 등 내부 목적으로 평가
+
+### 용어 변경 ✅
+
+**변경 완료**:
+- ❌ "자본시장법 평가법"
+- ✅ "본질가치평가법"
+
+### 기술 구현
+
+#### Supabase 쿼리
+```javascript
+const { data: report, error } = await supabase
+    .from('valuation_reports')
+    .select('*')
+    .eq('company_name', companyName)
+    .single();
+```
+
+#### JSONB 필드 활용
+```javascript
+// key_metrics 예시
+{
+    "PER": 38,
+    "비교기업_평균_PER": 27,
+    "경영권_프리미엄": 43.7,
+    "예상순이익_기준연도": 2026
+}
+```
+
+### 사용자 경험
+
+1. link.html에서 기업명 클릭
+2. report-summary.html 로드
+3. 평가보고서 개요 표시:
+   - 기업 기본 정보
+   - 평가 금액 배지
+   - 주요 섹션 (5개)
+   - 주요 지표 카드
+   - 태그
+   - 원본 공시 링크 (있는 경우)
+4. "← 기업 목록으로 돌아가기" 버튼
+
+### 다음 단계
+
+1. [ ] Supabase에서 테이블 생성 (create_valuation_reports_table.sql 실행)
+2. [ ] 샘플 데이터 삽입 (insert_sample_valuation_reports.sql 실행)
+3. [ ] 실제 브라우저에서 테스트
+4. [ ] 추가 기업 데이터 수집 및 삽입
+
+---
+
+## 50%/50% 결제 시스템 구현 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 작업 개요
+선금 50% + 잔금 50% 분할 결제 시스템 구현. 승인 후 선금 입금 → 평가 진행 → 평가 완료 후 잔금 입금 → 보고서 다운로드 흐름 구축.
+
+### 생성된 파일
+
+#### 1. balance-payment.html (잔금 결제 페이지) ✨ 신규
+**위치**: `valuation-platform/frontend/app/valuation/balance-payment.html`
+
+**주요 기능**:
+- 평가 완료 축하 배너 (녹색)
+- 선금 50% 입금 완료 표시 (체크 아이콘)
+- 잔금 50% 입금 안내 (노란색 강조)
+- 무통장 입금 계좌 정보
+- 계좌번호 복사 버튼
+- 약관 동의 체크박스 (3개)
+- 잔금 입금 완료 확인 버튼
+
+**단계**: Step 13 (잔금 입금)
+
+**특징**:
+- 평가 완료 후 접근 가능
+- 선금 완료 표시 + 잔금 강조
+- 입금 확인 후 Step 14로 이동
+- 이메일로 다운로드 링크 전송 안내
+
+#### 2. deposit-payment.html (선금 결제 페이지) - 기존
+**위치**: `valuation-platform/frontend/app/valuation/deposit-payment.html`
+
+**주요 기능**:
+- 선금 50% 입금 안내 (파란색 강조)
+- 잔금 50% 안내 (회색, 나중에 납부)
+- 무통장 입금 계좌 정보
+- 약관 동의 체크박스
+- 선금 입금 완료 확인 버튼
+
+**단계**: Step 3.5 (선금 입금)
+
+### 결제 프로세스 흐름
+
+```
+Step 1-3: 프로젝트 생성 및 승인
+     ↓
+Step 3.5: 선금 50% 입금 (deposit-payment.html) ⭐ 신규 단계
+     ↓
+     [관리자 입금 확인]
+     ↓
+Step 4-12: 데이터 수집 및 평가 진행
+     ↓
+Step 13: 잔금 50% 입금 (balance-payment.html) ⭐ 신규 페이지
+     ↓
+     [관리자 입금 확인]
+     ↓
+Step 14: 최종 보고서 다운로드 (report-download.html)
+```
+
+### 결제 금액 예시 (DCF 평가법)
+
+| 항목 | 금액 |
+|------|------|
+| 평가 서비스 전액 | ₩3,000,000 |
+| **선금 (50%)** | **₩1,500,000** |
+| **잔금 (50%)** | **₩1,500,000** |
+
+### 평가법별 가격 (분할)
+
+| 평가법 | 전액 | 선금 (50%) | 잔금 (50%) |
+|--------|------|-----------|-----------|
+| DCF | ₩3,000,000 | ₩1,500,000 | ₩1,500,000 |
+| 상대가치 | ₩2,500,000 | ₩1,250,000 | ₩1,250,000 |
+| 본질가치 | ₩2,800,000 | ₩1,400,000 | ₩1,400,000 |
+| 자산가치 | ₩2,000,000 | ₩1,000,000 | ₩1,000,000 |
+| 상증세법 | ₩3,500,000 | ₩1,750,000 | ₩1,750,000 |
+
+### 사용자 경험
+
+#### 선금 입금 단계 (Step 3.5)
+1. 승인 완료 알림 수신
+2. deposit-payment.html 접속
+3. 선금 50% 입금 (무통장 입금)
+4. "선금 입금 완료 확인" 버튼 클릭
+5. 관리자 입금 확인 대기
+6. 확인 후 평가 시작 (Step 4)
+
+#### 잔금 입금 단계 (Step 13)
+1. 평가 완료 이메일 수신
+2. balance-payment.html 접속
+3. 평가 완료 축하 배너 표시
+4. 잔금 50% 입금 (무통장 입금)
+5. "잔금 입금 완료 확인" 버튼 클릭
+6. 관리자 입금 확인 대기
+7. 확인 후 보고서 다운로드 링크 이메일 전송 (Step 14)
+
+### 관리자 작업
+
+#### 선금 확인
+1. 사용자가 "선금 입금 완료 확인" 버튼 클릭
+2. 관리자가 은행 계좌 확인
+3. 입금 확인 시 DB 업데이트: `{method}_step = 4`
+4. 평가 시작
+
+#### 잔금 확인
+1. 평가 완료 후 사용자가 balance-payment.html 접속
+2. 사용자가 "잔금 입금 완료 확인" 버튼 클릭
+3. 관리자가 은행 계좌 확인
+4. 입금 확인 시 DB 업데이트: `{method}_step = 14`
+5. 이메일로 보고서 다운로드 링크 전송
+
+### 기술 구현
+
+#### deposit-payment.html
+```javascript
+// 선금 50% 계산
+const totalPrice = METHOD_PRICES[method];
+const depositAmount = Math.floor(totalPrice * 0.5);  // 1,500,000
+const balanceAmount = totalPrice - depositAmount;    // 1,500,000
+
+// 단계 확인 (Step 3.5)
+if (methodStatus.step !== 3.5) {
+    alert('선금 입금 단계가 아닙니다.');
+    return;
+}
+```
+
+#### balance-payment.html
+```javascript
+// 잔금 50% 계산
+const totalPrice = METHOD_PRICES[method];
+const depositAmount = Math.floor(totalPrice * 0.5);  // 이미 완료
+const balanceAmount = totalPrice - depositAmount;    // 1,500,000
+
+// 단계 확인 (Step 13)
+if (methodStatus.step !== 13) {
+    alert('잔금 입금 단계가 아닙니다.');
+    return;
+}
+```
+
+### 무통장 입금 정보
+
+```
+은행명: 국민은행
+계좌번호: 123-456-789012
+예금주: (주)밸류링크
+입금자명: 회사명으로 입력
+```
+
+### 약관 동의 (3개, 필수)
+
+1. 결제 대행 서비스 약관 동의
+2. 개인정보 제3자 제공 동의
+3. 환불 규정 확인
+
+### UI 특징
+
+#### deposit-payment.html (선금)
+- 선금 50% 강조 (파란색 배경)
+- 잔금 안내 (회색, 나중에 납부)
+- 평가 시작 안내
+
+#### balance-payment.html (잔금)
+- 평가 완료 축하 배너 (녹색)
+- 선금 완료 표시 (체크 아이콘)
+- 잔금 50% 강조 (노란색 배경)
+- 보고서 다운로드 안내
+
+### 환불 정책
+
+- **선금 입금 후 평가 시작 전**: 100% 환불 가능
+- **평가 시작 후**: 환불 제한 (고객센터 문의)
+- **평가 완료 후**: 환불 불가
+
+### 리다이렉트 로직 구현 ✅
+
+#### 1. approval-waiting.html (승인 대기 페이지)
+**변경 위치**: Line 475-484
+
+**Before**:
+```javascript
+actionButton = `
+    <a href="./valuation/guides/guide-${method}.html?projectId=${projectId}"
+       class="btn-proceed">
+        평가 진행하기 →
+    </a>
+`;
+```
+
+**After**:
+```javascript
+actionButton = `
+    <a href="./valuation/deposit-payment.html?projectId=${projectId}&method=${method}"
+       class="btn-proceed">
+        선금 입금하기 →
+    </a>
+`;
+```
+
+**효과**: 승인 완료 시 선금 입금 페이지로 바로 이동
+
+#### 2. evaluation-progress.html (평가 진행 페이지)
+**변경 위치**: Line 612-644
+
+**Before**:
+```javascript
+// Step 7 이상이면 완료 (회계사 검토 단계로 이동)
+if (data.current_step >= 7) {
+    setTimeout(() => {
+        window.location.href = `./accountant-review.html?projectId=${projectId}&method=${method}`;
+    }, 3000);
+}
+```
+
+**After**:
+```javascript
+// Step 12 완료 시 잔금 입금 페이지로 이동
+if (data.current_step === 12) {
+    setTimeout(() => {
+        window.location.href = `./balance-payment.html?projectId=${projectId}&method=${method}`;
+    }, 3000);
+}
+// Step 7-11: 회계사 검토 진행 중
+else if (data.current_step >= 7 && data.current_step < 12) {
+    console.log(`Step ${data.current_step}: 회계사 검토 진행 중...`);
+}
+```
+
+**효과**: 평가 완료 (Step 12) 시 잔금 입금 페이지로 이동
+
+### 완성된 프로세스 흐름 ✅
+
+```
+Step 1-2: 프로젝트 생성
+     ↓
+Step 3: 관리자 승인 (approval-waiting.html)
+     ↓
+     [승인 완료]
+     ↓
+Step 3.5: 선금 50% 입금 (deposit-payment.html) ✅ 리다이렉트
+     ↓
+     [관리자 입금 확인]
+     ↓
+Step 4-6: 데이터 수집 및 평가 진행
+     ↓
+Step 7-12: 회계사 검토 및 보고서 작성 (evaluation-progress.html)
+     ↓
+     [Step 12 완료]
+     ↓
+Step 13: 잔금 50% 입금 (balance-payment.html) ✅ 리다이렉트
+     ↓
+     [관리자 입금 확인]
+     ↓
+Step 14: 최종 보고서 다운로드 (report-download.html)
+```
+
+### 다음 단계
+
+1. [ ] 관리자 입금 확인 페이지 구현
+2. [ ] DB에 `deposit_paid`, `balance_paid` 필드 추가
+3. [ ] 이메일 알림 템플릿 추가 (선금/잔금 확인)
+4. [x] Step 3.5 프로세스 연결 (승인 → deposit-payment.html) ✅
+5. [x] Step 13 프로세스 연결 (평가 완료 → balance-payment.html) ✅
+
+---
+
+## 실시간 Polling 제거 - 장기 작업 최적화 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 작업 개요
+24-48시간 소요되는 장기 작업에 대해 2-3초 간격의 실시간 polling을 제거하여 불필요한 API 요청 제거. 페이지 로드 시 1회만 상태 확인하고, 단계 완료 시 이메일 알림으로 사용자에게 통지하는 방식으로 변경.
+
+### 문제 상황
+- **기존 방식**: 2-3초마다 백엔드 API 폴링
+  - data-collection.html: 2초 간격
+  - evaluation-progress.html: 3초 간격
+- **문제점**:
+  - 24시간 작업 시 43,200번 요청 (data-collection)
+  - 24시간 작업 시 28,800번 요청 (evaluation-progress)
+  - 서버 부하 증가, 불필요한 리소스 낭비
+
+### 해결 방법
+- **새 방식**: 페이지 로드 시 1회 상태 확인
+  - 초기 로드 시에만 `pollProgress()` 또는 `pollEvaluationProgress()` 호출
+  - `setInterval()` 제거로 반복 요청 차단
+  - 이메일 알림으로 단계 완료 통지
+
+### 수정된 파일
+
+#### 1. valuation-platform/frontend/app/valuation/data-collection.html
+**변경 위치**: Line 623-631 (startPolling 함수)
+
+**Before (2초 polling)**:
+```javascript
+function startPolling(projectId, method) {
+    // 초기 호출
+    pollProgress(projectId, method);
+
+    // 2초마다 폴링
+    pollInterval = setInterval(() => {
+        pollProgress(projectId, method);
+    }, 2000);
+}
+```
+
+**After (페이지 로드 시 1회만)**:
+```javascript
+function startPolling(projectId, method) {
+    // 페이지 로드 시 1번만 호출 (Polling 제거)
+    // 24-48시간 소요 작업이므로 실시간 polling 불필요
+    // 이메일 알림으로 단계 완료 통지
+    pollProgress(projectId, method);
+
+    // ❌ 2초 polling 제거 (24시간 작업에 43,200번 요청은 과도함)
+    // pollInterval = setInterval(() => {
+    //     pollProgress(projectId, method);
+    // }, 2000);
+}
+```
+
+#### 2. valuation-platform/frontend/app/valuation/evaluation-progress.html
+**변경 위치**: Line 681-687 (startProgressSimulation 함수)
+
+**Before (3초 polling)**:
+```javascript
+function startProgressSimulation() {
+    // 초기 호출
+    pollEvaluationProgress();
+
+    // 3초마다 폴링
+    progressInterval = setInterval(pollEvaluationProgress, 3000);
+}
+```
+
+**After (페이지 로드 시 1회만)**:
+```javascript
+function startProgressSimulation() {
+    // 페이지 로드 시 1번만 호출 (Polling 제거)
+    // 24-48시간 소요 작업이므로 실시간 polling 불필요
+    // 이메일 알림으로 단계 완료 통지
+    pollEvaluationProgress();
+
+    // ❌ 3초 polling 제거 (24시간 작업에 28,800번 요청은 과도함)
+    // progressInterval = setInterval(pollEvaluationProgress, 3000);
+}
+```
+
+### 성과
+
+| 항목 | Before (Polling) | After (1회 체크) | 개선율 |
+|------|-----------------|-----------------|--------|
+| API 요청 수 (24시간) | 43,200번 | 1번 | 99.998% 감소 |
+| 서버 부하 | 높음 | 거의 없음 | 대폭 감소 |
+| 사용자 알림 | 자동 리다이렉트 | 이메일 알림 | 더 명확함 |
+| 페이지 성능 | setInterval 사용 | 이벤트 기반 | 향상 |
+
+### 사용자 경험
+
+**변경 전**:
+1. 페이지 접속
+2. 2-3초마다 자동 새로고침
+3. 진행률 실시간 업데이트
+4. 완료 시 자동 리다이렉트
+
+**변경 후**:
+1. 페이지 접속
+2. 현재 상태 1회 확인하여 표시
+3. 사용자는 페이지를 보면서 현재 단계 확인
+4. 단계 완료 시 이메일 알림 수신
+5. 사용자가 수동으로 페이지 새로고침 (또는 이메일 링크 클릭)
+
+### 통합 포인트
+
+- **이메일 알림**: `notification_service.py`가 단계 완료 시 자동 전송
+- **페이지 상태 표시**: 14단계 사이드바로 현재 진행 단계 시각화
+- **API 엔드포인트**: `/api/v1/valuation/progress` (변경 없음)
+
+### 다음 단계
+
+1. ✅ data-collection.html polling 제거
+2. ✅ evaluation-progress.html polling 제거
+3. [ ] Git 커밋 & 푸시
+4. [ ] deposit-payment.html 통합 (50%/50% 결제 흐름)
+
+---
+
+## Frontend Data Collection API 통합 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 작업 개요
+data-collection.html 페이지를 백엔드 API와 통합하여 실제 진행 상황을 폴링하도록 수정.
+
+### 수정된 파일
+- `valuation-platform/frontend/app/valuation/data-collection.html`
+
+### 주요 변경 사항
+
+#### 1. 로컬 시뮬레이션 제거
+- **제거된 함수**: `simulateProgress()` (573-616라인)
+- **이유**: 실제 백엔드 API 호출로 대체
+
+#### 2. API 폴링 추가
+**새 함수**: `pollProgress(projectId, method)`
+```javascript
+async function pollProgress(projectId, method) {
+    try {
+        const response = await fetch(
+            `http://localhost:8000/api/v1/valuation/progress?project_id=${projectId}&method=${method}`
+        );
+        const data = await response.json();
+
+        // 진행률 업데이트
+        updateProgress(data.progress);
+
+        // 현재 작업 메시지 업데이트
+        if (data.current_step === 5 && data.message) {
+            document.getElementById('currentTaskText').textContent = data.message;
+        }
+
+        // Step 6 이상이면 평가 진행 페이지로 이동
+        if (data.current_step >= 6) {
+            clearInterval(pollInterval);
+            onCollectionComplete(projectId, method);
+        }
+    } catch (error) {
+        console.error('Progress polling error:', error);
+    }
+}
+```
+
+#### 3. 폴링 시작 함수
+**새 함수**: `startPolling(projectId, method)`
+- 초기 호출 즉시 실행
+- 2초마다 자동 폴링
+- `pollInterval` 변수로 interval 관리
+
+#### 4. 시각적 업데이트 개선
+**새 함수**: `updateDataItemsVisual(percentage)`
+- 진행률(0-100%)을 5개 데이터 항목에 분산
+- 완료된 항목: 체크 표시 (✓)
+- 진행 중 항목: 회전 아이콘 (●)
+- 대기 중 항목: 빈 원 (○)
+
+#### 5. 에러 핸들링
+**새 함수**: `showError(message)`
+- 네트워크 에러 시 사용자에게 안내
+- 재시도 로직 (최대 3회)
+- 실패 시 에러 메시지 표시
+
+#### 6. 리다이렉트 변경
+- **Before**: `./results/result-${method}.html`
+- **After**: `./evaluation-progress.html`
+- **이유**: Step 6 이상 시 평가 진행 페이지로 이동
+
+### 통합 포인트
+
+| 항목 | 값 |
+|------|-----|
+| API URL | `http://localhost:8000/api/v1/valuation/progress` |
+| Query Params | `project_id`, `method` |
+| 폴링 간격 | 2초 |
+| 응답 필드 | `progress` (0-100), `current_step` (1-14), `message` (string) |
+
+### 데이터 흐름
+
+```
+1. 페이지 로드
+   ↓
+2. startPolling() 실행
+   ↓
+3. 2초마다 pollProgress() 호출
+   ↓
+4. 백엔드 API에서 진행 상황 조회
+   ↓
+5. 진행률 UI 업데이트
+   ↓
+6. current_step >= 6 감지 시
+   ↓
+7. evaluation-progress.html로 리다이렉트
+```
+
+### UI 유지 사항
+
+- ✅ 5개 데이터 수집 항목 체크리스트
+- ✅ 진행률 바 (0-100%)
+- ✅ 현재 작업 텍스트
+- ✅ 프로젝트 정보 카드
+- ✅ 사이드바 (14단계 프로세스)
+
+### 에러 처리
+
+| 에러 상황 | 처리 방법 |
+|----------|----------|
+| 네트워크 에러 | 최대 3회 재시도 |
+| HTTP 오류 | 콘솔 로그 + 에러 메시지 표시 |
+| JSON 파싱 실패 | catch 블록에서 처리 |
+| 3회 재시도 실패 | 폴링 중단 + 에러 메시지 표시 |
+
+### 테스트 체크리스트
+
+- [ ] 백엔드 서버 실행 (`uvicorn app.main:app`)
+- [ ] 프로젝트 생성 후 데이터 수집 페이지 접속
+- [ ] 진행률 바가 실시간으로 업데이트되는지 확인
+- [ ] Step 6 도달 시 자동 리다이렉트 확인
+- [ ] 네트워크 에러 발생 시 재시도 로직 확인
+
+### 다음 단계
+
+1. **evaluation-progress.html 생성** (미생성 시)
+2. **백엔드 API 테스트**: `/api/v1/valuation/progress` 엔드포인트 동작 확인
+3. **실제 데이터 수집 로직 구현**: Step 5에서 실제 AI 작업 수행
+
+---
+
+## Valuation API Endpoints 구현 완료 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 생성된 파일
+1. `valuation-platform/backend/app/api/v1/endpoints/valuation.py` - API 엔드포인트 (539줄)
+2. `valuation-platform/backend/app/api/v1/endpoints/README_VALUATION_API.md` - API 문서
+3. `valuation-platform/backend/test_valuation_api.py` - 테스트 스크립트
+4. `Human_ClaudeCode_Bridge/Reports/valuation_api_implementation_report.md` - 구현 보고서
+
+### 수정된 파일
+1. `valuation-platform/backend/app/api/v1/__init__.py` - valuation 라우터 추가
+2. `valuation-platform/backend/app/api/v1/endpoints/__init__.py` - valuation 모듈 추가
+3. `valuation-platform/backend/requirements.txt` - pydantic-settings 추가
+
+### 구현된 API 엔드포인트
+
+#### 1. POST /api/v1/valuation/start
+- **목적**: 평가 시작
+- **입력**: `{ "project_id": str, "method": str }`
+- **동작**: `{method}_status` = 'in_progress', `{method}_step` = 5
+- **응답**: `{ "status": "started", "project_id": str, "method": str, "message": str }`
+
+#### 2. GET /api/v1/valuation/progress
+- **목적**: 진행 상황 조회
+- **입력**: Query params - `project_id`, `method`
+- **응답**: `{ "progress": int(0-100), "current_step": int(1-14), "status": str, "message": str }`
+- **진행률 계산**: `(current_step / 14) * 100`
+
+#### 3. GET /api/v1/valuation/result
+- **목적**: 평가 결과 조회
+- **입력**: Query params - `project_id`, `method`
+- **응답**: `{ "valuation_amount": float, "currency": "KRW", "report_url": str, "completed_at": str }`
+- **제약**: status가 'completed'일 때만 조회 가능
+
+#### 4. POST /api/v1/valuation/advance-step
+- **목적**: 다음 단계로 전진 (테스트용)
+- **입력**: `{ "project_id": str, "method": str }`
+- **동작**: `{method}_step` + 1, 단계 14 도달 시 status = 'completed'
+- **응답**: `{ "status": "advanced", "new_step": int(1-14), "message": str }`
+
+#### 5. POST /api/v1/valuation/update-status
+- **목적**: 상태 업데이트
+- **입력**: `{ "project_id": str, "method": str, "status": str, "step": int(optional) }`
+- **응답**: `{ "status": "updated", "message": str }`
+
+### 지원 평가법 (5개)
+
+| 평가법 | method 값 | DB 필드 |
+|--------|----------|---------|
+| DCF (현금흐름할인법) | `dcf` | `dcf_status`, `dcf_step` |
+| 상대가치평가법 | `relative` | `relative_status`, `relative_step` |
+| 본질가치평가법 | `intrinsic` | `intrinsic_status`, `intrinsic_step` |
+| 자산가치평가법 | `asset` | `asset_status`, `asset_step` |
+| 상증세법 평가법 | `inheritance_tax` | `inheritance_tax_status`, `inheritance_tax_step` |
+
+### 평가 상태 (5개)
+- `not_requested` - 신청 안 함 (기본값)
+- `pending` - 승인 대기 중
+- `approved` - 승인됨
+- `in_progress` - 진행 중
+- `completed` - 완료
+
+### 주요 기능
+
+#### 1. 프로젝트 검증
+```python
+async def validate_project_exists(project_id: str) -> dict:
+    projects = await supabase_client.select("projects", filters={"id": project_id})
+    if not projects:
+        raise HTTPException(status_code=404, detail=f"Project not found: {project_id}")
+    return projects[0]
+```
+
+#### 2. 동적 필드명 생성
+```python
+def get_field_names(method: str) -> tuple[str, str]:
+    return f"{method}_status", f"{method}_step"
+```
+
+#### 3. 진행률 계산
+```python
+def calculate_progress(step: int) -> int:
+    return int((step / MAX_STEP) * 100)
+```
+
+#### 4. 상태 메시지 생성
+```python
+def get_status_message(status: str, step: int) -> str:
+    messages = {
+        "not_requested": "평가가 신청되지 않았습니다",
+        "pending": "승인 대기 중입니다",
+        "approved": "승인되었습니다",
+        "in_progress": f"진행 중입니다 (단계 {step}/14)",
+        "completed": "평가가 완료되었습니다"
+    }
+    return messages.get(status, "알 수 없는 상태")
+```
+
+### 사용 예시
+
+#### Python
+```python
+import httpx
+
+async with httpx.AsyncClient() as client:
+    # 평가 시작
+    response = await client.post(
+        "http://localhost:8000/api/v1/valuation/start",
+        json={"project_id": "your-project-id", "method": "dcf"}
+    )
+
+    # 진행 상황 조회
+    response = await client.get(
+        "http://localhost:8000/api/v1/valuation/progress",
+        params={"project_id": "your-project-id", "method": "dcf"}
+    )
+```
+
+#### JavaScript
+```javascript
+// 평가 시작
+const response = await fetch('/api/v1/valuation/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ project_id: 'your-project-id', method: 'dcf' })
+});
+
+// 진행 상황 조회
+const progress = await fetch('/api/v1/valuation/progress?project_id=your-project-id&method=dcf');
+const data = await progress.json();
+console.log(`진행률: ${data.progress}%`);
+```
+
+### 테스트 스크립트 실행
+
+```bash
+cd valuation-platform/backend
+python test_valuation_api.py
+```
+
+**테스트 시나리오**:
+1. 프로젝트 목록 조회
+2. 평가 시작 (DCF)
+3. 진행 상황 조회
+4. 단계 전진 (5 → 6)
+5. 상태 업데이트 (completed)
+6. 최종 상태 확인
+7. 상태 초기화
+
+### 에러 처리
+
+| HTTP Status | 상황 | detail |
+|-------------|------|--------|
+| 400 | 최대 단계 도달 | Already at maximum step: 14 |
+| 400 | 평가 미완료 | Valuation is not completed yet. Current status: in_progress |
+| 404 | 프로젝트 없음 | Project not found: {project_id} |
+| 500 | 서버 오류 | Failed to start valuation: {error_message} |
+
+### 의존성 업데이트
+
+`requirements.txt`에 추가됨:
+```
+pydantic-settings==2.1.0
+```
+
+### 다음 단계
+
+1. **프론트엔드 연동**: JavaScript fetch API로 호출
+2. **인증 추가**: JWT 토큰 기반 인증
+3. **실시간 업데이트**: WebSocket 연결
+4. **평가 결과 관리**: 별도 테이블 생성
+
+---
+
+## Notification Service 생성 완료 (2026-01-27)
+
+### 작업 상태: ✅ 완료
+
+### 생성된 파일
+- `valuation-platform/backend/app/services/notification_service.py`
+
+### 주요 기능
+
+#### 1. 단계별 알림 메서드
+| Step | 메서드 | 대상 | 설명 |
+|------|--------|------|------|
+| 3 | `notify_approval_required()` | 관리자 | 승인 필요 알림 |
+| 5 | `notify_step_complete()` | 사용자 | 데이터 수집 완료 |
+| 6 | `notify_step_complete()` | 사용자 | 평가 완료 |
+| 7 | `notify_step_complete()` | 사용자 | 회계사 검토 시작 |
+| 8 | `notify_review_complete()` | 사용자 | 검토 완료 |
+| 9 | `notify_draft_ready()` | 사용자 | 초안 준비 완료 |
+| 10 | `notify_revision_requested()` | 회계사 | 수정 요청 |
+| 12 | `notify_final_ready()` | 사용자 | 최종 보고서 준비 |
+| 13 | `notify_payment_required()` | 사용자 | 결제 필요 |
+| 14 | `notify_report_delivered()` | 사용자 | 보고서 전달 완료 |
+
+#### 2. 이메일 전송 기능
+- **SMTP 통합**: 설정 시 실제 이메일 전송
+- **Stub 모드**: SMTP 미설정 시 콘솔 로깅만
+- **HTML 지원**: HTML 형식 이메일 전송
+- **다중 수신자**: 관리자/회계사 그룹 전송
+
+#### 3. 사용자 설정 확인
+- `email_notifications`: 이메일 알림 설정
+- `sms_notifications`: SMS 알림 설정 (향후)
+- 사용자가 비활성화하면 알림 미전송
+
+#### 4. 내부 헬퍼 메서드
+- `_get_project_data()`: 프로젝트 정보 조회
+- `_get_user_data()`: 사용자 정보 조회
+- `_get_user_preferences()`: 알림 설정 조회
+- `_get_step_message()`: 단계별 메시지 템플릿
+- `_notify_user_step()`: 공통 사용자 알림 로직
+
+#### 5. SMS 지원 (향후)
+- `send_sms()`: Twilio/AWS SNS 연동 준비
+- 현재는 콘솔 로깅만 구현
+
+### 알림 트리거 매핑
+
+```
+Step 3  → notify_approval_required()      → 관리자 (승인 필요)
+Step 5  → notify_step_complete(step=5)    → 사용자 (데이터 수집 완료)
+Step 6  → notify_step_complete(step=6)    → 사용자 (평가 완료)
+Step 7  → notify_step_complete(step=7)    → 사용자 (검토 시작)
+Step 8  → notify_review_complete()        → 사용자 (검토 완료)
+Step 9  → notify_draft_ready()            → 사용자 (초안 준비)
+Step 10 → notify_revision_requested()     → 회계사 (수정 요청)
+Step 12 → notify_final_ready()            → 사용자 (최종 보고서)
+Step 13 → notify_payment_required()       → 사용자 (결제 필요)
+Step 14 → notify_report_delivered()       → 사용자 (전달 완료)
+```
+
+### 기술 구현
+
+#### 이메일 전송
+```python
+# SMTP 설정 (settings.py에서)
+SMTP_HOST = "smtp.gmail.com"
+SMTP_PORT = 587
+SMTP_USER = "your-email@gmail.com"
+SMTP_PASSWORD = "your-app-password"
+FROM_EMAIL = "noreply@valuelink.co.kr"
+
+# 사용 예시
+await notification_service.send_email(
+    to="user@example.com",
+    subject="평가가 완료되었습니다",
+    body="<h2>평가 완료</h2><p>초안을 확인해주세요.</p>",
+    html=True
+)
+```
+
+#### 단계 완료 알림
+```python
+# Progress Service에서 호출
+await notification_service.notify_step_complete(
+    project_id="proj_123",
+    method="income",
+    step=9
+)
+```
+
+#### 승인 요청 알림
+```python
+# Step 3에서 호출
+await notification_service.notify_approval_required(
+    project_id="proj_123",
+    method="income"
+)
+```
+
+### 메시지 템플릿
+
+각 단계별로 사전 정의된 HTML 이메일 템플릿 제공:
+- 제목: 간결하고 명확
+- 본문: 회사명, 평가 방법, 프로젝트 ID 포함
+- CTA: 고객 페이지 또는 관리자 페이지 링크
+
+### 향후 확장
+
+1. **외부 서비스 연동**
+   - Resend API
+   - SendGrid API
+   - Twilio (SMS)
+   - AWS SNS (SMS)
+
+2. **고급 기능**
+   - 이메일 템플릿 시스템
+   - 알림 이력 저장
+   - 재전송 로직
+   - 알림 스케줄링
+
+3. **개인화**
+   - 사용자별 템플릿
+   - 다국어 지원
+   - 시간대 고려
+
+### 의존성
+- `supabase_client`: 프로젝트/사용자 조회
+- `smtplib`: 기본 SMTP (Python 내장)
+- `email.mime`: MIME 메시지 생성
+
+### 사용 예시
+
+```python
+from app.services.notification_service import notification_service
+
+# 단계 완료 알림
+await notification_service.notify_step_complete(
+    project_id="proj_123",
+    method="income",
+    step=9
+)
+
+# 승인 요청 (관리자에게)
+await notification_service.notify_approval_required(
+    project_id="proj_123",
+    method="income"
+)
+
+# 수정 요청 (회계사에게)
+await notification_service.notify_revision_requested(
+    project_id="proj_123",
+    method="income"
+)
+
+# 직접 이메일 전송
+await notification_service.send_email(
+    to="user@example.com",
+    subject="테스트",
+    body="<h2>테스트 이메일</h2>",
+    html=True
+)
+```
+
+### 파일 위치
+```
+valuation-platform/backend/app/services/notification_service.py
+```
+
+---
+
+## 평가보고서 수령 페이지 생성 완료 (2026-01-26)
+
+### 작업 상태: ✅ 완료
+
+### 생성된 파일
+- `valuation-platform/frontend/app/valuation/report-download.html`
+
+### 주요 기능
+1. **성공 메시지 섹션**
+   - 🎉 축하 아이콘
+   - "평가가 완료되었습니다!" 메시지
+   - Confetti 애니메이션 (페이지 로드 시)
+
+2. **프로젝트 정보 카드**
+   - 프로젝트 번호, 회사명, 평가법, 평가 기준일 표시
+
+3. **평가보고서 요약**
+   - 평가 완료일
+   - 평가 금액 (결과값)
+   - 담당 회계사명 (선웅규 회계사)
+   - 보고서 버전 (v1.0)
+
+4. **다운로드 섹션**
+   - 📄 메인 보고서 카드
+     - 파일명: `{회사명}_기업가치평가보고서_{평가법}_{날짜}.pdf`
+     - 파일 크기 표시
+     - 대형 다운로드 버튼 (녹색)
+   - 📊 첨부 파일 (재무 데이터 엑셀, 추가 자료 ZIP)
+
+5. **보고서 미리보기**
+   - 첫 4페이지 썸네일 이미지
+   - "전체 미리보기" 버튼 (PDF 새 탭 열기)
+
+6. **다음 단계 섹션**
+   - 평가보고서 활용 가이드 링크
+   - 추가 평가 신청 버튼
+   - 문의하기 버튼
+
+7. **버전 이력**
+   - 이전 버전 보고서 목록 표시
+   - 각 버전별 다운로드 링크
+
+8. **만족도 조사**
+   - 별점 5개 (클릭 가능)
+   - 피드백 텍스트 박스
+   - 의견 제출 버튼
+   - 제출 완료 메시지
+
+9. **사이드바**
+   - 14단계 프로세스 (Step 14: 완료 상태)
+   - 진행 중인 평가법 표시
+   - 담당 회계사 정보
+
+### 기술 구현
+- **Confetti 애니메이션**: CSS keyframes로 축하 효과
+- **다운로드 카운트 추적**: JavaScript로 클릭 수 기록
+- **별점 시스템**: 인터랙티브 별점 선택
+- **상태 확인**: 평가 완료 상태가 아니면 리다이렉트
+- **반응형 디자인**: 모바일/태블릿 대응
+
+### UI/UX
+- 성공 중심 디자인 (녹색 강조)
+- 대형 다운로드 CTA 버튼
+- 전문적인 보고서 카드 레이아웃
+- 축하 분위기 조성 (Confetti 효과)
+
+### 파일 위치
+```
+valuation-platform/frontend/app/valuation/report-download.html
+```
+
+---
+
 ## 🤖 Gemini CLI 웹 스크래핑 통합 (2026-01-26) 🎉
 
 ### 작업 상태: ✅ 완료

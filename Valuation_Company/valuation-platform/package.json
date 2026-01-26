@@ -1,0 +1,11 @@
+{
+  "name": "valuation-platform",
+  "version": "1.0.0",
+  "description": "ValueLink Valuation Platform",
+  "main": "index.js",
+  "scripts": {
+    "setup-db": "node setup-db.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
