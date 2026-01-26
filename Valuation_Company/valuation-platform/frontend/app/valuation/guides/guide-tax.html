@@ -235,154 +235,10 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
-        /* 우측 사이드바 - 프로세스 */
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            height: fit-content;
-            position: sticky;
-            top: 110px;
-            align-self: flex-start;
-            max-height: calc(100vh - 130px);
-            overflow-y: auto;
-        }
-
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--deep-green);
-            background: #D1FAE5;
-            margin-bottom: 20px;
-            padding: 12px 16px;
-            border-radius: 8px;
-        }
-
-        .process-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .process-step {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #6B7280;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .process-step:hover {
-            background: #ECFDF5;
-        }
-
-        .process-step.active {
-            background: #D1FAE5;
-            color: var(--deep-green);
-            font-weight: 600;
-        }
-
-        .process-step.completed {
-            color: #059669;
-        }
-
-        .step-number {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #E5E7EB;
-            color: #6B7280;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* 우측 사이드바 래퍼 */
+        .sidebar-wrapper {
+            width: 320px;
             flex-shrink: 0;
-        }
-
-        .process-step.active .step-number {
-            background: var(--deep-green);
-            color: white;
-        }
-
-        .process-step.completed .step-number {
-            background: #059669;
-            color: white;
-        }
-
-        .step-text {
-            flex: 1;
-        }
-
-        /* 마이 페이지 버튼 */
-        .btn-mypage {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 600;
-            color: white;
-            background: #1D4ED8;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            margin-bottom: 24px;
-        }
-
-        .btn-mypage:hover {
-            background: #1E40AF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
-        }
-
-        /* 담당 공인회계사 섹션 */
-        .accountant-section {
-            margin-top: 32px;
-            padding-top: 32px;
-            border-top: 1px solid #E5E7EB;
-        }
-
-        .accountant-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .accountant-link:hover {
-            background: #EFF6FF;
-            border-color: #BFDBFE;
-        }
-
-        .accountant-icon {
-            font-size: 24px;
-        }
-
-        .accountant-name {
-            flex: 1;
-            font-size: 15px;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .arrow {
-            font-size: 16px;
-            color: #1D4ED8;
         }
 
         /* 반응형 */
@@ -391,9 +247,8 @@
                 flex-direction: column;
             }
 
-            .sidebar {
+            .sidebar-wrapper {
                 width: 100%;
-                position: static;
             }
         }
 
@@ -458,22 +313,8 @@
                 font-size: 24px;
             }
 
-            .sidebar {
-                padding: 20px;
-            }
-
-            .sidebar-title {
-                font-size: 16px;
-            }
-
-            .process-step {
-                padding: 10px 12px;
-                font-size: 13px;
-            }
-
-            .btn-mypage {
-                padding: 12px;
-                font-size: 14px;
+            .sidebar-wrapper {
+                width: 100%;
             }
         }
     </style>
@@ -881,53 +722,9 @@
             </div>
         </div>
 
-        <!-- 우측 사이드바 - 프로세스 -->
-        <aside class="sidebar">
-            <div class="sidebar-title">평가 진행 단계</div>
-            <div class="process-steps">
-                <div class="process-step active">
-                    <div class="step-number">1</div>
-                    <div class="step-text">안내문 보기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">2</div>
-                    <div class="step-text">평가 요청하기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">3</div>
-                    <div class="step-text">관리자 승인 대기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">4</div>
-                    <div class="step-text">자료 제출하기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">5</div>
-                    <div class="step-text">평가 결과 미리보기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">6</div>
-                    <div class="step-text">수정 요청하기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">7</div>
-                    <div class="step-text">최종 결과 보기</div>
-                </div>
-                <div class="process-step">
-                    <div class="step-number">8</div>
-                    <div class="step-text">보고서 발행 요청</div>
-                </div>
-            </div>
-
-            <!-- 담당 공인회계사 섹션 -->
-            <div class="accountant-section">
-                <div class="sidebar-title">담당 공인회계사</div>
-                <a href="../../accountant-profile.html" class="accountant-link">
-                    <span class="accountant-icon">👤</span>
-                    <span class="accountant-name">선웅규 회계사</span>
-                    <span class="arrow">→</span>
-                </a>
-            </div>
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
         </aside>
     </div>
 
@@ -992,7 +789,7 @@
                 const header = item.querySelector('.accordion-header');
                 header.addEventListener('click', () => {
                     const content = item.querySelector('.accordion-content');
-                    
+
                     // Toggle active class
                     item.classList.toggle('active');
 
@@ -1004,6 +801,139 @@
                 });
             });
         });
+    </script>
+
+    <!-- 사이드바 및 상태 체크 -->
+    <script type="module">
+        import { injectSidebar } from '../../components/common-sidebar.js';
+        import { checkMethodStatus, getCurrentProject, STATUS, getStatusDisplay } from '../../components/project-status-checker.js';
+
+        async function initPage() {
+            try {
+                // URL에서 projectId 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                const projectId = urlParams.get('projectId');
+
+                if (!projectId) {
+                    // 프로젝트 ID 없으면 현재 프로젝트 조회
+                    const project = await getCurrentProject();
+                    if (!project) {
+                        showNotLoggedIn();
+                        return;
+                    }
+                    // projectId 설정
+                    urlParams.set('projectId', project.project_id);
+                    window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+                }
+
+                // 상속세법 평가법 상태 확인 (DB 필드명: inheritance_tax)
+                const taxStatus = await checkMethodStatus(projectId, 'inheritance_tax');
+
+                // 상태에 따른 처리
+                if (taxStatus.status === STATUS.NOT_REQUESTED) {
+                    showNotRequested();
+                    return;
+                } else if (taxStatus.status === STATUS.PENDING) {
+                    showPendingApproval();
+                    return;
+                }
+
+                // 승인됨 (approved, in_progress, completed) → 정상 표시
+                // 사이드바 렌더링 (1단계 - 서비스 안내)
+                injectSidebar(
+                    'sidebar-container',
+                    1,                    // 1단계 (서비스 안내)
+                    taxStatus.status,     // 평가법 상태
+                    'inheritance_tax',    // 상속세법 평가법 (DB 필드명)
+                    projectId             // 프로젝트 ID
+                );
+
+            } catch (error) {
+                console.error('페이지 초기화 오류:', error);
+                showError();
+            }
+        }
+
+        function showNotLoggedIn() {
+            document.querySelector('.main-area').innerHTML = `
+                <div style="text-align: center; padding: 100px 20px;">
+                    <div style="font-size: 64px; margin-bottom: 24px;">🔒</div>
+                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
+                        로그인이 필요합니다
+                    </h2>
+                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
+                        상속세법 평가법 가이드를 보려면 먼저 로그인해주세요.
+                    </p>
+                    <a href="../../valuation.html"
+                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
+                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
+                        홈으로 돌아가기
+                    </a>
+                </div>
+            `;
+        }
+
+        function showNotRequested() {
+            document.querySelector('.main-area').innerHTML = `
+                <div style="text-align: center; padding: 100px 20px;">
+                    <div style="font-size: 64px; margin-bottom: 24px;">⚫</div>
+                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
+                        상속세법 평가법을 신청하지 않았습니다
+                    </h2>
+                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
+                        이 평가법을 이용하려면 먼저 평가를 신청해주세요.
+                    </p>
+                    <a href="../../projects/project-create.html"
+                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
+                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
+                        평가 신청하기
+                    </a>
+                </div>
+            `;
+        }
+
+        function showPendingApproval() {
+            document.querySelector('.main-area').innerHTML = `
+                <div style="text-align: center; padding: 100px 20px;">
+                    <div style="font-size: 64px; margin-bottom: 24px;">🟡</div>
+                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
+                        관리자 승인 대기 중
+                    </h2>
+                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
+                        상속세법 평가법 신청이 접수되었습니다.<br>
+                        관리자 승인 후 이용하실 수 있습니다.
+                    </p>
+                    <a href="../../approval-waiting.html"
+                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
+                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
+                        승인 상태 확인하기
+                    </a>
+                </div>
+            `;
+        }
+
+        function showError() {
+            document.querySelector('.main-area').innerHTML = `
+                <div style="text-align: center; padding: 100px 20px;">
+                    <div style="font-size: 64px; margin-bottom: 24px;">❌</div>
+                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
+                        오류가 발생했습니다
+                    </h2>
+                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
+                        페이지를 불러오는 중 문제가 발생했습니다.<br>
+                        잠시 후 다시 시도해주세요.
+                    </p>
+                    <a href="../../valuation.html"
+                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
+                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
+                        홈으로 돌아가기
+                    </a>
+                </div>
+            `;
+        }
+
+        // 페이지 로드 시 초기화
+        initPage();
     </script>
 </body>
 </html>

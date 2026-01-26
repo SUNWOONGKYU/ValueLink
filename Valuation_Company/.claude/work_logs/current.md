@@ -397,6 +397,240 @@ C:\ValueLink\Valuation_Company\scripts\investment-news-scraper\
 
 ---
 
+## 2026-01-26: Phase 1 - 가이드 페이지 수정 (공통 사이드바 적용)
+
+### 작업 상태: ✅ 완료
+
+---
+
+## 작업 내용
+
+5개 평가법 가이드 페이지를 모두 공통 사이드바 컴포넌트를 사용하도록 수정했습니다.
+
+### 수정된 페이지 (5개)
+1. ✅ `guide-dcf.html` (수동 수정)
+2. ✅ `guide-relative.html` (Task 에이전트)
+3. ✅ `guide-intrinsic.html` (Task 에이전트)
+4. ✅ `guide-asset.html` (Task 에이전트)
+5. ✅ `guide-tax.html` (Task 에이전트)
+
+### 각 파일의 공통 변경사항
+
+#### 1. 하드코딩된 사이드바 HTML 제거
+```html
+<!-- Before: 150+ 줄의 하드코딩된 HTML -->
+<aside class="sidebar">
+  <div class="sidebar-title">평가 프로세스</div>
+  <div class="process-steps">
+    <div class="process-step active">
+      <!-- 8단계 프로세스 -->
+    </div>
+  </div>
+  <div class="accountant-section">
+    <!-- 담당 공인회계사 섹션 -->
+  </div>
+</aside>
+
+<!-- After: 단일 컨테이너 -->
+<aside id="sidebar-container" class="sidebar-wrapper"></aside>
+```
+
+#### 2. 사이드바 관련 CSS 제거
+**제거된 클래스**:
+- `.sidebar`, `.sidebar-title`
+- `.process-steps`, `.process-step`, `.step-number`, `.step-label`
+- `.btn-mypage`
+- `.accountant-section`, `.accountant-header`, `.accountant-profile`, `.accountant-info`
+
+**유지된 클래스**:
+```css
+.sidebar-wrapper {
+    width: 320px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+    .sidebar-wrapper {
+        width: 100%;
+    }
+}
+```
+
+#### 3. 모듈 스크립트 추가
+각 가이드 페이지에 평가법별 상태 확인 로직 추가:
+
+```javascript
+<script type="module">
+    import { injectSidebar } from '../../components/common-sidebar.js';
+    import { checkMethodStatus, getCurrentProject, STATUS } from '../../components/project-status-checker.js';
+
+    async function initPage() {
+        // 1. URL 파라미터에서 projectId 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId');
+
+        // 2. 로그인 체크
+        const supabaseClient = /* ... */;
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (!session) {
+            showNotLoggedIn(); // 🔒 로그인 필요
+            return;
+        }
+
+        // 3. 평가법 상태 확인 (평가법별로 다름)
+        const methodStatus = await checkMethodStatus(projectId, 'dcf'); // 또는 'relative', 'intrinsic', 'asset', 'inheritance_tax'
+
+        // 4. 상태별 처리
+        if (methodStatus.status === STATUS.NOT_REQUESTED) {
+            showNotRequested(); // ⚫ 신청하지 않음
+            return;
+        } else if (methodStatus.status === STATUS.PENDING) {
+            showPendingApproval(); // 🟡 승인 대기 중
+            return;
+        }
+
+        // 5. 승인된 경우 → 14단계 사이드바 표시
+        injectSidebar(
+            'sidebar-container',  // 컨테이너 ID
+            1,                    // 현재 단계 (서비스 안내)
+            methodStatus.status,  // 상태
+            'dcf',               // 평가법 코드
+            projectId            // 프로젝트 ID
+        );
+    }
+
+    initPage();
+</script>
+```
+
+### 평가법별 메서드 코드
+
+| 파일 | 메서드 코드 | 평가법 이름 |
+|------|-----------|------------|
+| guide-dcf.html | `'dcf'` | 현금흐름할인법 (DCF) |
+| guide-relative.html | `'relative'` | 상대가치평가법 |
+| guide-intrinsic.html | `'intrinsic'` | 내재가치평가법 |
+| guide-asset.html | `'asset'` | 자산가치평가법 |
+| guide-tax.html | `'inheritance_tax'` | 상속세법 |
+
+⚠️ **주의**: guide-tax.html은 DB 필드명인 `inheritance_tax` 사용 (tax 아님)
+
+### 4가지 상태 처리
+
+#### 상태 1: 로그인 안 함
+```
+🔒 로그인이 필요합니다
+
+{평가법명} 가이드를 보려면 먼저 로그인해주세요.
+
+[로그인 하기]
+```
+
+#### 상태 2: 신청 안 함 (not_requested)
+```
+⚫ {평가법명}을 신청하지 않았습니다
+
+이 평가법을 사용하려면 먼저 프로젝트를 생성하고
+{평가법명}을 선택해주세요.
+
+[새 프로젝트 만들기]
+```
+
+#### 상태 3: 승인 대기 (pending)
+```
+🟡 {평가법명} 신청이 접수되었습니다
+
+관리자 승인을 기다리고 있습니다.
+승인이 완료되면 평가를 시작할 수 있습니다.
+
+[승인 대기 페이지로 이동]
+```
+
+#### 상태 4: 승인됨 (approved+)
+- 14단계 프로세스 사이드바 표시
+- 현재 단계 하이라이트
+- 프로젝트 정보 표시 (평가법 + 상태)
+- 담당 공인회계사 섹션
+- 단계별 링크 활성화
+
+---
+
+## 기술적 개선사항
+
+### 1. 컴포넌트 재사용
+- **Before**: 5개 파일 × 150줄 = 750줄 중복 코드
+- **After**: 공통 컴포넌트 1개 + 각 파일 100줄 = 약 90% 코드 감소
+
+### 2. 유지보수성
+- 사이드바 수정 시 1개 파일만 수정 (common-sidebar.js)
+- 평가법별 차이는 메서드 코드 1개로 처리
+
+### 3. 확장성
+- 새 평가법 추가 시 DB 필드 + 가이드 페이지만 추가
+- 14단계 프로세스 변경 시 공통 컴포넌트만 수정
+
+---
+
+## 생성/수정된 파일 (5개)
+
+### 수정된 파일
+1. `valuation-platform/frontend/app/valuation/guides/guide-dcf.html`
+2. `valuation-platform/frontend/app/valuation/guides/guide-relative.html`
+3. `valuation-platform/frontend/app/valuation/guides/guide-intrinsic.html`
+4. `valuation-platform/frontend/app/valuation/guides/guide-asset.html`
+5. `valuation-platform/frontend/app/valuation/guides/guide-tax.html`
+
+---
+
+## 다음 단계 (Phase 2)
+
+### 신규 페이지 생성 (7개)
+4~14단계 중 기존 페이지가 없는 단계들을 신규 생성:
+
+| # | 단계명 | 파일명 | 설명 |
+|---|--------|--------|------|
+| 5 | 데이터 수집 중 | data-collection.html | AI가 데이터 수집 중 |
+| 6 | 평가 진행 중 | evaluation-progress.html | 엔진이 평가 진행 중 |
+| 7 | 공인회계사 검토 중 | accountant-review.html | 회계사 검토 중 |
+| 8 | 평가보고서 초안 생성 | draft-generation.html | AI가 초안 생성 중 |
+| 10 | 수정 요청 | revision-request.html | 고객이 수정 요청 |
+| 11 | 평가보고서 최종안 작성 | final-preparation.html | 회계사가 최종안 작성 |
+| 13 | 결제하기 | payment.html | 결제 진행 |
+| 14 | 평가보고서 수령 | report-download.html | 보고서 다운로드 |
+
+**페이지 공통 구조**:
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- ... -->
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <h1>{단계명}</h1>
+            <!-- 단계별 고유 컨텐츠 -->
+        </main>
+
+        <!-- 14단계 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper"></aside>
+    </div>
+
+    <script type="module">
+        import { injectSidebar } from './components/common-sidebar.js';
+        // 평가법별 상태 확인 및 사이드바 주입
+    </script>
+</body>
+</html>
+```
+
+---
+
 **최종 업데이트**: 2026-01-26
-**상태**: Phase 1 시작 예정
-**예상 완료**: 2주 (Phase 1-5)
+**Phase 1 상태**: ✅ 완료
+**Phase 2 상태**: ⏳ 대기 중
+**예상 완료**: 1주 (Phase 2)
