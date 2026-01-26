@@ -2288,6 +2288,197 @@ DCF 평가법 보고서가 완성되었습니다.
 
 ---
 
+---
+
+## 2026-01-27: notification_service.py Resend API 통합
+
+### 작업 상태: ✅ 완료
+
+---
+
+## 작업 내용
+
+notification_service.py를 SMTP에서 Resend API로 전환했습니다.
+
+### 변경사항
+
+**제거된 기능**:
+- ❌ SMTP 이메일 전송
+- ❌ smtplib, email.mime import
+- ❌ SMTP 설정 (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD)
+
+**추가된 기능**:
+- ✅ Resend API 통합
+- ✅ httpx를 사용한 HTTP 요청
+- ✅ RESEND_API_KEY 환경변수 확인
+- ✅ API Key 미설정 시 콘솔 로그 (graceful fallback)
+
+### 코드 변경
+
+**Before (SMTP)**:
+```python
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+def __init__(self):
+    self.smtp_enabled = hasattr(settings, 'SMTP_HOST')
+    if self.smtp_enabled:
+        self.smtp_host = settings.SMTP_HOST
+        self.smtp_port = settings.SMTP_PORT
+        # ...
+
+async def send_email(to, subject, body, html=False):
+    msg = MIMEMultipart()
+    # ...
+    with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
+        server.starttls()
+        server.login(self.smtp_user, self.smtp_password)
+        server.send_message(msg)
+```
+
+**After (Resend API)**:
+```python
+def __init__(self):
+    self.resend_enabled = hasattr(settings, 'RESEND_API_KEY')
+    self.from_email = 'ValueLink <noreply@valuelink.co.kr>'
+    if self.resend_enabled:
+        logger.info("✅ Resend API configured")
+    else:
+        logger.warning("⚠️ RESEND_API_KEY not configured")
+
+async def send_email(to, subject, body, html=False):
+    import httpx
+
+    url = "https://api.resend.com/emails"
+    headers = {
+        "Authorization": f"Bearer {resend_api_key}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "from": "ValueLink <noreply@valuelink.co.kr>",
+        "to": [to],
+        "subject": subject,
+        "html": body if html else None,
+        "text": body if not html else None
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, headers=headers, json=payload)
+
+        if response.status_code == 200:
+            logger.info(f"✅ Email sent successfully to {to} via Resend")
+            return True
+        else:
+            logger.error(f"❌ Resend API error: {response.status_code}")
+            return False
+```
+
+### 환경변수 설정
+
+**settings.py 또는 .env 파일에 추가**:
+```python
+# Resend API (이메일 전송)
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxx"
+FROM_EMAIL="ValueLink <noreply@valuelink.co.kr>"
+```
+
+**Resend API Key 발급 방법**:
+1. https://resend.com 가입
+2. API Keys 섹션에서 새 키 생성
+3. `re_` 로 시작하는 키 복사
+4. .env 파일에 `RESEND_API_KEY=re_xxxxx` 추가
+
+### API 엔드포인트
+
+**Resend API 사양**:
+- URL: `https://api.resend.com/emails`
+- Method: `POST`
+- Headers:
+  - `Authorization: Bearer {API_KEY}`
+  - `Content-Type: application/json`
+- Body:
+  ```json
+  {
+    "from": "ValueLink <noreply@valuelink.co.kr>",
+    "to": ["user@example.com"],
+    "subject": "평가가 완료되었습니다",
+    "html": "<h1>Hello</h1>",
+    "text": "Hello"
+  }
+  ```
+
+### 장점
+
+**Resend vs SMTP**:
+| 항목 | SMTP | Resend |
+|------|------|--------|
+| 설정 복잡도 | 높음 (호스트, 포트, 인증) | 낮음 (API Key만) |
+| 전송 속도 | 느림 | 빠름 (HTTP) |
+| 전송 안정성 | 중간 | 높음 |
+| 에러 처리 | 복잡 | 간단 (HTTP 상태 코드) |
+| 로그/통계 | 없음 | Resend 대시보드 제공 |
+| 비용 | 무료 (Gmail 제한) | 월 3,000통 무료 |
+
+**Resend 특징**:
+- ✅ 간단한 REST API
+- ✅ 빠른 전송 속도
+- ✅ 대시보드에서 전송 내역 확인
+- ✅ 이메일 템플릿 지원
+- ✅ 도메인 인증 (DKIM, SPF)
+- ✅ 발송 통계 제공
+
+### 테스트 방법
+
+**1. Resend API Key 설정**:
+```bash
+# .env 파일
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxx
+FROM_EMAIL=ValueLink <noreply@valuelink.co.kr>
+```
+
+**2. 테스트 스크립트 실행**:
+```python
+from app.services.notification_service import notification_service
+
+# 테스트 이메일 전송
+await notification_service.send_email(
+    to="test@example.com",
+    subject="테스트 이메일",
+    body="<h1>안녕하세요</h1><p>이것은 테스트입니다.</p>",
+    html=True
+)
+```
+
+**3. Resend 대시보드 확인**:
+- https://resend.com/emails
+- 전송 내역, 상태, 오픈율 확인
+
+### Fallback 동작
+
+**RESEND_API_KEY 미설정 시**:
+- 에러 발생 안 함 (graceful fallback)
+- 콘솔에 로그만 출력:
+  ```
+  ⚠️ RESEND_API_KEY not configured. Email not sent.
+  ===== EMAIL NOTIFICATION (NOT SENT) =====
+  To: user@example.com
+  Subject: 평가가 완료되었습니다
+  Body: ...
+  =========================================
+  ```
+
+---
+
+## 수정된 파일
+
+**파일**: `valuation-platform/backend/app/services/notification_service.py`
+
+**변경 라인 수**: 약 30줄 수정
+
+---
+
 **작업 완료일**: 2026-01-27
 **Phase 4 상태**: ✅ 완료
 **다음 단계**: Production 배포 준비 (환경변수, 도메인 설정 등)

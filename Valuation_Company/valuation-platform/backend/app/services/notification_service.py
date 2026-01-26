@@ -1,15 +1,12 @@
 """
 Notification Service
-이메일 및 SMS 알림 서비스
+이메일 알림 서비스 (Resend API 사용)
 
 @description 평가 프로세스의 주요 단계에서 사용자에게 알림 전송
 """
 import logging
 from typing import Dict, Optional, List
 from datetime import datetime
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 from app.db.supabase_client import supabase_client
 from app.core.config import settings
@@ -25,16 +22,14 @@ class NotificationService:
 
     def __init__(self):
         self.supabase = supabase_client
-        # SMTP 설정 (향후 Resend, SendGrid 등으로 교체 가능)
-        self.smtp_enabled = hasattr(settings, 'SMTP_HOST') and settings.SMTP_HOST
-        if self.smtp_enabled:
-            self.smtp_host = settings.SMTP_HOST
-            self.smtp_port = settings.SMTP_PORT
-            self.smtp_user = settings.SMTP_USER
-            self.smtp_password = settings.SMTP_PASSWORD
-            self.from_email = settings.FROM_EMAIL
+        # Resend API 설정
+        self.resend_enabled = hasattr(settings, 'RESEND_API_KEY') and settings.RESEND_API_KEY
+        if self.resend_enabled:
+            self.from_email = getattr(settings, 'FROM_EMAIL', 'ValueLink <noreply@valuelink.co.kr>')
+            logger.info("✅ Resend API configured. Emails will be sent via Resend.")
         else:
-            logger.info("SMTP not configured. Notifications will be logged only.")
+            self.from_email = 'ValueLink <noreply@valuelink.co.kr>'
+            logger.warning("⚠️ RESEND_API_KEY not configured. Notifications will be logged only.")
 
     # ============================================================
     # 단계별 알림 메서드
@@ -342,7 +337,7 @@ class NotificationService:
         html: bool = False
     ) -> bool:
         """
-        이메일 전송
+        이메일 전송 (Resend API 사용)
 
         Args:
             to: 수신자 이메일
@@ -354,8 +349,12 @@ class NotificationService:
             bool: 전송 성공 여부
         """
         try:
-            if not self.smtp_enabled:
-                # SMTP 미설정 시 콘솔 로그만
+            # Resend API Key 확인
+            resend_api_key = getattr(settings, 'RESEND_API_KEY', None)
+
+            if not resend_api_key:
+                # Resend API Key 미설정 시 콘솔 로그만
+                logger.warning("⚠️ RESEND_API_KEY not configured. Email not sent.")
                 logger.info(f"""
                 ===== EMAIL NOTIFICATION (NOT SENT) =====
                 To: {to}
@@ -366,25 +365,35 @@ class NotificationService:
                 """)
                 return True
 
-            # SMTP를 통한 이메일 전송
-            msg = MIMEMultipart('alternative')
-            msg['From'] = self.from_email
-            msg['To'] = to
-            msg['Subject'] = subject
+            # Resend API를 통한 이메일 전송
+            import httpx
+
+            url = "https://api.resend.com/emails"
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            }
+
+            payload = {
+                "from": self.from_email or "ValueLink <noreply@valuelink.co.kr>",
+                "to": [to],
+                "subject": subject,
+            }
 
             if html:
-                part = MIMEText(body, 'html')
+                payload["html"] = body
             else:
-                part = MIMEText(body, 'plain')
+                payload["text"] = body
 
-            msg.attach(part)
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, headers=headers, json=payload)
 
-            with smtplib.SMTP(self.smtp_host, self.smtp_port) as server:
-                server.starttls()
-                server.login(self.smtp_user, self.smtp_password)
-                server.send_message(msg)
-
-            logger.info(f"Email sent successfully to {to}")
+                if response.status_code == 200:
+                    logger.info(f"✅ Email sent successfully to {to} via Resend")
+                    return True
+                else:
+                    logger.error(f"❌ Resend API error: {response.status_code} - {response.text}")
+                    return False
             return True
 
         except Exception as e:
