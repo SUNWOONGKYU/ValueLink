@@ -3,7 +3,30 @@
  * 14단계 프로세스 사이드바 동적 생성
  */
 
-import { METHOD_NAMES, getStatusDisplay } from './project-status-checker.js';
+/**
+ * 평가법 이름 매핑
+ */
+const METHOD_NAMES = {
+    dcf: '현금흐름할인법 (DCF)',
+    relative: '상대가치평가법',
+    intrinsic: '본질가치평가법',
+    asset: '자산가치평가법',
+    inheritance_tax: '상속세및증여세법'
+};
+
+/**
+ * 상태 정보 표시
+ */
+function getStatusDisplay(status) {
+    const statusMap = {
+        'not_requested': { text: '미신청', color: '#6B7280', icon: '⏸' },
+        'pending': { text: '승인 대기', color: '#F59E0B', icon: '⏳' },
+        'approved': { text: '승인됨', color: '#10B981', icon: '✅' },
+        'in_progress': { text: '진행 중', color: '#3B82F6', icon: '⚡' },
+        'completed': { text: '완료', color: '#166534', icon: '🎉' }
+    };
+    return statusMap[status] || statusMap['not_requested'];
+}
 
 /**
  * 14단계 프로세스 정의
