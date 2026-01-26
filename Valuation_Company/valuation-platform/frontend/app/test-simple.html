@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>초간단 테스트</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 40px;
+            background: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .main {
+            flex: 1;
+            background: white;
+            padding: 20px;
+        }
+        .sidebar-wrapper {
+            width: 320px;
+            background: yellow;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 초간단 사이드바 테스트</h1>
+
+    <div class="container">
+        <div class="main">
+            <h2>메인 영역</h2>
+            <p>우측 노란색 영역에 사이드바가 주입되어야 합니다.</p>
+        </div>
+
+        <div id="sidebar-container" class="sidebar-wrapper">
+            여기에 사이드바가 들어갑니다...
+        </div>
+    </div>
+
+    <script>
+        console.log('=== 테스트 시작 ===');
+        console.log('1. sidebar-container 찾기:', document.getElementById('sidebar-container'));
+    </script>
+
+    <script type="module">
+        console.log('2. 모듈 스크립트 실행됨');
+
+        try {
+            console.log('3. common-sidebar.js import 시도...');
+            const module = await import('./components/common-sidebar.js');
+            console.log('4. import 성공!', module);
+            console.log('5. injectSidebar 함수:', module.injectSidebar);
+
+            if (module.injectSidebar) {
+                console.log('6. injectSidebar 호출 시작...');
+                module.injectSidebar('sidebar-container', 1, 'not_requested', null, null);
+                console.log('7. ✅ injectSidebar 호출 완료!');
+            } else {
+                console.error('❌ injectSidebar 함수가 없습니다!');
+            }
+        } catch (error) {
+            console.error('❌ 에러 발생:', error);
+            console.error('에러 스택:', error.stack);
+        }
+    </script>
+</body>
+</html>
