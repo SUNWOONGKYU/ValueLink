@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가보고서 개요 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            border-color: var(--deep-green);
+            color: var(--deep-green);
+        }
+
+        /* Company Header */
+        .company-header {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .company-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .company-meta {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .meta-value {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .valuation-badge {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #DCFCE7;
+            color: var(--deep-green);
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .external-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .external-link:hover {
+            background: #1E40AF;
+        }
+
+        /* Report Section */
+        .report-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title-icon {
+            margin-right: 8px;
+        }
+
+        .section-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+        }
+
+        /* Key Metrics */
+        .key-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .metric-card {
+            background: #F9FAFB;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .metric-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Tags */
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            background: #FEF3C7;
+            color: #D97706;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Not Found */
+        .not-found {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .not-found-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .not-found-text {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .company-header,
+            .report-section {
+                padding: 24px 20px;
+            }
+
+            .company-title {
+                font-size: 24px;
+            }
+
+            .company-meta {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 뒤로가기 버튼 -->
+        <a href="link.html#companies" class="back-button">
+            ← 기업 목록으로 돌아가기
+        </a>
+
+        <!-- 로딩 상태 -->
+        <div id="loadingState" class="loading">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">평가보고서를 불러오는 중...</p>
+        </div>
+
+        <!-- Not Found -->
+        <div id="notFoundState" class="not-found" style="display: none;">
+            <div class="not-found-icon">📋</div>
+            <p class="not-found-text">평가보고서를 찾을 수 없습니다.</p>
+            <a href="link.html" class="back-button">기업 목록으로 돌아가기</a>
+        </div>
+
+        <!-- 보고서 내용 -->
+        <div id="reportContent" style="display: none;">
+            <!-- 기업 헤더 -->
+            <div class="company-header" id="companyHeader">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+
+            <!-- 요약 -->
+            <div class="report-section" id="executiveSummary">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+
+            <!-- 평가 개요 -->
+            <div class="report-section" id="evaluationOverview">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+
+            <!-- 평가 방법론 -->
+            <div class="report-section" id="methodology">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+
+            <!-- 평가 결과 -->
+            <div class="report-section" id="valuationResults">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+
+            <!-- 결론 -->
+            <div class="report-section" id="conclusion">
+                <!-- JavaScript로 동적 생성 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+        // Supabase 클라이언트
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 평가법 한글명
+        const METHOD_NAMES = {
+            dcf: 'DCF평가법',
+            relative: '상대가치평가법',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법',
+            inheritance_tax: '상증세법평가법'
+        };
+
+        async function loadReport() {
+            try {
+                // URL 파라미터에서 company_name 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                const companyName = urlParams.get('company');
+
+                if (!companyName) {
+                    showNotFound();
+                    return;
+                }
+
+                // Supabase에서 보고서 조회
+                const { data: report, error } = await supabase
+                    .from('valuation_reports')
+                    .select('*')
+                    .eq('company_name', companyName)
+                    .single();
+
+                if (error || !report) {
+                    console.error('보고서 조회 실패:', error);
+                    showNotFound();
+                    return;
+                }
+
+                // 보고서 표시
+                displayReport(report);
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                showNotFound();
+            }
+        }
+
+        function displayReport(report) {
+            // 로딩 숨김
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('reportContent').style.display = 'block';
+
+            // 기업 헤더
+            const companyHeader = document.getElementById('companyHeader');
+            companyHeader.innerHTML = `
+                <h1 class="company-title">${report.company_name}</h1>
+                <div class="company-meta">
+                    ${report.industry ? `
+                    <div class="meta-item">
+                        <span class="meta-label">업종</span>
+                        <span class="meta-value">${report.industry}</span>
+                    </div>
+                    ` : ''}
+                    ${report.ceo_name ? `
+                    <div class="meta-item">
+                        <span class="meta-label">대표자</span>
+                        <span class="meta-value">${report.ceo_name}</span>
+                    </div>
+                    ` : ''}
+                    ${report.location ? `
+                    <div class="meta-item">
+                        <span class="meta-label">지역</span>
+                        <span class="meta-value">${report.location}</span>
+                    </div>
+                    ` : ''}
+                    <div class="meta-item">
+                        <span class="meta-label">평가방법</span>
+                        <span class="meta-value">${METHOD_NAMES[report.valuation_method] || report.valuation_method}</span>
+                    </div>
+                    ${report.valuation_date ? `
+                    <div class="meta-item">
+                        <span class="meta-label">평가기준일</span>
+                        <span class="meta-value">${report.valuation_date}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                <div class="valuation-badge">
+                    💰 ${report.valuation_amount_display || formatCurrency(report.valuation_amount_krw)}
+                </div>
+                ${report.tags && report.tags.length > 0 ? `
+                <div class="tags">
+                    ${report.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                </div>
+                ` : ''}
+                ${report.report_url ? `
+                <a href="${report.report_url}" target="_blank" class="external-link">
+                    📄 원본 공시 보기 →
+                </a>
+                ` : ''}
+            `;
+
+            // 요약
+            if (report.executive_summary) {
+                const summary = document.getElementById('executiveSummary');
+                summary.innerHTML = `
+                    <h2 class="section-title"><span class="section-title-icon">📋</span>요약</h2>
+                    <div class="section-content">${report.executive_summary}</div>
+                `;
+            }
+
+            // 평가 개요
+            if (report.evaluation_overview) {
+                const overview = document.getElementById('evaluationOverview');
+                overview.innerHTML = `
+                    <h2 class="section-title"><span class="section-title-icon">🎯</span>평가 개요</h2>
+                    <div class="section-content">${report.evaluation_overview}</div>
+                `;
+            }
+
+            // 평가 방법론
+            if (report.methodology) {
+                const methodology = document.getElementById('methodology');
+                methodology.innerHTML = `
+                    <h2 class="section-title"><span class="section-title-icon">🔬</span>평가 방법론 및 가정</h2>
+                    <div class="section-content">${report.methodology}</div>
+                    ${report.key_metrics ? `
+                    <div class="key-metrics">
+                        ${Object.entries(report.key_metrics).map(([key, value]) => `
+                            <div class="metric-card">
+                                <div class="metric-label">${key}</div>
+                                <div class="metric-value">${value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+                `;
+            }
+
+            // 평가 결과
+            if (report.valuation_results) {
+                const results = document.getElementById('valuationResults');
+                results.innerHTML = `
+                    <h2 class="section-title"><span class="section-title-icon">💵</span>평가 결과</h2>
+                    <div class="section-content">${report.valuation_results}</div>
+                `;
+            }
+
+            // 결론
+            if (report.conclusion) {
+                const conclusion = document.getElementById('conclusion');
+                conclusion.innerHTML = `
+                    <h2 class="section-title"><span class="section-title-icon">✅</span>결론</h2>
+                    <div class="section-content">${report.conclusion}</div>
+                `;
+            }
+        }
+
+        function showNotFound() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('notFoundState').style.display = 'block';
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '-';
+            return '₩' + amount.toLocaleString('ko-KR');
+        }
+
+        // 페이지 로드 시 실행
+        loadReport();
+    </script>
+</body>
+</html>
