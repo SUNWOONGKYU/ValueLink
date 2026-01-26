@@ -255,7 +255,6 @@ function getMethodIcon(method) {
  * 사이드바 CSS 스타일
  */
 export const SIDEBAR_STYLES = `
-    <style>
         :root {
             --deep-green: #166534;
             --light-green: #DCFCE7;
@@ -438,7 +437,6 @@ export const SIDEBAR_STYLES = `
             color: #9CA3AF;
             font-size: 18px;
         }
-    </style>
 `;
 
 /**
