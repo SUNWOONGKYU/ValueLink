@@ -562,44 +562,16 @@
     <!-- 사이드바 초기화 -->
     <script type="module">
         import { injectSidebar } from './components/common-sidebar.js';
-        import { getCurrentProject, STATUS } from './components/project-status-checker.js';
 
-        async function initSidebar() {
-            // 홈 화면 (valuation.html)
-            // - 현재 단계: 1 (서비스 안내)
-            // - 평가법: 없음 (아직 선택 안 함)
-            // - 상태: not_requested (기본)
-
-            // 프로젝트 확인 (로그인 상태 체크)
-            const project = await getCurrentProject();
-
-            if (project) {
-                // 로그인 + 프로젝트 있음
-                // 프로젝트 상태에 따라 현재 단계 결정
-                const currentStep = project.current_step || 1;
-
-                injectSidebar(
-                    'sidebar-container',
-                    currentStep,           // 현재 단계 (DB에서 가져옴)
-                    STATUS.NOT_REQUESTED,  // 홈 화면에서는 평가법 미선택
-                    null,                  // 평가법 없음
-                    project.project_id     // 프로젝트 ID
-                );
-            } else {
-                // 로그인 안 됨 또는 프로젝트 없음
-                // 기본 사이드바 (1~3단계만 표시)
-                injectSidebar(
-                    'sidebar-container',
-                    1,                     // 1단계 (서비스 안내)
-                    STATUS.NOT_REQUESTED,  // 미선택
-                    null,                  // 평가법 없음
-                    null                   // 프로젝트 없음
-                );
-            }
-        }
-
-        // 페이지 로드 시 사이드바 초기화
-        initSidebar();
+        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
+        // TODO: 나중에 로그인 기능 구현 시 getCurrentProject() 연동
+        injectSidebar(
+            'sidebar-container',
+            1,        // 1단계 (서비스 안내)
+            'not_requested',  // 상태: 미선택
+            null,     // 평가법 없음
+            null      // 프로젝트 없음
+        );
     </script>
 </body>
 </html>

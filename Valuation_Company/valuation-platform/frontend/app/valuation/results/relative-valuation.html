@@ -1377,24 +1377,9 @@
     <!-- 사이드바 초기화 -->
     <script type="module">
         import { injectSidebar } from '../../components/common-sidebar.js';
-        import { getCurrentProject, STATUS } from '../../components/project-status-checker.js';
 
-        async function initSidebar() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectId = urlParams.get('projectId');
-            const method = urlParams.get('method') || 'relative';
-
-            const project = await getCurrentProject();
-
-            if (project && project.project_id === projectId) {
-                const currentStep = project.current_step || 6;
-                injectSidebar('sidebar-container', currentStep, STATUS.IN_PROGRESS, method, projectId);
-            } else {
-                injectSidebar('sidebar-container', 6, STATUS.IN_PROGRESS, 'relative', null);
-            }
-        }
-
-        initSidebar();
+        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
+        injectSidebar('sidebar-container', 6, 'in_progress', 'relative', null);
     </script>
 </body>
 </html>

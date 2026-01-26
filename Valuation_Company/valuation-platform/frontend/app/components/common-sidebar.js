@@ -26,6 +26,75 @@ const PROCESS_STEPS = [
 ];
 
 /**
+ * 단계별 URL 생성
+ * @param {object} stepInfo - 단계 정보 객체
+ * @param {string} method - 평가법 코드 (dcf, relative 등)
+ * @param {string} projectId - 프로젝트 ID
+ * @returns {string|null} URL 또는 null
+ */
+function getStepUrl(stepInfo, method, projectId) {
+    const { page, params } = stepInfo;
+
+    // 기본 경로 (현재 위치에서 상대 경로)
+    let basePath = '../';
+
+    // 페이지별 URL 매핑
+    switch (page) {
+        case 'guide':
+            // 1단계: 서비스 안내 (valuation 홈)
+            return basePath + 'valuation.html';
+
+        case 'project-create':
+            // 2단계: 평가 신청
+            return basePath + 'projects/project-create.html';
+
+        case 'approval-waiting':
+            // 3단계: 관리자 승인 대기
+            return basePath + 'approval-waiting.html';
+
+        case 'portal':
+            // 4단계: 평가 기초자료 제출 (평가법별)
+            if (method) {
+                return basePath + `valuation/portals/${method}-portal.html${projectId ? '?projectId=' + projectId : ''}`;
+            }
+            return null;
+
+        case 'data-collection':
+        case 'evaluation-progress':
+            // 5~6단계: 데이터 수집, 평가 진행
+            return basePath + `valuation/evaluation-progress.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        case 'accountant-review':
+        case 'draft-generation':
+        case 'final-preparation':
+            // 7, 8, 11단계: 공인회계사 검토, 초안 생성, 최종안 작성
+            return basePath + `valuation/${page}.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        case 'result':
+            // 9, 12단계: 평가보고서 확인 (초안/최종안)
+            if (method) {
+                return basePath + `valuation/results/${method}-valuation.html${projectId ? '?projectId=' + projectId : ''}${params ? '&' + params : ''}`;
+            }
+            return null;
+
+        case 'revision-request':
+            // 10단계: 수정 요청
+            return basePath + `valuation/revision-request.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        case 'payment':
+            // 13단계: 결제하기
+            return basePath + `valuation/balance-payment.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        case 'report-download':
+            // 14단계: 평가보고서 수령
+            return basePath + `valuation/report-download.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        default:
+            return null;
+    }
+}
+
+/**
  * 14단계 프로세스 사이드바 렌더링
  * @param {number} currentStep - 현재 단계 (1~14)
  * @param {string} methodStatus - 평가법 상태 (approved, in_progress 등)
@@ -49,16 +118,30 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
     PROCESS_STEPS.forEach(stepInfo => {
         const isActive = stepInfo.step === currentStep;
         const isAccessible = shouldStepBeAccessible(stepInfo.step, currentStep, methodStatus);
+        const url = getStepUrl(stepInfo, method, projectId);
 
-        html += `
-            <div class="process-step ${isActive ? 'active' : ''} ${isAccessible ? 'accessible' : 'locked'}">
-                <div class="step-number">${stepInfo.step}</div>
-                <div class="step-content">
-                    <div class="step-name">${stepInfo.name}</div>
-                    ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
+        // 접근 가능한 단계는 링크로, 잠긴 단계는 div로 렌더링
+        if (isAccessible && url) {
+            html += `
+                <a href="${url}" class="process-step ${isActive ? 'active' : ''} accessible">
+                    <div class="step-number">${stepInfo.step}</div>
+                    <div class="step-content">
+                        <div class="step-name">${stepInfo.name}</div>
+                        ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
+                    </div>
+                </a>
+            `;
+        } else {
+            html += `
+                <div class="process-step ${isActive ? 'active' : ''} ${isAccessible ? 'accessible' : 'locked'}">
+                    <div class="step-number">${stepInfo.step}</div>
+                    <div class="step-content">
+                        <div class="step-name">${stepInfo.name}</div>
+                        ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
     });
 
     html += `
@@ -224,6 +307,8 @@ export const SIDEBAR_STYLES = `
             padding: 12px;
             border-radius: 8px;
             transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
         }
 
         .process-step.accessible {

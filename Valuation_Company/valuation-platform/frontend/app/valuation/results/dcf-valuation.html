@@ -1166,43 +1166,16 @@
     <!-- 사이드바 초기화 -->
     <script type="module">
         import { injectSidebar } from '../../components/common-sidebar.js';
-        import { getCurrentProject, STATUS } from '../../components/project-status-checker.js';
 
-        async function initSidebar() {
-            // DCF 평가법 화면
-            // URL에서 projectId 가져오기
-            const urlParams = new URLSearchParams(window.location.search);
-            const projectId = urlParams.get('projectId');
-            const method = urlParams.get('method') || 'dcf';
-
-            // 프로젝트 확인
-            const project = await getCurrentProject();
-
-            if (project && project.project_id === projectId) {
-                // 현재 단계 결정 (평가 결과 페이지는 6단계)
-                const currentStep = project.current_step || 6;
-
-                injectSidebar(
-                    'sidebar-container',
-                    currentStep,
-                    STATUS.IN_PROGRESS,  // 평가 진행 중
-                    method,              // DCF
-                    projectId
-                );
-            } else {
-                // 프로젝트 없음 (미리보기 모드)
-                injectSidebar(
-                    'sidebar-container',
-                    6,                   // 6단계 (평가 진행 중)
-                    STATUS.IN_PROGRESS,
-                    'dcf',
-                    null
-                );
-            }
-        }
-
-        // 페이지 로드 시 사이드바 초기화
-        initSidebar();
+        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
+        // TODO: 나중에 로그인 기능 구현 시 getCurrentProject() 연동
+        injectSidebar(
+            'sidebar-container',
+            6,           // 6단계 (평가 진행 중)
+            'in_progress',  // 평가 진행 중
+            'dcf',       // DCF 평가법
+            null         // 프로젝트 ID 없음
+        );
     </script>
 </body>
 </html>
