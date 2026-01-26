@@ -1052,7 +1052,10 @@
 
         const API_BASE = 'http://localhost:8000/api/v1/investment-tracker';
 
-        // 실제 수집된 투자 뉴스 데이터 (2026년 1월 기준, 총 18개) - 뉴스 본문에서 추출한 상세 정보 포함
+        // Supabase 설정
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxODkwNDksImV4cCI6MjA1Mjc2NTA0OX0.Fhio-bpGAXaAOH8pAqiVwqZDEv7DUb7L3sRq6pLHOtk';
+
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', () => {
             console.log('페이지 로드됨');
@@ -1450,9 +1453,6 @@
         // Top 10 뉴스 제공사 로드 (Supabase에서 동적 로딩)
         async function loadNewsProviders() {
             try {
-                const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
-                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxODkwNDksImV4cCI6MjA1Mjc2NTA0OX0.Fhio-bpGAXaAOH8pAqiVwqZDEv7DUb7L3sRq6pLHOtk';
-
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_ranking?select=*&order=rank.asc`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
@@ -1490,9 +1490,6 @@
         // 투자 통계 로드 (어제, 지난주, 금년)
         async function loadInvestmentStats() {
             try {
-                const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
-                const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxODkwNDksImV4cCI6MjA1Mjc2NTA0OX0.Fhio-bpGAXaAOH8pAqiVwqZDEv7DUb7L3sRq6pLHOtk';
-
                 // 모든 기사 가져오기
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=published_date`, {
                     headers: {
