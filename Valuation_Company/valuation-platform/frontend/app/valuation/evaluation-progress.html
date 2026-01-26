@@ -679,11 +679,13 @@
         }
 
         function startProgressSimulation() {
-            // 초기 호출
+            // 페이지 로드 시 1번만 호출 (Polling 제거)
+            // 24-48시간 소요 작업이므로 실시간 polling 불필요
+            // 이메일 알림으로 단계 완료 통지
             pollEvaluationProgress();
 
-            // 3초마다 폴링
-            progressInterval = setInterval(pollEvaluationProgress, 3000);
+            // ❌ 3초 polling 제거 (24시간 작업에 28,800번 요청은 과도함)
+            // progressInterval = setInterval(pollEvaluationProgress, 3000);
         }
 
         function updateProgressBar(percentage) {
