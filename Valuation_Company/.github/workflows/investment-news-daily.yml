@@ -1,0 +1,55 @@
+name: Investment News Daily Collection
+
+on:
+  schedule:
+    # 매일 오전 8시 (KST) = 23:00 (UTC-1)
+    - cron: '0 23 * * *'
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  collect-and-send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/investment-news-scraper/requirements.txt
+
+      - name: Collect news and enrich
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: |
+          cd scripts/investment-news-scraper
+          python collect_and_enrich.py
+
+      - name: Send daily email (Mon-Sat only)
+        if: ${{ github.event.schedule == '0 23 * * *' && github.event.repository.updated_at != null }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          # Check if today is not Sunday (0 = Sunday in date command)
+          if [ $(date +%u) -ne 7 ]; then
+            cd scripts/investment-news-scraper
+            python send_daily_email.py
+          else
+            echo "Skipping daily email (Sunday)"
+          fi
+
+      - name: Notify completion
+        if: always()
+        run: |
+          echo "Collection and email sending completed"

@@ -1,0 +1,121 @@
+[
+  {
+    "site": "벤처스퀘어",
+    "method": "RSS",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "RSS",
+      "count": 30,
+      "sample_title": "지미션, 2026년 청년 일자리 강소기업 선정",
+      "sample_link": "https://www.venturesquare.net/1034889/",
+      "sample_date": "Mon, 26 Jan 2026 07:19:15 +0000"
+    }
+  },
+  {
+    "site": "스타트업투데이",
+    "method": "Web Scraping",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "Web Scraping",
+      "selector": "article",
+      "count": 8,
+      "sample": "<article class=\"box-skin\" style=\"margin-top:20px\">\n<header class=\"header\"></header>\n<section class=\""
+    }
+  },
+  {
+    "site": "아웃스탠딩",
+    "method": "RSS",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "RSS",
+      "count": 10,
+      "sample_title": "올해 금융시장에서 꼭 기억해야 하는 돌발 요인 ‘SELL AMERICA’",
+      "sample_link": "https://outstanding.kr/sellamerica20260126/",
+      "sample_date": "Mon, 26 Jan 2026 00:30:21 +0000"
+    }
+  },
+  {
+    "site": "더벨",
+    "method": "None",
+    "status": "FAILED",
+    "details": {
+      "success": false,
+      "method": "Web Scraping",
+      "reason": "적절한 선택자를 찾지 못함"
+    }
+  },
+  {
+    "site": "더브이씨",
+    "method": "None",
+    "status": "FAILED",
+    "details": {
+      "success": false,
+      "method": "Web Scraping",
+      "reason": "적절한 선택자를 찾지 못함"
+    }
+  },
+  {
+    "site": "스타트업엔",
+    "method": "Web Scraping",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "Web Scraping",
+      "selector": "article",
+      "count": 15,
+      "sample": "<article class=\"hd-left\">\n<a class=\"item\" href=\"/news/articleList.html?view_type=sm\" target=\"_top\">전"
+    }
+  },
+  {
+    "site": "블로터",
+    "method": "Web Scraping",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "Web Scraping",
+      "selector": "article",
+      "count": 23,
+      "sample": "<article class=\"box-skin\" style=\"margin-top:30px\">\n<header class=\"header\"></header>\n<section class=\""
+    }
+  },
+  {
+    "site": "이코노미스트",
+    "method": "Web Scraping",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "Web Scraping",
+      "selector": "h2 a",
+      "count": 2,
+      "sample": "<a href=\"/article/list/ecn_SC009000000\" title=\"오피니언\">\n                            오피니언\n             "
+    }
+  },
+  {
+    "site": "플래텀",
+    "method": "RSS",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "RSS",
+      "count": 10,
+      "sample_title": "텔레픽스, 기술특례상장 평가 통과… 하반기 코스닥 IPO 추진",
+      "sample_link": "https://platum.kr/archives/280190?utm_source=rss&utm_medium=rss&utm_campaign=%25ed%2585%2594%25eb%25a0%2588%25ed%2594%25bd%25ec%258a%25a4-%25ea%25b8%25b0%25ec%2588%25a0%25ed%258a%25b9%25eb%25a1%2580%25ec%2583%2581%25ec%259e%25a5-%25ed%258f%2589%25ea%25b0%2580-%25ed%2586%25b5%25ea%25b3%25bc-%25ed%2595%2598%25eb%25b0%2598%25ea%25b8%25b0-%25ec%25bd%2594%25ec%258a%25a4%25eb%258b%25a5-ipo",
+      "sample_date": "Sun, 25 Jan 2026 22:23:17 +0000"
+    }
+  },
+  {
+    "site": "AI타임스",
+    "method": "Web Scraping",
+    "status": "SUCCESS",
+    "details": {
+      "success": true,
+      "method": "Web Scraping",
+      "selector": "article",
+      "count": 7,
+      "sample": "<article class=\"gl-logo-container\">\n<h1 class=\"gl-logo\">\n<a href=\"https://www.aitimes.com\" id=\"logo-"
+    }
+  }
+]

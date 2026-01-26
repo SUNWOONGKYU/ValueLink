@@ -1,8 +1,194 @@
 # 작업 로그
 
+## 2026-01-26: Phase 0 - 전체 구조 재설계 (여러 평가법 동시 신청)
+
+### 작업 상태: ✅ 완료
+
+---
+
+## 작업 내용
+
+### Phase 0-1: 데이터베이스 수정 ✅
+- Supabase projects 테이블에 평가법별 상태 필드 추가 (10개 필드)
+  - `dcf_status`, `dcf_step`
+  - `relative_status`, `relative_step`
+  - `intrinsic_status`, `intrinsic_step`
+  - `asset_status`, `asset_step`
+  - `inheritance_tax_status`, `inheritance_tax_step`
+- 제약조건 추가 (상태 값, 단계 범위)
+- 인덱스 생성 (조회 성능 향상)
+- Supabase CLI로 마이그레이션 실행 완료
+
+**파일**:
+- `backend/database/migrations/add_method_status_fields.sql`
+- `backend/database/migrations/run_migration.py`
+- `backend/database/migrations/run_migration_rest.py`
+- `backend/database/migrations/verify_simple.py`
+
+### Phase 0-2: 공통 컴포넌트 생성 ✅
+**1. project-status-checker.js**
+- 평가법별 상태 확인 함수
+- 프로젝트 정보 조회
+- 상태 업데이트 함수
+- 승인된 평가법 목록 조회
+
+**2. common-sidebar.js**
+- 14단계 프로세스 사이드바 렌더링
+- 프로젝트 정보 표시 (평가법 + 상태)
+- 담당 공인회계사 섹션
+- 단계별 접근 권한 제어
+
+**3. method-content.json**
+- 5개 평가법별 상세 정보
+- 가이드 컨텐츠
+- 필요 데이터, 소요 기간, 가격 범위
+
+**파일**:
+- `frontend/app/components/project-status-checker.js`
+- `frontend/app/components/common-sidebar.js`
+- `frontend/app/data/method-content.json`
+
+### Phase 0-3: 홈 화면 수정 ✅
+- `valuation.html`에 14단계 프로세스 사이드바 적용
+- 공통 컴포넌트 import 및 초기화
+- "평가 시작하기" 버튼 추가 (Hero 섹션)
+- 로그인 상태별 사이드바 표시 처리
+
+**파일**:
+- `frontend/app/valuation.html`
+
+### Phase 0-4: 평가 신청 페이지 수정 ✅
+- 라디오 버튼 → 체크박스 변경 (여러 평가법 동시 선택)
+- 평가법 값 변경 (DC→dcf, RV→relative, IV→intrinsic, AV→asset, TX→inheritance_tax)
+- 아이콘 업데이트 (일관성 유지)
+- JavaScript 수정:
+  - `getMethodCode()`: 첫 번째 선택된 평가법 코드 반환
+  - `createProject()`: 선택된 평가법별 상태 설정
+- 프로젝트 생성 후 `approval-waiting.html`로 리다이렉트
+- 체크 표시 CSS 추가
+
+**파일**:
+- `frontend/app/projects/project-create.html`
+
+### Phase 0-5: 승인 대기 페이지 생성 ✅
+- 3단계 (관리자 승인 대기) 페이지
+- 프로젝트 정보 카드 (번호, 회사명, 평가 기준일, 신청 일시)
+- 신청한 평가법 목록 표시
+- 평가법별 승인 상태 표시:
+  - 🟢 승인됨 → "평가 진행하기" 버튼
+  - 🟡 대기중 → 상태만 표시
+  - ⚫ 신청안함 → 목록에서 제외
+- 14단계 프로세스 사이드바
+- 로딩 상태, 빈 상태 처리
+
+**파일**:
+- `frontend/app/approval-waiting.html`
+
+---
+
+## 핵심 변경사항
+
+### 설계 철학
+```
+이전: 하나의 프로젝트 = 하나의 평가법
+이후: 하나의 프로젝트 = 여러 평가법 (동시 신청 가능)
+
+홈 화면 (1~3단계): 공통 프로세스
+  1단계: 서비스 안내
+  2단계: 평가 신청 (여러 평가법 체크박스 선택)
+  3단계: 관리자 승인 대기
+
+평가법별 페이지 (4~14단계): 개별 프로세스
+  - 승인된 평가법만 진행 가능
+  - 각 평가법별 독립적 진행
+  - 평가법 상태: not_requested, pending, approved, in_progress, completed
+```
+
+### DB 구조
+```sql
+projects 테이블:
+  dcf_status TEXT DEFAULT 'not_requested'
+  dcf_step INTEGER DEFAULT 1
+  relative_status TEXT DEFAULT 'not_requested'
+  relative_step INTEGER DEFAULT 1
+  intrinsic_status TEXT DEFAULT 'not_requested'
+  intrinsic_step INTEGER DEFAULT 1
+  asset_status TEXT DEFAULT 'not_requested'
+  asset_step INTEGER DEFAULT 1
+  inheritance_tax_status TEXT DEFAULT 'not_requested'
+  inheritance_tax_step INTEGER DEFAULT 1
+```
+
+### 사용자 시나리오
+```
+1. valuation.html → "평가 시작하기" 클릭
+2. project-create.html → DCF + 상대가치 체크박스 선택 → "프로젝트 생성"
+3. DB 저장:
+   dcf_status = 'pending'
+   relative_status = 'pending'
+   intrinsic_status = 'not_requested'
+   ...
+4. approval-waiting.html로 리다이렉트
+5. 화면 표시:
+   💰 DCF: 🟡 승인 대기 중
+   ⚖️ 상대가치: 🟡 승인 대기 중
+6. 관리자가 DCF 승인 (Supabase에서 수동)
+7. 새로고침:
+   💰 DCF: 🟢 승인됨 [평가 진행하기 →]
+   ⚖️ 상대가치: 🟡 승인 대기 중
+8. "평가 진행하기" 클릭 → guide-dcf.html (4단계부터 진행)
+```
+
+---
+
+## 생성/수정된 파일 (13개)
+
+### 생성된 파일 (8개)
+1. `valuation-platform/backend/database/migrations/add_method_status_fields.sql`
+2. `valuation-platform/backend/database/migrations/run_migration.py`
+3. `valuation-platform/backend/database/migrations/run_migration_rest.py`
+4. `valuation-platform/backend/database/migrations/verify_simple.py`
+5. `valuation-platform/frontend/app/components/project-status-checker.js`
+6. `valuation-platform/frontend/app/components/common-sidebar.js`
+7. `valuation-platform/frontend/app/data/method-content.json`
+8. `valuation-platform/frontend/app/approval-waiting.html`
+
+### 수정된 파일 (5개)
+1. `valuation-platform/frontend/app/valuation.html`
+2. `valuation-platform/frontend/app/projects/project-create.html`
+3. `supabase/migrations/20260126000001_add_method_status_fields.sql` (복사본)
+4. `Human_ClaudeCode_Bridge/Reports/Phase0_전체구조_재설계_계획서_v2.md`
+
+---
+
+## 다음 단계
+
+### Phase 1: 기존 페이지 수정 (5개 가이드 페이지)
+- guide-dcf.html, guide-relative.html, guide-intrinsic.html, guide-asset.html, guide-tax.html
+- 공통 사이드바 컴포넌트 적용
+- 평가법별 상태 체크 로직 추가
+- 승인되지 않은 평가법 접근 시 안내 메시지
+
+### Phase 2: 신규 페이지 생성 (7개)
+- data-collection.html (5단계)
+- evaluation-progress.html (6단계)
+- accountant-review.html (7단계)
+- draft-generation.html (8단계)
+- revision-request.html (10단계)
+- final-preparation.html (11단계)
+- payment.html (13단계)
+- report-download.html (14단계)
+
+### Phase 3: 백엔드 연동
+- 평가 엔진 연결 (Option 1: 단일 엔드포인트 + Enum)
+- API 엔드포인트 생성
+- 상태 업데이트 로직
+
+---
+
 ## 2026-01-25: 투자 뉴스 스크래핑 시스템 구축
 
-### 작업 상태: 🟡 진행 중
+### 작업 상태: ✅ 완료
 
 ---
 

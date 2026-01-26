@@ -16,8 +16,17 @@ supabase>=2.0.0
 # 환경변수 관리
 python-dotenv>=1.0.0
 
-# 날짜/시간 처리 (내장 datetime 사용하므로 불필요하지만 추가 기능 필요 시)
-# python-dateutil>=2.8.0
+# Gemini API
+google-generativeai>=0.3.2
+
+# RSS 파싱
+feedparser>=6.0.11
+
+# 날짜/시간 처리
+python-dateutil>=2.8.0
+
+# PostgreSQL (스키마 적용용)
+psycopg2-binary>=2.9.9
 
 # Selenium (동적 사이트 스크래핑 필요 시)
 # selenium>=4.15.0

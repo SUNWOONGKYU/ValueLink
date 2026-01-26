@@ -131,6 +131,13 @@
             margin-left: 2px;
         }
 
+        .form-group label .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
         .form-group input,
         .form-group select,
         .form-group textarea {
@@ -205,6 +212,24 @@
         .method-option input:checked + label {
             border-color: var(--deep-blue);
             background: var(--deep-blue-pale);
+            position: relative;
+        }
+
+        .method-option input:checked + label::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         .method-option .icon {
@@ -545,44 +570,44 @@
             <h2>평가 정보</h2>
 
             <div class="form-group">
-                <label>평가 방법 <span class="required">*</span></label>
+                <label>평가 방법 <span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
                 <div class="method-selector">
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodDC" value="DC" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodDC" value="dcf" onchange="updateProjectId()">
                         <label for="methodDC">
-                            <span class="icon">📈</span>
+                            <span class="icon">💰</span>
                             <span class="name">DCF</span>
                             <span class="code">DC</span>
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodRV" value="RV" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodRV" value="relative" onchange="updateProjectId()">
                         <label for="methodRV">
-                            <span class="icon">📊</span>
+                            <span class="icon">⚖️</span>
                             <span class="name">상대가치</span>
                             <span class="code">RV</span>
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodIV" value="IV" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodIV" value="intrinsic" onchange="updateProjectId()">
                         <label for="methodIV">
                             <span class="icon">💎</span>
-                            <span class="name">본질가치평가법</span>
+                            <span class="name">본질가치</span>
                             <span class="code">IV</span>
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodAV" value="AV" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodAV" value="asset" onchange="updateProjectId()">
                         <label for="methodAV">
-                            <span class="icon">🏢</span>
+                            <span class="icon">🏦</span>
                             <span class="name">자산가치</span>
                             <span class="code">AV</span>
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="radio" name="method" id="methodTX" value="TX" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodTX" value="inheritance_tax" onchange="updateProjectId()">
                         <label for="methodTX">
-                            <span class="icon">📜</span>
+                            <span class="icon">📋</span>
                             <span class="name">상증법</span>
                             <span class="code">TX</span>
                         </label>
@@ -694,10 +719,21 @@
             return yy + mm + dd + hh + min;
         }
 
-        // 선택된 평가방법 코드
+        // 선택된 평가방법 코드 (첫 번째 선택된 평가법)
         function getMethodCode() {
-            const selected = document.querySelector('input[name="method"]:checked');
-            return selected ? selected.value : 'XX';
+            const selected = document.querySelector('input[name="methods[]"]:checked');
+            if (!selected) return 'XX';
+
+            // 평가법 값 → 코드 매핑
+            const codeMap = {
+                'dcf': 'DC',
+                'relative': 'RV',
+                'intrinsic': 'IV',
+                'asset': 'AV',
+                'inheritance_tax': 'TX'
+            };
+
+            return codeMap[selected.value] || 'XX';
         }
 
         // 프로젝트 ID 업데이트
@@ -716,29 +752,24 @@
             // 필수 입력 검증
             const companyNameKr = document.getElementById('companyNameKr').value;
             const companyNameEn = document.getElementById('companyNameEn').value;
-            const method = document.querySelector('input[name="method"]:checked');
+
+            // 선택된 평가법들 (체크박스 배열)
+            const selectedMethods = Array.from(
+                document.querySelectorAll('input[name="methods[]"]:checked')
+            ).map(cb => cb.value);
 
             if (!companyNameKr || !companyNameEn) {
                 alert('회사명을 입력해주세요.');
                 return;
             }
 
-            if (!method) {
-                alert('평가 방법을 선택해주세요.');
+            if (selectedMethods.length === 0) {
+                alert('평가 방법을 1개 이상 선택해주세요.');
                 return;
             }
 
             // 프로젝트 ID
             const projectId = document.getElementById('projectIdPreview').textContent;
-
-            // 평가법 코드 매핑
-            const methodCodeMap = {
-                'DC': 'dcf',
-                'RV': 'relative',
-                'IV': 'intrinsic',
-                'AV': 'asset',
-                'TX': 'inheritance_tax_law'
-            };
 
             // 수정 모드 확인
             const urlParams = new URLSearchParams(window.location.search);
@@ -766,51 +797,49 @@
 
                 } else {
                     // 신규 생성 모드
+
+                    // 평가법별 상태 설정
+                    const projectData = {
+                        project_id: projectId,
+                        company_name_kr: companyNameKr,
+                        company_name_en: companyNameEn,
+                        valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
+                        purpose: document.getElementById('purpose').value,
+                        assigned_accountant: document.getElementById('assignedAccountant').value,
+                        status: 'pending',
+                        current_step: 2,  // 2단계 (평가 신청)
+
+                        // 평가법별 상태 필드
+                        dcf_status: selectedMethods.includes('dcf') ? 'pending' : 'not_requested',
+                        dcf_step: selectedMethods.includes('dcf') ? 2 : 1,
+
+                        relative_status: selectedMethods.includes('relative') ? 'pending' : 'not_requested',
+                        relative_step: selectedMethods.includes('relative') ? 2 : 1,
+
+                        intrinsic_status: selectedMethods.includes('intrinsic') ? 'pending' : 'not_requested',
+                        intrinsic_step: selectedMethods.includes('intrinsic') ? 2 : 1,
+
+                        asset_status: selectedMethods.includes('asset') ? 'pending' : 'not_requested',
+                        asset_step: selectedMethods.includes('asset') ? 2 : 1,
+
+                        inheritance_tax_status: selectedMethods.includes('inheritance_tax') ? 'pending' : 'not_requested',
+                        inheritance_tax_step: selectedMethods.includes('inheritance_tax') ? 2 : 1
+                    };
+
                     // 1. projects 테이블에 프로젝트 생성
                     const { data: project, error: projectError } = await supabase
                         .from('projects')
-                        .insert([{
-                            project_id: projectId,
-                            company_name_kr: companyNameKr,
-                            company_name_en: companyNameEn,
-                            valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
-                            purpose: document.getElementById('purpose').value,
-                            assigned_accountant: document.getElementById('assignedAccountant').value,
-                            status: 'pending'
-                        }])
+                        .insert([projectData])
                         .select();
 
                     if (projectError) throw projectError;
 
-                    // 2. valuation_results 테이블에 초기 데이터 생성
-                    const { data: result, error: resultError } = await supabase
-                        .from('valuation_results')
-                        .insert([{
-                            project_id: projectId,
-                            method: methodCodeMap[method.value],
-                            enterprise_value: 0,
-                            value_per_share: 0,
-                            status: 'pending'
-                        }])
-                        .select();
+                    console.log('프로젝트 생성 성공:', project);
+                    console.log('선택된 평가법:', selectedMethods);
 
-                    if (resultError) throw resultError;
-
-                    console.log('프로젝트 생성 성공:', project, result);
-
-                    // 평가법에 따른 포털 URL 매핑
-                    const portalUrls = {
-                        'DC': 'dcf-portal.html',
-                        'RV': 'relative-portal.html',
-                        'IV': 'intrinsic-portal.html',
-                        'AV': 'asset-portal.html',
-                        'TX': 'tax-portal.html'
-                    };
-
-                    // 모달에 표시
-                    document.getElementById('modalProjectId').textContent = projectId;
-
-                    // 자료 제출 버튼에 해당 포털로 이동하는 이벤트 설정
+                    // 성공 후 approval-waiting.html로 이동
+                    alert(`프로젝트가 생성되었습니다.\n선택한 평가법: ${selectedMethods.length}개\n\n관리자 승인 대기 페이지로 이동합니다.`);
+                    location.href = `../approval-waiting.html?projectId=${projectId}`;
                     const portalBtn = document.getElementById('goToPortalBtn');
                     portalBtn.onclick = () => {
                         location.href = portalUrls[method.value] || 'customer-portal.html';

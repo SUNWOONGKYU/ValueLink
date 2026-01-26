@@ -4,7 +4,11 @@
       "Bash(python:*)",
       "Bash(git push)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "WebFetch(domain:www.venturesquare.net)",
+      "WebFetch(domain:thevc.kr)",
+      "Bash(git push:*)",
+      "Bash(pip install:*)"
     ]
   }
 }

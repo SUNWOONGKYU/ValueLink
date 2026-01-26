@@ -1,0 +1,147 @@
+{
+  "dcf": {
+    "code": "dcf",
+    "name": "현금흐름할인법 (DCF)",
+    "full_name": "Discounted Cash Flow Method",
+    "icon": "💰",
+    "description": "기업이 미래에 창출할 현금흐름을 현재가치로 환산하여 기업가치를 평가합니다.",
+    "guide_content": {
+      "overview": "DCF법은 기업의 미래 현금흐름을 예측하고, 이를 적절한 할인율로 현재가치화하여 기업가치를 산정하는 방법입니다.",
+      "features": [
+        "미래 수익성 기반 평가",
+        "할인율(WACC) 적용",
+        "성장성 반영 가능",
+        "투자 의사결정에 유용"
+      ],
+      "suitable_for": [
+        "성장 단계의 기업",
+        "안정적인 현금흐름이 예상되는 기업",
+        "투자 유치를 준비하는 기업"
+      ]
+    },
+    "required_data": [
+      "재무제표 (최근 3개년)",
+      "사업계획서",
+      "현금흐름 예측 자료",
+      "자본구조 정보"
+    ],
+    "estimated_duration": "7-10 영업일",
+    "price_range": "500만원 ~ 1,000만원"
+  },
+  "relative": {
+    "code": "relative",
+    "name": "상대가치평가법",
+    "full_name": "Relative Valuation Method",
+    "icon": "⚖️",
+    "description": "유사 기업의 가치 배수를 비교하여 기업가치를 평가합니다.",
+    "guide_content": {
+      "overview": "상대가치평가법은 유사한 상장기업의 주가 배수(PER, PBR 등)를 기준으로 대상 기업의 가치를 산정하는 방법입니다.",
+      "features": [
+        "시장 기반 평가",
+        "유사 기업 비교",
+        "신속한 평가 가능",
+        "시장 트렌드 반영"
+      ],
+      "suitable_for": [
+        "상장을 준비하는 기업",
+        "유사 상장기업이 있는 업종",
+        "빠른 평가가 필요한 경우"
+      ]
+    },
+    "required_data": [
+      "재무제표 (최근 3개년)",
+      "업종 정보",
+      "경쟁사 리스트",
+      "사업 현황 자료"
+    ],
+    "estimated_duration": "5-7 영업일",
+    "price_range": "400만원 ~ 800만원"
+  },
+  "intrinsic": {
+    "code": "intrinsic",
+    "name": "본질가치평가법",
+    "full_name": "Intrinsic Value Method",
+    "icon": "💎",
+    "description": "자본시장법에 따른 본질가치 평가로 공정한 기업가치를 산정합니다.",
+    "guide_content": {
+      "overview": "본질가치평가법은 자본시장법에 규정된 방법론에 따라 기업의 본질적 가치를 평가하는 방법입니다.",
+      "features": [
+        "법적 기준 준수",
+        "공정가치 산정",
+        "규제 요건 충족",
+        "투명한 평가 기준"
+      ],
+      "suitable_for": [
+        "IPO 준비 기업",
+        "M&A 거래 기업",
+        "법적 요구사항이 있는 경우"
+      ]
+    },
+    "required_data": [
+      "재무제표 (최근 3개년)",
+      "사업계획서",
+      "자본시장법 관련 서류",
+      "기업 현황 자료"
+    ],
+    "estimated_duration": "10-14 영업일",
+    "price_range": "800만원 ~ 1,500만원"
+  },
+  "asset": {
+    "code": "asset",
+    "name": "자산가치평가법",
+    "full_name": "Asset-Based Valuation Method",
+    "icon": "🏦",
+    "description": "기업이 보유한 자산의 시장가치를 기준으로 기업가치를 평가합니다.",
+    "guide_content": {
+      "overview": "자산가치평가법은 기업이 보유한 유형·무형 자산의 공정가치를 평가하여 기업가치를 산정하는 방법입니다.",
+      "features": [
+        "자산 중심 평가",
+        "청산가치 산정",
+        "실물자산 중시",
+        "보수적 평가"
+      ],
+      "suitable_for": [
+        "부동산·자산 보유 기업",
+        "청산 검토 기업",
+        "자산집약적 산업"
+      ]
+    },
+    "required_data": [
+      "재무제표 (최근 3개년)",
+      "자산 목록 및 명세",
+      "부동산 감정평가서 (해당 시)",
+      "재고자산 현황"
+    ],
+    "estimated_duration": "7-10 영업일",
+    "price_range": "600만원 ~ 1,200만원"
+  },
+  "inheritance_tax": {
+    "code": "inheritance_tax",
+    "name": "상속세및증여세법",
+    "full_name": "Inheritance and Gift Tax Law Method",
+    "icon": "📋",
+    "description": "상속세 및 증여세법에 따른 평가 방법으로 세무 목적의 기업가치를 산정합니다.",
+    "guide_content": {
+      "overview": "상속세및증여세법은 세법에 규정된 평가 기준에 따라 상속·증여 시 기업가치를 산정하는 방법입니다.",
+      "features": [
+        "세법 기준 준수",
+        "과세 목적 평가",
+        "명확한 산정 기준",
+        "세무 당국 인정"
+      ],
+      "suitable_for": [
+        "상속·증여 계획 기업",
+        "경영권 승계 기업",
+        "세무 목적 평가 필요 시"
+      ]
+    },
+    "required_data": [
+      "재무제표 (최근 3개년)",
+      "주주 구성 정보",
+      "자산·부채 명세",
+      "세무 관련 서류"
+    ],
+    "estimated_duration": "5-7 영업일",
+    "price_range": "400만원 ~ 900만원"
+  }
+}

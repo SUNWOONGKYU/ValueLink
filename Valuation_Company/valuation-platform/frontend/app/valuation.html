@@ -202,7 +202,26 @@
             font-size: 16px;
             opacity: 0.9;
             max-width: 800px;
-            margin: 0 auto;
+            margin: 0 auto 24px auto;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .page-header {
@@ -288,75 +307,10 @@
             box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
         }
 
-        /* 우측 사이드바 */
-        .sidebar {
-            width: 280px;
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            height: fit-content;
-        }
-
-
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--deep-green);
-            background: #D1FAE5;
-            margin-bottom: 20px;
-            padding: 12px 16px;
-            border-radius: 8px;
-        }
-
-        .process-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .process-step {
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #6B7280;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .process-step:hover {
-            background: #ECFDF5;
-        }
-
-        .process-step.active {
-            background: #D1FAE5;
-            color: var(--deep-green);
-            font-weight: 600;
-        }
-
-        .step-number {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #E5E7EB;
-            color: #6B7280;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* 우측 사이드바 래퍼 */
+        .sidebar-wrapper {
+            width: 320px;
             flex-shrink: 0;
-        }
-
-        .process-step.active .step-number {
-            background: var(--deep-green);
-            color: white;
-        }
-
-        .step-text {
-            flex: 1;
         }
 
         /* 반응형 */
@@ -365,9 +319,8 @@
                 flex-direction: column;
             }
 
-            .sidebar {
+            .sidebar-wrapper {
                 width: 100%;
-                position: static;
             }
 
             .method-card {
@@ -446,25 +399,8 @@
             }
 
             /* Sidebar */
-            .sidebar {
+            .sidebar-wrapper {
                 width: 100%;
-                padding: 20px;
-            }
-
-            .sidebar-title {
-                font-size: 16px;
-                padding: 10px 14px;
-            }
-
-            .process-step {
-                padding: 10px 14px;
-                font-size: 13px;
-            }
-
-            .step-number {
-                width: 22px;
-                height: 22px;
-                font-size: 11px;
             }
 
             /* Footer */
@@ -518,6 +454,7 @@
         <p class="hero-description">
             DCF 등 5가지 평가방법을 적용해서 AI를 활용하여 빠르고 낮은 비용으로 기업의 가치를 평가합니다
         </p>
+        <a href="./projects/project-create.html" class="hero-cta">평가 시작하기 →</a>
     </section>
 
     <div class="container">
@@ -587,43 +524,9 @@
             </div>
         </div>
 
-        <!-- 우측 사이드바 -->
-        <aside class="sidebar">
-            <div class="sidebar-title">평가 진행 프로세스</div>
-            <div class="process-steps">
-                <a href="./valuation/guides/mockup-valuation.html" class="process-step active">
-                    <div class="step-number">1</div>
-                    <div class="step-text">안내문 보기</div>
-                </a>
-                <a href="app/projects/project-create.html" class="process-step">
-                    <div class="step-number">2</div>
-                    <div class="step-text">평가 요청하기</div>
-                </a>
-                <a href="app/core/project-dashboard.html" class="process-step">
-                    <div class="step-number">3</div>
-                    <div class="step-text">관리자 승인 대기</div>
-                </a>
-                <a href="app/valuation/portals/dcf-portal.html" class="process-step">
-                    <div class="step-number">4</div>
-                    <div class="step-text">자료 제출하기</div>
-                </a>
-                <a href="app/valuation/results/dcf-valuation.html" class="process-step">
-                    <div class="step-number">5</div>
-                    <div class="step-text">평가 결과 미리보기</div>
-                </a>
-                <a href="app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">6</div>
-                    <div class="step-text">수정 요청하기</div>
-                </a>
-                <a href="app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">7</div>
-                    <div class="step-text">최종 결과 보기</div>
-                </a>
-                <a href="app/projects/project-detail.html" class="process-step">
-                    <div class="step-number">8</div>
-                    <div class="step-text">보고서 발행 요청</div>
-                </a>
-            </div>
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
         </aside>
     </div>
 
@@ -655,6 +558,49 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from './components/common-sidebar.js';
+        import { getCurrentProject, STATUS } from './components/project-status-checker.js';
+
+        async function initSidebar() {
+            // 홈 화면 (valuation.html)
+            // - 현재 단계: 1 (서비스 안내)
+            // - 평가법: 없음 (아직 선택 안 함)
+            // - 상태: not_requested (기본)
+
+            // 프로젝트 확인 (로그인 상태 체크)
+            const project = await getCurrentProject();
+
+            if (project) {
+                // 로그인 + 프로젝트 있음
+                // 프로젝트 상태에 따라 현재 단계 결정
+                const currentStep = project.current_step || 1;
+
+                injectSidebar(
+                    'sidebar-container',
+                    currentStep,           // 현재 단계 (DB에서 가져옴)
+                    STATUS.NOT_REQUESTED,  // 홈 화면에서는 평가법 미선택
+                    null,                  // 평가법 없음
+                    project.project_id     // 프로젝트 ID
+                );
+            } else {
+                // 로그인 안 됨 또는 프로젝트 없음
+                // 기본 사이드바 (1~3단계만 표시)
+                injectSidebar(
+                    'sidebar-container',
+                    1,                     // 1단계 (서비스 안내)
+                    STATUS.NOT_REQUESTED,  // 미선택
+                    null,                  // 평가법 없음
+                    null                   // 프로젝트 없음
+                );
+            }
+        }
+
+        // 페이지 로드 시 사이드바 초기화
+        initSidebar();
     </script>
 </body>
 </html>

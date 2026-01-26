@@ -1,0 +1,38 @@
+name: Investment News Weekly Insight
+
+on:
+  schedule:
+    # 매주 일요일 오전 10시 (KST) = 01:00 (UTC)
+    - cron: '0 1 * * 0'
+  workflow_dispatch:  # 수동 실행 가능
+
+jobs:
+  send-weekly-insight:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/investment-news-scraper/requirements.txt
+
+      - name: Send weekly insight email
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          cd scripts/investment-news-scraper
+          python send_weekly_email.py
+
+      - name: Notify completion
+        if: always()
+        run: |
+          echo "Weekly insight email sent"
