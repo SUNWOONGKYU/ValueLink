@@ -849,6 +849,9 @@
         // 전역 변수
         let projectId, method, selectedRating = 0, downloadCount = 0;
 
+        // API Base URL
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+
         // Confetti 애니메이션 생성
         function createConfetti() {
             const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
@@ -864,6 +867,49 @@
 
                     setTimeout(() => confetti.remove(), 4000);
                 }, i * 30);
+            }
+        }
+
+        // API로부터 평가 결과 로드
+        async function loadValuationResult() {
+            try {
+                const response = await fetch(
+                    `${API_BASE_URL}/valuation/result?project_id=${projectId}&method=${method}`
+                );
+
+                if (!response.ok) {
+                    console.warn('Failed to fetch valuation result from API, using fallback data');
+                    return null;
+                }
+
+                const data = await response.json();
+
+                // 평가 금액 업데이트
+                const valuationAmountElement = document.getElementById('valuationAmountDisplay');
+                if (valuationAmountElement && data.valuation_amount) {
+                    const currency = data.currency === 'KRW' ? '원' : data.currency;
+                    const formattedAmount = data.valuation_amount.toLocaleString('ko-KR');
+                    valuationAmountElement.textContent = `₩${formattedAmount}`;
+                }
+
+                // 완료일 업데이트
+                const completionDateElement = document.getElementById('completionDateDisplay');
+                if (completionDateElement && data.completed_at) {
+                    const completedDate = new Date(data.completed_at);
+                    completionDateElement.textContent = completedDate.toLocaleDateString('ko-KR');
+                }
+
+                // 보고서 URL 업데이트 (다운로드 버튼에 저장)
+                if (data.report_url) {
+                    const btnDownloadReport = document.getElementById('btnDownloadReport');
+                    btnDownloadReport.dataset.reportUrl = data.report_url;
+                }
+
+                return data;
+
+            } catch (error) {
+                console.error('Failed to load valuation result:', error);
+                return null;
             }
         }
 
@@ -904,6 +950,9 @@
                 // 프로젝트 정보 표시
                 displayProjectInfo(project);
 
+                // API로부터 평가 결과 로드
+                await loadValuationResult();
+
                 // 사이드바 렌더링 (14단계 - 완료)
                 injectSidebar(
                     'sidebar-container',
@@ -933,13 +982,19 @@
             document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
             document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
 
-            // 평가 완료일 (현재 날짜로 임시 설정)
+            // 평가 완료일 (기본값: 현재 날짜)
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('completionDateDisplay').textContent = today;
+            const completionDateElement = document.getElementById('completionDateDisplay');
+            if (completionDateElement.textContent === '-') {
+                completionDateElement.textContent = today;
+            }
 
-            // 평가 금액 (임시 값)
-            const amount = (Math.random() * 50 + 50).toFixed(1); // 50~100억 랜덤
-            document.getElementById('valuationAmountDisplay').textContent = `${amount}억원`;
+            // 평가 금액 (기본값: 임시 값, API로부터 로드되면 덮어씌워짐)
+            const valuationAmountElement = document.getElementById('valuationAmountDisplay');
+            if (valuationAmountElement.textContent === '-') {
+                const amount = (Math.random() * 50 + 50).toFixed(1); // 50~100억 랜덤
+                valuationAmountElement.textContent = `${amount}억원`;
+            }
 
             // 파일명 생성
             const filename = `${project.company_name_kr}_기업가치평가보고서_${METHOD_NAMES[method]}_${today}.pdf`;
@@ -953,14 +1008,24 @@
             // 다운로드 카운트 기록
             console.log(`Download count: ${downloadCount}`);
 
-            // 실제 PDF 파일이 있으면 다운로드 처리
-            alert('보고서 다운로드가 시작됩니다.\n\n(실제 환경에서는 PDF 파일이 다운로드됩니다)');
+            const btnDownloadReport = document.getElementById('btnDownloadReport');
+            const reportUrl = btnDownloadReport.dataset.reportUrl;
 
-            // TODO: 실제 PDF 파일 다운로드 구현
-            // const link = document.createElement('a');
-            // link.href = '/path/to/report.pdf';
-            // link.download = document.getElementById('reportFilename').textContent;
-            // link.click();
+            if (reportUrl) {
+                // API로부터 받은 실제 보고서 URL이 있으면 다운로드
+                const link = document.createElement('a');
+                link.href = reportUrl;
+                link.download = document.getElementById('reportFilename').textContent;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                console.log('Downloaded report from:', reportUrl);
+            } else {
+                // Fallback: API 결과가 없으면 안내 메시지
+                alert('보고서 다운로드가 시작됩니다.\n\n(실제 환경에서는 PDF 파일이 다운로드됩니다)');
+            }
         });
 
         // 미리보기 버튼

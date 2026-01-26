@@ -975,23 +975,28 @@
             btnPay.disabled = true;
 
             try {
-                // 실제로는 PG사 API 호출
-                // 여기서는 Mock으로 대체
+                // 실제로는 PG사 API 호출 (Mock으로 대체)
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
-                // 결제 완료 후 DB 업데이트
-                const { error } = await supabase
-                    .from('projects')
-                    .update({
-                        [`${method}_step`]: 14,
-                        [`${method}_payment_status`]: 'completed',
-                        [`${method}_payment_amount`]: totalPaymentAmount,
-                        [`${method}_payment_method`]: paymentMethod,
-                        [`${method}_payment_date`]: new Date().toISOString()
+                // 백엔드 API를 통해 결제 상태 업데이트
+                const response = await fetch('http://localhost:8000/api/v1/valuation/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_id: projectId,
+                        method: method,
+                        status: 'completed',
+                        step: 14
                     })
-                    .eq('project_id', projectId);
+                });
 
-                if (error) throw error;
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.detail || 'Payment status update failed');
+                }
+
+                const result = await response.json();
+                console.log('Payment completed:', result);
 
                 alert('결제가 완료되었습니다! 평가보고서를 다운로드할 수 있습니다.');
 

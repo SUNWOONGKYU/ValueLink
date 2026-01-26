@@ -542,8 +542,12 @@
             // 진행 상황 섹션 표시
             document.getElementById('progressSection').style.display = 'block';
 
-            // 시뮬레이션 시작 (실제로는 백엔드에서 실시간 업데이트)
-            simulateProgress();
+            // API 폴링 시작
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('projectId');
+            const method = urlParams.get('method');
+
+            startPolling(projectId, method);
         }
 
         function renderDataItems() {
@@ -570,49 +574,100 @@
             });
         }
 
-        function simulateProgress() {
-            // 실제로는 WebSocket 또는 polling으로 실시간 진행 상황 업데이트
-            const interval = setInterval(() => {
-                if (currentItemIndex >= DATA_COLLECTION_ITEMS.length) {
-                    clearInterval(interval);
-                    onCollectionComplete();
-                    return;
+        let pollInterval = null;
+
+        async function pollProgress(projectId, method) {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/v1/valuation/progress?project_id=${projectId}&method=${method}`
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                const item = DATA_COLLECTION_ITEMS[currentItemIndex];
+                const data = await response.json();
 
-                // 현재 작업 표시
-                document.getElementById('currentTaskText').textContent = `${item.name} 중...`;
+                // 진행률 업데이트
+                updateProgress(data.progress);
 
-                // 현재 항목을 processing 상태로 변경
-                const dataItem = document.getElementById(`data-item-${currentItemIndex}`);
-                const dataStatus = document.getElementById(`data-status-${currentItemIndex}`);
-                const checkIcon = document.getElementById(`check-icon-${currentItemIndex}`);
+                // current_step이 5(데이터 수집 단계)일 때만 현재 작업 업데이트
+                if (data.current_step === 5 && data.message) {
+                    document.getElementById('currentTaskText').textContent = data.message;
+                }
 
-                dataItem.classList.add('processing');
-                dataStatus.textContent = '분석 중...';
-                dataStatus.classList.add('processing');
-                checkIcon.classList.remove('pending');
-                checkIcon.classList.add('processing');
-                checkIcon.innerHTML = '<span>●</span>';
+                // 진행률에 따라 데이터 항목 시각적 업데이트
+                updateDataItemsVisual(data.progress);
 
-                // 2초 후 완료 상태로 변경
-                setTimeout(() => {
+                // Step 6 이상이면 평가 진행 페이지로 이동
+                if (data.current_step >= 6) {
+                    clearInterval(pollInterval);
+                    onCollectionComplete(projectId, method);
+                }
+
+            } catch (error) {
+                console.error('Progress polling error:', error);
+                // 에러 발생 시 재시도 (최대 3회)
+                if (!window.pollingRetryCount) {
+                    window.pollingRetryCount = 0;
+                }
+                window.pollingRetryCount++;
+
+                if (window.pollingRetryCount > 3) {
+                    clearInterval(pollInterval);
+                    showError('데이터 수집 중 오류가 발생했습니다. 페이지를 새로고침해주세요.');
+                }
+            }
+        }
+
+        function startPolling(projectId, method) {
+            // 초기 호출
+            pollProgress(projectId, method);
+
+            // 2초마다 폴링
+            pollInterval = setInterval(() => {
+                pollProgress(projectId, method);
+            }, 2000);
+        }
+
+        function updateDataItemsVisual(percentage) {
+            // 진행률을 5개 항목에 분산
+            const itemsCompleted = Math.floor((percentage / 100) * DATA_COLLECTION_ITEMS.length);
+            const currentProcessingIndex = Math.min(itemsCompleted, DATA_COLLECTION_ITEMS.length - 1);
+
+            DATA_COLLECTION_ITEMS.forEach((item, index) => {
+                const dataItem = document.getElementById(`data-item-${index}`);
+                const dataStatus = document.getElementById(`data-status-${index}`);
+                const checkIcon = document.getElementById(`check-icon-${index}`);
+
+                if (index < itemsCompleted) {
+                    // 완료된 항목
                     dataItem.classList.remove('processing');
                     dataItem.classList.add('completed');
                     dataStatus.textContent = '완료';
                     dataStatus.classList.remove('processing');
                     dataStatus.classList.add('completed');
-                    checkIcon.classList.remove('processing');
+                    checkIcon.classList.remove('pending', 'processing');
                     checkIcon.classList.add('completed');
                     checkIcon.innerHTML = '<span>✓</span>';
-
-                    currentItemIndex++;
-                    currentProgress = Math.round((currentItemIndex / DATA_COLLECTION_ITEMS.length) * 100);
-                    updateProgress(currentProgress);
-                }, 2000);
-
-            }, 3000); // 각 항목마다 3초 간격 (2초 처리 + 1초 대기)
+                } else if (index === currentProcessingIndex && percentage < 100) {
+                    // 현재 진행 중인 항목
+                    dataItem.classList.add('processing');
+                    dataStatus.textContent = '분석 중...';
+                    dataStatus.classList.add('processing');
+                    checkIcon.classList.remove('pending');
+                    checkIcon.classList.add('processing');
+                    checkIcon.innerHTML = '<span>●</span>';
+                } else {
+                    // 대기 중인 항목
+                    dataItem.classList.remove('processing', 'completed');
+                    dataStatus.textContent = '대기 중';
+                    dataStatus.classList.remove('processing', 'completed');
+                    checkIcon.classList.remove('processing', 'completed');
+                    checkIcon.classList.add('pending');
+                    checkIcon.innerHTML = '<span>○</span>';
+                }
+            });
         }
 
         function updateProgress(percentage) {
@@ -620,18 +675,26 @@
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }
 
-        function onCollectionComplete() {
+        function onCollectionComplete(projectId, method) {
             // 완료 메시지
             document.getElementById('currentTaskText').textContent = '데이터 수집 완료!';
-            document.querySelector('.current-task .loading-spinner').style.display = 'none';
+            const spinnerEl = document.querySelector('.current-task .loading-spinner');
+            if (spinnerEl) {
+                spinnerEl.style.display = 'none';
+            }
 
-            // 2초 후 결과 페이지로 이동
+            // 2초 후 평가 진행 페이지로 이동
             setTimeout(() => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const projectId = urlParams.get('projectId');
-                const method = urlParams.get('method');
-                window.location.href = `./results/result-${method}.html?projectId=${projectId}`;
+                window.location.href = `./evaluation-progress.html?projectId=${projectId}&method=${method}`;
             }, 2000);
+        }
+
+        function showError(message) {
+            const progressSection = document.getElementById('progressSection');
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = 'padding: 16px; background: #FEE2E2; color: #991B1B; border-radius: 12px; margin-top: 16px; text-align: center;';
+            errorDiv.textContent = message;
+            progressSection.appendChild(errorDiv);
         }
 
         function showEmptyState() {

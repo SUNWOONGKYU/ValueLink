@@ -562,19 +562,47 @@ class ReportGenerator:
         Returns:
             bytes: PDF 바이트
         """
-        # TODO: weasyprint 또는 reportlab 사용하여 실제 PDF 생성
-        # 현재는 mock PDF 반환
-        mock_pdf_content = f"""
-        Mock PDF Report
-        =================
-        Generated at: {datetime.now()}
-        Watermark: {watermark}
+        try:
+            from weasyprint import HTML, CSS
+            from io import BytesIO
 
-        HTML Preview:
-        {html[:500]}...
-        """
+            # Watermark CSS
+            watermark_css = """
+            @page {
+                @bottom-center {
+                    content: "DRAFT - 초안";
+                    font-size: 60px;
+                    color: rgba(200, 200, 200, 0.3);
+                    font-weight: bold;
+                }
+            }
+            """ if watermark else ""
 
-        return mock_pdf_content.encode('utf-8')
+            # HTML to PDF conversion
+            pdf_file = BytesIO()
+            HTML(string=html).write_pdf(
+                pdf_file,
+                stylesheets=[CSS(string=watermark_css)] if watermark else None
+            )
+
+            return pdf_file.getvalue()
+
+        except ImportError:
+            # weasyprint가 없으면 mock PDF 반환
+            print("⚠️ weasyprint not installed. Returning mock PDF.")
+            mock_pdf_content = f"""
+            Mock PDF Report
+            =================
+            Generated at: {datetime.now()}
+            Watermark: {watermark}
+
+            HTML Preview:
+            {html[:500]}...
+            """
+            return mock_pdf_content.encode('utf-8')
+        except Exception as e:
+            print(f"❌ PDF 변환 실패: {e}")
+            raise
 
     async def _upload_to_storage(self, pdf_bytes: bytes, filename: str) -> str:
         """
