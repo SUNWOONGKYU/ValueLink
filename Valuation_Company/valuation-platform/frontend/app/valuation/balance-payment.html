@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>잔금 입금 (50%) | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        /* Success Banner */
+        .success-banner {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .success-banner h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .success-banner p {
+            font-size: 15px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Project Info Card */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-id {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--deep-blue);
+        }
+
+        /* Payment Summary */
+        .payment-summary {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .summary-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* 선금 완료 표시 */
+        .summary-row.deposit-complete {
+            background: #ECFDF5;
+            padding: 12px 16px;
+            margin: 0 -16px 16px -16px;
+            border-radius: 8px;
+            border: 1px solid var(--success);
+        }
+
+        .summary-row.deposit-complete .summary-label {
+            color: var(--success);
+        }
+
+        .summary-row.deposit-complete .summary-value {
+            color: var(--success);
+        }
+
+        .check-icon {
+            color: var(--success);
+            font-size: 18px;
+            margin-left: 8px;
+        }
+
+        /* 잔금 강조 */
+        .summary-row.balance {
+            background: #FEF3C7;
+            padding: 16px;
+            margin: 16px -16px 16px -16px;
+            border-radius: 8px;
+            border: 2px solid var(--warning);
+        }
+
+        .summary-row.balance .summary-label {
+            font-size: 18px;
+            color: #92400E;
+            font-weight: 700;
+        }
+
+        .summary-row.balance .summary-value {
+            font-size: 24px;
+            color: #92400E;
+        }
+
+        /* Bank Account Info */
+        .bank-info {
+            padding: 24px;
+            background: #F9FAFB;
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .bank-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .bank-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .bank-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .copy-button {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: 1px solid var(--deep-blue);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* Notice Box */
+        .notice-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: #DBEAFE;
+            border-left: 4px solid var(--deep-blue);
+            border-radius: 8px;
+        }
+
+        .notice-box strong {
+            display: block;
+            font-size: 15px;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+        }
+
+        .notice-box ul {
+            margin-left: 20px;
+            font-size: 14px;
+            color: #1E40AF;
+            line-height: 1.8;
+        }
+
+        /* Warning Box */
+        .warning-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            border-radius: 8px;
+        }
+
+        .warning-box p {
+            margin: 0;
+            font-size: 14px;
+            color: #92400E;
+            line-height: 1.6;
+        }
+
+        /* Terms and Agreements */
+        .terms-section {
+            margin-top: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .checkbox-label.required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .terms-link {
+            color: var(--deep-blue);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .terms-link:hover {
+            color: #1E40AF;
+        }
+
+        /* Payment Button */
+        .btn-payment {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: var(--warning);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 24px;
+        }
+
+        .btn-payment:hover:not(:disabled) {
+            background: #D97706;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-payment:disabled {
+            background: #D1D5DB;
+            cursor: not-allowed;
+        }
+
+        /* Security Notice */
+        .security-notice {
+            margin-top: 24px;
+            padding: 16px;
+            background: #ECFDF5;
+            border: 1px solid #10B981;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .security-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .security-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .pg-logos {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pg-logo {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Sidebar */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">잔금 입금 (50%)</h1>
+                <p class="page-description">평가가 완료되었습니다! 🎉<br>최종 보고서를 다운로드하려면 잔금 50%를 입금해 주세요.</p>
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">결제 정보를 불러오는 중...</p>
+            </div>
+
+            <!-- 평가 완료 배너 -->
+            <div id="successBanner" class="success-banner" style="display: none;">
+                <h2>✅ 평가가 완료되었습니다!</h2>
+                <p>전문 회계사의 철저한 검토를 거쳐 평가가 완료되었습니다.<br>잔금 입금 확인 후 최종 보고서를 다운로드하실 수 있습니다.</p>
+            </div>
+
+            <!-- 프로젝트 정보 -->
+            <div id="projectInfoCard" class="card" style="display: none;">
+                <h3>프로젝트 정보</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">프로젝트 번호</span>
+                        <span class="info-value project-id" id="projectIdDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">회사명</span>
+                        <span class="info-value" id="companyNameDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가법</span>
+                        <span class="info-value" id="methodDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가 기준일</span>
+                        <span class="info-value" id="valuationDateDisplay">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 결제 금액 -->
+            <div id="paymentSummaryCard" class="card" style="display: none;">
+                <h3>💰 결제 금액</h3>
+                <div class="payment-summary">
+                    <div class="summary-row">
+                        <span class="summary-label">평가 서비스</span>
+                        <span class="summary-value" id="serviceName">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">평가 서비스 금액 (전액)</span>
+                        <span class="summary-value" id="totalServiceAmount">-</span>
+                    </div>
+
+                    <!-- 선금 완료 표시 -->
+                    <div class="summary-row deposit-complete">
+                        <span class="summary-label">✅ 선금 (50%) - 입금 완료</span>
+                        <span class="summary-value" id="depositAmountPaid">-</span>
+                    </div>
+
+                    <!-- 잔금 50% 강조 -->
+                    <div class="summary-row balance">
+                        <span class="summary-label">📍 잔금 (50%)</span>
+                        <span class="summary-value" id="balanceAmount">-</span>
+                    </div>
+                </div>
+
+                <div class="notice-box">
+                    <strong>💡 결제 안내</strong>
+                    <ul>
+                        <li><strong>잔금 입금 확인 후</strong> 최종 보고서 다운로드 가능</li>
+                        <li>입금 확인은 영업일 기준 1일 이내에 처리됩니다</li>
+                        <li>확인 완료 시 이메일로 다운로드 링크를 전송합니다</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 무통장 입금 안내 -->
+            <div id="paymentMethodCard" class="card" style="display: none;">
+                <h3>🏦 입금 계좌 안내</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 15px; line-height: 1.6;">
+                    아래 계좌로 잔금 50%를 입금해주시면 관리자가 확인 후 최종 보고서 다운로드 링크를 보내드립니다.
+                </p>
+
+                <!-- 입금 계좌 정보 -->
+                <div class="bank-info">
+                    <div class="bank-row">
+                        <span class="bank-label">은행명</span>
+                        <span class="bank-value">국민은행</span>
+                    </div>
+                    <div class="bank-row">
+                        <span class="bank-label">계좌번호</span>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span class="bank-value" id="accountNumber">123-456-789012</span>
+                            <button class="copy-button" onclick="copyAccountNumber()">복사</button>
+                        </div>
+                    </div>
+                    <div class="bank-row">
+                        <span class="bank-label">예금주</span>
+                        <span class="bank-value">(주)밸류링크</span>
+                    </div>
+                    <div class="bank-row" style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--warning);">
+                        <span class="bank-label" style="font-size: 16px; color: #92400E;">잔금 입금 금액 (50%)</span>
+                        <span class="bank-value" id="balanceAmountBank" style="color: #92400E; font-size: 20px;">-</span>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <p>
+                        <strong>⚠️ 입금 시 유의사항</strong><br>
+                        • 입금자명은 <strong>회사명</strong>으로 입력해 주세요<br>
+                        • 잔금 입금 확인 후 최종 보고서 다운로드 가능<br>
+                        • 입금 확인은 영업일 기준 1일 이내에 처리됩니다<br>
+                        • 확인 완료 시 이메일로 다운로드 링크를 전송합니다
+                    </p>
+                </div>
+
+                <!-- 약관 동의 -->
+                <div class="terms-section">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsPayment" required>
+                            <label for="termsPayment" class="checkbox-label required">
+                                결제 대행 서비스 약관 동의
+                                <a href="#" class="terms-link" onclick="showTerms('payment'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsPrivacy" required>
+                            <label for="termsPrivacy" class="checkbox-label required">
+                                개인정보 제3자 제공 동의
+                                <a href="#" class="terms-link" onclick="showTerms('privacy'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsRefund" required>
+                            <label for="termsRefund" class="checkbox-label required">
+                                환불 규정 확인
+                                <a href="#" class="terms-link" onclick="showTerms('refund'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결제 버튼 -->
+                <button id="btnPay" class="btn-payment" disabled>잔금 입금 완료 확인</button>
+
+                <!-- 보안 안내 -->
+                <div class="security-notice">
+                    <div class="security-icon">🔒</div>
+                    <p class="security-text">SSL 보안 결제로 안전하게 보호됩니다</p>
+                    <div class="pg-logos">
+                        <span class="pg-logo">국민은행</span>
+                        <span class="pg-logo">안심 입금</span>
+                        <span class="pg-logo">무통장 입금</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트 주입 -->
+        </aside>
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../components/project-status-checker.js';
+
+        // Supabase 클라이언트
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 평가법별 가격 (원)
+        const METHOD_PRICES = {
+            dcf: 3000000,              // 300만원
+            relative: 2500000,         // 250만원
+            intrinsic: 2800000,        // 280만원
+            asset: 2000000,            // 200만원
+            inheritance_tax: 3500000   // 350만원
+        };
+
+        let projectId, method, balancePaymentAmount;
+
+        async function loadPaymentPage() {
+            try {
+                // URL 파라미터 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                projectId = urlParams.get('projectId');
+                method = urlParams.get('method');
+
+                if (!projectId || !method) {
+                    alert('잘못된 접근입니다.');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // 평가법 상태 확인 (Step 13 - 잔금 입금)
+                const methodStatus = await checkMethodStatus(projectId, method);
+                if (methodStatus.status !== STATUS.IN_PROGRESS || methodStatus.step !== 13) {
+                    alert('잔금 입금 단계가 아닙니다.');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // 프로젝트 정보 조회
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (error || !project) {
+                    console.error('프로젝트 조회 실패:', error);
+                    alert('프로젝트를 찾을 수 없습니다.');
+                    return;
+                }
+
+                // 프로젝트 정보 표시
+                displayProjectInfo(project);
+
+                // 결제 금액 계산 및 표시
+                calculateAndDisplayPayment();
+
+                // 사이드바 렌더링 (Step 13 - 잔금 입금)
+                injectSidebar(
+                    'sidebar-container',
+                    13,                         // 현재 단계
+                    STATUS.IN_PROGRESS,         // 진행 중
+                    method,                     // 평가법
+                    projectId                   // 프로젝트 ID
+                );
+
+                // 로딩 숨김
+                document.getElementById('loadingState').style.display = 'none';
+                showCards();
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                alert('오류가 발생했습니다.');
+            }
+        }
+
+        function displayProjectInfo(project) {
+            document.getElementById('projectIdDisplay').textContent = project.project_id;
+            document.getElementById('companyNameDisplay').textContent = project.company_name_kr;
+            document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
+            document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
+        }
+
+        function calculateAndDisplayPayment() {
+            const totalPrice = METHOD_PRICES[method] || 0;
+            const depositAmount = Math.floor(totalPrice * 0.5);  // 선금 50% (이미 완료)
+            const balanceAmount = totalPrice - depositAmount;    // 잔금 50%
+
+            balancePaymentAmount = balanceAmount;
+
+            // 금액 표시 (천 단위 콤마)
+            document.getElementById('serviceName').textContent = METHOD_NAMES[method];
+            document.getElementById('totalServiceAmount').textContent = formatCurrency(totalPrice);
+            document.getElementById('depositAmountPaid').textContent = formatCurrency(depositAmount);
+            document.getElementById('balanceAmount').textContent = formatCurrency(balanceAmount);
+            document.getElementById('balanceAmountBank').textContent = formatCurrency(balanceAmount);
+
+            // 결제 버튼 텍스트 업데이트
+            updatePaymentButtonText(balanceAmount);
+        }
+
+        function formatCurrency(amount) {
+            return '₩' + amount.toLocaleString('ko-KR');
+        }
+
+        function updatePaymentButtonText(amount) {
+            const btnPay = document.getElementById('btnPay');
+            btnPay.textContent = `잔금 입금 완료 확인 (${formatCurrency(amount)})`;
+        }
+
+        function showCards() {
+            document.getElementById('successBanner').style.display = 'block';
+            document.getElementById('projectInfoCard').style.display = 'block';
+            document.getElementById('paymentSummaryCard').style.display = 'block';
+            document.getElementById('paymentMethodCard').style.display = 'block';
+        }
+
+        // 약관 동의 체크
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', checkTermsAndEnableButton);
+        });
+
+        function checkTermsAndEnableButton() {
+            const termsPayment = document.getElementById('termsPayment').checked;
+            const termsPrivacy = document.getElementById('termsPrivacy').checked;
+            const termsRefund = document.getElementById('termsRefund').checked;
+
+            const allChecked = termsPayment && termsPrivacy && termsRefund;
+            document.getElementById('btnPay').disabled = !allChecked;
+        }
+
+        // 잔금 입금 버튼 클릭
+        document.getElementById('btnPay').addEventListener('click', async () => {
+            // 잔금 입금 확인 메시지
+            const confirmMessage = `잔금 50% ${formatCurrency(balancePaymentAmount)}을\n위 계좌로 입금하셨습니까?\n\n입금 확인 후 최종 보고서를 다운로드하실 수 있습니다.`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            // 잔금 입금 안내 알림
+            alert(`잔금 입금이 접수되었습니다.
+
+📋 입금 정보
+• 은행: 국민은행
+• 계좌번호: 123-456-789012
+• 예금주: (주)밸류링크
+• 잔금 (50%): ${formatCurrency(balancePaymentAmount)}
+
+관리자가 입금 확인 후 최종 보고서 다운로드 링크를 이메일로 전송합니다.
+
+✅ 평가 완료!
+입금 확인 후 최종 보고서를 다운로드하실 수 있습니다.`);
+
+            // 페이지는 그대로 유지 (관리자가 입금 확인 후 Step 14로 변경)
+            console.log('잔금 입금 대기 상태 - 관리자 확인 필요');
+        });
+
+        // 페이지 로드 시 실행
+        loadPaymentPage();
+    </script>
+
+    <!-- 전역 함수 -->
+    <script>
+        // 계좌번호 복사
+        function copyAccountNumber() {
+            const accountNumber = document.getElementById('accountNumber').textContent;
+            navigator.clipboard.writeText(accountNumber).then(() => {
+                alert('계좌번호가 복사되었습니다.');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+            });
+        }
+
+        // 약관 전문 보기
+        function showTerms(type) {
+            const titles = {
+                payment: '결제 대행 서비스 약관',
+                privacy: '개인정보 제3자 제공 동의',
+                refund: '환불 규정'
+            };
+
+            const contents = {
+                payment: '결제 대행 서비스는 무통장 입금 방식으로 제공됩니다. 잔금 50% 입금 후 최종 보고서를 다운로드하실 수 있습니다...',
+                privacy: '결제 처리를 위해 귀하의 개인정보가 은행 및 PG사에 제공됩니다...',
+                refund: '평가 완료 후에는 환불이 제한됩니다. 자세한 사항은 고객센터로 문의해주세요...'
+            };
+
+            alert(`${titles[type]}\n\n${contents[type]}`);
+        }
+    </script>
+</body>
+</html>
