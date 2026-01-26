@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가보고서 초안 생성 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-green: #166534;
+            --deep-blue: #1D4ED8;
+            --amber: #F59E0B;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-symbol {
+            width: 44px;
+            height: 44px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E3A5F;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-secondary);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-light);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--deep-blue-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-company {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            font-size: 14px;
+            color: var(--text-muted);
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Main Layout */
+        .page-wrapper {
+            display: flex;
+            gap: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Project Info Card */
+        .project-info-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .project-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .project-id {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: monospace;
+            background: var(--bg-light);
+            padding: 4px 12px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .project-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .project-meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Generation Progress Section */
+        .generation-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 32px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .progress-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-percentage {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
+        .progress-bar-wrapper {
+            width: 100%;
+            height: 12px;
+            background: var(--bg-light);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--deep-blue), var(--deep-blue-light));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        /* Writing Animation */
+        @keyframes writing {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 40px;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+            animation: writing 1.5s ease-in-out infinite;
+        }
+
+        .current-section {
+            text-align: center;
+            padding: 20px;
+            background: var(--deep-blue-pale);
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+
+        .current-section-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .current-section-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        /* Section List */
+        .section-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .section-item.completed {
+            background: #D1FAE5;
+            border: 2px solid var(--success);
+        }
+
+        .section-item.writing {
+            background: var(--deep-blue-pale);
+            border: 2px solid var(--deep-blue);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .section-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .section-info {
+            flex: 1;
+        }
+
+        .section-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .section-description {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .section-status {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
+
+        .section-status.waiting {
+            background: #F3F4F6;
+            color: var(--text-muted);
+        }
+
+        .section-status.writing {
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+        }
+
+        .section-status.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* Report Structure Preview */
+        .structure-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .toc-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toc-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border-left: 4px solid var(--deep-green);
+        }
+
+        .toc-number {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--deep-green);
+            width: 32px;
+        }
+
+        .toc-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Notice Box */
+        .notice-box {
+            background: var(--deep-blue-pale);
+            border: 1px solid #BFDBFE;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .notice-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notice-text {
+            font-size: 13px;
+            color: #1E40AF;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .page-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+                order: -1;
+            }
+
+            .project-meta {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 20px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .project-info-card,
+            .generation-section,
+            .structure-section {
+                padding: 20px;
+            }
+
+            .project-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header-container">
+        <div class="header-left">
+            <a href="../index.html" class="logo">
+                <svg class="logo-symbol" viewBox="0 0 100 100">
+                    <g transform="translate(15, 20)">
+                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
+                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
+                    </g>
+                </svg>
+                <span class="logo-text">ValueLink</span>
+            </a>
+            <nav class="main-nav">
+                <a href="../guides/valuation-guide.html" class="nav-item">📚 평가방법</a>
+                <a href="../project-list.html" class="nav-item">📊 프로젝트 목록</a>
+                <a href="../project-create.html" class="nav-item">➕ 신규</a>
+            </nav>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="user-avatar">김</div>
+                <div>
+                    <div class="user-name" id="user-name">로딩 중...</div>
+                    <div class="user-company" id="user-company">-</div>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="page-wrapper">
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">평가보고서 초안 생성</h1>
+                <p class="page-description">
+                    AI가 평가 결과를 바탕으로 보고서 초안을 자동으로 작성하고 있습니다.
+                    완료까지 약 5-10분 소요됩니다.
+                </p>
+            </div>
+
+            <!-- Project Info Card -->
+            <section class="project-info-card">
+                <div class="project-header">
+                    <div>
+                        <h2 class="project-title" id="project-company-name">로딩 중...</h2>
+                        <span class="project-id" id="project-id">-</span>
+                    </div>
+                    <div class="project-status">
+                        <span>✍️</span>
+                        <span>보고서 작성 중</span>
+                    </div>
+                </div>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <div class="meta-label">평가 방법</div>
+                        <div class="meta-value" id="method-name">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">신청일</div>
+                        <div class="meta-value" id="created-date">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">평가 기준일</div>
+                        <div class="meta-value" id="evaluation-date">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">담당 회계사</div>
+                        <div class="meta-value">선웅규 회계사</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notice Box -->
+            <div class="notice-box">
+                <div class="notice-title">
+                    <span>💡</span>
+                    AI 보고서 생성 안내
+                </div>
+                <div class="notice-text">
+                    AI가 제출하신 재무제표와 사업계획서를 분석하여 평가보고서 초안을 자동으로 작성합니다.
+                    초안 완료 후 공인회계사의 검토를 거쳐 정확성이 보장됩니다.
+                </div>
+            </div>
+
+            <!-- Generation Progress -->
+            <section class="generation-section">
+                <h3 class="section-title">
+                    <span>📊</span>
+                    생성 진행률
+                </h3>
+
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-label">전체 진행률</span>
+                        <span class="progress-percentage" id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Current Section -->
+                <div class="current-section">
+                    <div class="current-section-icon">✍️</div>
+                    <div class="current-section-text" id="current-section-text">초기화 중...</div>
+                </div>
+
+                <!-- Section List -->
+                <div class="section-list" id="section-list">
+                    <!-- Sections will be dynamically inserted -->
+                </div>
+            </section>
+
+            <!-- Report Structure Preview -->
+            <section class="structure-section">
+                <h3 class="section-title">
+                    <span>📋</span>
+                    보고서 목차
+                </h3>
+                <div class="toc-list">
+                    <div class="toc-item">
+                        <span class="toc-number">I</span>
+                        <span class="toc-title">요약 (Executive Summary)</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">II</span>
+                        <span class="toc-title">평가 개요</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">III</span>
+                        <span class="toc-title">회사 개요 및 산업 분석</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">IV</span>
+                        <span class="toc-title">재무 분석</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">V</span>
+                        <span class="toc-title">평가 방법론 및 가정</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">VI</span>
+                        <span class="toc-title">평가 결과</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">VII</span>
+                        <span class="toc-title">민감도 분석</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">VIII</span>
+                        <span class="toc-title">결론</span>
+                    </div>
+                    <div class="toc-item">
+                        <span class="toc-number">IX</span>
+                        <span class="toc-title">부록</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Sidebar -->
+        <aside id="sidebar-container" class="sidebar-wrapper"></aside>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <!-- Module Script -->
+    <script type="module">
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES } from '../components/project-status-checker.js';
+
+        // URL 파라미터에서 프로젝트 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id') || 'DEMO-2026-DCF';
+        const method = urlParams.get('method') || 'dcf';
+
+        // 보고서 섹션 정의
+        const reportSections = [
+            { id: 1, name: '요약', description: 'Executive Summary 작성', icon: '📝' },
+            { id: 2, name: '평가 개요', description: '평가 목적 및 범위', icon: '🎯' },
+            { id: 3, name: '회사 개요', description: '회사 소개 및 산업 분석', icon: '🏢' },
+            { id: 4, name: '재무 분석', description: '과거 재무제표 분석', icon: '💹' },
+            { id: 5, name: '평가 방법론', description: '평가 방법 및 가정 설명', icon: '📊' },
+            { id: 6, name: '평가 결과', description: '기업가치 산정 결과', icon: '💰' },
+            { id: 7, name: '민감도 분석', description: '주요 변수 민감도 검토', icon: '🔍' },
+            { id: 8, name: '결론', description: '평가 의견 및 제한사항', icon: '✅' },
+            { id: 9, name: '부록', description: '재무제표 및 참고자료', icon: '📎' }
+        ];
+
+        // 페이지 로드 시 실행
+        async function initializePage() {
+            try {
+                // 평가법 상태 확인
+                const { status, step } = await checkMethodStatus(projectId, method);
+
+                // 사이드바 주입 (현재 단계: 8)
+                injectSidebar('sidebar-container', 8, status, method, projectId);
+
+                // 프로젝트 정보 표시
+                displayProjectInfo();
+
+                // 보고서 섹션 렌더링
+                renderSections();
+
+                // 생성 진행 시뮬레이션 시작
+                startGenerationSimulation();
+
+            } catch (error) {
+                console.error('페이지 초기화 실패:', error);
+            }
+        }
+
+        // 프로젝트 정보 표시
+        function displayProjectInfo() {
+            const methodName = METHOD_NAMES[method] || method;
+
+            // 임시 데이터 (실제로는 DB에서 가져와야 함)
+            document.getElementById('project-company-name').textContent = '(주)테크이노베이션';
+            document.getElementById('project-id').textContent = projectId;
+            document.getElementById('method-name').textContent = methodName;
+            document.getElementById('created-date').textContent = '2026.01.15';
+            document.getElementById('evaluation-date').textContent = '2025.12.31';
+        }
+
+        // 보고서 섹션 렌더링
+        function renderSections() {
+            const sectionList = document.getElementById('section-list');
+
+            reportSections.forEach(section => {
+                const sectionItem = document.createElement('div');
+                sectionItem.className = 'section-item waiting';
+                sectionItem.id = `section-${section.id}`;
+
+                sectionItem.innerHTML = `
+                    <span class="section-icon">${section.icon}</span>
+                    <div class="section-info">
+                        <div class="section-name">${section.name}</div>
+                        <div class="section-description">${section.description}</div>
+                    </div>
+                    <span class="section-status waiting">⏳ 대기</span>
+                `;
+
+                sectionList.appendChild(sectionItem);
+            });
+        }
+
+        // 생성 진행 시뮬레이션
+        function startGenerationSimulation() {
+            let currentSectionIndex = 0;
+            let progress = 0;
+            const totalSections = reportSections.length;
+            const progressPerSection = 100 / totalSections;
+
+            const interval = setInterval(() => {
+                if (currentSectionIndex >= totalSections) {
+                    clearInterval(interval);
+                    // 완료 후 초안 확인 페이지로 이동
+                    setTimeout(() => {
+                        window.location.href = `results/valuation-result.html?id=${projectId}&method=${method}&mode=draft`;
+                    }, 2000);
+                    return;
+                }
+
+                const section = reportSections[currentSectionIndex];
+
+                // 현재 섹션 표시
+                document.getElementById('current-section-text').textContent =
+                    `${section.name} 작성 중...`;
+
+                // 섹션 상태 업데이트
+                const sectionElement = document.getElementById(`section-${section.id}`);
+                sectionElement.className = 'section-item writing';
+                sectionElement.querySelector('.section-status').textContent = '✍️ 작성 중';
+                sectionElement.querySelector('.section-status').className = 'section-status writing';
+
+                // 진행률 업데이트
+                progress = Math.min(100, Math.round((currentSectionIndex + 1) * progressPerSection));
+                document.getElementById('progress-percentage').textContent = `${progress}%`;
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+
+                // 이전 섹션 완료 표시
+                if (currentSectionIndex > 0) {
+                    const prevSection = reportSections[currentSectionIndex - 1];
+                    const prevElement = document.getElementById(`section-${prevSection.id}`);
+                    prevElement.className = 'section-item completed';
+                    prevElement.querySelector('.section-status').textContent = '✅ 완료';
+                    prevElement.querySelector('.section-status').className = 'section-status completed';
+                }
+
+                currentSectionIndex++;
+            }, 3000); // 3초마다 다음 섹션으로
+        }
+
+        // 로그아웃 처리
+        window.handleLogout = async function() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                // 실제로는 Supabase 로그아웃 처리
+                window.location.href = '../index.html';
+            }
+        };
+
+        // 페이지 로드 시 초기화
+        initializePage();
+    </script>
+</body>
+</html>

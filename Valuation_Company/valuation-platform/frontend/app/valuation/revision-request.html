@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수정 요청 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --light-green: #DCFCE7;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --bg-light: #F9FAFB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Project Info Card */
+        .project-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .project-info-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-id {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--deep-blue);
+        }
+
+        /* Draft Link Section */
+        .draft-link-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .draft-link-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .btn-view-draft {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: #DBEAFE;
+            border: 2px solid var(--deep-blue);
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-draft:hover {
+            background: var(--deep-blue);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Revision Form Section */
+        .revision-form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .revision-form-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: var(--error);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .form-select:hover {
+            border-color: #D1D5DB;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .radio-option input[type="radio"]:checked + .radio-label {
+            background: var(--light-green);
+            border-color: var(--deep-green);
+        }
+
+        .radio-label:hover {
+            border-color: #D1D5DB;
+        }
+
+        .radio-icon {
+            font-size: 24px;
+        }
+
+        .radio-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Textarea */
+        .form-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            font-size: 15px;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        .form-textarea:hover {
+            border-color: #D1D5DB;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .char-counter.warning {
+            color: var(--warning);
+        }
+
+        .char-counter.error {
+            color: var(--error);
+        }
+
+        /* File Upload */
+        .file-upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--bg-light);
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--deep-blue);
+            background: #EFF6FF;
+        }
+
+        .file-upload-area.dragover {
+            border-color: var(--deep-green);
+            background: var(--light-green);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-upload-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .file-upload-hint {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .uploaded-files {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .file-size {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .btn-remove-file {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--error);
+            background: transparent;
+            border: 1px solid var(--error);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-remove-file:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Submit Button */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn-submit {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-green);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #15803D;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Previous Requests Section */
+        .previous-requests-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .previous-requests-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .requests-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .request-item {
+            padding: 16px;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .request-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .request-section {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .request-status {
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .request-status.received {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .request-status.processing {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .request-status.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .request-type {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .request-content {
+            font-size: 14px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .request-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .empty-requests {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .modal-content {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-cancel {
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .btn-modal-cancel:hover {
+            background: #E5E7EB;
+        }
+
+        .btn-modal-confirm {
+            background: var(--deep-green);
+            color: white;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #15803D;
+        }
+
+        /* Sidebar */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">수정 요청</h1>
+                <p class="page-description">평가보고서 초안에서 수정이 필요한 부분을 요청해주세요.</p>
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">프로젝트 정보를 불러오는 중...</p>
+            </div>
+
+            <!-- 프로젝트 정보 -->
+            <div id="projectInfoCard" class="project-info-card" style="display: none;">
+                <h3>프로젝트 정보</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">프로젝트 번호</span>
+                        <span class="info-value project-id" id="projectIdDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">회사명</span>
+                        <span class="info-value" id="companyNameDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가법</span>
+                        <span class="info-value" id="methodDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가 기준일</span>
+                        <span class="info-value" id="valuationDateDisplay">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 초안 다시 보기 -->
+            <div id="draftLinkSection" class="draft-link-section" style="display: none;">
+                <h3>평가보고서 초안</h3>
+                <a href="#" id="btnViewDraft" class="btn-view-draft" target="_blank">
+                    📄 초안 다시 보기
+                </a>
+            </div>
+
+            <!-- 수정 요청 폼 -->
+            <div id="revisionFormSection" class="revision-form-section" style="display: none;">
+                <h3>수정 요청 작성</h3>
+
+                <form id="revisionForm">
+                    <!-- 섹션 선택 -->
+                    <div class="form-group">
+                        <label class="form-label" for="sectionSelect">
+                            어느 섹션을 수정하고 싶으신가요? <span class="required">*</span>
+                        </label>
+                        <select id="sectionSelect" class="form-select" required>
+                            <option value="">섹션을 선택해주세요</option>
+                            <option value="요약">요약 (Executive Summary)</option>
+                            <option value="평가 개요">평가 개요 (Valuation Overview)</option>
+                            <option value="회사 분석">회사 분석 (Company Analysis)</option>
+                            <option value="재무 분석">재무 분석 (Financial Analysis)</option>
+                            <option value="평가 방법론">평가 방법론 (Valuation Methodology)</option>
+                            <option value="평가 결과">평가 결과 (Valuation Results)</option>
+                            <option value="민감도 분석">민감도 분석 (Sensitivity Analysis)</option>
+                            <option value="결론">결론 (Conclusion)</option>
+                            <option value="부록">부록 (Appendix)</option>
+                        </select>
+                    </div>
+
+                    <!-- 수정 유형 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            수정 유형 <span class="required">*</span>
+                        </label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="typeRevise" name="requestType" value="내용 수정" required>
+                                <label for="typeRevise" class="radio-label">
+                                    <span class="radio-icon">✏️</span>
+                                    <span class="radio-text">내용 수정</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeAdd" name="requestType" value="내용 추가">
+                                <label for="typeAdd" class="radio-label">
+                                    <span class="radio-icon">➕</span>
+                                    <span class="radio-text">내용 추가</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeRemove" name="requestType" value="내용 삭제">
+                                <label for="typeRemove" class="radio-label">
+                                    <span class="radio-icon">➖</span>
+                                    <span class="radio-text">내용 삭제</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="typeUpdate" name="requestType" value="데이터 업데이트">
+                                <label for="typeUpdate" class="radio-label">
+                                    <span class="radio-icon">🔄</span>
+                                    <span class="radio-text">데이터 업데이트</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 상세 요청 사항 -->
+                    <div class="form-group">
+                        <label class="form-label" for="requestDetail">
+                            구체적인 수정 요청 사항 <span class="required">*</span>
+                        </label>
+                        <textarea
+                            id="requestDetail"
+                            class="form-textarea"
+                            placeholder="구체적인 수정 요청 사항을 입력해주세요...&#10;&#10;예시:&#10;- '재무 분석' 섹션의 매출 성장률 전망을 보수적으로 수정해주세요&#10;- '평가 결과' 섹션에 경쟁사 비교 분석을 추가해주세요&#10;- '민감도 분석'에서 할인율 8% 시나리오를 제거해주세요"
+                            maxlength="1000"
+                            required
+                        ></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span> / 1000
+                        </div>
+                    </div>
+
+                    <!-- 파일 업로드 -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            참고 자료 첨부 (선택사항)
+                        </label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <div class="file-upload-icon">📎</div>
+                            <div class="file-upload-text">
+                                파일을 드래그하거나 클릭하여 업로드
+                            </div>
+                            <div class="file-upload-hint">
+                                PDF, Excel, Word 파일만 가능 (최대 10MB)
+                            </div>
+                        </div>
+                        <input
+                            type="file"
+                            id="fileInput"
+                            class="file-input"
+                            accept=".pdf,.xlsx,.xls,.doc,.docx"
+                            multiple
+                        >
+                        <div id="uploadedFiles" class="uploaded-files"></div>
+                    </div>
+
+                    <!-- 제출 버튼 -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit" id="btnSubmit">
+                            수정 요청 제출
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 이전 수정 요청 목록 -->
+            <div id="previousRequestsSection" class="previous-requests-section" style="display: none;">
+                <h3>이전 수정 요청 내역</h3>
+                <div id="requestsList" class="requests-list">
+                    <!-- JavaScript로 동적 생성 -->
+                </div>
+            </div>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트 주입 -->
+        </aside>
+    </div>
+
+    <!-- 확인 모달 -->
+    <div id="confirmModal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">수정 요청 제출</h3>
+            <div class="modal-content">
+                작성하신 수정 요청을 제출하시겠습니까?<br>
+                제출 후에는 수정할 수 없습니다.
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-modal-cancel" id="btnModalCancel">
+                    취소
+                </button>
+                <button type="button" class="btn-modal btn-modal-confirm" id="btnModalConfirm">
+                    제출하기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../components/project-status-checker.js';
+
+        // Supabase 클라이언트
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentProjectId = null;
+        let currentMethod = null;
+        let uploadedFiles = [];
+
+        async function loadProject() {
+            try {
+                // URL에서 파라미터 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                currentProjectId = urlParams.get('projectId');
+                currentMethod = urlParams.get('method');
+
+                if (!currentProjectId || !currentMethod) {
+                    alert('잘못된 접근입니다.');
+                    window.location.href = '../approval-waiting.html';
+                    return;
+                }
+
+                // 프로젝트 정보 조회
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('project_id', currentProjectId)
+                    .single();
+
+                if (error || !project) {
+                    console.error('프로젝트 조회 실패:', error);
+                    alert('프로젝트를 찾을 수 없습니다.');
+                    return;
+                }
+
+                // 평가법 상태 확인
+                const methodStatus = await checkMethodStatus(currentProjectId, currentMethod);
+
+                // 프로젝트 정보 표시
+                displayProjectInfo(project);
+
+                // 초안 링크 설정
+                setupDraftLink();
+
+                // 이전 수정 요청 로드
+                await loadPreviousRequests();
+
+                // 사이드바 렌더링 (10단계 - 수정 요청)
+                injectSidebar(
+                    'sidebar-container',
+                    10,                        // 현재 단계
+                    methodStatus.status,       // 평가법 상태
+                    currentMethod,             // 평가법
+                    currentProjectId           // 프로젝트 ID
+                );
+
+                // 로딩 숨김
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('projectInfoCard').style.display = 'block';
+                document.getElementById('draftLinkSection').style.display = 'block';
+                document.getElementById('revisionFormSection').style.display = 'block';
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                alert('오류가 발생했습니다.');
+            }
+        }
+
+        function displayProjectInfo(project) {
+            document.getElementById('projectIdDisplay').textContent = project.project_id;
+            document.getElementById('companyNameDisplay').textContent =
+                `${project.company_name_kr} (${project.company_name_en})`;
+            document.getElementById('methodDisplay').textContent = METHOD_NAMES[currentMethod];
+            document.getElementById('valuationDateDisplay').textContent =
+                project.valuation_date || '-';
+        }
+
+        function setupDraftLink() {
+            const draftUrl = `./results/result.html?projectId=${currentProjectId}&method=${currentMethod}&mode=draft`;
+            document.getElementById('btnViewDraft').href = draftUrl;
+        }
+
+        async function loadPreviousRequests() {
+            try {
+                const { data: requests, error } = await supabase
+                    .from('revision_requests')
+                    .select('*')
+                    .eq('project_id', currentProjectId)
+                    .eq('method', currentMethod)
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('수정 요청 조회 실패:', error);
+                    return;
+                }
+
+                displayPreviousRequests(requests);
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+            }
+        }
+
+        function displayPreviousRequests(requests) {
+            const requestsList = document.getElementById('requestsList');
+
+            if (!requests || requests.length === 0) {
+                requestsList.innerHTML = '<div class="empty-requests">아직 제출한 수정 요청이 없습니다.</div>';
+            } else {
+                requestsList.innerHTML = requests.map(req => {
+                    const statusClass = req.status === '완료' ? 'completed' :
+                                      req.status === '처리중' ? 'processing' : 'received';
+                    const statusText = req.status === '완료' ? '완료' :
+                                     req.status === '처리중' ? '처리중' : '접수됨';
+
+                    return `
+                        <div class="request-item">
+                            <div class="request-header">
+                                <span class="request-section">${req.section}</span>
+                                <span class="request-status ${statusClass}">${statusText}</span>
+                            </div>
+                            <div class="request-type">${req.request_type}</div>
+                            <div class="request-content">${req.request_detail}</div>
+                            <div class="request-date">
+                                ${new Date(req.created_at).toLocaleString('ko-KR')}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('previousRequestsSection').style.display = 'block';
+        }
+
+        // 글자 수 카운터
+        const requestDetail = document.getElementById('requestDetail');
+        const charCount = document.getElementById('charCount');
+
+        requestDetail.addEventListener('input', () => {
+            const length = requestDetail.value.length;
+            charCount.textContent = length;
+
+            const counter = charCount.parentElement;
+            if (length > 900) {
+                counter.classList.add('error');
+                counter.classList.remove('warning');
+            } else if (length > 800) {
+                counter.classList.add('warning');
+                counter.classList.remove('error');
+            } else {
+                counter.classList.remove('warning', 'error');
+            }
+        });
+
+        // 파일 업로드
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const uploadedFilesDiv = document.getElementById('uploadedFiles');
+
+        fileUploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.add('dragover');
+        });
+
+        fileUploadArea.addEventListener('dragleave', () => {
+            fileUploadArea.classList.remove('dragover');
+        });
+
+        fileUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const allowedTypes = [
+                'application/pdf',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            ];
+
+            Array.from(files).forEach(file => {
+                if (!allowedTypes.includes(file.type)) {
+                    alert(`${file.name}은(는) 지원하지 않는 파일 형식입니다.`);
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    alert(`${file.name}의 크기가 10MB를 초과합니다.`);
+                    return;
+                }
+
+                uploadedFiles.push(file);
+            });
+
+            displayUploadedFiles();
+        }
+
+        function displayUploadedFiles() {
+            uploadedFilesDiv.innerHTML = uploadedFiles.map((file, index) => `
+                <div class="uploaded-file">
+                    <div class="file-info">
+                        <span class="file-name">📎 ${file.name}</span>
+                        <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                    <button type="button" class="btn-remove-file" onclick="removeFile(${index})">
+                        삭제
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.removeFile = function(index) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles();
+        };
+
+        // 폼 제출
+        const revisionForm = document.getElementById('revisionForm');
+        const confirmModal = document.getElementById('confirmModal');
+        const btnModalCancel = document.getElementById('btnModalCancel');
+        const btnModalConfirm = document.getElementById('btnModalConfirm');
+
+        revisionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // 유효성 검사
+            const section = document.getElementById('sectionSelect').value;
+            const requestType = document.querySelector('input[name="requestType"]:checked');
+            const detail = requestDetail.value.trim();
+
+            if (!section) {
+                alert('수정할 섹션을 선택해주세요.');
+                return;
+            }
+
+            if (!requestType) {
+                alert('수정 유형을 선택해주세요.');
+                return;
+            }
+
+            if (!detail) {
+                alert('구체적인 수정 요청 사항을 입력해주세요.');
+                return;
+            }
+
+            if (detail.length < 10) {
+                alert('수정 요청 사항을 10자 이상 입력해주세요.');
+                return;
+            }
+
+            // 확인 모달 표시
+            confirmModal.classList.add('active');
+        });
+
+        btnModalCancel.addEventListener('click', () => {
+            confirmModal.classList.remove('active');
+        });
+
+        btnModalConfirm.addEventListener('click', async () => {
+            confirmModal.classList.remove('active');
+            await submitRevisionRequest();
+        });
+
+        async function submitRevisionRequest() {
+            try {
+                const btnSubmit = document.getElementById('btnSubmit');
+                btnSubmit.disabled = true;
+                btnSubmit.textContent = '제출 중...';
+
+                const section = document.getElementById('sectionSelect').value;
+                const requestType = document.querySelector('input[name="requestType"]:checked').value;
+                const detail = requestDetail.value.trim();
+
+                // 파일 업로드 (실제 구현 시 Supabase Storage 사용)
+                let fileUrls = [];
+                // TODO: 파일 업로드 로직 구현
+
+                // revision_requests 테이블에 저장
+                const { error } = await supabase
+                    .from('revision_requests')
+                    .insert({
+                        project_id: currentProjectId,
+                        method: currentMethod,
+                        section: section,
+                        request_type: requestType,
+                        request_detail: detail,
+                        attachment_urls: fileUrls,
+                        status: '접수됨'
+                    });
+
+                if (error) {
+                    console.error('수정 요청 제출 실패:', error);
+                    alert('수정 요청 제출에 실패했습니다.');
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = '수정 요청 제출';
+                    return;
+                }
+
+                alert('수정 요청이 제출되었습니다.\n담당 공인회계사가 검토 후 반영하겠습니다.');
+
+                // 폼 초기화
+                revisionForm.reset();
+                uploadedFiles = [];
+                displayUploadedFiles();
+                charCount.textContent = '0';
+
+                // 이전 요청 목록 갱신
+                await loadPreviousRequests();
+
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '수정 요청 제출';
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                alert('오류가 발생했습니다.');
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = '수정 요청 제출';
+            }
+        }
+
+        // 페이지 로드 시 실행
+        loadProject();
+    </script>
+</body>
+</html>

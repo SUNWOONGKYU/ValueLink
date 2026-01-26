@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>결제하기 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        /* Project Info Card */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-id {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--deep-blue);
+        }
+
+        /* Final Report Preview */
+        .report-preview {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #F9FAFB;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .report-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .report-icon {
+            font-size: 40px;
+        }
+
+        .report-details {
+            flex: 1;
+        }
+
+        .report-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .report-meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .btn-view-report {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: 2px solid var(--deep-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .btn-view-report:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* Payment Summary */
+        .payment-summary {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 16px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .summary-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .summary-row.total .summary-label {
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .summary-row.total .summary-value {
+            font-size: 28px;
+            color: var(--deep-blue);
+        }
+
+        /* Payment Method Selection */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .payment-method {
+            position: relative;
+        }
+
+        .payment-method input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .payment-method label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-method input[type="radio"]:checked + label {
+            border-color: var(--deep-blue);
+            background: #EFF6FF;
+        }
+
+        .payment-method-icon {
+            font-size: 24px;
+        }
+
+        .payment-method-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Payment Form */
+        .payment-form {
+            margin-top: 24px;
+            padding: 24px;
+            background: #F9FAFB;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .payment-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+        }
+
+        /* Bank Account Info */
+        .bank-info {
+            padding: 20px;
+            background: white;
+            border: 2px solid var(--deep-blue);
+            border-radius: 12px;
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .bank-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .bank-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .bank-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .copy-button {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: 1px solid var(--deep-blue);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* Terms and Agreements */
+        .terms-section {
+            margin-top: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .checkbox-label.required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .terms-link {
+            color: var(--deep-blue);
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .terms-link:hover {
+            color: #1E40AF;
+        }
+
+        /* Payment Button */
+        .btn-payment {
+            width: 100%;
+            padding: 18px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 24px;
+        }
+
+        .btn-payment:hover:not(:disabled) {
+            background: #1E40AF;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+        }
+
+        .btn-payment:disabled {
+            background: #D1D5DB;
+            cursor: not-allowed;
+        }
+
+        /* Security Notice */
+        .security-notice {
+            margin-top: 24px;
+            padding: 16px;
+            background: #ECFDF5;
+            border: 1px solid #10B981;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .security-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .security-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .pg-logos {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .pg-logo {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Sidebar */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">결제하기</h1>
+                <p class="page-description">평가보고서 비용을 결제하시면 최종 보고서를 수령하실 수 있습니다.</p>
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">결제 정보를 불러오는 중...</p>
+            </div>
+
+            <!-- 프로젝트 정보 -->
+            <div id="projectInfoCard" class="card" style="display: none;">
+                <h3>프로젝트 정보</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">프로젝트 번호</span>
+                        <span class="info-value project-id" id="projectIdDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">회사명</span>
+                        <span class="info-value" id="companyNameDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가법</span>
+                        <span class="info-value" id="methodDisplay">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">평가 기준일</span>
+                        <span class="info-value" id="valuationDateDisplay">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최종안 미리보기 -->
+            <div id="reportPreviewCard" class="card" style="display: none;">
+                <h3>평가보고서 최종안</h3>
+                <div class="report-preview">
+                    <div class="report-info">
+                        <span class="report-icon">📄</span>
+                        <div class="report-details">
+                            <div class="report-title">평가보고서 최종안.pdf</div>
+                            <div class="report-meta">45페이지 • 2.3MB</div>
+                        </div>
+                    </div>
+                    <a href="#" class="btn-view-report" id="btnViewReport">최종안 다시 보기</a>
+                </div>
+            </div>
+
+            <!-- 결제 금액 -->
+            <div id="paymentSummaryCard" class="card" style="display: none;">
+                <h3>결제 금액</h3>
+                <div class="payment-summary">
+                    <div class="summary-row">
+                        <span class="summary-label">평가 서비스</span>
+                        <span class="summary-value" id="serviceName">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">평가 금액</span>
+                        <span class="summary-value" id="baseAmount">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">부가세 (VAT 10%)</span>
+                        <span class="summary-value" id="vatAmount">-</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label">총 결제 금액</span>
+                        <span class="summary-value" id="totalAmount">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 결제 수단 선택 -->
+            <div id="paymentMethodCard" class="card" style="display: none;">
+                <h3>결제 수단 선택</h3>
+                <div class="payment-methods">
+                    <div class="payment-method">
+                        <input type="radio" name="paymentMethod" id="methodCard" value="card">
+                        <label for="methodCard">
+                            <span class="payment-method-icon">💳</span>
+                            <span class="payment-method-name">신용카드</span>
+                        </label>
+                    </div>
+                    <div class="payment-method">
+                        <input type="radio" name="paymentMethod" id="methodBank" value="bank">
+                        <label for="methodBank">
+                            <span class="payment-method-icon">🏦</span>
+                            <span class="payment-method-name">무통장 입금</span>
+                        </label>
+                    </div>
+                    <div class="payment-method">
+                        <input type="radio" name="paymentMethod" id="methodTransfer" value="transfer">
+                        <label for="methodTransfer">
+                            <span class="payment-method-icon">💰</span>
+                            <span class="payment-method-name">계좌이체</span>
+                        </label>
+                    </div>
+                    <div class="payment-method">
+                        <input type="radio" name="paymentMethod" id="methodEasy" value="easy">
+                        <label for="methodEasy">
+                            <span class="payment-method-icon">📱</span>
+                            <span class="payment-method-name">간편결제</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 신용카드 폼 -->
+                <div id="formCard" class="payment-form">
+                    <div class="form-group">
+                        <label class="form-label">카드번호</label>
+                        <div class="form-row">
+                            <input type="text" class="form-input" placeholder="1234-5678-9012-3456" maxlength="19">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div>
+                                <label class="form-label">유효기간</label>
+                                <input type="text" class="form-input" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div>
+                                <label class="form-label">CVC</label>
+                                <input type="text" class="form-input" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">카드 소유자명</label>
+                        <input type="text" class="form-input" placeholder="홍길동">
+                    </div>
+                </div>
+
+                <!-- 무통장 입금 -->
+                <div id="formBank" class="payment-form">
+                    <div class="bank-info">
+                        <div class="bank-row">
+                            <span class="bank-label">은행명</span>
+                            <span class="bank-value">국민은행</span>
+                        </div>
+                        <div class="bank-row">
+                            <span class="bank-label">계좌번호</span>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <span class="bank-value" id="accountNumber">123-456-789012</span>
+                                <button class="copy-button" onclick="copyAccountNumber()">복사</button>
+                            </div>
+                        </div>
+                        <div class="bank-row">
+                            <span class="bank-label">예금주</span>
+                            <span class="bank-value">(주)밸류링크</span>
+                        </div>
+                        <div class="bank-row">
+                            <span class="bank-label">입금 금액</span>
+                            <span class="bank-value" id="depositAmount">-</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                        입금자명은 회사명으로 입력해 주세요. 입금 확인 후 최종 보고서가 발송됩니다.
+                    </p>
+                </div>
+
+                <!-- 계좌이체 -->
+                <div id="formTransfer" class="payment-form">
+                    <div class="bank-info">
+                        <div class="bank-row">
+                            <span class="bank-label">가상계좌 발급</span>
+                            <span class="bank-value">자동 발급됩니다</span>
+                        </div>
+                    </div>
+                    <p style="margin-top: 16px; font-size: 14px; color: var(--text-secondary);">
+                        결제 진행 시 고객님 전용 가상계좌가 발급됩니다. 발급된 계좌로 입금해 주세요.
+                    </p>
+                </div>
+
+                <!-- 간편결제 -->
+                <div id="formEasy" class="payment-form">
+                    <div class="payment-methods" style="margin-top: 0;">
+                        <div class="payment-method">
+                            <input type="radio" name="easyPayMethod" id="kakao" value="kakao">
+                            <label for="kakao">
+                                <span class="payment-method-icon">💛</span>
+                                <span class="payment-method-name">카카오페이</span>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" name="easyPayMethod" id="naver" value="naver">
+                            <label for="naver">
+                                <span class="payment-method-icon">💚</span>
+                                <span class="payment-method-name">네이버페이</span>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" name="easyPayMethod" id="toss" value="toss">
+                            <label for="toss">
+                                <span class="payment-method-icon">💙</span>
+                                <span class="payment-method-name">토스페이</span>
+                            </label>
+                        </div>
+                        <div class="payment-method">
+                            <input type="radio" name="easyPayMethod" id="payco" value="payco">
+                            <label for="payco">
+                                <span class="payment-method-icon">❤️</span>
+                                <span class="payment-method-name">페이코</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 약관 동의 -->
+                <div class="terms-section">
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsPayment" required>
+                            <label for="termsPayment" class="checkbox-label required">
+                                결제 대행 서비스 약관 동의
+                                <a href="#" class="terms-link" onclick="showTerms('payment'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsPrivacy" required>
+                            <label for="termsPrivacy" class="checkbox-label required">
+                                개인정보 제3자 제공 동의
+                                <a href="#" class="terms-link" onclick="showTerms('privacy'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="termsRefund" required>
+                            <label for="termsRefund" class="checkbox-label required">
+                                환불 규정 확인
+                                <a href="#" class="terms-link" onclick="showTerms('refund'); return false;">(전문보기)</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 결제 버튼 -->
+                <button id="btnPay" class="btn-payment" disabled>결제하기</button>
+
+                <!-- 보안 안내 -->
+                <div class="security-notice">
+                    <div class="security-icon">🔒</div>
+                    <p class="security-text">SSL 보안 결제로 안전하게 보호됩니다</p>
+                    <div class="pg-logos">
+                        <span class="pg-logo">KG이니시스</span>
+                        <span class="pg-logo">토스페이먼츠</span>
+                        <span class="pg-logo">NICE페이먼츠</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트 주입 -->
+        </aside>
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../components/project-status-checker.js';
+
+        // Supabase 클라이언트
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 평가법별 가격 (원)
+        const METHOD_PRICES = {
+            dcf: 3000000,              // 300만원
+            relative: 2500000,         // 250만원
+            intrinsic: 2800000,        // 280만원
+            asset: 2000000,            // 200만원
+            inheritance_tax: 3500000   // 350만원
+        };
+
+        let projectId, method, totalPaymentAmount;
+
+        async function loadPaymentPage() {
+            try {
+                // URL 파라미터 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                projectId = urlParams.get('projectId');
+                method = urlParams.get('method');
+
+                if (!projectId || !method) {
+                    alert('잘못된 접근입니다.');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // 평가법 상태 확인
+                const methodStatus = await checkMethodStatus(projectId, method);
+                if (methodStatus.status !== STATUS.IN_PROGRESS || methodStatus.step !== 13) {
+                    alert('결제 단계가 아닙니다.');
+                    window.location.href = '../index.html';
+                    return;
+                }
+
+                // 프로젝트 정보 조회
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (error || !project) {
+                    console.error('프로젝트 조회 실패:', error);
+                    alert('프로젝트를 찾을 수 없습니다.');
+                    return;
+                }
+
+                // 프로젝트 정보 표시
+                displayProjectInfo(project);
+
+                // 결제 금액 계산 및 표시
+                calculateAndDisplayPayment();
+
+                // 사이드바 렌더링 (13단계 - 결제하기)
+                injectSidebar(
+                    'sidebar-container',
+                    13,                         // 현재 단계
+                    STATUS.IN_PROGRESS,         // 진행 중
+                    method,                     // 평가법
+                    projectId                   // 프로젝트 ID
+                );
+
+                // 로딩 숨김
+                document.getElementById('loadingState').style.display = 'none';
+                showCards();
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                alert('오류가 발생했습니다.');
+            }
+        }
+
+        function displayProjectInfo(project) {
+            document.getElementById('projectIdDisplay').textContent = project.project_id;
+            document.getElementById('companyNameDisplay').textContent = project.company_name_kr;
+            document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
+            document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
+
+            // 최종안 보기 버튼 링크 설정
+            document.getElementById('btnViewReport').href =
+                `./results/result-${method}.html?projectId=${projectId}&mode=final`;
+        }
+
+        function calculateAndDisplayPayment() {
+            const basePrice = METHOD_PRICES[method] || 0;
+            const vat = Math.floor(basePrice * 0.1);
+            const total = basePrice + vat;
+
+            totalPaymentAmount = total;
+
+            // 금액 표시 (천 단위 콤마)
+            document.getElementById('serviceName').textContent = METHOD_NAMES[method];
+            document.getElementById('baseAmount').textContent = formatCurrency(basePrice);
+            document.getElementById('vatAmount').textContent = formatCurrency(vat);
+            document.getElementById('totalAmount').textContent = formatCurrency(total);
+            document.getElementById('depositAmount').textContent = formatCurrency(total);
+
+            // 결제 버튼 텍스트 업데이트
+            updatePaymentButtonText(total);
+        }
+
+        function formatCurrency(amount) {
+            return '₩' + amount.toLocaleString('ko-KR');
+        }
+
+        function updatePaymentButtonText(amount) {
+            const btnPay = document.getElementById('btnPay');
+            btnPay.textContent = `${formatCurrency(amount)} 결제하기`;
+        }
+
+        function showCards() {
+            document.getElementById('projectInfoCard').style.display = 'block';
+            document.getElementById('reportPreviewCard').style.display = 'block';
+            document.getElementById('paymentSummaryCard').style.display = 'block';
+            document.getElementById('paymentMethodCard').style.display = 'block';
+        }
+
+        // 결제 수단 선택 이벤트
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                // 모든 폼 숨김
+                document.querySelectorAll('.payment-form').forEach(form => {
+                    form.classList.remove('active');
+                });
+
+                // 선택된 폼만 표시
+                const selectedMethod = e.target.value;
+                document.getElementById(`form${capitalize(selectedMethod)}`).classList.add('active');
+
+                // 약관 동의 체크 확인
+                checkTermsAndEnableButton();
+            });
+        });
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // 약관 동의 체크
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', checkTermsAndEnableButton);
+        });
+
+        function checkTermsAndEnableButton() {
+            const termsPayment = document.getElementById('termsPayment').checked;
+            const termsPrivacy = document.getElementById('termsPrivacy').checked;
+            const termsRefund = document.getElementById('termsRefund').checked;
+            const paymentMethodSelected = document.querySelector('input[name="paymentMethod"]:checked');
+
+            const allChecked = termsPayment && termsPrivacy && termsRefund && paymentMethodSelected;
+            document.getElementById('btnPay').disabled = !allChecked;
+        }
+
+        // 결제 버튼 클릭
+        document.getElementById('btnPay').addEventListener('click', async () => {
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!selectedMethod) {
+                alert('결제 수단을 선택해 주세요.');
+                return;
+            }
+
+            const paymentMethod = selectedMethod.value;
+
+            // 결제 처리 (Mock)
+            const confirmMessage = `${METHOD_NAMES[method]} 평가 서비스를 ${formatCurrency(totalPaymentAmount)}에 결제하시겠습니까?`;
+
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+
+            // 로딩 표시
+            const btnPay = document.getElementById('btnPay');
+            const originalText = btnPay.textContent;
+            btnPay.textContent = '결제 처리 중...';
+            btnPay.disabled = true;
+
+            try {
+                // 실제로는 PG사 API 호출
+                // 여기서는 Mock으로 대체
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // 결제 완료 후 DB 업데이트
+                const { error } = await supabase
+                    .from('projects')
+                    .update({
+                        [`${method}_step`]: 14,
+                        [`${method}_payment_status`]: 'completed',
+                        [`${method}_payment_amount`]: totalPaymentAmount,
+                        [`${method}_payment_method`]: paymentMethod,
+                        [`${method}_payment_date`]: new Date().toISOString()
+                    })
+                    .eq('project_id', projectId);
+
+                if (error) throw error;
+
+                alert('결제가 완료되었습니다! 평가보고서를 다운로드할 수 있습니다.');
+
+                // 14단계 (보고서 수령)로 이동
+                window.location.href = `./report-download.html?projectId=${projectId}&method=${method}`;
+
+            } catch (error) {
+                console.error('결제 실패:', error);
+                alert('결제 처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+                btnPay.textContent = originalText;
+                btnPay.disabled = false;
+            }
+        });
+
+        // 페이지 로드 시 실행
+        loadPaymentPage();
+    </script>
+
+    <!-- 전역 함수 -->
+    <script>
+        // 계좌번호 복사
+        function copyAccountNumber() {
+            const accountNumber = document.getElementById('accountNumber').textContent;
+            navigator.clipboard.writeText(accountNumber).then(() => {
+                alert('계좌번호가 복사되었습니다.');
+            }).catch(err => {
+                console.error('복사 실패:', err);
+            });
+        }
+
+        // 약관 전문 보기
+        function showTerms(type) {
+            const titles = {
+                payment: '결제 대행 서비스 약관',
+                privacy: '개인정보 제3자 제공 동의',
+                refund: '환불 규정'
+            };
+
+            const contents = {
+                payment: '결제 대행 서비스는 KG이니시스, 토스페이먼츠 등의 PG사를 통해 제공됩니다...',
+                privacy: '결제 처리를 위해 귀하의 개인정보가 PG사에 제공됩니다...',
+                refund: '평가보고서 수령 전에는 100% 환불이 가능합니다. 수령 후에는 환불이 불가능합니다...'
+            };
+
+            alert(`${titles[type]}\n\n${contents[type]}`);
+        }
+    </script>
+</body>
+</html>

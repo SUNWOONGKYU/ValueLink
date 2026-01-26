@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가보고서 수령 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --light-green: #DCFCE7;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success-green: #10B981;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+        }
+
+        /* Confetti Animation */
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--success-green);
+            top: -10px;
+            animation: confetti-fall 3s linear;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Success Message */
+        .success-message {
+            background: linear-gradient(135deg, var(--light-green) 0%, #DCFCE7 100%);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 2px solid var(--deep-green);
+        }
+
+        .celebration-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--deep-green);
+            margin-bottom: 8px;
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Project Info Card */
+        .project-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .project-info-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .project-id {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--deep-blue);
+        }
+
+        .valuation-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--deep-green);
+        }
+
+        /* Report Summary */
+        .report-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .report-summary h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        /* Download Section */
+        .download-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .download-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .main-report-card {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border: 2px solid var(--deep-green);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .report-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .report-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .report-filename {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .report-size {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .btn-download-large {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            background: var(--deep-green);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-download-large:hover {
+            background: #15803D;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(22, 101, 52, 0.3);
+        }
+
+        .btn-download-large:active {
+            transform: translateY(0);
+        }
+
+        .download-icon {
+            font-size: 20px;
+        }
+
+        /* Attachments */
+        .attachments {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .attachment-item:hover {
+            background: #F3F4F6;
+            border-color: #D1D5DB;
+        }
+
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .attachment-icon {
+            font-size: 24px;
+        }
+
+        .attachment-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .attachment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .attachment-size {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .btn-download-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-download-small:hover {
+            background: #1E40AF;
+        }
+
+        /* Report Preview */
+        .report-preview {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .report-preview h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .preview-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .thumbnail {
+            position: relative;
+            aspect-ratio: 1 / 1.4;
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .thumbnail:hover {
+            border-color: var(--deep-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .thumbnail-icon {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .thumbnail-page {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: var(--deep-blue);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .btn-preview {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: 2px solid var(--deep-blue);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-preview:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* Next Steps */
+        .next-steps {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .next-steps h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .next-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .next-step-btn {
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .next-step-btn:hover {
+            background: #F3F4F6;
+            border-color: var(--deep-blue);
+            color: var(--deep-blue);
+        }
+
+        /* History Section */
+        .history-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .history-section h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .version-badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            background: var(--text-secondary);
+            color: white;
+            border-radius: 4px;
+        }
+
+        .version-badge.current {
+            background: var(--deep-green);
+        }
+
+        /* Satisfaction Survey */
+        .satisfaction-survey {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .satisfaction-survey h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .survey-question {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .star:hover,
+        .star.active {
+            transform: scale(1.2);
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .btn-submit-survey {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit-survey:hover {
+            background: #1E40AF;
+        }
+
+        .survey-submitted {
+            padding: 16px;
+            background: var(--light-green);
+            border: 1px solid var(--deep-green);
+            border-radius: 8px;
+            text-align: center;
+            color: var(--deep-green);
+            font-weight: 600;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* Sidebar */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .next-steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-thumbnails {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">평가보고서 정보를 불러오는 중...</p>
+            </div>
+
+            <!-- 메인 컨텐츠 (로딩 후 표시) -->
+            <div id="mainContent" style="display: none;">
+                <!-- 성공 메시지 -->
+                <div class="success-message">
+                    <div class="celebration-icon">🎉</div>
+                    <h2 class="success-title">평가가 완료되었습니다!</h2>
+                    <p class="success-subtitle">귀사의 기업가치 평가보고서를 확인하세요.</p>
+                </div>
+
+                <div class="page-header">
+                    <h1 class="page-title">평가보고서 수령</h1>
+                    <p class="page-description">평가보고서가 준비되었습니다. 다운로드하여 확인하세요.</p>
+                </div>
+
+                <!-- 프로젝트 정보 -->
+                <div class="project-info-card">
+                    <h3>프로젝트 정보</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">프로젝트 번호</span>
+                            <span class="info-value project-id" id="projectIdDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">회사명</span>
+                            <span class="info-value" id="companyNameDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">평가법</span>
+                            <span class="info-value" id="methodDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">평가 기준일</span>
+                            <span class="info-value" id="valuationDateDisplay">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 평가보고서 요약 -->
+                <div class="report-summary">
+                    <h3>평가보고서 요약</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">평가 완료일</span>
+                            <span class="info-value" id="completionDateDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">평가 금액</span>
+                            <span class="info-value valuation-amount" id="valuationAmountDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">담당 회계사</span>
+                            <span class="info-value">선웅규 회계사</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">보고서 버전</span>
+                            <span class="info-value">v1.0 (최종본)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 다운로드 섹션 -->
+                <div class="download-section">
+                    <h3>평가보고서 다운로드</h3>
+
+                    <!-- 메인 보고서 -->
+                    <div class="main-report-card">
+                        <div class="report-icon">📄</div>
+                        <div class="report-title">평가보고서 (최종본)</div>
+                        <div class="report-filename" id="reportFilename">-</div>
+                        <div class="report-size">파일 크기: <span id="reportSize">2.5MB</span></div>
+                        <button class="btn-download-large" id="btnDownloadReport">
+                            <span class="download-icon">⬇️</span>
+                            평가보고서 다운로드
+                        </button>
+                    </div>
+
+                    <!-- 첨부 파일 -->
+                    <div class="attachments" id="attachmentsList" style="display: none;">
+                        <div class="attachment-item">
+                            <div class="attachment-info">
+                                <span class="attachment-icon">📊</span>
+                                <div class="attachment-details">
+                                    <span class="attachment-name">재무 데이터.xlsx</span>
+                                    <span class="attachment-size">854KB</span>
+                                </div>
+                            </div>
+                            <button class="btn-download-small">다운로드</button>
+                        </div>
+                        <div class="attachment-item">
+                            <div class="attachment-info">
+                                <span class="attachment-icon">📦</span>
+                                <div class="attachment-details">
+                                    <span class="attachment-name">추가 자료.zip</span>
+                                    <span class="attachment-size">1.2MB</span>
+                                </div>
+                            </div>
+                            <button class="btn-download-small">다운로드</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 보고서 미리보기 -->
+                <div class="report-preview">
+                    <h3>보고서 미리보기</h3>
+                    <div class="preview-thumbnails">
+                        <div class="thumbnail">
+                            <span class="thumbnail-icon">📄</span>
+                            <span class="thumbnail-page">1</span>
+                        </div>
+                        <div class="thumbnail">
+                            <span class="thumbnail-icon">📊</span>
+                            <span class="thumbnail-page">2</span>
+                        </div>
+                        <div class="thumbnail">
+                            <span class="thumbnail-icon">📈</span>
+                            <span class="thumbnail-page">3</span>
+                        </div>
+                        <div class="thumbnail">
+                            <span class="thumbnail-icon">📉</span>
+                            <span class="thumbnail-page">4</span>
+                        </div>
+                    </div>
+                    <button class="btn-preview" id="btnPreview">전체 미리보기</button>
+                </div>
+
+                <!-- 다음 단계 -->
+                <div class="next-steps">
+                    <h3>다음 단계</h3>
+                    <div class="next-steps-grid">
+                        <a href="#" class="next-step-btn">
+                            📖 평가보고서 활용 가이드
+                        </a>
+                        <a href="../projects/project-create.html" class="next-step-btn">
+                            ➕ 추가 평가 신청
+                        </a>
+                        <a href="../customer/customer-support.html" class="next-step-btn">
+                            💬 문의하기
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 이전 버전 이력 -->
+                <div class="history-section" id="historySection" style="display: none;">
+                    <h3>보고서 버전 이력</h3>
+                    <div class="history-list">
+                        <div class="history-item">
+                            <div>
+                                <span class="version-badge current">v1.0</span>
+                                <span style="margin-left: 12px; font-weight: 600;">최종본</span>
+                                <span style="margin-left: 8px; color: var(--text-secondary); font-size: 13px;">2026-01-26</span>
+                            </div>
+                            <button class="btn-download-small">다운로드</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 만족도 조사 -->
+                <div class="satisfaction-survey">
+                    <h3>서비스 만족도 조사</h3>
+                    <div id="surveyForm">
+                        <div class="survey-question">서비스는 만족하셨나요?</div>
+                        <div class="star-rating" id="starRating">
+                            <span class="star" data-rating="1">⭐</span>
+                            <span class="star" data-rating="2">⭐</span>
+                            <span class="star" data-rating="3">⭐</span>
+                            <span class="star" data-rating="4">⭐</span>
+                            <span class="star" data-rating="5">⭐</span>
+                        </div>
+                        <textarea
+                            class="feedback-textarea"
+                            id="feedbackText"
+                            placeholder="서비스 이용 소감을 자유롭게 작성해주세요 (선택사항)"
+                        ></textarea>
+                        <button class="btn-submit-survey" id="btnSubmitSurvey">의견 제출</button>
+                    </div>
+                    <div id="surveySubmitted" class="survey-submitted" style="display: none;">
+                        ✅ 소중한 의견 감사합니다!
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트 주입 -->
+        </aside>
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../components/project-status-checker.js';
+
+        // Supabase 클라이언트
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 전역 변수
+        let projectId, method, selectedRating = 0, downloadCount = 0;
+
+        // Confetti 애니메이션 생성
+        function createConfetti() {
+            const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        async function loadReportData() {
+            try {
+                // URL 파라미터
+                const urlParams = new URLSearchParams(window.location.search);
+                projectId = urlParams.get('projectId');
+                method = urlParams.get('method');
+
+                if (!projectId || !method) {
+                    alert('프로젝트 정보가 없습니다.');
+                    window.location.href = '../projects/project-list.html';
+                    return;
+                }
+
+                // 평가법 상태 확인
+                const methodStatus = await checkMethodStatus(projectId, method);
+                if (methodStatus.status !== STATUS.COMPLETED) {
+                    alert('아직 평가가 완료되지 않았습니다.');
+                    window.location.href = '../approval-waiting.html?projectId=' + projectId;
+                    return;
+                }
+
+                // 프로젝트 정보 조회
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (error || !project) {
+                    console.error('프로젝트 조회 실패:', error);
+                    alert('프로젝트 정보를 불러올 수 없습니다.');
+                    return;
+                }
+
+                // 프로젝트 정보 표시
+                displayProjectInfo(project);
+
+                // 사이드바 렌더링 (14단계 - 완료)
+                injectSidebar(
+                    'sidebar-container',
+                    14,                    // 14단계: 평가보고서 수령
+                    STATUS.COMPLETED,      // 완료 상태
+                    method,
+                    projectId
+                );
+
+                // 로딩 숨김, 메인 컨텐츠 표시
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+
+                // Confetti 애니메이션
+                createConfetti();
+
+            } catch (error) {
+                console.error('오류 발생:', error);
+                alert('데이터 로드 중 오류가 발생했습니다.');
+            }
+        }
+
+        function displayProjectInfo(project) {
+            document.getElementById('projectIdDisplay').textContent = project.project_id;
+            document.getElementById('companyNameDisplay').textContent =
+                `${project.company_name_kr} (${project.company_name_en})`;
+            document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
+            document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
+
+            // 평가 완료일 (현재 날짜로 임시 설정)
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('completionDateDisplay').textContent = today;
+
+            // 평가 금액 (임시 값)
+            const amount = (Math.random() * 50 + 50).toFixed(1); // 50~100억 랜덤
+            document.getElementById('valuationAmountDisplay').textContent = `${amount}억원`;
+
+            // 파일명 생성
+            const filename = `${project.company_name_kr}_기업가치평가보고서_${METHOD_NAMES[method]}_${today}.pdf`;
+            document.getElementById('reportFilename').textContent = filename;
+        }
+
+        // 메인 보고서 다운로드
+        document.getElementById('btnDownloadReport').addEventListener('click', async () => {
+            downloadCount++;
+
+            // 다운로드 카운트 기록
+            console.log(`Download count: ${downloadCount}`);
+
+            // 실제 PDF 파일이 있으면 다운로드 처리
+            alert('보고서 다운로드가 시작됩니다.\n\n(실제 환경에서는 PDF 파일이 다운로드됩니다)');
+
+            // TODO: 실제 PDF 파일 다운로드 구현
+            // const link = document.createElement('a');
+            // link.href = '/path/to/report.pdf';
+            // link.download = document.getElementById('reportFilename').textContent;
+            // link.click();
+        });
+
+        // 미리보기 버튼
+        document.getElementById('btnPreview').addEventListener('click', () => {
+            alert('보고서 미리보기 페이지가 새 탭에서 열립니다.\n\n(실제 환경에서는 PDF 뷰어가 열립니다)');
+
+            // TODO: 실제 PDF 뷰어 열기
+            // window.open('/path/to/report.pdf', '_blank');
+        });
+
+        // 별점 클릭
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.dataset.rating);
+                selectedRating = rating;
+
+                // 별점 표시 업데이트
+                stars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // 만족도 조사 제출
+        document.getElementById('btnSubmitSurvey').addEventListener('click', async () => {
+            if (selectedRating === 0) {
+                alert('별점을 선택해주세요.');
+                return;
+            }
+
+            const feedback = document.getElementById('feedbackText').value;
+
+            try {
+                // TODO: 실제 DB에 저장
+                console.log('Survey submitted:', {
+                    projectId,
+                    method,
+                    rating: selectedRating,
+                    feedback
+                });
+
+                // UI 업데이트
+                document.getElementById('surveyForm').style.display = 'none';
+                document.getElementById('surveySubmitted').style.display = 'block';
+
+            } catch (error) {
+                console.error('만족도 조사 제출 실패:', error);
+                alert('의견 제출 중 오류가 발생했습니다.');
+            }
+        });
+
+        // 페이지 로드 시 실행
+        loadReportData();
+    </script>
+</body>
+</html>

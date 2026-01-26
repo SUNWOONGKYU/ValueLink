@@ -630,7 +630,364 @@ C:\ValueLink\Valuation_Company\scripts\investment-news-scraper\
 
 ---
 
+---
+
+## 2026-01-26: Phase 2 - 신규 페이지 생성 (4~14단계)
+
+### 작업 상태: ✅ 완료
+
+---
+
+## 작업 내용
+
+14단계 프로세스 중 기존 페이지가 없는 8개 단계의 신규 페이지를 생성했습니다.
+
+### 생성된 페이지 (8개)
+
+| # | 단계명 | 파일명 | 주요 기능 |
+|---|--------|--------|----------|
+| 5 | 데이터 수집 중 | data-collection.html | AI 데이터 분석 진행률 표시 |
+| 6 | 평가 진행 중 | evaluation-progress.html | 평가 엔진 계산 진행 상황 |
+| 7 | 공인회계사 검토 중 | accountant-review.html | 회계사 검토 대기 페이지 |
+| 8 | 평가보고서 초안 생성 | draft-generation.html | AI 보고서 작성 진행률 |
+| 10 | 수정 요청 | revision-request.html | 초안 수정 요청 폼 |
+| 11 | 평가보고서 최종안 작성 | final-preparation.html | 회계사 최종안 작성 대기 |
+| 13 | 결제하기 | payment.html | 결제 방법 선택 및 결제 |
+| 14 | 평가보고서 수령 | report-download.html | 최종 보고서 다운로드 |
+
+---
+
+## 각 페이지별 상세 기능
+
+### 1. data-collection.html (Step 5)
+**목적**: AI가 고객이 제출한 데이터를 자동으로 수집하고 분석하는 진행 상황 표시
+
+**주요 기능**:
+- 진행률 바 (0-100%) with shimmer animation
+- 현재 처리 중인 작업 표시 (예: "재무제표 분석 중...")
+- 데이터 수집 체크리스트 (5개 항목):
+  - 📊 재무제표 분석
+  - 🏢 회사 정보 추출
+  - 📈 시장 데이터 수집
+  - 🔍 산업 분석
+  - 💰 평가 데이터 생성
+- 각 항목별 상태: 대기 중 → 분석 중 → 완료
+- 자동 진행 시뮬레이션 (3초 간격)
+- 완료 시 자동 리다이렉트
+
+### 2. evaluation-progress.html (Step 6)
+**목적**: 평가 엔진이 실제 기업가치를 계산하는 진행 상황 표시
+
+**주요 기능**:
+- 평가법별 5단계 프로세스:
+  - **DCF**: 재무제표 분석 → 현금흐름 추정 → 할인율 계산 → 터미널 밸류 → 기업가치 산출
+  - **상대가치**: 비교기업 선정 → 배수 계산 → 조정 → 가치산정 → 최종 검증
+  - **내재가치**: 순자산 평가 → 영업권 평가 → 무형자산 → 조정 → 가치산정
+  - **자산가치**: 유형자산 → 무형자산 → 부채 → 순자산 → 가치산정
+  - **상속세법**: 순자산 → 영업권 → 보정 → 세법적용 → 가치산정
+- 단계별 상태 아이콘 (⏳ 대기, ⚙️ 진행, ✅ 완료)
+- 예상 남은 시간 표시
+- 진행률 바 with animated gradient
+- 완료 시 accountant-review.html로 이동
+
+### 3. accountant-review.html (Step 7)
+**목적**: 공인회계사가 평가 결과를 검토하는 대기 페이지
+
+**주요 기능**:
+- 담당 회계사 프로필:
+  - 이름: 선웅규 공인회계사
+  - 자격증 번호: 12345
+  - 연락처, 경력 (15년)
+  - 프로필 사진
+- 검토 타임라인:
+  - ✓ 검토 시작
+  - 🔍 현재 진행 중 (pulse animation)
+  - ⏳ 예상 완료 (시작 후 2일)
+- 알림 설정:
+  - 이메일 알림 (toggle switch)
+  - SMS 알림 (toggle switch)
+- 신뢰감 있는 디자인
+
+### 4. draft-generation.html (Step 8)
+**목적**: AI가 평가보고서 초안을 자동 생성하는 진행 상황
+
+**주요 기능**:
+- 보고서 9개 섹션 생성 상태 표시:
+  1. 요약
+  2. 평가 개요
+  3. 회사 개요 및 산업 분석
+  4. 재무 분석
+  5. 평가 방법론 및 가정
+  6. 평가 결과
+  7. 민감도 분석
+  8. 결론
+  9. 부록
+- 섹션별 상태: ⏳ 대기 → ✍️ 작성 중 (pulse) → ✅ 완료
+- 진행률 바 with writing animation
+- 보고서 구조 미리보기 (목차)
+- 예상 소요 시간: 5-10분
+- 완료 시 초안 확인 페이지로 이동
+
+### 5. revision-request.html (Step 10)
+**목적**: 고객이 평가보고서 초안을 확인 후 수정 요청
+
+**주요 기능**:
+- 초안 다시 보기 버튼 (새 탭에서 열기)
+- 수정 요청 폼:
+  - **섹션 선택** (dropdown): 9개 섹션 중 선택
+  - **요청 유형** (radio):
+    - ✏️ 내용 수정
+    - ➕ 내용 추가
+    - ➖ 내용 삭제
+    - 🔄 데이터 업데이트
+  - **상세 요청** (textarea):
+    - 최대 1000자
+    - 실시간 글자 수 카운터
+    - 색상 변경 (700자+: yellow, 950자+: red)
+  - **파일 첨부** (optional):
+    - Drag & drop 지원
+    - PDF, Excel, Word 허용
+    - 최대 10MB
+- 이전 요청 내역 표시 (상태별 배지)
+- 제출 시 Supabase revision_requests 테이블에 저장
+- 확인 모달
+
+### 6. final-preparation.html (Step 11)
+**목적**: 공인회계사가 수정 사항을 반영하여 최종 보고서 작성 대기
+
+**주요 기능**:
+- 담당 회계사 프로필 (선웅규, 247건 완료)
+- 작업 일정:
+  - 시작 일시: 현재
+  - 예상 완료: 5영업일 후
+- 수정 요청 요약:
+  - 접수된 요청 개수
+  - 요청 목록 (간략)
+  - 상세보기 링크
+- 진행 상태:
+  - ✅ 수정 요청 확인
+  - ⚙️ 수정 사항 반영 중 (pulse animation)
+  - ⏳ 최종 검토 예정
+- 알림 설정 버튼 (이메일/SMS)
+
+### 7. payment.html (Step 13)
+**목적**: 평가보고서 최종안 확인 후 결제 진행
+
+**주요 기능**:
+- 최종안 다시 보기 버튼
+- 결제 금액 요약:
+  - 평가 서비스 금액 (평가법별 차등):
+    - DCF: ₩3,000,000
+    - 상대가치: ₩2,500,000
+    - 내재가치: ₩2,800,000
+    - 자산가치: ₩2,000,000
+    - 상속세법: ₩3,500,000
+  - 부가세 (10%)
+  - 총 결제 금액 (large, bold)
+- 결제 수단 선택 (4가지):
+  - 💳 신용카드 (카드 정보 입력)
+  - 🏦 무통장 입금 (계좌 정보 표시)
+  - 💰 계좌이체 (가상계좌 생성)
+  - 📱 간편결제 (카카오페이, 네이버페이, 토스페이, 페이코)
+- 약관 동의 (3개 필수):
+  - 결제 대행 서비스 약관
+  - 개인정보 제3자 제공 동의
+  - 환불 규정 확인
+- 보안 인증 표시 (SSL, PG사 로고)
+- 결제 버튼: "₩{amount} 결제하기"
+- Mock 결제 처리 (2초 delay)
+- DB 업데이트 후 14단계로 이동
+
+### 8. report-download.html (Step 14)
+**목적**: 결제 완료 후 최종 평가보고서 다운로드
+
+**주요 기능**:
+- 🎉 성공 메시지 with confetti animation (50개 파티클)
+- 보고서 요약:
+  - 평가 완료일
+  - 평가 금액 (결과값, large green text)
+  - 담당 회계사명
+  - 보고서 버전 (v1.0)
+- 메인 다운로드:
+  - 파일명: `{회사명}_기업가치평가보고서_{평가법}_{날짜}.pdf`
+  - 파일 크기: 2.5MB
+  - Large green download button
+- 첨부 파일 (optional):
+  - 재무 데이터 엑셀 (854KB)
+  - 추가 자료 ZIP (1.2MB)
+- 보고서 미리보기:
+  - 4페이지 썸네일
+  - 전체 미리보기 버튼
+- 다음 단계:
+  - 평가보고서 활용 가이드
+  - 추가 평가 신청
+  - 문의하기
+- 버전 히스토리 (v1.0 표시)
+- 만족도 조사:
+  - 5점 별점 (interactive)
+  - 피드백 텍스트
+  - 의견 제출 버튼
+
+---
+
+## 페이지 공통 구조
+
+모든 페이지가 동일한 구조를 따릅니다:
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{단계명} | ValueLink</title>
+    <style>
+        /* approval-waiting.html 스타일 기반 */
+        /* 색상: --deep-blue, --deep-green */
+        /* 반응형 디자인 */
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <!-- 메인 컨텐츠 -->
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">{단계명}</h1>
+                <p class="page-description">{설명}</p>
+            </div>
+
+            <!-- 프로젝트 정보 카드 -->
+            <div class="project-info-card">
+                <!-- ... -->
+            </div>
+
+            <!-- 단계별 고유 컨텐츠 -->
+            <!-- ... -->
+        </main>
+
+        <!-- 14단계 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper"></aside>
+    </div>
+
+    <!-- 헤더 로드 스크립트 -->
+    <script>/* ... */</script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../components/common-sidebar.js';
+        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../components/project-status-checker.js';
+
+        // URL 파라미터
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId');
+        const method = urlParams.get('method');
+
+        // 평가법 상태 확인
+        const methodStatus = await checkMethodStatus(projectId, method);
+
+        // 사이드바 주입
+        injectSidebar('sidebar-container', {현재단계}, methodStatus.status, method, projectId);
+
+        // 페이지별 고유 로직
+        // ...
+    </script>
+</body>
+</html>
+```
+
+---
+
+## 기술적 특징
+
+### 1. 일관된 디자인 시스템
+- **색상**: Deep Blue (#1D4ED8), Deep Green (#166534)
+- **폰트**: Pretendard (Korean), -apple-system (fallback)
+- **간격**: 40px container padding, 32px header margin
+- **카드**: 16px border-radius, 1px border
+- **버튼**: 10px border-radius, hover effects
+
+### 2. 애니메이션
+- **Shimmer**: 진행률 바 반짝임 효과
+- **Pulse**: 진행 중 아이콘 맥박 효과
+- **Spin**: 로딩 스피너 회전
+- **Confetti**: 14단계 축하 애니메이션
+
+### 3. 반응형 디자인
+- **Desktop**: Sidebar 320px (right)
+- **Tablet/Mobile** (< 1024px): Sidebar 100% (stacked)
+- **Grid**: 2 columns → 1 column on mobile
+
+### 4. 상태 관리
+- URL 파라미터: projectId, method
+- Supabase 연동: projects, revision_requests 테이블
+- 평가법별 상태 체크
+- 단계별 접근 제어
+
+### 5. 사용자 경험
+- 실시간 진행률 표시
+- 자동 페이지 전환
+- 명확한 상태 피드백
+- 인터랙티브 폼 요소
+- 입력 검증
+
+---
+
+## 생성된 파일 (8개)
+
+1. `valuation-platform/frontend/app/valuation/data-collection.html`
+2. `valuation-platform/frontend/app/valuation/evaluation-progress.html`
+3. `valuation-platform/frontend/app/valuation/accountant-review.html`
+4. `valuation-platform/frontend/app/valuation/draft-generation.html`
+5. `valuation-platform/frontend/app/valuation/revision-request.html`
+6. `valuation-platform/frontend/app/valuation/final-preparation.html`
+7. `valuation-platform/frontend/app/valuation/payment.html`
+8. `valuation-platform/frontend/app/valuation/report-download.html`
+
+---
+
+## 다음 단계 (Phase 3)
+
+### Backend 연동
+1. **평가 엔진 연결**:
+   - DCF 엔진 API 엔드포인트
+   - 상대가치 엔진 API
+   - 내재가치 엔진 API
+   - 자산가치 엔진 API
+   - 상속세법 엔진 API
+
+2. **상태 업데이트 자동화**:
+   - 데이터 수집 완료 → 평가 진행 중 자동 전환
+   - 평가 완료 → 회계사 검토 자동 전환
+   - 검토 완료 → 초안 생성 자동 전환
+   - 결제 완료 → 보고서 수령 자동 전환
+
+3. **실시간 진행률**:
+   - WebSocket 또는 polling으로 실시간 업데이트
+   - 백엔드에서 진행률 계산
+
+4. **파일 생성**:
+   - AI 보고서 생성 엔진 연동
+   - PDF 생성 (wkhtmltopdf, Puppeteer 등)
+   - 파일 저장 (Supabase Storage)
+
+5. **결제 연동**:
+   - PG사 API 연동 (KG이니시스, 토스페이먼츠)
+   - 결제 검증
+   - 환불 처리
+
+6. **알림 시스템**:
+   - 이메일 알림 (Resend, SendGrid)
+   - SMS 알림 (NCP SENS, Twilio)
+   - 단계 변경 시 자동 알림
+
+---
+
 **최종 업데이트**: 2026-01-26
-**Phase 1 상태**: ✅ 완료
-**Phase 2 상태**: ⏳ 대기 중
-**예상 완료**: 1주 (Phase 2)
+**Phase 1 상태**: ✅ 완료 (5개 가이드 페이지)
+**Phase 2 상태**: ✅ 완료 (8개 신규 페이지)
+**Phase 3 상태**: ⏳ 대기 중 (Backend 연동)
+**예상 완료**: 2주 (Phase 3)
