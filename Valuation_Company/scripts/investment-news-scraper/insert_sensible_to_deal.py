@@ -51,19 +51,21 @@ def insert_companies_from_csv():
         safe_print(f"[{idx}/{len(companies)}] {company_name}...", end=" ")
 
         try:
-            # Deal 테이블에 INSERT
+            # deals 테이블에 INSERT (영문 컬럼명)
             data = {
-                "기업명": row['기업명'],
-                "주요사업": row['주요사업'],
-                "투자자": row['투자자'],
-                "투자단계": row['단계'],
-                "투자금액": row['신규'],
-                "지역": None,
-                "직원수": None,
-                "뉴스": None,  # 나중에 역추적으로 채움
+                "company_name": row['기업명'],
+                "industry": row['주요사업'],
+                "investors": row['투자자'],
+                "stage": row['단계'],
+                # amount는 numeric 타입이라 문자열 불가, 일단 제외
+                "location": None,
+                "employees": None,
+                "news_url": None,  # 나중에 역추적으로 채움
+                "news_title": f"{row['기업명']} {row['신규']} 투자 유치",  # 제목에 금액 포함
+                "site_name": "센서블박스 위클리",
             }
 
-            result = supabase.table("Deal").insert(data).execute()
+            result = supabase.table("deals").insert(data).execute()  # 복수형!
 
             print("[OK]")
             success_count += 1

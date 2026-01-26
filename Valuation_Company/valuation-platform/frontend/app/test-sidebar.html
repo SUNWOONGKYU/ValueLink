@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사이드바 테스트</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: #F3F4F6;
+            padding: 40px;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+        }
+
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .success {
+            padding: 16px;
+            background: #DCFCE7;
+            color: #166534;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="main-content">
+            <h1>🧪 사이드바 테스트 페이지</h1>
+            <p>이 페이지는 사이드바가 제대로 작동하는지 테스트하기 위한 페이지입니다.</p>
+
+            <div class="success" style="margin-top: 40px;">
+                ✅ 우측에 14단계 프로세스 사이드바가 보여야 합니다!
+            </div>
+
+            <div style="margin-top: 20px; padding: 16px; background: #FEF3C7; color: #D97706; border-radius: 8px;">
+                ⚠️ 만약 사이드바가 보이지 않는다면, F12를 눌러 Console 탭에서 에러 메시지를 확인하세요.
+            </div>
+        </div>
+
+        <!-- 우측 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
+        </aside>
+    </div>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from './components/common-sidebar.js';
+
+        console.log('🔧 사이드바 초기화 시작...');
+
+        try {
+            injectSidebar(
+                'sidebar-container',
+                1,              // 1단계
+                'not_requested', // 상태
+                null,           // 평가법 없음
+                null            // 프로젝트 없음
+            );
+            console.log('✅ 사이드바 초기화 성공!');
+        } catch (error) {
+            console.error('❌ 사이드바 초기화 실패:', error);
+        }
+    </script>
+</body>
+</html>
