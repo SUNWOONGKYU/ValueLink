@@ -7,11 +7,11 @@
  * 평가법 이름 매핑
  */
 const METHOD_NAMES = {
-    dcf: '현금흐름할인법 (DCF)',
+    dcf: 'DCF평가법',
     relative: '상대가치평가법',
     intrinsic: '본질가치평가법',
     asset: '자산가치평가법',
-    inheritance_tax: '상속세및증여세법'
+    inheritance_tax: '상증세법평가법'
 };
 
 /**
