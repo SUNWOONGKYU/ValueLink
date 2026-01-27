@@ -1,0 +1,144 @@
+============================================================
+126개 기업 뉴스 URL 업데이트
+============================================================
+
+CSV 파일: sensible_companies_2026_01_COMPLETE.csv
+
+총 기업 수: 126개
+
+============================================================
+
+[1/126] 이노션스... ? 'cp949' codec can't encode cha
+[2/126] 모바투스... ? 'cp949' codec can't encode cha
+[3/126] 오픈마일... ? 'cp949' codec can't encode cha
+[4/126] 엘리사젠... ? 'cp949' codec can't encode cha
+[5/126] 로카101... ? 'cp949' codec can't encode cha
+[6/126] 르몽... ? 'cp949' codec can't encode cha
+[7/126] 소프트웨어융합연구소... ? 'cp949' codec can't encode cha
+[8/126] 모프시스템즈... ? 'cp949' codec can't encode cha
+[9/126] 두리컴퍼니... ? 'cp949' codec can't encode cha
+[10/126] 팩타고라... ? 'cp949' codec can't encode cha
+[11/126] 트래드스나... ? 'cp949' codec can't encode cha
+[12/126] 큐투켓... ? 'cp949' codec can't encode cha
+[13/126] 레오스페이스... ? 'cp949' codec can't encode cha
+[14/126] 디디덴웰케어... ? 'cp949' codec can't encode cha
+[15/126] 핵사후면케어... ? 'cp949' codec can't encode cha
+[16/126] 수앤케릿즈... ? 'cp949' codec can't encode cha
+[17/126] 에이샌택... ? 'cp949' codec can't encode cha
+[18/126] 오픈웨딩... ? 'cp949' codec can't encode cha
+[19/126] 엔포러스... ? 'cp949' codec can't encode cha
+[20/126] 모놀리... ? 'cp949' codec can't encode cha
+[21/126] PGT... ? 'cp949' codec can't encode cha
+[22/126] 스튜디오에피소드... ? 'cp949' codec can't encode cha
+[23/126] SDT... ? 'cp949' codec can't encode cha
+[24/126] 부스티스... ? 'cp949' codec can't encode cha
+[25/126] 에이디에스... ? 'cp949' codec can't encode cha
+[26/126] 컨트로펙스... ? 'cp949' codec can't encode cha
+[27/126] 신소재프레제조... ? 'cp949' codec can't encode cha
+[28/126] 콕스케어넷... ? 'cp949' codec can't encode cha
+[29/126] 데이터얼라이언스... ? 'cp949' codec can't encode cha
+[30/126] 브라이트닉스이미징... ? 'cp949' codec can't encode cha
+[31/126] 스마트아크... ? 'cp949' codec can't encode cha
+[32/126] 구하다... ? 'cp949' codec can't encode cha
+[33/126] 미스쿨... ? 'cp949' codec can't encode cha
+[34/126] 에스와이유... ? 'cp949' codec can't encode cha
+[35/126] 투모로우... ? 'cp949' codec can't encode cha
+[36/126] 비바트로로보틱스... ? 'cp949' codec can't encode cha
+[37/126] 웨이크... ? 'cp949' codec can't encode cha
+[38/126] 슬러토즈... ? 'cp949' codec can't encode cha
+[39/126] 플로라유지... ? 'cp949' codec can't encode cha
+[40/126] 이원테이블... ? 'cp949' codec can't encode cha
+[41/126] 옐바... ? 'cp949' codec can't encode cha
+[42/126] 아워스팟... ? 'cp949' codec can't encode cha
+[43/126] 포미큰... ? 'cp949' codec can't encode cha
+[44/126] 디나미스월... ? 'cp949' codec can't encode cha
+[45/126] 덱산스튜디오... ? 'cp949' codec can't encode cha
+[46/126] 원... ? 'cp949' codec can't encode cha
+[47/126] Legion Health... ? 'cp949' codec can't encode cha
+[48/126] 타이디비... ? 'cp949' codec can't encode cha
+[49/126] 아이씨피... ? 'cp949' codec can't encode cha
+[50/126] 한양로보틱스... ? 'cp949' codec can't encode cha
+[51/126] 크래온유니티... ? 'cp949' codec can't encode cha
+[52/126] 엔라이트... ? 'cp949' codec can't encode cha
+[53/126] 아이디어스투실리콘... ? 'cp949' codec can't encode cha
+[54/126] 한국던난님... ? 'cp949' codec can't encode cha
+[55/126] 그레이스... ? 'cp949' codec can't encode cha
+[56/126] 망고부스트... ? 'cp949' codec can't encode cha
+[57/126] RXC... ? 'cp949' codec can't encode cha
+[58/126] SML메디트리... ? 'cp949' codec can't encode cha
+[59/126] 에나이어... ? 'cp949' codec can't encode cha
+[60/126] 워드로인즈... ? 'cp949' codec can't encode cha
+[61/126] 오믹스AI... ? 'cp949' codec can't encode cha
+[62/126] 아이슬... ? 'cp949' codec can't encode cha
+[63/126] 팝업스튜디오... ? 'cp949' codec can't encode cha
+[64/126] 팸... ? 'cp949' codec can't encode cha
+[65/126] 리보다스... ? 'cp949' codec can't encode cha
+[66/126] 큐슬루션즈... ? 'cp949' codec can't encode cha
+[67/126] 엠피지오웰니스... ? 'cp949' codec can't encode cha
+[68/126] 업맥당... ? 'cp949' codec can't encode cha
+[69/126] 세상을바꾸는사람들... ? 'cp949' codec can't encode cha
+[70/126] 랭인큐브... ? 'cp949' codec can't encode cha
+[71/126] 열다컴퍼니... ? 'cp949' codec can't encode cha
+[72/126] 애플에이아이... ? 'cp949' codec can't encode cha
+[73/126] 요양의정석... ? 'cp949' codec can't encode cha
+[74/126] 커버사먼... ? 'cp949' codec can't encode cha
+[75/126] 애이뉴프로덕션... ? 'cp949' codec can't encode cha
+[76/126] 어피닛... ? 'cp949' codec can't encode cha
+[77/126] 열다컴퍼니... ? 'cp949' codec can't encode cha
+[78/126] 매머드커퍼... ? 'cp949' codec can't encode cha
+[79/126] 라이드플러스... ? 'cp949' codec can't encode cha
+[80/126] 어니스티... ? 'cp949' codec can't encode cha
+[81/126] 아롤바이오... ? 'cp949' codec can't encode cha
+[82/126] 팡세... ? 'cp949' codec can't encode cha
+[83/126] 주미당... ? 'cp949' codec can't encode cha
+[84/126] 로블루션... ? 'cp949' codec can't encode cha
+[85/126] 공감오픈텐트... ? 'cp949' codec can't encode cha
+[86/126] 엠바스... ? 'cp949' codec can't encode cha
+[87/126] 바이오점... ? 'cp949' codec can't encode cha
+[88/126] 신군... ? 'cp949' codec can't encode cha
+[89/126] 소셜스크리야... ? 'cp949' codec can't encode cha
+[90/126] 메디카네티... ? 'cp949' codec can't encode cha
+[91/126] 로보에테크놀로지... ? 'cp949' codec can't encode cha
+[92/126] 엘케이벤처스... ? 'cp949' codec can't encode cha
+[93/126] 더틀티... ? 'cp949' codec can't encode cha
+[94/126] 심일리티... ? 'cp949' codec can't encode cha
+[95/126] 내일테크놀로지... ? 'cp949' codec can't encode cha
+[96/126] 어미닛... ? 'cp949' codec can't encode cha
+[97/126] 인디그레이션... ? 'cp949' codec can't encode cha
+[98/126] 인포유금융서비스... ? 'cp949' codec can't encode cha
+[99/126] 메이사... ? 'cp949' codec can't encode cha
+[100/126] 배다베로... ? 'cp949' codec can't encode cha
+[101/126] 블루포인트... ? 'cp949' codec can't encode cha
+[102/126] 하이마루캠퍼니... ? 'cp949' codec can't encode cha
+[103/126] 디엔텐터크솔루션... ? 'cp949' codec can't encode cha
+[104/126] 뉴리챗... ? 'cp949' codec can't encode cha
+[105/126] 도대솔루션... ? 'cp949' codec can't encode cha
+[106/126] 알엑스비아이오... ? 'cp949' codec can't encode cha
+[107/126] 소담스탑... ? 'cp949' codec can't encode cha
+[108/126] 프로스앤코... ? 'cp949' codec can't encode cha
+[109/126] 나루빅큐리티... ? 'cp949' codec can't encode cha
+[110/126] 파이토스올... ? 'cp949' codec can't encode cha
+[111/126] 캔디슬리트... ? 'cp949' codec can't encode cha
+[112/126] 드래프터임... ? 'cp949' codec can't encode cha
+[113/126] 슬러라이즈... ? 'cp949' codec can't encode cha
+[114/126] 뉴타임인더스트리즈... ? 'cp949' codec can't encode cha
+[115/126] 에즈위에이크... ? 'cp949' codec can't encode cha
+[116/126] 팰리트노티리퓨먼스... ? 'cp949' codec can't encode cha
+[117/126] 에스티리테일... ? 'cp949' codec can't encode cha
+[118/126] 홍시공... ? 'cp949' codec can't encode cha
+[119/126] CSP... ? 'cp949' codec can't encode cha
+[120/126] 엑스닷츠... ? 'cp949' codec can't encode cha
+[121/126] 해피컵... ? 'cp949' codec can't encode cha
+[122/126] 반야AI... ? 'cp949' codec can't encode cha
+[123/126] 페리오너어... ? 'cp949' codec can't encode cha
+[124/126] 무인의연구소... ? 'cp949' codec can't encode cha
+[125/126] 하이파이널... ? 'cp949' codec can't encode cha
+[126/126] 스카이인텔리전스... ? 'cp949' codec can't encode cha
+
+============================================================
+업데이트 완료
+============================================================
+성공: 0개
+실패: 126개
+건너뜀 (URL 없음): 0개
+============================================================

@@ -1,0 +1,15 @@
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from '../../components/common-sidebar.js';
+
+        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
+        injectSidebar(
+            'sidebar-container',
+            4,                  // 4단계 (평가 기초자료 제출)
+            'approved',         // 상태: 승인됨
+            'METHOD_PLACEHOLDER',  // 평가법
+            null,               // 프로젝트 ID 없음
+            4,                  // startStep: 4단계부터
+            14                  // endStep: 14단계까지 (1-11번으로 표시)
+        );
+    </script>

@@ -1041,136 +1041,20 @@ LTM 순이익 계산:
             .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 
-    <!-- 사이드바 및 상태 체크 -->
+    <!-- 사이드바 초기화 -->
     <script type="module">
         import { injectSidebar } from '../../components/common-sidebar.js';
-        import { checkMethodStatus, getCurrentProject, STATUS, getStatusDisplay } from '../../components/project-status-checker.js';
 
-        async function initPage() {
-            try {
-                // URL에서 projectId 가져오기
-                const urlParams = new URLSearchParams(window.location.search);
-                const projectId = urlParams.get('projectId');
-
-                if (!projectId) {
-                    // 프로젝트 ID 없으면 현재 프로젝트 조회
-                    const project = await getCurrentProject();
-                    if (!project) {
-                        showNotLoggedIn();
-                        return;
-                    }
-                    // projectId 설정
-                    urlParams.set('projectId', project.project_id);
-                    window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
-                }
-
-                // 상대가치평가법 상태 확인
-                const relativeStatus = await checkMethodStatus(projectId, 'relative');
-
-                // 상태에 따른 처리
-                if (relativeStatus.status === STATUS.NOT_REQUESTED) {
-                    showNotRequested();
-                    return;
-                } else if (relativeStatus.status === STATUS.PENDING) {
-                    showPendingApproval();
-                    return;
-                }
-
-                // 승인됨 (approved, in_progress, completed) → 정상 표시
-                // 사이드바 렌더링 (1단계 - 서비스 안내)
-                injectSidebar(
-                    'sidebar-container',
-                    1,                    // 1단계 (서비스 안내)
-                    relativeStatus.status,     // 평가법 상태
-                    'relative',                // 상대가치평가법
-                    projectId             // 프로젝트 ID
-                );
-
-            } catch (error) {
-                console.error('페이지 초기화 오류:', error);
-                showError();
-            }
-        }
-
-        function showNotLoggedIn() {
-            document.querySelector('.main-area').innerHTML = `
-                <div style="text-align: center; padding: 100px 20px;">
-                    <div style="font-size: 64px; margin-bottom: 24px;">🔒</div>
-                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
-                        로그인이 필요합니다
-                    </h2>
-                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
-                        상대가치평가법 가이드를 보려면 먼저 로그인해주세요.
-                    </p>
-                    <a href="../../valuation.html"
-                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
-                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
-                        홈으로 돌아가기
-                    </a>
-                </div>
-            `;
-        }
-
-        function showNotRequested() {
-            document.querySelector('.main-area').innerHTML = `
-                <div style="text-align: center; padding: 100px 20px;">
-                    <div style="font-size: 64px; margin-bottom: 24px;">⚫</div>
-                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
-                        상대가치평가법을 신청하지 않았습니다
-                    </h2>
-                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
-                        이 평가법을 이용하려면 먼저 평가를 신청해주세요.
-                    </p>
-                    <a href="../../projects/project-create.html"
-                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
-                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
-                        평가 신청하기
-                    </a>
-                </div>
-            `;
-        }
-
-        function showPendingApproval() {
-            document.querySelector('.main-area').innerHTML = `
-                <div style="text-align: center; padding: 100px 20px;">
-                    <div style="font-size: 64px; margin-bottom: 24px;">🟡</div>
-                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
-                        관리자 승인 대기 중
-                    </h2>
-                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
-                        상대가치평가법 신청이 접수되었습니다.<br>
-                        관리자 승인 후 이용하실 수 있습니다.
-                    </p>
-                    <a href="../../approval-waiting.html"
-                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
-                              color: white; background: #F59E0B; border-radius: 10px; text-decoration: none;">
-                        승인 현황 보기
-                    </a>
-                </div>
-            `;
-        }
-
-        function showError() {
-            document.querySelector('.main-area').innerHTML = `
-                <div style="text-align: center; padding: 100px 20px;">
-                    <div style="font-size: 64px; margin-bottom: 24px;">❌</div>
-                    <h2 style="font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 12px;">
-                        오류가 발생했습니다
-                    </h2>
-                    <p style="font-size: 16px; color: #6B7280; margin-bottom: 32px;">
-                        페이지를 불러오는 중 문제가 발생했습니다.
-                    </p>
-                    <a href="../../valuation.html"
-                       style="display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 600;
-                              color: white; background: #1D4ED8; border-radius: 10px; text-decoration: none;">
-                        홈으로 돌아가기
-                    </a>
-                </div>
-            `;
-        }
-
-        // 페이지 로드 시 초기화
-        initPage();
+        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
+        injectSidebar(
+            'sidebar-container',
+            4,                  // 4단계 (평가 기초자료 제출)
+            'approved',         // 상태: 승인됨
+            'relative',         // Relative
+            null,               // 프로젝트 ID 없음
+            4,                  // startStep: 4단계부터
+            14                  // endStep: 14단계까지 (1-11번으로 표시)
+        );
     </script>
 
     <script>
