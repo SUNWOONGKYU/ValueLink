@@ -939,8 +939,11 @@
     <main class="main-content">
         <div class="content-main">
             <!-- 최신 투자유치 뉴스 (최신 3개) -->
-            <div class="section-header">
+            <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <h2>최신 투자유치 뉴스</h2>
+                <button class="btn-see-more" onclick="openNewsModal()">
+                    더보기 →
+                </button>
             </div>
 
         <div class="news-grid" id="news-grid">
@@ -1750,7 +1753,8 @@
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
                 const weekAgoStr = oneWeekAgo.toISOString().split('T')[0];
 
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=*&published_date=gte.${weekAgoStr}&order=published_date.desc`, {
+                // Deal 테이블에서 일주일간 데이터 가져오기 (created_at 기준)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=company_name,stage,amount,news_title,news_url,site_name,news_date,created_at&created_at=gte.${oneWeekAgo.toISOString()}&order=created_at.desc`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -1758,8 +1762,9 @@
                 });
 
                 if (response.ok) {
-                    const articles = await response.json();
-                    renderModalNews(articles);
+                    const deals = await response.json();
+                    console.log('일주일간 Deal:', deals.length, '개');
+                    renderModalNews(deals);
                 } else {
                     console.error('뉴스 로드 실패');
                 }
@@ -1768,25 +1773,49 @@
             }
         }
 
-        // 모달에 뉴스 렌더링
-        function renderModalNews(articles) {
+        // 모달에 뉴스 렌더링 (Deal 테이블 기반)
+        function renderModalNews(deals) {
             const container = document.getElementById('modal-news-list');
-            if (!articles || articles.length === 0) {
-                container.innerHTML = '<p style="text-align: center; padding: 40px; color: #6B7280;">뉴스가 없습니다.</p>';
+            if (!deals || deals.length === 0) {
+                container.innerHTML = '<p style="text-align: center; padding: 40px; color: #6B7280;">일주일간 투자유치 뉴스가 없습니다.</p>';
                 return;
             }
 
-            container.innerHTML = articles.map(article => `
-                <div class="modal-news-item">
-                    <div class="modal-news-date">${article.published_date || '날짜 없음'}</div>
-                    <div class="modal-news-site">${escapeHtml(article.site_name || '')}</div>
-                    <h3 class="modal-news-title">
-                        <a href="${escapeHtml(article.article_url || '#')}" target="_blank">
-                            ${escapeHtml(article.article_title || '제목 없음')}
-                        </a>
-                    </h3>
-                </div>
-            `).join('');
+            container.innerHTML = deals.map(deal => {
+                const datetime = formatDateTime(deal.news_date, deal.created_at);
+                const source = deal.site_name || '미디어';
+                const title = deal.news_title || '제목 없음';
+                const url = deal.news_url || '#';
+                const company = deal.company_name || '-';
+                const stage = deal.stage || '-';
+                const amount = deal.amount ? `${deal.amount}억원` : '비공개';
+
+                return `
+                    <div class="modal-news-item" style="padding: 20px; border-bottom: 1px solid #F3F4F6;">
+                        <!-- 1행: 소스 + 연월일시 -->
+                        <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center; font-size: 13px;">
+                            <span style="font-weight: 400; color: var(--amber-dark); background: var(--amber-pale); padding: 4px 10px; border-radius: 6px;">[${escapeHtml(source)}]</span>
+                            <span style="color: var(--text-muted); font-size: 13px;">${datetime}</span>
+                        </div>
+
+                        <!-- 2행: 제목 -->
+                        <h3 class="modal-news-title" style="margin-bottom: 12px;">
+                            <a href="${escapeHtml(url)}" target="_blank" style="color: var(--text-primary); text-decoration: none; font-size: 16px; font-weight: 400; line-height: 1.5;">
+                                ${escapeHtml(title)}
+                            </a>
+                        </h3>
+
+                        <!-- 3행: 회사명 | 투자단계 | 금액 -->
+                        <div style="display: flex; align-items: center; gap: 8px; padding-top: 12px; border-top: 1px solid #F9FAFB; font-size: 14px; color: var(--text-secondary);">
+                            <span style="font-weight: 400; color: var(--text-primary);">${escapeHtml(company)}</span>
+                            <span style="color: #D1D5DB; font-weight: 300;">|</span>
+                            <span style="color: var(--deep-green);">${escapeHtml(stage)}</span>
+                            <span style="color: #D1D5DB; font-weight: 300;">|</span>
+                            <span style="color: ${amount === '비공개' ? 'var(--text-muted)' : 'var(--amber-dark)'}; font-weight: 400; ${amount === '비공개' ? 'font-style: italic;' : ''}">${escapeHtml(amount)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
     </script>
 
