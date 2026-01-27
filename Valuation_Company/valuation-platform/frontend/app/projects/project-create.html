@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>신규 프로젝트 생성 | ValueLink</title>
+    <title>평가 신청하기 | ValueLink</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -28,50 +28,19 @@
             color: var(--text-primary);
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            padding: 40px 40px 40px 40px;
+            text-align: center;
+            color: white;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .main-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-light);
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 0;
         }
 
         /* MAIN */
@@ -249,35 +218,6 @@
             margin-top: 4px;
         }
 
-        /* 프로젝트 번호 미리보기 */
-        .project-id-preview {
-            background: var(--deep-blue);
-            border-radius: 12px;
-            padding: 24px;
-            color: var(--white);
-            text-align: center;
-            margin-bottom: 24px;
-        }
-
-        .project-id-preview label {
-            display: block;
-            font-size: 13px;
-            opacity: 0.8;
-            margin-bottom: 8px;
-        }
-
-        .project-id-preview .id {
-            font-size: 28px;
-            font-weight: 700;
-            font-family: 'Consolas', 'Monaco', monospace;
-            letter-spacing: 1px;
-        }
-
-        .project-id-preview .hint {
-            font-size: 12px;
-            opacity: 0.7;
-            margin-top: 12px;
-        }
 
         /* 버튼 */
         .btn-group {
@@ -482,41 +422,16 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">➕ 신규</a>
-                <a href="deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1 class="hero-title">평가 신청하기</h1>
+    </section>
 
     <!-- MAIN -->
     <main class="main-content">
-        <div class="page-title">
-            <h1>신규 프로젝트 생성</h1>
-            <p>기업가치 평가 프로젝트를 생성합니다</p>
-        </div>
-
-        <!-- 프로젝트 번호 미리보기 -->
-        <div class="project-id-preview">
-            <label>프로젝트 관리번호</label>
-            <div class="id" id="projectIdPreview">XXXXX-0000000000-XX</div>
-            <div class="hint">회사명과 평가방법 입력 시 자동 생성됩니다</div>
-        </div>
 
         <!-- 고객사 정보 -->
         <div class="form-card">
@@ -525,11 +440,11 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>회사명 (국문) <span class="required">*</span></label>
-                    <input type="text" id="companyNameKr" placeholder="예: 삼성전자" oninput="updateProjectId()">
+                    <input type="text" id="companyNameKr" placeholder="예: 삼성전자">
                 </div>
                 <div class="form-group">
                     <label>회사명 (영문) <span class="required">*</span></label>
-                    <input type="text" id="companyNameEn" placeholder="예: Samsung Electronics" oninput="updateProjectId()">
+                    <input type="text" id="companyNameEn" placeholder="예: Samsung Electronics">
                     <div class="hint">영문명이 없으면 한글 발음을 로마자로 입력</div>
                 </div>
             </div>
@@ -573,7 +488,7 @@
                 <label>평가 방법 <span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
                 <div class="method-selector">
                     <div class="method-option">
-                        <input type="checkbox" name="methods[]" id="methodDC" value="dcf" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodDC" value="dcf">
                         <label for="methodDC">
                             <span class="icon">💰</span>
                             <span class="name">DCF</span>
@@ -581,7 +496,7 @@
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="checkbox" name="methods[]" id="methodRV" value="relative" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodRV" value="relative">
                         <label for="methodRV">
                             <span class="icon">⚖️</span>
                             <span class="name">상대가치</span>
@@ -589,7 +504,7 @@
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="checkbox" name="methods[]" id="methodIV" value="intrinsic" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodIV" value="intrinsic">
                         <label for="methodIV">
                             <span class="icon">💎</span>
                             <span class="name">본질가치</span>
@@ -597,7 +512,7 @@
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="checkbox" name="methods[]" id="methodAV" value="asset" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodAV" value="asset">
                         <label for="methodAV">
                             <span class="icon">🏦</span>
                             <span class="name">자산가치</span>
@@ -605,7 +520,7 @@
                         </label>
                     </div>
                     <div class="method-option">
-                        <input type="checkbox" name="methods[]" id="methodTX" value="inheritance_tax" onchange="updateProjectId()">
+                        <input type="checkbox" name="methods[]" id="methodTX" value="inheritance_tax">
                         <label for="methodTX">
                             <span class="icon">📋</span>
                             <span class="name">상증법</span>
@@ -736,16 +651,6 @@
             return codeMap[selected.value] || 'XX';
         }
 
-        // 프로젝트 ID 업데이트
-        function updateProjectId() {
-            const englishName = document.getElementById('companyNameEn').value;
-            const companyCode = getCompanyCode(englishName);
-            const timeCode = getTimeCode();
-            const methodCode = getMethodCode();
-
-            const projectId = `${companyCode}-${timeCode}-${methodCode}`;
-            document.getElementById('projectIdPreview').textContent = projectId;
-        }
 
         // 프로젝트 생성/수정
         async function createProject() {
@@ -768,8 +673,12 @@
                 return;
             }
 
-            // 프로젝트 ID
-            const projectId = document.getElementById('projectIdPreview').textContent;
+            // 프로젝트 ID 생성 (회사명 + 타임스탬프 + 평가법)
+            const englishName = companyNameEn;
+            const companyCode = getCompanyCode(englishName);
+            const timeCode = getTimeCode();
+            const methodCode = getMethodCode();
+            const projectId = `${companyCode}-${timeCode}-${methodCode}`;
 
             // 수정 모드 확인
             const urlParams = new URLSearchParams(window.location.search);
@@ -897,9 +806,7 @@
                     document.querySelector('.btn-primary').textContent = '프로젝트 수정';
                     document.querySelector('.page-title h1').textContent = '프로젝트 수정';
 
-                    // 프로젝트 ID 미리보기 비활성화 (수정 모드에서는 변경 불가)
-                    document.getElementById('projectIdPreview').textContent = projectId;
-                    document.getElementById('projectIdPreview').style.color = '#9CA3AF';
+                    // 수정 모드 - projectId는 변경 불가
                 }
             } catch (error) {
                 console.error('프로젝트 로드 실패:', error);
@@ -915,14 +822,30 @@
         if (editId) {
             // 수정 모드
             loadProjectForEdit(editId);
-            // 시간 업데이트 중지 (수정 모드에서는 ID 변경 안 함)
-        } else {
-            // 신규 생성 모드
-            // 1초마다 시간 업데이트
-            setInterval(updateProjectId, 1000);
-            // 초기 실행
-            updateProjectId();
         }
+    </script>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                const container = document.getElementById('header-container');
+                container.innerHTML = data;
+
+                // 삽입된 script 태그를 수동으로 실행
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>
