@@ -374,13 +374,15 @@
         .deal-investors {
             font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.6;
-            max-height: 45px; /* 2줄 제한 강제 (14px * 1.6 * 2 = 44.8px) */
+            line-height: 1.7;
+            min-height: 48px; /* 최소 2줄 높이 확보 */
+            max-height: 48px; /* 2줄 제한 강제 (14px * 1.7 * 2 = 47.6px) */
             word-break: keep-all;
             display: -webkit-box;
             -webkit-line-clamp: 2; /* 2줄 제한 */
             -webkit-box-orient: vertical;
             overflow: hidden;
+            white-space: normal; /* 여러 줄 표시 가능 */
         }
 
         .deal-company {
