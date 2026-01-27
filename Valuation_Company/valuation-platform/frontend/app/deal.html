@@ -351,17 +351,14 @@
             white-space: nowrap;
         }
 
-        /* 컬럼별 너비 조정 (직원수 삭제, 10개 컬럼) */
-        .deals-table th:nth-child(1) { width: 12%; } /* 기업명 */
-        .deals-table th:nth-child(2) { width: 8%; }  /* 대표자 */
-        .deals-table th:nth-child(3) { width: 12%; } /* 업종 */
-        .deals-table th:nth-child(4) { width: 8%; }  /* 설립일 */
-        .deals-table th:nth-child(5) { width: 6%; }  /* 지역 */
-        .deals-table th:nth-child(6) { width: 10%; } /* 투자단계 */
-        .deals-table th:nth-child(7) { width: 18%; } /* 투자자 */
-        .deals-table th:nth-child(8) { width: 10%; } /* 투자금액 */
-        .deals-table th:nth-child(9) { width: 10%; } /* 누적투자액 */
-        .deals-table th:nth-child(10) { width: 6%; } /* 뉴스 */
+        /* 컬럼별 너비 조정 (대표자/설립일/누적투자액 제거, 7개 컬럼) */
+        .deals-table th:nth-child(1) { width: 15%; } /* 기업명 */
+        .deals-table th:nth-child(2) { width: 18%; } /* 업종 */
+        .deals-table th:nth-child(3) { width: 8%; }  /* 지역 */
+        .deals-table th:nth-child(4) { width: 12%; } /* 투자단계 */
+        .deals-table th:nth-child(5) { width: 22%; } /* 투자자 */
+        .deals-table th:nth-child(6) { width: 15%; } /* 투자금액 */
+        .deals-table th:nth-child(7) { width: 10%; } /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -838,6 +835,97 @@
         .modal-news-title a:hover {
             color: var(--amber-dark);
         }
+
+        /* 기업 상세 정보 모달 */
+        .detail-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .detail-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .detail-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .detail-modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .detail-modal-close {
+            font-size: 32px;
+            color: #6B7280;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .detail-modal-close:hover {
+            background: #F3F4F6;
+            color: var(--text-primary);
+        }
+
+        .detail-modal-body {
+            padding: 32px;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 16px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            width: 140px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            flex: 1;
+            color: var(--text-primary);
+        }
+
+        .detail-value a {
+            color: var(--amber-dark);
+            text-decoration: none;
+        }
+
+        .detail-value a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -927,21 +1015,18 @@
                 <thead>
                     <tr>
                         <th>기업명</th>
-                        <th>대표자</th>
                         <th>주요사업</th>
-                        <th>설립일</th>
                         <th>지역</th>
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
-                        <th>누적투자액</th>
                         <th>뉴스</th>
                     </tr>
                 </thead>
                 <tbody id="deals-tbody">
                     <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
                     <tr>
-                        <td colspan="10" style="text-align: center; padding: 40px; color: #6B7280;">
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #6B7280;">
                             데이터 로딩 중...
                         </td>
                     </tr>
@@ -1189,18 +1274,14 @@
                     ).join('');
 
                 return `
-                    <tr>
+                    <tr onclick="showDealDetail('${escapeHtml(company)}', '${escapeHtml(ceo)}', '${escapeHtml(founded)}', '${escapeHtml(totalFunding)}', '${escapeHtml(industry)}', '${escapeHtml(region)}', '${escapeHtml(stage)}', '${investorList.replace(/'/g, "\\'")}', '${escapeHtml(amount)}', '${url}')" style="cursor: pointer;">
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
-                        <td data-label="대표자" class="deal-ceo">${escapeHtml(ceo)}</td>
                         <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
-                        <td data-label="설립일" class="deal-founded">${escapeHtml(founded)}</td>
                         <td data-label="지역" class="deal-region">${escapeHtml(region)}</td>
-                        <td data-label="직원수" class="deal-employees">${escapeHtml(employees)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="누적투자액" class="deal-total-funding">${escapeHtml(totalFunding)}</td>
-                        <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
+                        <td data-label="뉴스" onclick="event.stopPropagation();"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
             }).join('');
@@ -1229,7 +1310,7 @@
                         console.log('DB에 Deal 없음');
                         const tbody = document.getElementById('deals-tbody');
                         if (tbody) {
-                            tbody.innerHTML = '<tr><td colspan="11" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
                         }
                     }
                 } else {
@@ -1302,7 +1383,7 @@
             }
         }
 
-        // Deal 테이블 렌더링 (직원수 컬럼 제거)
+        // Deal 테이블 렌더링 (대표자/설립일/누적투자액 제거)
         function renderDealsTable(deals) {
             const tbody = document.getElementById('deals-tbody');
             if (!tbody) return;
@@ -1315,7 +1396,9 @@
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
                 const newsUrl = deal.news_url || '#';
-                const newsDate = deal.news_date || '';
+                const ceo = deal.ceo || '-';
+                const founded = deal.founded || '-';
+                const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
                 // 투자자를 쉼표로 분리하여 한 줄씩 표시
                 const investorList = investors === '-' ? '-' :
@@ -1323,18 +1406,20 @@
                         `<div style="white-space: nowrap;">${escapeHtml(inv.trim())}</div>`
                     ).join('');
 
+                // JSON 데이터를 안전하게 전달하기 위해 escape
+                const dealData = JSON.stringify({
+                    company, ceo, founded, totalFunding, industry, location, stage, investors, amount, newsUrl
+                }).replace(/"/g, '&quot;');
+
                 return `
-                    <tr>
+                    <tr onclick='showDealDetail(${dealData})' style="cursor: pointer;">
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
-                        <td data-label="대표자" class="deal-ceo">-</td>
                         <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
-                        <td data-label="설립일" class="deal-founded">-</td>
                         <td data-label="지역" class="deal-region">${escapeHtml(location)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="누적투자액" class="deal-total-funding">-</td>
-                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news">원문</a></td>
+                        <td data-label="뉴스" onclick="event.stopPropagation();"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news">원문</a></td>
                     </tr>
                 `;
             }).join('');
@@ -1537,11 +1622,46 @@
             document.getElementById('newsModal').style.display = 'none';
         }
 
+        // 기업 상세 정보 모달 열기/닫기
+        function showDealDetail(dealData) {
+            const data = typeof dealData === 'string' ? JSON.parse(dealData) : dealData;
+
+            document.getElementById('detail-company-name').textContent = data.company || '-';
+            document.getElementById('detail-company').textContent = data.company || '-';
+            document.getElementById('detail-ceo').textContent = data.ceo || '-';
+            document.getElementById('detail-founded').textContent = data.founded || '-';
+            document.getElementById('detail-industry').textContent = data.industry || '-';
+            document.getElementById('detail-location').textContent = data.location || '-';
+            document.getElementById('detail-stage').textContent = data.stage || '-';
+            document.getElementById('detail-investors').textContent = data.investors || '-';
+            document.getElementById('detail-amount').textContent = data.amount || '-';
+            document.getElementById('detail-total-funding').textContent = data.totalFunding || '-';
+
+            const newsLink = document.getElementById('detail-news-link');
+            if (data.newsUrl && data.newsUrl !== '#') {
+                newsLink.href = data.newsUrl;
+                newsLink.style.display = 'inline';
+            } else {
+                newsLink.style.display = 'none';
+            }
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        function closeDealDetail() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
         // 모달 외부 클릭 시 닫기
         window.onclick = function(event) {
-            const modal = document.getElementById('newsModal');
-            if (event.target === modal) {
+            const newsModal = document.getElementById('newsModal');
+            const detailModal = document.getElementById('detailModal');
+
+            if (event.target === newsModal) {
                 closeNewsModal();
+            }
+            if (event.target === detailModal) {
+                closeDealDetail();
             }
         }
 
@@ -1603,6 +1723,58 @@
             <div class="news-modal-body" id="modal-news-list">
                 <!-- 뉴스 목록이 JavaScript로 로드됩니다 -->
                 <p style="text-align: center; padding: 40px; color: #6B7280;">로딩 중...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 기업 상세 정보 모달 -->
+    <div id="detailModal" class="detail-modal">
+        <div class="detail-modal-content">
+            <div class="detail-modal-header">
+                <h2 id="detail-company-name">기업 상세 정보</h2>
+                <button class="detail-modal-close" onclick="closeDealDetail()">&times;</button>
+            </div>
+            <div class="detail-modal-body">
+                <div class="detail-row">
+                    <div class="detail-label">기업명</div>
+                    <div class="detail-value" id="detail-company"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">대표자</div>
+                    <div class="detail-value" id="detail-ceo"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">설립일</div>
+                    <div class="detail-value" id="detail-founded"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">업종</div>
+                    <div class="detail-value" id="detail-industry"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">지역</div>
+                    <div class="detail-value" id="detail-location"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">투자단계</div>
+                    <div class="detail-value" id="detail-stage"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">투자자</div>
+                    <div class="detail-value" id="detail-investors"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">투자금액</div>
+                    <div class="detail-value" id="detail-amount"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">누적투자액</div>
+                    <div class="detail-value" id="detail-total-funding"></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">뉴스</div>
+                    <div class="detail-value"><a id="detail-news-link" href="#" target="_blank">원문 보기</a></div>
+                </div>
             </div>
         </div>
     </div>
