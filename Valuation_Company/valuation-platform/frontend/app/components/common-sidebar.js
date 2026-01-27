@@ -32,20 +32,20 @@ function getStatusDisplay(status) {
  * 14단계 프로세스 정의
  */
 const PROCESS_STEPS = [
-    { step: 1, name: '서비스 안내', page: 'guide' },
-    { step: 2, name: '평가 신청', page: 'project-create' },
-    { step: 3, name: '관리자 승인 대기', page: 'approval-waiting' },
-    { step: 4, name: '평가 기초자료 제출', page: 'portal' },
-    { step: 5, name: '데이터 수집 중', page: 'data-collection' },
-    { step: 6, name: '평가 진행 중', page: 'evaluation-progress' },
-    { step: 7, name: '공인회계사 검토 중', page: 'accountant-review' },
-    { step: 8, name: '평가보고서 초안 생성', page: 'draft-generation' },
-    { step: 9, name: '평가보고서 초안 확인', page: 'result', params: 'mode=draft' },
-    { step: 10, name: '수정 요청', page: 'revision-request' },
-    { step: 11, name: '평가보고서 최종안 작성', page: 'final-preparation' },
-    { step: 12, name: '평가보고서 최종안 확인', page: 'result', params: 'mode=final' },
-    { step: 13, name: '결제하기', page: 'payment' },
-    { step: 14, name: '평가보고서 수령', page: 'report-download' }
+    { step: 1, name: '서비스 안내 보기', page: 'guide', visible: true },
+    { step: 2, name: '평가 신청하기', page: 'project-create', visible: true },
+    { step: 3, name: '관리자 승인 확인하기', page: 'approval-waiting', visible: true },
+    { step: 4, name: '평가 기초자료 제출하기', page: 'portal', visible: true },
+    { step: 5, name: '데이터 수집 중', page: 'data-collection', visible: false },
+    { step: 6, name: '평가 진행 중', page: 'evaluation-progress', visible: false },
+    { step: 7, name: '공인회계사 검토 중', page: 'accountant-review', visible: false },
+    { step: 8, name: '평가보고서 초안 생성', page: 'draft-generation', visible: false },
+    { step: 9, name: '평가보고서 초안 확인하기', page: 'result', params: 'mode=draft', visible: true },
+    { step: 10, name: '평가보고서 초안 수정 요청하기', page: 'revision-request', visible: true },
+    { step: 11, name: '평가보고서 최종안 작성', page: 'final-preparation', visible: false },
+    { step: 12, name: '평가보고서 최종안 확인하기', page: 'result', params: 'mode=final', visible: true },
+    { step: 13, name: '대금 결제하기', page: 'payment', visible: true },
+    { step: 14, name: '평가보고서 수령하기', page: 'report-download', visible: true }
 ];
 
 /**
@@ -155,18 +155,24 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             <div class="process-steps">
     `;
 
+    let displayNumber = 0; // visible 단계만 카운트하는 변수
+
     PROCESS_STEPS.forEach(stepInfo => {
         // 범위 필터링: startStep ~ endStep만 표시
         if (stepInfo.step < startStep || stepInfo.step > endStep) {
             return;
         }
 
+        // 숨김 처리된 단계는 표시하지 않음
+        if (stepInfo.visible === false) {
+            return;
+        }
+
+        displayNumber++; // visible 단계마다 번호 증가
+
         const isActive = stepInfo.step === currentStep;
         const isAccessible = shouldStepBeAccessible(stepInfo.step, currentStep, methodStatus);
         const url = getStepUrl(stepInfo, method, projectId);
-
-        // 표시 번호: startStep부터 시작하여 1번부터 다시 매김
-        const displayNumber = stepInfo.step - startStep + 1;
 
         // 접근 가능한 단계는 링크로, 잠긴 단계는 div로 렌더링
         if (isAccessible && url) {
