@@ -125,29 +125,37 @@ function getStepUrl(stepInfo, method, projectId) {
  * @param {string} projectId - 프로젝트 ID
  * @returns {string} HTML 문자열
  */
-export function renderSidebar(currentStep, methodStatus, method = null, projectId = null) {
+export function renderSidebar(currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 14) {
     const statusInfo = getStatusDisplay(methodStatus);
 
     let html = `
         <div class="sidebar">
             <!-- 프로젝트 정보 (4단계부터 표시) -->
-            ${currentStep >= 4 && method ? renderProjectInfo(method, methodStatus) : ''}
+            ${currentStep >= 4 && method ? renderProjectInfo(method, methodStatus, projectId) : ''}
 
-            <!-- 14단계 프로세스 -->
+            <!-- 진행 단계 -->
             <div class="sidebar-title">진행 단계</div>
             <div class="process-steps">
     `;
 
     PROCESS_STEPS.forEach(stepInfo => {
+        // 범위 필터링: startStep ~ endStep만 표시
+        if (stepInfo.step < startStep || stepInfo.step > endStep) {
+            return;
+        }
+
         const isActive = stepInfo.step === currentStep;
         const isAccessible = shouldStepBeAccessible(stepInfo.step, currentStep, methodStatus);
         const url = getStepUrl(stepInfo, method, projectId);
+
+        // 표시 번호: startStep부터 시작하여 1번부터 다시 매김
+        const displayNumber = stepInfo.step - startStep + 1;
 
         // 접근 가능한 단계는 링크로, 잠긴 단계는 div로 렌더링
         if (isAccessible && url) {
             html += `
                 <a href="${url}" class="process-step ${isActive ? 'active' : ''} accessible">
-                    <div class="step-number">${stepInfo.step}</div>
+                    <div class="step-number">${displayNumber}</div>
                     <div class="step-content">
                         <div class="step-name">${stepInfo.name}</div>
                         ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
@@ -157,7 +165,7 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
         } else {
             html += `
                 <div class="process-step ${isActive ? 'active' : ''} ${isAccessible ? 'accessible' : 'locked'}">
-                    <div class="step-number">${stepInfo.step}</div>
+                    <div class="step-number">${displayNumber}</div>
                     <div class="step-content">
                         <div class="step-name">${stepInfo.name}</div>
                         ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
@@ -181,13 +189,14 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
 /**
  * 프로젝트 정보 섹션 렌더링 (평가법 표시)
  */
-function renderProjectInfo(method, methodStatus) {
+function renderProjectInfo(method, methodStatus, projectId = null) {
     const methodName = METHOD_NAMES[method] || method;
     const statusInfo = getStatusDisplay(methodStatus);
 
     return `
         <div class="project-info-section">
             <div class="sidebar-title">진행 중인 평가</div>
+            ${projectId ? `<div class="project-id">프로젝트 ID: ${projectId}</div>` : ''}
             <div class="method-badge">
                 <span class="method-icon">${getMethodIcon(method)}</span>
                 <div class="method-details">
@@ -282,6 +291,16 @@ export const SIDEBAR_STYLES = `
         /* 프로젝트 정보 */
         .project-info-section {
             margin-bottom: 32px;
+        }
+
+        .project-id {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: #F3F4F6;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
         }
 
         .method-badge {
@@ -447,7 +466,7 @@ export const SIDEBAR_STYLES = `
  * @param {string} method - 평가법 코드
  * @param {string} projectId - 프로젝트 ID
  */
-export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null) {
+export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 14) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
@@ -463,5 +482,5 @@ export function injectSidebar(containerId, currentStep, methodStatus, method = n
     }
 
     // 사이드바 HTML 주입
-    container.innerHTML = renderSidebar(currentStep, methodStatus, method, projectId);
+    container.innerHTML = renderSidebar(currentStep, methodStatus, method, projectId, startStep, endStep);
 }
