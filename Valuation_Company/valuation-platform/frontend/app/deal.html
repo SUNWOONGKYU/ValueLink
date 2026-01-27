@@ -1132,13 +1132,13 @@
             }
         }
 
-        // 최신 뉴스 로드 - investment_news_articles 테이블 사용 (실제 수집된 뉴스)
+        // 최신 뉴스 로드 - Deal 테이블에서 최신 3개 가져오기
         async function loadLatestNews() {
             try {
                 console.log('최신 뉴스 로딩 중...');
 
-                // investment_news_articles 테이블에서 최신 3개 가져오기
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_articles?select=*&order=published_date.desc&limit=3`, {
+                // Deal 테이블에서 최신 3개 가져오기 (news_date 기준)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=company_name,stage,amount,news_title,news_url,site_name,news_date,created_at&order=news_date.desc&limit=3`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -1146,32 +1146,24 @@
                 });
 
                 if (response.ok) {
-                    const articles = await response.json();
-                    console.log('최신 뉴스:', articles);
+                    const deals = await response.json();
+                    console.log('최신 Deal 뉴스:', deals);
 
-                    if (articles && articles.length > 0) {
-                        // 기사 제목에서 기업명, 투자단계, 금액 추출
-                        const newsItems = articles.map(article => {
-                            const title = article.article_title || '제목 없음';
-                            const company = extractCompanyName(title);
-                            const stage = extractStage(title);
-                            const amount = extractAmount(title);
-
-                            return {
-                                title: title,
-                                source: article.site_name || 'Google News',
-                                source_url: article.article_url || '#',
-                                date: article.published_date,
-                                created_at: null,
-                                company: company,
-                                stage: stage,
-                                amount: amount !== '-' ? amount : '비공개'
-                            };
-                        });
+                    if (deals && deals.length > 0) {
+                        const newsItems = deals.map(deal => ({
+                            title: deal.news_title || `${deal.company_name} ${deal.stage} 투자 유치`,
+                            source: deal.site_name || '미디어',
+                            source_url: deal.news_url || '#',
+                            date: deal.news_date,
+                            created_at: deal.created_at,
+                            company: deal.company_name || '-',
+                            stage: deal.stage || '-',
+                            amount: deal.amount ? `${deal.amount}억원` : '비공개'
+                        }));
 
                         renderNewsCards(newsItems);
                     } else {
-                        console.log('DB에 뉴스 없음');
+                        console.log('DB에 Deal 없음');
                         showNewsError('수집된 투자 뉴스가 없습니다.');
                     }
                 } else {
@@ -1182,38 +1174,6 @@
                 console.log('뉴스 로딩 실패:', err.message);
                 showNewsError('데이터를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
             }
-        }
-
-        // 기사 제목에서 기업명 추출
-        function extractCompanyName(title) {
-            // "이노션스, 142억원 시리즈A 투자 유치" → "이노션스"
-            const match = title.match(/^([가-힣A-Za-z0-9]+),/);
-            if (match) return match[1];
-
-            // "AI 스타트업 테크이노" → "테크이노"
-            const match2 = title.match(/([가-힣A-Za-z0-9]+)(?:\s|,|·)/);
-            if (match2) return match2[1];
-
-            return '-';
-        }
-
-        // 투자 단계 추출
-        function extractStage(title) {
-            if (title.includes('시리즈A') || title.includes('Series A')) return '시리즈A';
-            if (title.includes('시리즈B') || title.includes('Series B')) return '시리즈B';
-            if (title.includes('시리즈C') || title.includes('Series C')) return '시리즈C';
-            if (title.includes('프리A') || title.includes('Pre-A')) return '프리A';
-            if (title.includes('시드') || title.includes('Seed')) return '시드';
-            if (title.includes('프리IPO') || title.includes('Pre-IPO')) return '프리IPO';
-            return '-';
-        }
-
-        // 투자 금액 추출
-        function extractAmount(title) {
-            // "142억원" 패턴
-            const match = title.match(/(\d+)억/);
-            if (match) return `${match[1]}억원`;
-            return '-';
         }
 
         // 뉴스 로딩 에러 표시
@@ -1795,8 +1755,8 @@
                 oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
                 const weekAgoStr = oneWeekAgo.toISOString().split('T')[0];
 
-                // Deal 테이블에서 일주일간 데이터 가져오기 (created_at 기준)
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=company_name,stage,amount,news_title,news_url,site_name,news_date,created_at&created_at=gte.${oneWeekAgo.toISOString()}&order=created_at.desc`, {
+                // Deal 테이블에서 일주일간 데이터 가져오기 (news_date 기준)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=company_name,stage,amount,news_title,news_url,site_name,news_date,created_at&news_date=gte.${weekAgoStr}&order=news_date.desc`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -1865,7 +1825,7 @@
     <div id="newsModal" class="news-modal">
         <div class="news-modal-content">
             <div class="news-modal-header">
-                <h2>최근 1주일 투자유치 뉴스</h2>
+                <h2>일주일간 투자유치 뉴스</h2>
                 <button class="news-modal-close" onclick="closeNewsModal()">&times;</button>
             </div>
             <div class="news-modal-body" id="modal-news-list">
