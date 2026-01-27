@@ -131,7 +131,7 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
     let html = `
         <div class="sidebar">
             <!-- 프로젝트 정보 (4단계부터 표시) -->
-            ${currentStep >= 4 && method ? renderProjectInfo(method, methodStatus, projectId) : ''}
+            ${currentStep >= 4 && method ? renderProjectInfo(method, methodStatus, projectId, 'FinderWorld') : ''}
 
             <!-- 진행 단계 -->
             <div class="sidebar-title">진행 단계</div>
@@ -189,22 +189,21 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
 /**
  * 프로젝트 정보 섹션 렌더링 (평가법 표시)
  */
-function renderProjectInfo(method, methodStatus, projectId = null) {
+function renderProjectInfo(method, methodStatus, projectId = null, customerName = null) {
     const methodName = METHOD_NAMES[method] || method;
-    const statusInfo = getStatusDisplay(methodStatus);
+
+    // projectId가 없으면 아무것도 표시하지 않음
+    if (!projectId) {
+        return '';
+    }
 
     return `
         <div class="project-info-section">
             <div class="sidebar-title">진행 중인 평가</div>
-            ${projectId ? `<div class="project-id">프로젝트 ID: ${projectId}</div>` : ''}
-            <div class="method-badge">
-                <span class="method-icon">${getMethodIcon(method)}</span>
-                <div class="method-details">
-                    <div class="method-name">${methodName}</div>
-                    <div class="method-status" style="color: ${statusInfo.color}">
-                        ${statusInfo.icon} ${statusInfo.text}
-                    </div>
-                </div>
+            <div class="project-info-simple">
+                ${customerName ? `<div class="info-row">고객회사: ${customerName}</div>` : ''}
+                <div class="info-row">프로젝트 ID: ${projectId}</div>
+                <div class="info-row">평가방법: ${methodName}</div>
             </div>
         </div>
     `;
@@ -293,39 +292,18 @@ export const SIDEBAR_STYLES = `
             margin-bottom: 32px;
         }
 
-        .project-id {
+        .project-info-simple {
             font-size: 13px;
-            color: #6B7280;
-            margin-bottom: 12px;
-            padding: 8px 12px;
-            background: #F3F4F6;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
+            color: #374151;
+            line-height: 1.8;
         }
 
-        .method-badge {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: #F9FAFB;
-            border: 2px solid var(--deep-green);
-            border-radius: 12px;
+        .info-row {
+            margin-bottom: 8px;
         }
 
-        .method-icon {
-            font-size: 28px;
-        }
-
-        .method-details {
-            flex: 1;
-        }
-
-        .method-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 4px;
+        .info-row:last-child {
+            margin-bottom: 0;
         }
 
         .method-status {
