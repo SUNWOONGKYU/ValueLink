@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation 서비스 안내 - ValueLink</title>
+    <style>
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            padding: 60px 40px 80px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            opacity: 0.95;
+            max-width: 900px;
+            margin: 0 auto 32px auto;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: inline-block;
+            padding: 16px 36px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            gap: 40px;
+        }
+
+        .main-area {
+            flex: 1;
+        }
+
+        /* Section Styles */
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--deep-blue);
+        }
+
+        .section-content {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        /* Process Steps */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .process-item {
+            background: #F9FAFB;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .process-item:hover {
+            border-color: var(--deep-blue);
+            background: #F0F9FF;
+        }
+
+        .process-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .process-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .process-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Methods Grid */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .method-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .method-card:hover {
+            border-color: var(--deep-blue);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
+        }
+
+        .method-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .method-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .method-summary {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Features List */
+        .features-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #F0F9FF 0%, #DBEAFE 100%);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .cta-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .cta-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background: #1E40AF;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+        }
+
+        /* Sidebar */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar-wrapper {
+                width: 100%;
+            }
+
+            .process-grid,
+            .methods-grid,
+            .features-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 20px 60px 20px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-description {
+                font-size: 16px;
+            }
+
+            .container {
+                padding: 40px 20px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .cta-section {
+                padding: 32px 24px;
+            }
+
+            .cta-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="hero-title">Valuation 서비스 안내</h1>
+        <p class="hero-description">
+            AI 기술과 전문 회계사의 검증을 결합한 기업가치 평가 서비스입니다.<br>
+            5가지 평가방법 중 선택하여 빠르고 정확하게 기업의 가치를 산정할 수 있습니다.
+        </p>
+        <a href="./projects/project-create.html" class="hero-cta">평가 신청하기</a>
+    </section>
+
+    <div class="container">
+        <div class="main-area">
+            <!-- 서비스 개요 -->
+            <section class="section">
+                <h2 class="section-title">💡 서비스 개요</h2>
+                <div class="section-content">
+                    <p>
+                        ValueLink Valuation은 기업의 가치를 객관적이고 정확하게 평가하는 서비스입니다.
+                        DCF, 본질가치, 자산가치, 상대가치, 상증세법 등 5가지 평가방법을 제공하며,
+                        AI가 1차 평가를 수행한 후 공인회계사가 최종 검증하여 신뢰성 높은 결과를 제공합니다.
+                    </p>
+                </div>
+
+                <div class="features-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">🤖</div>
+                        <div class="feature-text">
+                            <div class="feature-title">AI 자동화 평가</div>
+                            <div class="feature-description">AI가 데이터를 분석하여 빠르게 1차 평가 수행</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">✅</div>
+                        <div class="feature-text">
+                            <div class="feature-title">전문가 검증</div>
+                            <div class="feature-description">공인회계사가 최종 검토하여 신뢰성 보장</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-text">
+                            <div class="feature-title">빠른 처리</div>
+                            <div class="feature-description">기존 대비 50% 이상 단축된 평가 기간</div>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💰</div>
+                        <div class="feature-text">
+                            <div class="feature-title">합리적 비용</div>
+                            <div class="feature-description">AI 자동화로 평가 비용 절감</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 14단계 프로세스 -->
+            <section class="section">
+                <h2 class="section-title">📋 Valuation 진행 프로세스 (14단계)</h2>
+                <div class="section-content">
+                    <p>
+                        평가 신청부터 최종 보고서 수령까지 체계적인 14단계 프로세스로 진행됩니다.
+                        각 단계마다 진행 상황을 실시간으로 확인할 수 있으며, 필요시 수정 요청이 가능합니다.
+                    </p>
+                </div>
+
+                <div class="process-grid">
+                    <div class="process-item">
+                        <div class="process-number">1</div>
+                        <div class="process-title">서비스 안내</div>
+                        <div class="process-description">평가 서비스 및 평가법 소개</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">2</div>
+                        <div class="process-title">평가 신청</div>
+                        <div class="process-description">기업 정보 입력 및 평가법 선택</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">3</div>
+                        <div class="process-title">관리자 승인 대기</div>
+                        <div class="process-description">신청 내용 검토 및 승인</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">4</div>
+                        <div class="process-title">평가 기초자료 제출</div>
+                        <div class="process-description">재무제표, 사업계획서 등 업로드</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">5</div>
+                        <div class="process-title">데이터 수집</div>
+                        <div class="process-description">AI가 자료를 분석하여 데이터 수집</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">6</div>
+                        <div class="process-title">평가 진행</div>
+                        <div class="process-description">AI가 선택한 평가법으로 1차 평가</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">7</div>
+                        <div class="process-title">공인회계사 검토</div>
+                        <div class="process-description">전문가가 AI 평가 결과 검토</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">8</div>
+                        <div class="process-title">초안 생성</div>
+                        <div class="process-description">평가보고서 초안 작성</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">9</div>
+                        <div class="process-title">초안 확인</div>
+                        <div class="process-description">고객이 초안 검토 및 수정 요청</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">10</div>
+                        <div class="process-title">수정 반영</div>
+                        <div class="process-description">요청사항 검토 및 수정 반영</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">11</div>
+                        <div class="process-title">최종안 작성</div>
+                        <div class="process-description">최종 평가보고서 완성</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">12</div>
+                        <div class="process-title">최종안 확인</div>
+                        <div class="process-description">고객이 최종안 검토 및 승인</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">13</div>
+                        <div class="process-title">보고서 발송</div>
+                        <div class="process-description">최종 보고서 이메일 발송</div>
+                    </div>
+                    <div class="process-item">
+                        <div class="process-number">14</div>
+                        <div class="process-title">평가 완료</div>
+                        <div class="process-description">평가 프로세스 종료</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5가지 평가방법 -->
+            <section class="section">
+                <h2 class="section-title">📊 5가지 평가방법</h2>
+                <div class="section-content">
+                    <p>
+                        기업의 업종, 성장단계, 평가 목적에 따라 최적의 평가방법을 선택할 수 있습니다.
+                        각 평가법의 특징과 적용 사례를 확인하고 적합한 방법을 선택하세요.
+                    </p>
+                </div>
+
+                <div class="methods-grid">
+                    <div class="method-card">
+                        <div class="method-icon">📈</div>
+                        <div class="method-name">DCF평가법</div>
+                        <div class="method-summary">
+                            미래 현금흐름의 현재가치 환산<br>
+                            성장기업, M&A, 투자유치에 적합
+                        </div>
+                    </div>
+
+                    <div class="method-card">
+                        <div class="method-icon">💎</div>
+                        <div class="method-name">본질가치평가법</div>
+                        <div class="method-summary">
+                            자산가치 40% + 수익가치 60%<br>
+                            IPO 공모가 산정에 주로 사용
+                        </div>
+                    </div>
+
+                    <div class="method-card">
+                        <div class="method-icon">🏦</div>
+                        <div class="method-name">자산가치평가법</div>
+                        <div class="method-summary">
+                            보유 자산의 시장가치 합산<br>
+                            부동산, 유형자산 중심 기업
+                        </div>
+                    </div>
+
+                    <div class="method-card">
+                        <div class="method-icon">⚖️</div>
+                        <div class="method-name">상대가치평가법</div>
+                        <div class="method-summary">
+                            유사기업 비교 (PER, PBR)<br>
+                            빠르고 직관적인 평가
+                        </div>
+                    </div>
+
+                    <div class="method-card">
+                        <div class="method-icon">📜</div>
+                        <div class="method-name">상증세법평가법</div>
+                        <div class="method-summary">
+                            법정 평가방법<br>
+                            증여, 상속, 스톡옵션 행사 시
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 32px;">
+                    <a href="./valuation.html" style="
+                        display: inline-block;
+                        padding: 12px 28px;
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: var(--deep-blue);
+                        background: white;
+                        border: 2px solid var(--deep-blue);
+                        border-radius: 10px;
+                        text-decoration: none;
+                        transition: all 0.2s ease;
+                    ">평가법 상세보기</a>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="cta-section">
+                <h2 class="cta-title">지금 바로 기업가치를 평가해보세요</h2>
+                <p class="cta-description">
+                    간단한 정보 입력만으로 평가를 신청할 수 있습니다.<br>
+                    평가 신청 후 24시간 내 관리자 승인이 진행됩니다.
+                </p>
+                <a href="./projects/project-create.html" class="cta-button">평가 신청하기</a>
+            </section>
+        </div>
+
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
+        </aside>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                const container = document.getElementById('header-container');
+                container.innerHTML = data;
+
+                // 삽입된 script 태그를 수동으로 실행
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from './components/common-sidebar.js';
+
+        // 1단계: 서비스 안내 (not_requested 상태)
+        injectSidebar(
+            'sidebar-container',
+            1,                    // 1단계
+            'not_requested',      // 상태
+            null,                 // 평가법 없음
+            null,                 // 프로젝트 없음
+            1,                    // startStep: 1단계부터
+            14                    // endStep: 14단계까지 전체 표시
+        );
+    </script>
+</body>
+</html>

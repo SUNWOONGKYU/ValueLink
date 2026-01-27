@@ -79,8 +79,8 @@ function getStepUrl(stepInfo, method, projectId) {
     // 페이지별 URL 매핑
     switch (page) {
         case 'guide':
-            // 1단계: 서비스 안내 (valuation 홈)
-            return basePath + 'valuation.html';
+            // 1단계: 서비스 안내
+            return basePath + 'service-guide.html';
 
         case 'project-create':
             // 2단계: 평가 신청
@@ -150,8 +150,8 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             <!-- 프로젝트 정보 (4단계부터 표시) -->
             ${currentStep >= 4 && method ? renderProjectInfo(method, methodStatus, projectId, 'FinderWorld') : ''}
 
-            <!-- 진행 단계 -->
-            <div class="sidebar-title">진행 단계</div>
+            <!-- Valuation 진행 단계 -->
+            <div class="sidebar-title">Valuation 진행 단계</div>
             <div class="process-steps">
     `;
 
