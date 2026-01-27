@@ -370,16 +370,15 @@
             background: #FEFCE8;
         }
 
-        /* 투자자 셀 스타일 */
+        /* 투자자 셀 스타일 - 두 줄로 표시 */
         .deal-investors {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.6;
-            max-width: 200px;
-        }
-
-        .deal-investors > div {
-            padding: 2px 0;
+            line-height: 1.7;
+            word-break: keep-all;
+            white-space: normal;
+            max-height: 3.4em; /* 2줄 높이 */
+            overflow: hidden;
         }
 
         .deal-company {
@@ -428,11 +427,6 @@
         .stage-a { background: #FEF3C7; color: #B45309; }
         .stage-b { background: #FCE7F3; color: #BE185D; }
         .stage-c { background: #E0E7FF; color: #4338CA; }
-
-        .deal-investors {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
 
         .deal-region {
             font-size: 12px;
@@ -1269,20 +1263,18 @@
                 const employees = news.employees || '-';
                 const region = news.region || '-';
 
-                // 투자자 최대 3개만 표시, 나머지는 +N개
+                // 투자자 콤마로 구분, 두 줄로 표시
                 let investorList = '-';
                 if (investor !== '-') {
                     const investorArray = investor.split(',').map(inv => inv.trim());
-                    if (investorArray.length <= 3) {
-                        investorList = investorArray.map(inv =>
-                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
-                        ).join('');
+                    if (investorArray.length <= 5) {
+                        // 5개 이하면 전부 표시 (콤마로 구분)
+                        investorList = investorArray.map(inv => escapeHtml(inv)).join(', ');
                     } else {
-                        const first3 = investorArray.slice(0, 3).map(inv =>
-                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
-                        ).join('');
-                        const remaining = investorArray.length - 3;
-                        investorList = first3 + `<div style="color: #6B7280; font-size: 12px; padding: 2px 0;">+${remaining}개</div>`;
+                        // 5개 초과면 처음 5개만 표시 + 나머지 개수
+                        const first5 = investorArray.slice(0, 5).map(inv => escapeHtml(inv)).join(', ');
+                        const remaining = investorArray.length - 5;
+                        investorList = `${first5} <span style="color: #6B7280; font-size: 12px;">+${remaining}개</span>`;
                     }
                 }
 
@@ -1416,20 +1408,18 @@
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
-                // 투자자 최대 3개만 표시, 나머지는 +N개
+                // 투자자 콤마로 구분, 두 줄로 표시
                 let investorList = '-';
                 if (investors !== '-') {
                     const investorArray = investors.split(',').map(inv => inv.trim());
-                    if (investorArray.length <= 3) {
-                        investorList = investorArray.map(inv =>
-                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
-                        ).join('');
+                    if (investorArray.length <= 5) {
+                        // 5개 이하면 전부 표시 (콤마로 구분)
+                        investorList = investorArray.map(inv => escapeHtml(inv)).join(', ');
                     } else {
-                        const first3 = investorArray.slice(0, 3).map(inv =>
-                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
-                        ).join('');
-                        const remaining = investorArray.length - 3;
-                        investorList = first3 + `<div style="color: #6B7280; font-size: 12px; padding: 2px 0;">+${remaining}개</div>`;
+                        // 5개 초과면 처음 5개만 표시 + 나머지 개수
+                        const first5 = investorArray.slice(0, 5).map(inv => escapeHtml(inv)).join(', ');
+                        const remaining = investorArray.length - 5;
+                        investorList = `${first5} <span style="color: #6B7280; font-size: 12px;">+${remaining}개</span>`;
                     }
                 }
 
