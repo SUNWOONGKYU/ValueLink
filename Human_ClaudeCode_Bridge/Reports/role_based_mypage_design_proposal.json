@@ -1,0 +1,592 @@
+{
+  "proposal_id": "role_based_mypage_20260128",
+  "title": "역할 기반 마이페이지 설계 제안",
+  "date": "2026-01-28",
+  "status": "제안",
+  "problem": {
+    "description": "현재 마이페이지는 모든 사용자에게 동일한 화면을 제공하지만, 사용자 유형별로 필요한 정보가 다름",
+    "current_state": {
+      "mypage": "단일 마이페이지 (고객사 정보만)",
+      "user_types": "구분 없음",
+      "issue": "공인회계사, 관리자 등 다른 역할의 사용자는 마이페이지를 사용할 수 없음"
+    },
+    "need": "사용자 역할(role)에 따라 다른 마이페이지 제공 필요"
+  },
+  "user_roles": {
+    "overview": "ValueLink 플랫폼의 3가지 사용자 유형",
+    "roles": [
+      {
+        "role": "customer",
+        "name": "고객",
+        "description": "평가를 받는 기업/개인",
+        "main_tasks": [
+          "회사 정보 관리",
+          "평가 신청",
+          "프로젝트 진행 상황 확인",
+          "평가 결과 확인",
+          "결제 관리"
+        ],
+        "mypage_needs": [
+          "회사 기본 정보 (이름, 사업자번호, 대표자명 등)",
+          "내가 신청한 프로젝트 목록",
+          "진행 중인 평가 현황",
+          "완료된 평가 결과",
+          "결제 내역"
+        ]
+      },
+      {
+        "role": "accountant",
+        "name": "공인회계사",
+        "description": "평가를 수행하는 전문가",
+        "main_tasks": [
+          "프로필 관리",
+          "배정된 프로젝트 확인",
+          "평가 업무 수행",
+          "평가 보고서 작성",
+          "고객 문의 응답"
+        ],
+        "mypage_needs": [
+          "개인 프로필 (이름, 자격증, 학력, 경력)",
+          "담당 프로젝트 목록",
+          "진행 중인 평가 현황",
+          "완료한 평가 통계",
+          "일정 관리"
+        ]
+      },
+      {
+        "role": "admin",
+        "name": "관리자",
+        "description": "플랫폼을 관리하는 운영자",
+        "main_tasks": [
+          "사용자 관리",
+          "프로젝트 승인/거부",
+          "공인회계사 배정",
+          "시스템 설정",
+          "통계 확인"
+        ],
+        "mypage_needs": [
+          "전체 프로젝트 현황",
+          "사용자 통계",
+          "매출 통계",
+          "시스템 설정",
+          "공지사항 관리"
+        ]
+      }
+    ]
+  },
+  "database_design": {
+    "current_tables": [
+      {
+        "table": "customers",
+        "description": "고객사 정보",
+        "has_role": false,
+        "linked_to": "Supabase auth.users (email)"
+      },
+      {
+        "table": "projects",
+        "description": "평가 프로젝트",
+        "has_role": false
+      },
+      {
+        "table": "valuation_reports",
+        "description": "평가 보고서",
+        "has_role": false
+      }
+    ],
+    "missing_tables": [
+      {
+        "table": "users",
+        "needed": true,
+        "reason": "사용자 역할(role) 관리 필요",
+        "note": "Supabase auth.users는 인증용, 역할은 별도 테이블에서 관리"
+      },
+      {
+        "table": "accountants",
+        "needed": true,
+        "reason": "공인회계사 프로필 정보 필요"
+      }
+    ],
+    "proposed_schema": {
+      "users_table": {
+        "description": "사용자 역할 관리 테이블 (Supabase auth.users와 연결)",
+        "fields": [
+          {
+            "field": "user_id",
+            "type": "UUID PRIMARY KEY",
+            "description": "Supabase auth.users.id와 동일"
+          },
+          {
+            "field": "email",
+            "type": "VARCHAR(100) UNIQUE NOT NULL",
+            "description": "이메일 (auth.users.email과 동일)"
+          },
+          {
+            "field": "role",
+            "type": "VARCHAR(20) NOT NULL",
+            "description": "역할: 'customer', 'accountant', 'admin'",
+            "constraint": "CHECK (role IN ('customer', 'accountant', 'admin'))"
+          },
+          {
+            "field": "name",
+            "type": "VARCHAR(50) NOT NULL",
+            "description": "이름"
+          },
+          {
+            "field": "phone",
+            "type": "VARCHAR(20)",
+            "description": "전화번호"
+          },
+          {
+            "field": "profile_image_url",
+            "type": "TEXT",
+            "description": "프로필 이미지 URL"
+          },
+          {
+            "field": "is_active",
+            "type": "BOOLEAN DEFAULT true",
+            "description": "활성화 여부"
+          },
+          {
+            "field": "created_at",
+            "type": "TIMESTAMPTZ DEFAULT NOW()"
+          },
+          {
+            "field": "updated_at",
+            "type": "TIMESTAMPTZ DEFAULT NOW()"
+          }
+        ],
+        "relationships": [
+          "1:1 with Supabase auth.users (user_id)",
+          "1:1 with customers (email) - if role = 'customer'",
+          "1:1 with accountants (user_id) - if role = 'accountant'"
+        ]
+      },
+      "accountants_table": {
+        "description": "공인회계사 프로필 정보",
+        "fields": [
+          {
+            "field": "accountant_id",
+            "type": "VARCHAR(20) PRIMARY KEY",
+            "description": "회계사 ID (ACC + timestamp)"
+          },
+          {
+            "field": "user_id",
+            "type": "UUID NOT NULL",
+            "description": "users 테이블 참조",
+            "foreign_key": "users(user_id)"
+          },
+          {
+            "field": "license_number",
+            "type": "VARCHAR(50) NOT NULL",
+            "description": "공인회계사 자격증 번호"
+          },
+          {
+            "field": "education",
+            "type": "TEXT[]",
+            "description": "학력 (배열)"
+          },
+          {
+            "field": "career",
+            "type": "TEXT[]",
+            "description": "경력 (배열)"
+          },
+          {
+            "field": "specialization",
+            "type": "VARCHAR(100)[]",
+            "description": "전문 분야 (예: DCF, 상대가치 등)"
+          },
+          {
+            "field": "bio",
+            "type": "TEXT",
+            "description": "소개"
+          },
+          {
+            "field": "rating",
+            "type": "DECIMAL(3,2) DEFAULT 0.00",
+            "description": "평점 (0.00 ~ 5.00)"
+          },
+          {
+            "field": "total_projects",
+            "type": "INTEGER DEFAULT 0",
+            "description": "수행한 프로젝트 수"
+          },
+          {
+            "field": "is_available",
+            "type": "BOOLEAN DEFAULT true",
+            "description": "배정 가능 여부"
+          },
+          {
+            "field": "created_at",
+            "type": "TIMESTAMPTZ DEFAULT NOW()"
+          },
+          {
+            "field": "updated_at",
+            "type": "TIMESTAMPTZ DEFAULT NOW()"
+          }
+        ]
+      },
+      "customers_modifications": {
+        "add_fields": [
+          {
+            "field": "user_id",
+            "type": "UUID",
+            "description": "users 테이블 참조",
+            "foreign_key": "users(user_id)"
+          },
+          {
+            "field": "company_name_en",
+            "type": "VARCHAR(100)",
+            "description": "영문 회사명 (project-create에서 필요)"
+          }
+        ],
+        "note": "기존 customers 테이블에 users 테이블 연결"
+      },
+      "projects_modifications": {
+        "add_fields": [
+          {
+            "field": "assigned_accountant_id",
+            "type": "VARCHAR(20)",
+            "description": "배정된 회계사 ID",
+            "foreign_key": "accountants(accountant_id)"
+          }
+        ],
+        "note": "현재 코드에는 assigned_accountant가 있지만 테이블에는 없음"
+      }
+    }
+  },
+  "mypage_design": {
+    "approach": "역할별로 다른 마이페이지 렌더링",
+    "implementation_strategy": {
+      "option_1": {
+        "name": "단일 파일, 조건부 렌더링",
+        "description": "mypage.html 하나로 role에 따라 다른 섹션 표시",
+        "pros": [
+          "파일 관리 간단",
+          "공통 스타일 재사용"
+        ],
+        "cons": [
+          "파일 크기 증가",
+          "유지보수 복잡"
+        ],
+        "code_structure": "if (role === 'customer') { renderCustomerPage(); } else if (role === 'accountant') { renderAccountantPage(); }"
+      },
+      "option_2": {
+        "name": "역할별 별도 파일 (권장) ⭐",
+        "description": "mypage-customer.html, mypage-accountant.html, mypage-admin.html 분리",
+        "pros": [
+          "각 역할에 맞는 최적화",
+          "유지보수 용이",
+          "코드 가독성 향상"
+        ],
+        "cons": [
+          "파일 수 증가",
+          "공통 스타일 중복 가능"
+        ],
+        "recommended": true,
+        "code_structure": "const role = user.role; window.location.href = `/core/mypage-${role}.html`;"
+      },
+      "option_3": {
+        "name": "라우팅 로직 + 컴포넌트",
+        "description": "mypage.html에서 role 확인 후 적절한 컴포넌트 로드",
+        "pros": [
+          "유연한 구조",
+          "React/Vue로 전환 시 용이"
+        ],
+        "cons": [
+          "초기 구현 복잡",
+          "Vanilla JS에서는 오버엔지니어링"
+        ],
+        "code_structure": "loadComponent(`/components/mypage-${role}.html`);"
+      }
+    },
+    "recommended_approach": "Option 2 (역할별 별도 파일)",
+    "file_structure": {
+      "directory": "frontend/app/core/",
+      "files": [
+        {
+          "file": "mypage.html",
+          "role": "라우터",
+          "description": "로그인 확인 + 역할 판단 + 적절한 페이지로 리다이렉트",
+          "logic": "1. Supabase auth 확인\n2. users 테이블에서 role 조회\n3. role에 따라 mypage-{role}.html로 리다이렉트"
+        },
+        {
+          "file": "mypage-customer.html",
+          "role": "customer",
+          "description": "고객용 마이페이지",
+          "sections": [
+            "회사 정보 (customers 테이블)",
+            "내 프로젝트 목록 (projects 테이블)",
+            "진행 중인 평가 현황",
+            "결제 내역"
+          ]
+        },
+        {
+          "file": "mypage-accountant.html",
+          "role": "accountant",
+          "description": "공인회계사용 마이페이지",
+          "sections": [
+            "개인 프로필 (accountants 테이블)",
+            "담당 프로젝트 목록",
+            "진행 중인 평가 현황",
+            "완료한 평가 통계",
+            "일정 관리"
+          ]
+        },
+        {
+          "file": "mypage-admin.html",
+          "role": "admin",
+          "description": "관리자용 마이페이지",
+          "sections": [
+            "전체 프로젝트 현황",
+            "사용자 통계 (고객, 회계사)",
+            "매출 통계",
+            "시스템 설정",
+            "공지사항 관리"
+          ]
+        }
+      ]
+    }
+  },
+  "integration_with_project_create": {
+    "scenario_A": {
+      "user": "고객 (Customer) + 마이페이지 정보 있음",
+      "flow": [
+        "1. project-create.html 접속",
+        "2. Supabase auth로 로그인 확인",
+        "3. users 테이블에서 role = 'customer' 확인",
+        "4. customers 테이블에서 회사 정보 조회 (email 기준)",
+        "5. 6개 필드 자동 채우기",
+        "6. 평가 신청 완료 → projects 테이블 저장"
+      ]
+    },
+    "scenario_B": {
+      "user": "고객 (Customer) + 마이페이지 정보 없음",
+      "flow": [
+        "1. project-create.html 접속",
+        "2. Supabase auth로 로그인 확인",
+        "3. users 테이블에서 role = 'customer' 확인",
+        "4. customers 테이블 조회 → 데이터 없음",
+        "5. 모든 필드 입력",
+        "6. 평가 신청 완료 → customers + projects 테이블 저장 (마이페이지 자동 생성)"
+      ]
+    },
+    "scenario_C": {
+      "user": "공인회계사 (Accountant) 접속",
+      "flow": [
+        "1. project-create.html 접속",
+        "2. users 테이블에서 role = 'accountant' 확인",
+        "3. 접근 차단 모달 표시: '고객만 평가를 신청할 수 있습니다.'",
+        "4. 마이페이지로 리다이렉트"
+      ]
+    },
+    "scenario_D": {
+      "user": "비로그인 사용자",
+      "flow": [
+        "1. project-create.html 접속",
+        "2. 로그인 안내 모달 표시",
+        "3. 로그인 유도"
+      ]
+    }
+  },
+  "user_registration_flow": {
+    "description": "회원가입 시 역할 선택",
+    "steps": [
+      {
+        "step": 1,
+        "page": "register.html",
+        "action": "회원가입 폼",
+        "fields": [
+          "이메일",
+          "비밀번호",
+          "이름",
+          "전화번호",
+          "역할 선택 (고객 / 공인회계사)"
+        ],
+        "note": "관리자는 직접 회원가입 불가 (기존 관리자가 수동 등록)"
+      },
+      {
+        "step": 2,
+        "action": "Supabase auth.signUp()",
+        "result": "auth.users 테이블에 사용자 생성"
+      },
+      {
+        "step": 3,
+        "action": "users 테이블에 role 저장",
+        "sql": "INSERT INTO users (user_id, email, role, name, phone) VALUES (...)"
+      },
+      {
+        "step": 4,
+        "conditional": "role에 따라 추가 테이블 생성",
+        "if_customer": "customers 테이블에 레코드 생성 (회사 정보는 나중에 입력)",
+        "if_accountant": "accountants 테이블에 레코드 생성 + 자격증 번호 입력 요구"
+      }
+    ]
+  },
+  "implementation_plan": {
+    "phase_1": {
+      "name": "데이터베이스 스키마 구축",
+      "tasks": [
+        {
+          "task": "users 테이블 생성",
+          "file": "create_users_table.sql",
+          "priority": "High"
+        },
+        {
+          "task": "accountants 테이블 생성",
+          "file": "create_accountants_table.sql",
+          "priority": "High"
+        },
+        {
+          "task": "customers 테이블 수정 (user_id, company_name_en 추가)",
+          "file": "alter_customers_table.sql",
+          "priority": "Medium"
+        },
+        {
+          "task": "projects 테이블 수정 (assigned_accountant_id 추가)",
+          "file": "alter_projects_table.sql",
+          "priority": "Medium"
+        }
+      ],
+      "estimated_effort": "2시간"
+    },
+    "phase_2": {
+      "name": "역할별 마이페이지 구축",
+      "tasks": [
+        {
+          "task": "mypage.html → 라우터로 변경",
+          "description": "role 확인 후 적절한 페이지로 리다이렉트",
+          "priority": "High"
+        },
+        {
+          "task": "mypage-customer.html 생성",
+          "description": "고객용 마이페이지 (현재 mypage.html 기반)",
+          "priority": "High"
+        },
+        {
+          "task": "mypage-accountant.html 생성",
+          "description": "공인회계사용 마이페이지",
+          "priority": "High"
+        },
+        {
+          "task": "mypage-admin.html 생성",
+          "description": "관리자용 마이페이지",
+          "priority": "Medium"
+        }
+      ],
+      "estimated_effort": "6시간"
+    },
+    "phase_3": {
+      "name": "project-create 페이지 통합",
+      "tasks": [
+        {
+          "task": "역할 기반 접근 제어",
+          "description": "고객만 접근 가능, 회계사/관리자는 차단"
+        },
+        {
+          "task": "자동 채우기 기능 (고객용)",
+          "description": "customers 테이블에서 정보 자동 불러오기"
+        },
+        {
+          "task": "양방향 동기화",
+          "description": "평가 신청 시 customers 테이블 자동 생성"
+        }
+      ],
+      "estimated_effort": "4시간"
+    },
+    "phase_4": {
+      "name": "회원가입 페이지 수정",
+      "tasks": [
+        {
+          "task": "역할 선택 UI 추가",
+          "description": "고객 / 공인회계사 라디오 버튼"
+        },
+        {
+          "task": "users 테이블 저장 로직",
+          "description": "회원가입 시 role과 함께 저장"
+        },
+        {
+          "task": "공인회계사 추가 정보 입력",
+          "description": "자격증 번호 등 추가 필드"
+        }
+      ],
+      "estimated_effort": "3시간"
+    }
+  },
+  "code_example": {
+    "mypage_router": {
+      "file": "mypage.html",
+      "language": "javascript",
+      "code": "async function routeToRoleBasedPage() {\n    // 1. 로그인 확인\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n    \n    if (!user) {\n        alert('로그인이 필요합니다.');\n        window.location.href = '/login';\n        return;\n    }\n    \n    // 2. users 테이블에서 role 조회\n    const { data: userData, error } = await supabase\n        .from('users')\n        .select('role')\n        .eq('user_id', user.id)\n        .single();\n    \n    if (error || !userData) {\n        alert('사용자 정보를 불러올 수 없습니다.');\n        return;\n    }\n    \n    // 3. role에 따라 리다이렉트\n    const role = userData.role;\n    \n    if (role === 'customer') {\n        window.location.href = '/core/mypage-customer.html';\n    } else if (role === 'accountant') {\n        window.location.href = '/core/mypage-accountant.html';\n    } else if (role === 'admin') {\n        window.location.href = '/core/mypage-admin.html';\n    } else {\n        alert('알 수 없는 사용자 역할입니다.');\n    }\n}\n\n// 페이지 로드 시 즉시 실행\nwindow.addEventListener('DOMContentLoaded', routeToRoleBasedPage);"
+    },
+    "role_based_access_control": {
+      "file": "project-create.html",
+      "language": "javascript",
+      "code": "async function checkCustomerAccess() {\n    const { data: { user } } = await supabase.auth.getUser();\n    \n    if (!user) {\n        showLoginModal();\n        return false;\n    }\n    \n    const { data: userData } = await supabase\n        .from('users')\n        .select('role')\n        .eq('user_id', user.id)\n        .single();\n    \n    if (userData.role !== 'customer') {\n        alert('고객만 평가를 신청할 수 있습니다.');\n        window.location.href = '/core/mypage.html';\n        return false;\n    }\n    \n    return true;\n}\n\n// 페이지 로드 시 접근 권한 확인\nwindow.addEventListener('DOMContentLoaded', async () => {\n    const hasAccess = await checkCustomerAccess();\n    if (hasAccess) {\n        autoFillCustomerInfo();\n    }\n});"
+    }
+  },
+  "benefits": {
+    "user_experience": [
+      "역할에 맞는 최적화된 마이페이지",
+      "불필요한 정보 제거",
+      "직관적인 네비게이션"
+    ],
+    "security": [
+      "역할 기반 접근 제어 (RBAC)",
+      "권한 없는 사용자 차단",
+      "데이터 보안 강화"
+    ],
+    "maintainability": [
+      "역할별 파일 분리로 유지보수 용이",
+      "각 역할의 요구사항 독립적 개발",
+      "확장 가능한 구조"
+    ]
+  },
+  "next_steps": [
+    {
+      "step": 1,
+      "action": "사용자 승인 받기",
+      "decision_needed": [
+        "역할별 마이페이지 분리 방식 (Option 1 vs 2 vs 3)",
+        "회원가입 시 역할 선택 UI",
+        "공인회계사 자격 검증 방법"
+      ]
+    },
+    {
+      "step": 2,
+      "action": "데이터베이스 스키마 설계 확정",
+      "decision_needed": [
+        "users 테이블 필드",
+        "accountants 테이블 필드",
+        "기존 테이블 수정 범위"
+      ]
+    },
+    {
+      "step": 3,
+      "action": "Phase 1 구현 (DB)",
+      "files_to_create": [
+        "create_users_table.sql",
+        "create_accountants_table.sql",
+        "alter_customers_table.sql",
+        "alter_projects_table.sql"
+      ]
+    },
+    {
+      "step": 4,
+      "action": "Phase 2 구현 (마이페이지)",
+      "files_to_create": [
+        "mypage-customer.html",
+        "mypage-accountant.html",
+        "mypage-admin.html"
+      ],
+      "files_to_modify": [
+        "mypage.html (라우터로 변경)"
+      ]
+    }
+  ],
+  "total_estimated_effort": "15시간",
+  "priority": "High",
+  "impact": "High",
+  "dependencies": [
+    "mypage_project_create_integration_proposal.json (평가 신청 자동 채우기)"
+  ]
+}
