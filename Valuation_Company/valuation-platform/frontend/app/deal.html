@@ -374,11 +374,13 @@
         .deal-investors {
             font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.7;
+            line-height: 1.6;
             word-break: keep-all;
-            white-space: normal;
-            max-height: 3.4em; /* 2줄 높이 */
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* 2줄 제한 */
+            -webkit-box-orient: vertical;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .deal-company {
@@ -1263,18 +1265,18 @@
                 const employees = news.employees || '-';
                 const region = news.region || '-';
 
-                // 투자자 콤마로 구분, 두 줄로 표시
+                // 투자자 콤마로 구분, 두 줄로 표시 (약 6-7개가 2줄)
                 let investorList = '-';
                 if (investor !== '-') {
                     const investorArray = investor.split(',').map(inv => inv.trim());
-                    if (investorArray.length <= 5) {
-                        // 5개 이하면 전부 표시 (콤마로 구분)
+                    if (investorArray.length <= 7) {
+                        // 7개 이하면 전부 표시 (콤마 + 공백으로 구분)
                         investorList = investorArray.map(inv => escapeHtml(inv)).join(', ');
                     } else {
-                        // 5개 초과면 처음 5개만 표시 + 나머지 개수
-                        const first5 = investorArray.slice(0, 5).map(inv => escapeHtml(inv)).join(', ');
-                        const remaining = investorArray.length - 5;
-                        investorList = `${first5} <span style="color: #6B7280; font-size: 12px;">+${remaining}개</span>`;
+                        // 7개 초과면 처음 7개만 표시 + 나머지 개수
+                        const first7 = investorArray.slice(0, 7).map(inv => escapeHtml(inv)).join(', ');
+                        const remaining = investorArray.length - 7;
+                        investorList = `${first7} <span style="color: #6B7280; font-size: 11px; font-weight: 600;">+${remaining}</span>`;
                     }
                 }
 
@@ -1408,18 +1410,18 @@
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
-                // 투자자 콤마로 구분, 두 줄로 표시
+                // 투자자 콤마로 구분, 두 줄로 표시 (약 6-7개가 2줄)
                 let investorList = '-';
                 if (investors !== '-') {
                     const investorArray = investors.split(',').map(inv => inv.trim());
-                    if (investorArray.length <= 5) {
-                        // 5개 이하면 전부 표시 (콤마로 구분)
+                    if (investorArray.length <= 7) {
+                        // 7개 이하면 전부 표시 (콤마 + 공백으로 구분)
                         investorList = investorArray.map(inv => escapeHtml(inv)).join(', ');
                     } else {
-                        // 5개 초과면 처음 5개만 표시 + 나머지 개수
-                        const first5 = investorArray.slice(0, 5).map(inv => escapeHtml(inv)).join(', ');
-                        const remaining = investorArray.length - 5;
-                        investorList = `${first5} <span style="color: #6B7280; font-size: 12px;">+${remaining}개</span>`;
+                        // 7개 초과면 처음 7개만 표시 + 나머지 개수
+                        const first7 = investorArray.slice(0, 7).map(inv => escapeHtml(inv)).join(', ');
+                        const remaining = investorArray.length - 7;
+                        investorList = `${first7} <span style="color: #6B7280; font-size: 11px; font-weight: 600;">+${remaining}</span>`;
                     }
                 }
 
