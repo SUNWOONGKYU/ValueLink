@@ -89,12 +89,12 @@ def extract_investors():
     deals = result.data
     print(f"\n총 레코드: {len(deals)}개")
 
-    # 투자자가 깨진 것만 필터링 (공백만 있거나 이상한 문자)
+    # 투자자가 깨진 것만 필터링 (콤마가 없는 모든 레코드)
     to_process = []
     for deal in deals:
         investors = deal.get('investors') or ''
-        # 콤마가 없고 공백으로만 분리된 경우 = 깨진 데이터
-        if investors and ',' not in investors and ' ' in investors:
+        # 콤마가 없는 경우 = 깨진 데이터 또는 단일 투자자
+        if investors and ',' not in investors:
             to_process.append(deal)
 
     print(f"재추출 대상: {len(to_process)}개\n")

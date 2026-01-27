@@ -36,9 +36,9 @@
         }
 
         .hero-title {
-            font-size: 42px;
+            font-size: 36px;
             font-weight: 700;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .hero-description {
@@ -149,44 +149,70 @@
             line-height: 1.6;
         }
 
-        /* Methods Grid */
-        .methods-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
+        /* 평가법 목록 */
+        .valuation-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
             margin-top: 32px;
         }
 
         .method-card {
             background: white;
-            border: 2px solid var(--border);
+            border: 2px solid #E5E7EB;
             border-radius: 16px;
-            padding: 28px;
-            text-align: center;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
             transition: all 0.2s ease;
         }
 
         .method-card:hover {
-            border-color: var(--deep-blue);
+            border-color: #1D4ED8;
             box-shadow: 0 4px 12px rgba(29, 78, 216, 0.15);
         }
 
         .method-icon {
             font-size: 48px;
-            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
+        .method-info {
+            flex: 1;
         }
 
         .method-name {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: #111827;
             margin-bottom: 12px;
         }
 
         .method-summary {
-            font-size: 14px;
-            color: var(--text-secondary);
+            font-size: 15px;
+            color: #6B7280;
             line-height: 1.6;
+        }
+
+        .btn-detail {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: #1D4ED8;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-detail:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
         }
 
         /* Features List */
@@ -302,9 +328,13 @@
             }
 
             .process-grid,
-            .methods-grid,
             .features-list {
                 grid-template-columns: 1fr;
+            }
+
+            .method-card {
+                flex-direction: column;
+                text-align: center;
             }
         }
 
@@ -314,7 +344,7 @@
             }
 
             .hero-title {
-                font-size: 32px;
+                font-size: 28px;
             }
 
             .hero-description {
@@ -398,12 +428,12 @@
                 </div>
             </section>
 
-            <!-- 14단계 프로세스 -->
+            <!-- Valuation 진행 프로세스 -->
             <section class="section">
-                <h2 class="section-title">📋 Valuation 진행 프로세스 (14단계)</h2>
+                <h2 class="section-title">📋 Valuation 진행 프로세스</h2>
                 <div class="section-content">
                     <p>
-                        평가 신청부터 최종 보고서 수령까지 체계적인 14단계 프로세스로 진행됩니다.
+                        평가 신청부터 최종 보고서 수령까지 체계적인 프로세스로 진행됩니다.
                         각 단계마다 진행 상황을 실시간으로 확인할 수 있으며, 필요시 수정 요청이 가능합니다.
                     </p>
                 </div>
@@ -411,73 +441,47 @@
                 <div class="process-grid">
                     <div class="process-item">
                         <div class="process-number">1</div>
-                        <div class="process-title">서비스 안내</div>
-                        <div class="process-description">평가 서비스 및 평가법 소개</div>
+                        <div class="process-title">서비스 안내문 보기</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">2</div>
-                        <div class="process-title">평가 신청</div>
-                        <div class="process-description">기업 정보 입력 및 평가법 선택</div>
+                        <div class="process-title">평가 신청하기</div>
+                        <div class="process-description">회사명, 사업자등록번호, 대표자명 등 기본 정보를 입력하고 원하는 평가방법을 선택합니다. 신청서 제출 후 24시간 내 관리자 검토가 진행됩니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">3</div>
-                        <div class="process-title">관리자 승인 대기</div>
-                        <div class="process-description">신청 내용 검토 및 승인</div>
+                        <div class="process-title">관리자 승인 확인하기</div>
+                        <div class="process-description">관리자가 신청 내용을 검토하고 승인합니다. 승인이 완료되면 이메일 알림을 받고, 다음 단계인 기초자료 제출을 진행할 수 있습니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">4</div>
-                        <div class="process-title">평가 기초자료 제출</div>
-                        <div class="process-description">재무제표, 사업계획서 등 업로드</div>
+                        <div class="process-title">평가 기초자료 제출하기</div>
+                        <div class="process-description">재무제표(손익계산서, 재무상태표, 현금흐름표), 사업계획서, 주주명부 등 평가에 필요한 자료를 업로드합니다. 평가법에 따라 필요한 자료가 다를 수 있습니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">5</div>
-                        <div class="process-title">데이터 수집</div>
-                        <div class="process-description">AI가 자료를 분석하여 데이터 수집</div>
+                        <div class="process-title">평가보고서 초안 확인하기</div>
+                        <div class="process-description">AI가 제출된 자료를 분석하여 1차 평가를 수행하고, 공인회계사가 검토한 초안을 확인합니다. 평가 근거와 산출 과정을 상세히 검토할 수 있습니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">6</div>
-                        <div class="process-title">평가 진행</div>
-                        <div class="process-description">AI가 선택한 평가법으로 1차 평가</div>
+                        <div class="process-title">평가보고서 초안 수정 요청하기</div>
+                        <div class="process-description">초안 검토 후 수정이 필요한 부분이 있으면 구체적인 사유와 함께 수정을 요청할 수 있습니다. 회계사가 검토 후 합리적인 요청은 반영됩니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">7</div>
-                        <div class="process-title">공인회계사 검토</div>
-                        <div class="process-description">전문가가 AI 평가 결과 검토</div>
+                        <div class="process-title">평가보고서 최종안 확인하기</div>
+                        <div class="process-description">수정사항이 반영된 최종 평가보고서를 확인하고 승인합니다. 최종안에 동의하면 결제 단계로 넘어갑니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">8</div>
-                        <div class="process-title">초안 생성</div>
-                        <div class="process-description">평가보고서 초안 작성</div>
+                        <div class="process-title">대금 결제하기</div>
+                        <div class="process-description">평가 서비스 비용을 카드 또는 계좌이체로 결제합니다. 결제 완료 후 최종 보고서를 다운로드할 수 있습니다.</div>
                     </div>
                     <div class="process-item">
                         <div class="process-number">9</div>
-                        <div class="process-title">초안 확인</div>
-                        <div class="process-description">고객이 초안 검토 및 수정 요청</div>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-number">10</div>
-                        <div class="process-title">수정 반영</div>
-                        <div class="process-description">요청사항 검토 및 수정 반영</div>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-number">11</div>
-                        <div class="process-title">최종안 작성</div>
-                        <div class="process-description">최종 평가보고서 완성</div>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-number">12</div>
-                        <div class="process-title">최종안 확인</div>
-                        <div class="process-description">고객이 최종안 검토 및 승인</div>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-number">13</div>
-                        <div class="process-title">보고서 발송</div>
-                        <div class="process-description">최종 보고서 이메일 발송</div>
-                    </div>
-                    <div class="process-item">
-                        <div class="process-number">14</div>
-                        <div class="process-title">평가 완료</div>
-                        <div class="process-description">평가 프로세스 종료</div>
+                        <div class="process-title">평가보고서 수령하기</div>
+                        <div class="process-description">결제 완료 후 최종 평가보고서(PDF)를 다운로드합니다. 보고서는 투자유치, M&A, IPO 등 다양한 목적으로 활용할 수 있습니다.</div>
                     </div>
                 </div>
             </section>
@@ -492,66 +496,66 @@
                     </p>
                 </div>
 
-                <div class="methods-grid">
+                <div class="valuation-methods">
+                    <!-- DCF평가법 -->
                     <div class="method-card">
                         <div class="method-icon">📈</div>
-                        <div class="method-name">DCF평가법</div>
-                        <div class="method-summary">
-                            미래 현금흐름의 현재가치 환산<br>
-                            성장기업, M&A, 투자유치에 적합
+                        <div class="method-info">
+                            <div class="method-name">DCF평가법</div>
+                            <div class="method-summary">
+                                기업이 미래에 창출할 현금흐름을 현재 가치로 환산하여 기업 가치를 산정하는 방법입니다. 성장 가능성이 있는 기업, M&A 및 투자 의사결정에 주로 사용됩니다.
+                            </div>
                         </div>
+                        <a href="./valuation/guides/guide-dcf.html" class="btn-detail">상세보기</a>
                     </div>
 
+                    <!-- 본질가치평가법 -->
                     <div class="method-card">
                         <div class="method-icon">💎</div>
-                        <div class="method-name">본질가치평가법</div>
-                        <div class="method-summary">
-                            자산가치 40% + 수익가치 60%<br>
-                            IPO 공모가 산정에 주로 사용
+                        <div class="method-info">
+                            <div class="method-name">본질가치평가법</div>
+                            <div class="method-summary">
+                                기업의 자산가치와 수익가치를 40:60의 비율로 가중평균하여 산정하는 자본시장법에 따른 평가 방법입니다. IPO 공모가 산정에서 중요한 기준으로 활용됩니다.
+                            </div>
                         </div>
+                        <a href="./valuation/guides/guide-intrinsic.html" class="btn-detail">상세보기</a>
                     </div>
 
+                    <!-- 자산가치평가법 -->
                     <div class="method-card">
                         <div class="method-icon">🏦</div>
-                        <div class="method-name">자산가치평가법</div>
-                        <div class="method-summary">
-                            보유 자산의 시장가치 합산<br>
-                            부동산, 유형자산 중심 기업
+                        <div class="method-info">
+                            <div class="method-name">자산가치평가법</div>
+                            <div class="method-summary">
+                                기업이 보유한 자산의 시장 가치를 합산하여 기업 가치를 산정하는 방법입니다. 부동산, 유형자산이 많은 기업이나 M&A 시 최소 가치 산정에 적합합니다.
+                            </div>
                         </div>
+                        <a href="./valuation/guides/guide-asset.html" class="btn-detail">상세보기</a>
                     </div>
 
+                    <!-- 상대가치평가법 -->
                     <div class="method-card">
                         <div class="method-icon">⚖️</div>
-                        <div class="method-name">상대가치평가법</div>
-                        <div class="method-summary">
-                            유사기업 비교 (PER, PBR)<br>
-                            빠르고 직관적인 평가
+                        <div class="method-info">
+                            <div class="method-name">상대가치평가법</div>
+                            <div class="method-summary">
+                                유사한 기업들의 시장 가치를 비교하여 평가 대상 기업의 가치를 산정하는 방법입니다. PER, PBR, EV/EBITDA 등의 배수를 활용하여 빠르고 직관적인 평가가 가능합니다.
+                            </div>
                         </div>
+                        <a href="./valuation/guides/guide-relative.html" class="btn-detail">상세보기</a>
                     </div>
 
+                    <!-- 상증세법평가법 -->
                     <div class="method-card">
                         <div class="method-icon">📜</div>
-                        <div class="method-name">상증세법평가법</div>
-                        <div class="method-summary">
-                            법정 평가방법<br>
-                            증여, 상속, 스톡옵션 행사 시
+                        <div class="method-info">
+                            <div class="method-name">상증세법평가법</div>
+                            <div class="method-summary">
+                                상속세 및 증여세법에서 정한 방법으로 비상장주식의 가치를 산정하는 법정 평가 방법입니다. 비상장주식 증여, 상속, 임직원 스톡옵션 행사 시 사용됩니다.
+                            </div>
                         </div>
+                        <a href="./valuation/guides/guide-tax.html" class="btn-detail">상세보기</a>
                     </div>
-                </div>
-
-                <div style="text-align: center; margin-top: 32px;">
-                    <a href="./valuation.html" style="
-                        display: inline-block;
-                        padding: 12px 28px;
-                        font-size: 15px;
-                        font-weight: 600;
-                        color: var(--deep-blue);
-                        background: white;
-                        border: 2px solid var(--deep-blue);
-                        border-radius: 10px;
-                        text-decoration: none;
-                        transition: all 0.2s ease;
-                    ">평가법 상세보기</a>
                 </div>
             </section>
 
