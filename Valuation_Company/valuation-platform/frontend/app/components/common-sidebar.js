@@ -303,9 +303,9 @@ export const SIDEBAR_STYLES = `
 
         .sidebar-title {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 14px;
-            font-weight: 700;
-            color: #6B7280;
+            font-size: 18px;
+            font-weight: 900;
+            color: #1F2937;
             margin-bottom: 16px;
         }
 
