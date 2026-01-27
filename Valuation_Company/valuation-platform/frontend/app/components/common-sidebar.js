@@ -32,7 +32,7 @@ function getStatusDisplay(status) {
  * 14단계 프로세스 정의
  */
 const PROCESS_STEPS = [
-    { step: 1, name: '서비스 안내 보기', page: 'guide', visible: true },
+    { step: 1, name: '서비스 안내문 보기', page: 'guide', visible: true },
     { step: 2, name: '평가 신청하기', page: 'project-create', visible: true },
     { step: 3, name: '관리자 승인 확인하기', page: 'approval-waiting', visible: true },
     { step: 4, name: '평가 기초자료 제출하기', page: 'portal', visible: true },
@@ -181,7 +181,6 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
                     <div class="step-number">${displayNumber}</div>
                     <div class="step-content">
                         <div class="step-name">${stepInfo.name}</div>
-                        ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
                     </div>
                 </a>
             `;
@@ -191,7 +190,6 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
                     <div class="step-number">${displayNumber}</div>
                     <div class="step-content">
                         <div class="step-name">${stepInfo.name}</div>
-                        ${isActive ? '<div class="step-indicator">→ 현재 단계</div>' : ''}
                     </div>
                 </div>
             `;
@@ -411,10 +409,13 @@ export const SIDEBAR_STYLES = `
         }
 
         .step-indicator {
-            font-size: 12px;
-            color: var(--deep-green);
+            font-size: 13px;
+            color: var(--deep-blue);
             margin-top: 4px;
-            font-weight: 600;
+            font-weight: 700;
+            background: #DBEAFE;
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
         /* 담당 공인회계사 */
