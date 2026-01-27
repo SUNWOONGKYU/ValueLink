@@ -296,12 +296,11 @@ export const SIDEBAR_STYLES = `
         }
 
         .sidebar-title {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             font-size: 18px;
             font-weight: 900;
             color: #1F2937;
             margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         /* 프로젝트 정보 */
