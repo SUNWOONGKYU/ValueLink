@@ -1511,10 +1511,10 @@
             return classes[stage] || 'stage-seed';
         }
 
-        // Top 10 뉴스 제공사 로드 (Supabase에서 동적 로딩)
+        // Top 5 뉴스 제공사 로드 (Supabase에서 동적 로딩)
         async function loadNewsProviders() {
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_ranking?select=*&order=rank.asc`, {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_ranking?select=*&order=rank.asc&limit=5`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -1525,22 +1525,25 @@
                     const providers = await response.json();
                     if (providers && providers.length > 0) {
                         renderNewsProviders(providers);
-                        console.log('Top 10 랭킹 로드 성공:', providers);
+                        console.log('Top 5 뉴스 소스 로드 성공:', providers);
                     }
                 } else {
-                    console.log('Top 10 랭킹 API 실패, 기본 데이터 사용');
+                    console.log('뉴스 소스 API 실패, 기본 데이터 사용 (HTML 하드코딩)');
                 }
             } catch (error) {
-                console.log('Top 10 랭킹 로드 실패, 기본 데이터 사용:', error);
+                console.log('뉴스 소스 로드 실패, 기본 데이터 사용:', error);
             }
         }
 
-        // Top 10 뉴스 제공사 렌더링
+        // Top 5 뉴스 제공사 렌더링
         function renderNewsProviders(providers) {
             const container = document.getElementById('news-provider-list');
             if (!container) return;
 
-            container.innerHTML = providers.map(provider => `
+            // 상위 5개만 표시
+            const top5 = providers.slice(0, 5);
+
+            container.innerHTML = top5.map(provider => `
                 <a href="${escapeHtml(provider.site_url)}" target="_blank" class="news-provider-item">
                     <span class="provider-number">${provider.rank}</span>
                     <span class="provider-name">${escapeHtml(provider.site_name)}</span>
