@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>평가 신청하기 | ValueLink</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../utils/auth-check.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -622,6 +623,70 @@
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ===== PHASE 3: 접근 제어 및 Auto-Fill =====
+        // 페이지 로드 시 실행
+        (async function initPage() {
+            try {
+                // 1. 접근 제어: company 역할만 허용
+                const { user, userData, customerData } = await AuthCheck.getCustomerData();
+
+                console.log('Authorized user:', userData);
+                console.log('Customer data:', customerData);
+
+                // 2. Auto-Fill: customerData가 있으면 폼 자동 채우기
+                if (customerData) {
+                    autoFillCompanyInfo(customerData);
+                }
+
+            } catch (error) {
+                console.error('Page init failed:', error);
+                // AuthCheck.getCustomerData()가 이미 에러 처리 및 리다이렉트 수행
+            }
+        })();
+
+        // Auto-Fill 함수
+        function autoFillCompanyInfo(customerData) {
+            // 회사명 (국문)
+            if (customerData.company_name && !document.getElementById('companyNameKr').value) {
+                document.getElementById('companyNameKr').value = customerData.company_name;
+            }
+
+            // 회사명 (영문)
+            if (customerData.company_name_en && !document.getElementById('companyNameEn').value) {
+                document.getElementById('companyNameEn').value = customerData.company_name_en;
+            }
+
+            // 사업자등록번호
+            if (customerData.business_number && !document.getElementById('bizNumber').value) {
+                document.getElementById('bizNumber').value = customerData.business_number;
+            }
+
+            // 대표자명
+            if (customerData.ceo_name && !document.getElementById('ceoName').value) {
+                document.getElementById('ceoName').value = customerData.ceo_name;
+            }
+
+            // 업종
+            if (customerData.industry && !document.getElementById('industry').value) {
+                document.getElementById('industry').value = customerData.industry;
+            }
+
+            // 설립일
+            if (customerData.founded_date && !document.getElementById('foundedDate').value) {
+                document.getElementById('foundedDate').value = customerData.founded_date;
+            }
+
+            console.log('Auto-fill completed:', {
+                companyNameKr: customerData.company_name,
+                companyNameEn: customerData.company_name_en,
+                bizNumber: customerData.business_number,
+                ceoName: customerData.ceo_name,
+                industry: customerData.industry,
+                foundedDate: customerData.founded_date
+            });
+        }
+        // ===== END: PHASE 3 =====
 
         // 영문명에서 5글자 코드 추출
         function getCompanyCode(englishName) {
