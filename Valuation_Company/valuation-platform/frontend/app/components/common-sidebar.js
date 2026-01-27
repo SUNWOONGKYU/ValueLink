@@ -224,7 +224,7 @@ function renderProjectInfo(method, methodStatus, projectId = null, customerName 
         <div class="project-info-section">
             <div class="sidebar-title">진행 중인 Valuation</div>
             <div class="project-info-simple">
-                ${customerName ? `<div class="info-row">고객회사: ${customerName}</div>` : ''}
+                ${customerName ? `<div class="info-row">회사: ${customerName}</div>` : ''}
                 <div class="info-row">프로젝트 ID: ${projectId}</div>
                 <div class="info-row">평가방법: ${methodName}</div>
             </div>
@@ -303,9 +303,9 @@ export const SIDEBAR_STYLES = `
 
         .sidebar-title {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            font-size: 18px;
-            font-weight: 900;
-            color: #1F2937;
+            font-size: 14px;
+            font-weight: 700;
+            color: #6B7280;
             margin-bottom: 16px;
         }
 
