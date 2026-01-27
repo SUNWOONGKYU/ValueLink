@@ -296,9 +296,9 @@ export const SIDEBAR_STYLES = `
         }
 
         .sidebar-title {
-            font-size: 16px;
-            font-weight: 800;
-            color: #374151;
+            font-size: 18px;
+            font-weight: 900;
+            color: #1F2937;
             margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
