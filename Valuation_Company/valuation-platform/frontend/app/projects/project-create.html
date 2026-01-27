@@ -554,6 +554,21 @@
                 <label>평가 요청 사항</label>
                 <textarea id="requirements" placeholder="특별히 고려해야 할 사항이나 요청 사항을 입력해주세요"></textarea>
             </div>
+
+            <div class="form-group">
+                <label>고객 예산 <span class="required">*</span></label>
+                <input type="text" id="budget" placeholder="예: 500만원">
+                <div class="hint" style="margin-top: 12px; padding: 16px; background: #F0F9FF; border-radius: 8px; border-left: 4px solid var(--deep-blue);">
+                    <strong>평가방법별 예산 가이드</strong><br>
+                    • DCF평가법: 500만원 ~ 1,000만원<br>
+                    • 본질가치평가법: 400만원 ~ 900만원<br>
+                    • 상대가치평가법: 300만원 ~ 700만원<br>
+                    • 자산가치평가법: 300만원 ~ 600만원<br>
+                    • 상증세법평가법: 200만원 ~ 500만원<br>
+                    <br>
+                    <strong style="color: var(--deep-blue);">※ 참고사항:</strong> 예산을 제시해 주실 때, 시중 일반 가격 대비 50% 수준으로 제시해 주시기 바랍니다.
+                </div>
+            </div>
         </div>
 
         <!-- 담당자 배정 -->
@@ -673,6 +688,12 @@
                 return;
             }
 
+            const budget = document.getElementById('budget').value;
+            if (!budget) {
+                alert('고객 예산을 입력해주세요.');
+                return;
+            }
+
             // 프로젝트 ID 생성 (회사명 + 타임스탬프 + 평가법)
             const englishName = companyNameEn;
             const companyCode = getCompanyCode(englishName);
@@ -692,6 +713,7 @@
                         .update({
                             company_name_kr: companyNameKr,
                             company_name_en: companyNameEn,
+                            budget: budget,
                             valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
                             purpose: document.getElementById('purpose').value,
                             assigned_accountant: document.getElementById('assignedAccountant').value
@@ -712,6 +734,7 @@
                         project_id: projectId,
                         company_name_kr: companyNameKr,
                         company_name_en: companyNameEn,
+                        budget: budget,
                         valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
                         purpose: document.getElementById('purpose').value,
                         assigned_accountant: document.getElementById('assignedAccountant').value,
