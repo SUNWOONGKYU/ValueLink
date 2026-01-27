@@ -93,8 +93,8 @@ function getStepUrl(stepInfo, method, projectId) {
         case 'portal':
             // 4단계: 평가 기초자료 제출 (평가법별)
             if (method) {
-                const portalMethod = method === 'inheritance_tax' ? 'tax' : method;
-                return basePath + `valuation/portals/${portalMethod}-portal.html${projectId ? '?projectId=' + projectId : ''}`;
+                const submissionMethod = method === 'inheritance_tax' ? 'tax' : method;
+                return basePath + `valuation/submissions/${submissionMethod}-submission.html${projectId ? '?projectId=' + projectId : ''}`;
             }
             return null;
 

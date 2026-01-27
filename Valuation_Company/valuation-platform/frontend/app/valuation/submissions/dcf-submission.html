@@ -379,47 +379,15 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">➕ 신규</a>
-                <a href="deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info">
-                <div class="user-avatar">김</div>
-                <div>
-                    <div class="user-name">김철수</div>
-                    <div class="user-company">삼성전자(주)</div>
-                </div>
-            </div>
-            <button class="btn-logout">로그아웃</button>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
 
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
         <div class="breadcrumb">
-            <a href="../index.html">홈</a>
+            <a href="../../valuation.html">평가 홈</a>
             <span>></span>
-            <a href="mockup-valuation.html">평가방법</a>
-            <span>></span>
-            <a href="dcf-valuation.html">DCF평가법</a>
-            <span>></span>
-            <span>자료제출</span>
+            <span>DCF 평가 - 자료 제출</span>
         </div>
     </div>
 
@@ -428,30 +396,30 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) DCF 기업가치평가</h1>
-                    <span class="project-id">SAMSU-2501191430-DC</span>
+                    <h1 class="project-title" id="project-title">DCF 평가 - 자료 제출</h1>
+                    <span class="project-id" id="project-id">-</span>
                 </div>
                 <div class="project-status collecting">
-                    <span>&#128196;</span>
-                    <span>자료 수집중</span>
+                    <span>📄</span>
+                    <span>자료 수집 중</span>
                 </div>
             </div>
             <div class="project-meta">
                 <div class="meta-item">
-                    <div class="meta-label">평가 방법</div>
-                    <div class="meta-value">DCF (현금흐름할인법)</div>
+                    <div class="meta-label">회사명</div>
+                    <div class="meta-value" id="company-name">FinderWorld</div>
                 </div>
                 <div class="meta-item">
-                    <div class="meta-label">신청일</div>
-                    <div class="meta-value">2025.01.19</div>
+                    <div class="meta-label">평가 방법</div>
+                    <div class="meta-value">DCF평가법</div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-label">담당 회계사</div>
-                    <div class="meta-value">박회계 회계사</div>
+                    <div class="meta-value">선웅규 회계사</div>
                 </div>
                 <div class="meta-item">
-                    <div class="meta-label">자료 제출 기한</div>
-                    <div class="meta-value" style="color: var(--error);">2025.01.26</div>
+                    <div class="meta-label">신청일</div>
+                    <div class="meta-value" id="created-date">-</div>
                 </div>
             </div>
         </section>
@@ -734,30 +702,37 @@
         </div>
     </div>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { injectSidebar } from '../../components/common-sidebar.js';
+    <!-- 헤더 로드 스크립트 -->
+    <script>
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
 
+    <!-- 페이지 스크립트 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
         // Supabase 설정
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // URL에서 프로젝트 ID와 평가법 가져오기
+        // URL에서 프로젝트 ID 가져오기
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('projectId') || 'FINDE-2601270530-DC';
-        const method = 'dcf'; // DCF 포털
-
-        // 사이드바 렌더링 (4단계 - 평가 기초자료 제출)
-        injectSidebar(
-            'sidebar-container',
-            4,                      // 현재 단계
-            'in_progress',          // 진행 중 상태
-            method,                 // 평가법
-            projectId,              // 프로젝트 ID
-            4,                      // startStep: 4
-            14                      // endStep: 14
-        );
 
         const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.csv', '.json', '.xml', '.md', '.html', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.gif', '.webp', '.bmp'];
         const CONVERT_REQUIRED = ['.hwp'];
