@@ -289,24 +289,8 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100"><g transform="translate(15, 20)"><line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/><line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/><line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/></g></svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">➕ 신규</a>
-                <a href="deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info"><div class="user-avatar">김</div><div><div class="user-name">김철수</div><div class="user-company">삼성전자(주)</div></div></div>
-            <button class="btn-logout">로그아웃</button>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
 
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
@@ -466,6 +450,27 @@
 
     <footer><div class="footer-content"><div class="footer-logo">ValueLink</div><div class="footer-text">© 2026 ValueLink. All rights reserved.</div></div></footer>
 
+    <!-- 헤더 로드 스크립트 -->
+    <script>
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
     <script>
         const uploadedFiles = { financial: [], asset_list: [], appraisal: [], registry: [], shareholder: [], others: [] };
 
