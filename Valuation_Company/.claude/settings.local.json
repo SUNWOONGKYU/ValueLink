@@ -8,7 +8,8 @@
       "WebFetch(domain:www.venturesquare.net)",
       "WebFetch(domain:thevc.kr)",
       "Bash(git push:*)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(tee:*)"
     ]
   }
 }
