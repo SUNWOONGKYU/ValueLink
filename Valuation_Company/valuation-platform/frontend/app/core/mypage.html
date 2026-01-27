@@ -3,458 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>마이 페이지 - ValueLink</title>
+    <title>마이페이지 - ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background: #F9FAFB;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .loading-container {
+            text-align: center;
             padding: 40px;
         }
 
-        .page-header {
-            margin-bottom: 40px;
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
         }
 
-        .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 8px;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .page-subtitle {
-            font-size: 16px;
-            color: #6B7280;
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
 
-        /* 섹션 스타일 */
-        .section {
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .error-container {
             background: white;
             border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        .section-title {
-            font-size: 20px;
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .error-title {
+            font-size: 24px;
             font-weight: 700;
-            color: #111827;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #E5E7EB;
+            color: #DC2626;
+            margin-bottom: 12px;
         }
 
-        /* 폼 스타일 */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 24px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .form-input {
-            padding: 12px 16px;
+        .error-message {
             font-size: 15px;
-            border: 2px solid #E5E7EB;
-            border-radius: 8px;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #1D4ED8;
-        }
-
-        .form-input:disabled {
-            background: #F3F4F6;
             color: #6B7280;
-            cursor: not-allowed;
-        }
-
-        .form-hint {
-            font-size: 13px;
-            color: #6B7280;
-        }
-
-        /* 버튼 스타일 */
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
+            margin-bottom: 24px;
+            line-height: 1.6;
         }
 
         .btn {
-            padding: 12px 24px;
+            display: inline-block;
+            padding: 12px 32px;
             font-size: 15px;
             font-weight: 600;
+            color: white;
+            background: #1D4ED8;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
+            text-decoration: none;
             transition: all 0.2s ease;
         }
 
-        .btn-primary {
-            color: white;
-            background: #1D4ED8;
-        }
-
-        .btn-primary:hover {
+        .btn:hover {
             background: #1E40AF;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
-        }
-
-        .btn-secondary {
-            color: #374151;
-            background: #F3F4F6;
-        }
-
-        .btn-secondary:hover {
-            background: #E5E7EB;
-        }
-
-        /* 정보 표시 영역 */
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-
-        .info-item {
-            padding: 16px;
-            background: #F9FAFB;
-            border-radius: 8px;
-        }
-
-        .info-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #6B7280;
-            margin-bottom: 6px;
-        }
-
-        .info-value {
-            font-size: 15px;
-            color: #111827;
-        }
-
-        /* 링크 */
-        .link {
-            color: #1D4ED8;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .link:hover {
-            text-decoration: underline;
-        }
-
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 768px) {
-            /* 컨테이너 패딩 축소 */
-            .container {
-                padding: 20px;
-            }
-
-            /* 페이지 헤더 */
-            .page-header {
-                margin-bottom: 24px;
-            }
-
-            .page-title {
-                font-size: 24px;
-            }
-
-            .page-subtitle {
-                font-size: 14px;
-            }
-
-            /* 섹션 패딩 축소 */
-            .section {
-                padding: 20px;
-                margin-bottom: 16px;
-            }
-
-            .section-title {
-                font-size: 18px;
-                margin-bottom: 20px;
-                padding-bottom: 12px;
-            }
-
-            /* 그리드 1열로 변경 */
-            .form-grid,
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            /* 버튼 그룹 세로 정렬 */
-            .btn-group {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-
-            /* 폼 입력 필드 */
-            .form-input {
-                font-size: 16px; /* iOS 자동 확대 방지 */
-            }
         }
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
-    <div id="header-container"></div>
-
-    <div class="container">
-        <div class="page-header">
-            <h1 class="page-title">마이 페이지</h1>
-            <p class="page-subtitle">회사 정보 및 계정 설정을 관리합니다</p>
-        </div>
-
-        <!-- 회사 기본 정보 -->
-        <div class="section">
-            <h2 class="section-title">회사 기본 정보</h2>
-            <form id="companyForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">회사명 *</label>
-                        <input type="text" class="form-input" id="companyName" placeholder="예: (주)밸류링크" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">대표자명 *</label>
-                        <input type="text" class="form-input" id="ceoName" placeholder="예: 홍길동" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">업종</label>
-                        <input type="text" class="form-input" id="industry" placeholder="예: 소프트웨어 개발">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">설립일</label>
-                        <input type="date" class="form-input" id="foundedDate">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">사업자등록번호 *</label>
-                        <input type="text" class="form-input" id="businessNumber" placeholder="예: 123-45-67890" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">직원 수</label>
-                        <input type="number" class="form-input" id="employees" placeholder="예: 50">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label class="form-label">회사 홈페이지</label>
-                        <input type="url" class="form-input" id="companyWebsite" placeholder="예: https://www.valuelink.com">
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label class="form-label">주소</label>
-                        <input type="text" class="form-input" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">전화번호</label>
-                        <input type="tel" class="form-input" id="phone" placeholder="예: 02-1234-5678">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">팩스 번호</label>
-                        <input type="tel" class="form-input" id="fax" placeholder="예: 02-1234-5679">
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">취소</button>
-                    <button type="submit" class="btn btn-primary">저장하기</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- 계정 정보 -->
-        <div class="section">
-            <h2 class="section-title">계정 정보</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">계정 이메일</div>
-                    <div class="info-value">user@example.com</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">가입일</div>
-                    <div class="info-value">2025년 1월 20일</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">마지막 로그인</div>
-                    <div class="info-value">2025년 1월 21일 18:30</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">계정 상태</div>
-                    <div class="info-value" style="color: #059669;">활성</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 비밀번호 변경 -->
-        <div class="section">
-            <h2 class="section-title">비밀번호 변경</h2>
-            <form id="passwordForm">
-                <div class="form-grid">
-                    <div class="form-group full-width">
-                        <label class="form-label">현재 비밀번호 *</label>
-                        <input type="password" class="form-input" id="currentPassword" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">새 비밀번호 *</label>
-                        <input type="password" class="form-input" id="newPassword" required>
-                        <span class="form-hint">최소 8자 이상, 영문/숫자/특수문자 조합</span>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">새 비밀번호 확인 *</label>
-                        <input type="password" class="form-input" id="confirmPassword" required>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">비밀번호 변경</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- 평가 내역 바로가기 -->
-        <div class="section">
-            <h2 class="section-title">평가 프로젝트 관리</h2>
-            <p style="color: #6B7280; margin-bottom: 16px;">
-                진행 중이거나 완료된 평가 프로젝트를 확인하고 관리할 수 있습니다.
-            </p>
-            <a href="valuation-list.html" class="link">내 평가 프로젝트 보기 →</a>
-        </div>
+    <div class="loading-container" id="loadingContainer">
+        <div class="spinner"></div>
+        <div class="loading-text">마이페이지 로딩 중...</div>
+        <div class="loading-subtext">역할을 확인하고 있습니다</div>
     </div>
 
     <script>
-        // 헤더 로드
-        fetch('../../components/header.html')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('header-container').innerHTML = data;
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-                // 헤더 로드 후 메뉴 링크 수정 (마이 페이지는 /app/ 폴더 내부)
-                const menuValuation = document.getElementById('menu-valuation');
-                const menuDeal = document.getElementById('menu-deal');
-                const logoLink = document.querySelector('.logo-container');
+        // 역할별 페이지 라우팅
+        async function routeToRoleBasedPage() {
+            try {
+                // 1. 로그인 확인
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-                if (menuValuation) menuValuation.href = '../index.html';
-                if (menuDeal) menuDeal.href = 'deal.html';
-                if (logoLink) logoLink.href = '../index.html';
+                if (authError || !user) {
+                    showError('로그인이 필요합니다', '마이페이지를 이용하려면 먼저 로그인해주세요.', '/login');
+                    return;
+                }
 
-                // 현재 페이지가 마이 페이지이므로 메뉴 active 제거
-                if (menuValuation) menuValuation.classList.remove('active');
-                if (menuDeal) menuDeal.classList.remove('active');
-            })
-            .catch(error => console.error('헤더 로드 실패:', error));
+                console.log('User authenticated:', user.email);
 
-        // 회사 정보 폼 제출
-        document.getElementById('companyForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+                // 2. users 테이블에서 role 조회
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('role, name, is_active')
+                    .eq('user_id', user.id)
+                    .single();
 
-            const formData = {
-                industry: document.getElementById('industry').value,
-                companyName: document.getElementById('companyName').value,
-                ceoName: document.getElementById('ceoName').value,
-                businessNumber: document.getElementById('businessNumber').value,
-                foundedDate: document.getElementById('foundedDate').value,
-                employees: document.getElementById('employees').value,
-                companyWebsite: document.getElementById('companyWebsite').value,
-                address: document.getElementById('address').value,
-                phone: document.getElementById('phone').value,
-                fax: document.getElementById('fax').value
-            };
+                if (userError) {
+                    console.error('User data fetch error:', userError);
 
-            localStorage.setItem('companyInfo', JSON.stringify(formData));
-            console.log('회사 정보 저장:', formData);
-            alert('회사 정보가 저장되었습니다.');
-        });
+                    // users 테이블에 데이터가 없는 경우 (신규 사용자)
+                    if (userError.code === 'PGRST116') {
+                        showError(
+                            '프로필 설정이 필요합니다',
+                            '회원가입을 완료하려면 프로필을 설정해주세요.',
+                            '/register?step=profile'
+                        );
+                        return;
+                    }
 
-        // 비밀번호 변경 폼 제출
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+                    showError('오류가 발생했습니다', userError.message, '/');
+                    return;
+                }
 
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
+                if (!userData) {
+                    showError('사용자 정보를 찾을 수 없습니다', '관리자에게 문의해주세요.', '/');
+                    return;
+                }
 
-            if (newPassword !== confirmPassword) {
-                alert('새 비밀번호가 일치하지 않습니다.');
-                return;
+                // 3. 활성화 여부 확인
+                if (!userData.is_active) {
+                    showError(
+                        '계정이 비활성화되었습니다',
+                        '계정이 일시적으로 비활성화되었습니다. 관리자에게 문의해주세요.',
+                        '/'
+                    );
+                    return;
+                }
+
+                // 4. role에 따라 리다이렉트
+                const role = userData.role;
+                console.log('User role:', role);
+
+                let targetPage = '';
+
+                switch (role) {
+                    case 'customer':
+                        targetPage = '/core/mypage-company.html';
+                        break;
+                    case 'accountant':
+                        targetPage = '/core/mypage-accountant.html';
+                        break;
+                    case 'admin':
+                        targetPage = '/core/mypage-admin.html';
+                        break;
+                    case 'investor':
+                    case 'partner':
+                    case 'supporter':
+                        // Phase 5에서 구현 예정
+                        showError(
+                            '준비 중입니다',
+                            `${getRoleKoreanName(role)} 마이페이지는 곧 서비스될 예정입니다.`,
+                            '/'
+                        );
+                        return;
+                    default:
+                        showError('알 수 없는 사용자 역할입니다', '관리자에게 문의해주세요.', '/');
+                        return;
+                }
+
+                // 5. 리다이렉트
+                console.log('Redirecting to:', targetPage);
+                window.location.href = targetPage;
+
+            } catch (error) {
+                console.error('Route error:', error);
+                showError('오류가 발생했습니다', error.message, '/');
             }
-
-            if (newPassword.length < 8) {
-                alert('비밀번호는 최소 8자 이상이어야 합니다.');
-                return;
-            }
-
-            console.log('비밀번호 변경 요청');
-            alert('비밀번호가 변경되었습니다.');
-
-            // 폼 초기화
-            document.getElementById('passwordForm').reset();
-        });
-
-        // 폼 초기화
-        function resetForm() {
-            document.getElementById('companyForm').reset();
         }
 
-        // 로컬 스토리지에서 회사 정보 불러오기
-        window.addEventListener('load', function() {
-            const savedData = localStorage.getItem('companyInfo');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                document.getElementById('industry').value = data.industry || '';
-                document.getElementById('companyName').value = data.companyName || '';
-                document.getElementById('ceoName').value = data.ceoName || '';
-                document.getElementById('businessNumber').value = data.businessNumber || '';
-                document.getElementById('foundedDate').value = data.foundedDate || '';
-                document.getElementById('employees').value = data.employees || '';
-                document.getElementById('companyWebsite').value = data.companyWebsite || '';
-                document.getElementById('address').value = data.address || '';
-                document.getElementById('phone').value = data.phone || '';
-                document.getElementById('fax').value = data.fax || '';
-            }
-        });
+        // 에러 화면 표시
+        function showError(title, message, redirectUrl) {
+            document.getElementById('loadingContainer').innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon">⚠️</div>
+                    <h2 class="error-title">${title}</h2>
+                    <p class="error-message">${message}</p>
+                    <a href="${redirectUrl}" class="btn">
+                        ${redirectUrl === '/' ? '메인으로 돌아가기' : '이동하기'}
+                    </a>
+                </div>
+            `;
+        }
+
+        // 역할 한글명 반환
+        function getRoleKoreanName(role) {
+            const roleNames = {
+                'customer': '고객',
+                'accountant': '공인회계사',
+                'admin': '관리자',
+                'investor': '투자자',
+                'partner': '제휴자',
+                'supporter': '서포터'
+            };
+            return roleNames[role] || role;
+        }
+
+        // 페이지 로드 시 즉시 실행
+        window.addEventListener('DOMContentLoaded', routeToRoleBasedPage);
     </script>
 </body>
 </html>
