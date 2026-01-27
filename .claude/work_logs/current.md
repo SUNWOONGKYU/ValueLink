@@ -1,5 +1,152 @@
 # Work Log - Valuation Platform Backend Development
 
+## GitHub Pages 404 에러 해결 - header.html 경로 수정 (2026-01-28) ⭐
+
+### 작업 상태: ✅ 완료
+
+### 문제 상황
+
+**1. GitHub Pages 404 에러**
+- URL: `https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/projects/project-create.html`
+- 파일은 GitHub에 존재하고 배포도 성공했지만 페이지 접속 시 404 에러 발생
+
+**2. 콘솔 에러 3개 발견**
+```
+1. Uncaught SyntaxError: Identifier 'supabase' has already been declared (at project-create.html:620:13)
+2. /ValueLink/Valuation_Company/valuation-platform/frontend/app/components/header.html:1
+   Failed to load resource: the server responded with a status of 404 ()
+3. The Content Security Policy was delivered via a <meta> element outside the document's <head>
+```
+
+---
+
+### 해결 과정
+
+#### 1단계: 이전 404 해결 방법 확인
+- **work_logs 검색**: `.nojekyll` 파일로 Jekyll 처리 비활성화 방법 확인
+- **현황 확인**: `.nojekyll` 파일 이미 존재함
+- **워크플로우 확인**: GitHub Actions 정상 작동 중
+- **실제 파일 확인**: `curl`로 200 OK 응답 확인됨
+
+#### 2단계: GitHub Pages 워크플로우 수동 재실행
+```bash
+gh workflow run "Deploy static content to Pages"
+```
+- 배포 성공 (31초 소요)
+- 하지만 404 에러 여전히 발생
+
+#### 3단계: 콘솔 에러 분석으로 진짜 원인 발견 ⭐
+**핵심 발견:**
+- `header.html` 404 에러가 근본 원인
+- 경로 오류 발견: `fetch('../components/header.html')`
+- 실제 파일 위치: `frontend/components/header.html`
+- 현재 페이지 위치: `frontend/app/projects/project-create.html`
+
+**경로 계산:**
+```
+frontend/app/projects/project-create.html (현재)
+   ↓ ../components/ (잘못된 경로 - 1단계만 상위)
+   frontend/app/components/header.html (존재하지 않음!)
+
+   ↓ ../../components/ (올바른 경로 - 2단계 상위)
+   frontend/components/header.html (존재함!)
+```
+
+#### 4단계: 경로 수정 및 배포
+```javascript
+// 수정 전
+fetch('../components/header.html')
+
+// 수정 후
+fetch('../../components/header.html')
+```
+
+---
+
+### 해결 방법
+
+**파일 수정:**
+- `Valuation_Company/valuation-platform/frontend/app/projects/project-create.html`
+- Line 853: `fetch('../../components/header.html')` 로 경로 수정
+
+**커밋 & 배포:**
+```bash
+git add Valuation_Company/valuation-platform/frontend/app/projects/project-create.html
+git commit -m "fix: header.html 경로 수정 (404 에러 해결)"
+git push
+```
+
+**배포 결과:**
+- GitHub Actions 자동 배포: 31초 소요
+- 배포 상태: ✅ 성공
+- 에러 해결: ✅ 모든 콘솔 에러 해결됨
+
+---
+
+### 핵심 교훈
+
+1. **GitHub Pages가 정상 작동해도 실제 페이지 에러 가능**
+   - 인프라(`.nojekyll`, 워크플로우)는 정상이어도 코드 자체에 에러가 있을 수 있음
+   - 배포 성공 ≠ 페이지 정상 작동
+
+2. **콘솔 에러 메시지가 핵심 단서 제공**
+   - 사용자 메시지: "404 File not found"
+   - 진짜 원인: header.html 404 에러 (콘솔에만 표시됨)
+   - **콘솔 에러를 먼저 확인해야 함!**
+
+3. **상대 경로 주의 (폴더 깊이 계산)**
+   - `app/projects/` 폴더는 2단계 하위
+   - `../` = 1단계 상위 (app/)
+   - `../../` = 2단계 상위 (frontend/)
+   - 경로 계산 실수 = 404 에러
+
+4. **header.html 로드 실패 → supabase 중복 선언 에러**
+   - header 로드 실패 시 header 내 script가 실행되지 않음
+   - 하지만 페이지 본문의 supabase 선언은 실행됨
+   - 이후 header가 로드되면 supabase가 중복 선언되는 것처럼 보임
+   - **실제로는 header 로드 실패가 근본 원인**
+
+5. **에러 해결 순서**
+   ```
+   1. 인프라 확인 (.nojekyll, 워크플로우)
+      ↓
+   2. 배포 상태 확인 (GitHub Actions)
+      ↓
+   3. 파일 존재 확인 (curl, git)
+      ↓
+   4. 콘솔 에러 확인 ⭐ (진짜 원인 발견)
+      ↓
+   5. 코드 수정 및 재배포
+   ```
+
+---
+
+### 관련 파일
+
+| 파일 | 변경 내용 |
+|------|----------|
+| `frontend/app/projects/project-create.html` | Line 853: header.html 경로 수정 |
+| `.nojekyll` | 이미 존재 (Jekyll 비활성화) |
+| `.github/workflows/pages.yml` | 정상 작동 중 |
+
+---
+
+### 재발 방지
+
+**다른 페이지에서도 동일 문제 확인 필요:**
+```bash
+grep -r "fetch.*components/header.html" frontend/app/
+```
+
+**상대 경로 규칙:**
+| 페이지 위치 | header.html 경로 |
+|-------------|------------------|
+| `app/*.html` | `../components/header.html` |
+| `app/subdir/*.html` | `../../components/header.html` |
+| `app/subdir/subdir2/*.html` | `../../../components/header.html` |
+
+---
+
 ## 평가보고서 DB 저장 및 개요 페이지 구현 (2026-01-27)
 
 ### 작업 상태: ✅ 완료

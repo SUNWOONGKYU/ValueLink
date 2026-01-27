@@ -1,0 +1,201 @@
+{
+  "report_id": "github_pages_404_resolution_20260128",
+  "report_title": "GitHub Pages 404 에러 해결 - header.html 경로 수정",
+  "date": "2026-01-28",
+  "status": "완료",
+  "category": "버그 수정",
+  "severity": "High",
+  "problem": {
+    "summary": "GitHub Pages 배포 성공했으나 페이지 접속 시 404 에러 발생",
+    "errors": [
+      {
+        "type": "HTTP 404",
+        "location": "GitHub Pages",
+        "url": "https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/projects/project-create.html",
+        "description": "페이지가 404 File not found 에러 표시"
+      },
+      {
+        "type": "Console Error",
+        "error_code": "SyntaxError",
+        "message": "Uncaught SyntaxError: Identifier 'supabase' has already been declared",
+        "location": "project-create.html:620:13"
+      },
+      {
+        "type": "Console Error",
+        "error_code": "404",
+        "message": "Failed to load resource: the server responded with a status of 404",
+        "location": "/ValueLink/Valuation_Company/valuation-platform/frontend/app/components/header.html"
+      },
+      {
+        "type": "Console Warning",
+        "message": "The Content Security Policy was delivered via a <meta> element outside the document's <head>",
+        "severity": "Low"
+      }
+    ]
+  },
+  "investigation_steps": [
+    {
+      "step": 1,
+      "action": "work_logs 검색",
+      "finding": ".nojekyll 파일로 Jekyll 비활성화 방법 확인",
+      "result": ".nojekyll 파일 이미 존재함"
+    },
+    {
+      "step": 2,
+      "action": "인프라 상태 확인",
+      "checks": [
+        {
+          "item": ".nojekyll 파일",
+          "status": "존재",
+          "command": "ls -la .nojekyll"
+        },
+        {
+          "item": "GitHub Actions 워크플로우",
+          "status": "정상 작동",
+          "command": "gh run list --limit 5"
+        },
+        {
+          "item": "파일 실제 존재",
+          "status": "확인됨",
+          "command": "ls -la Valuation_Company/valuation-platform/frontend/app/projects/project-create.html"
+        },
+        {
+          "item": "GitHub raw 파일",
+          "status": "200 OK",
+          "command": "curl -I https://raw.githubusercontent.com/..."
+        }
+      ],
+      "result": "인프라는 모두 정상"
+    },
+    {
+      "step": 3,
+      "action": "GitHub Pages 워크플로우 수동 재실행",
+      "command": "gh workflow run 'Deploy static content to Pages'",
+      "result": "배포 성공 (31초), 하지만 404 여전히 발생"
+    },
+    {
+      "step": 4,
+      "action": "콘솔 에러 분석",
+      "finding": "header.html 404 에러가 근본 원인",
+      "detail": {
+        "error_path": "../components/header.html",
+        "current_location": "frontend/app/projects/project-create.html",
+        "actual_file_location": "frontend/components/header.html",
+        "path_depth_required": 2,
+        "path_depth_used": 1,
+        "correct_path": "../../components/header.html"
+      }
+    }
+  ],
+  "root_cause": {
+    "type": "상대 경로 오류",
+    "description": "header.html 경로가 1단계 상위로 설정되어야 할 곳에 2단계 상위로 가야 함",
+    "file": "Valuation_Company/valuation-platform/frontend/app/projects/project-create.html",
+    "line": 853,
+    "incorrect_code": "fetch('../components/header.html')",
+    "correct_code": "fetch('../../components/header.html')",
+    "explanation": "app/projects/ 폴더는 2단계 하위이므로 ../../로 2단계 상위로 가야 frontend/components/에 도달 가능"
+  },
+  "solution": {
+    "method": "경로 수정",
+    "files_modified": [
+      {
+        "file": "Valuation_Company/valuation-platform/frontend/app/projects/project-create.html",
+        "line": 853,
+        "change": {
+          "before": "fetch('../components/header.html')",
+          "after": "fetch('../../components/header.html')"
+        }
+      }
+    ],
+    "deployment": {
+      "commit_message": "fix: header.html 경로 수정 (404 에러 해결)",
+      "commit_hash": "652bff2",
+      "deployment_time": "31초",
+      "deployment_status": "성공"
+    },
+    "verification": {
+      "http_status": "200 OK",
+      "console_errors": "해결됨",
+      "page_loads": true
+    }
+  },
+  "lessons_learned": [
+    {
+      "lesson": "GitHub Pages 정상 작동 ≠ 페이지 정상 작동",
+      "detail": "인프라(.nojekyll, 워크플로우)가 정상이어도 코드 자체에 에러가 있을 수 있음"
+    },
+    {
+      "lesson": "콘솔 에러 메시지가 핵심 단서",
+      "detail": "사용자에게 보이는 에러(404)와 실제 원인(header.html 경로 오류)이 다를 수 있음",
+      "action": "항상 브라우저 콘솔 에러를 먼저 확인해야 함"
+    },
+    {
+      "lesson": "상대 경로 주의 (폴더 깊이 계산)",
+      "detail": "../ 개수 = 상위로 올라갈 단계 수",
+      "examples": [
+        {
+          "location": "app/*.html",
+          "path": "../components/header.html"
+        },
+        {
+          "location": "app/subdir/*.html",
+          "path": "../../components/header.html"
+        },
+        {
+          "location": "app/subdir/subdir2/*.html",
+          "path": "../../../components/header.html"
+        }
+      ]
+    },
+    {
+      "lesson": "연쇄 에러 분석",
+      "detail": "header 로드 실패 → supabase 중복 선언 에러로 보임",
+      "explanation": "header가 로드되지 않아 header 내 script가 실행되지 않았고, 이후 로드 시도 시 페이지 본문의 supabase와 충돌하는 것처럼 보임"
+    },
+    {
+      "lesson": "에러 해결 순서",
+      "steps": [
+        "1. 인프라 확인 (.nojekyll, 워크플로우)",
+        "2. 배포 상태 확인 (GitHub Actions)",
+        "3. 파일 존재 확인 (curl, git)",
+        "4. 콘솔 에러 확인 ⭐ (진짜 원인 발견)",
+        "5. 코드 수정 및 재배포"
+      ]
+    }
+  ],
+  "prevention": {
+    "check_other_pages": {
+      "command": "grep -r \"fetch.*components/header.html\" frontend/app/",
+      "purpose": "다른 페이지에서도 동일 문제 확인"
+    },
+    "path_rules": {
+      "rule": "상대 경로는 폴더 깊이만큼 ../ 사용",
+      "examples": [
+        "app/*.html → ../components/",
+        "app/subdir/*.html → ../../components/",
+        "app/subdir/subdir2/*.html → ../../../components/"
+      ]
+    }
+  },
+  "references": {
+    "work_log": ".claude/work_logs/current.md",
+    "previous_404_solution": "GitHub Pages 404 에러 해결 (2026-01-25) - .nojekyll 방법",
+    "commit": "652bff2",
+    "deployment_url": "https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/projects/project-create.html"
+  },
+  "time_spent": {
+    "investigation": "약 15분",
+    "fix_implementation": "1분",
+    "deployment": "31초",
+    "total": "약 20분"
+  },
+  "impact": {
+    "severity": "High",
+    "affected_pages": [
+      "project-create.html"
+    ],
+    "user_impact": "프로젝트 생성 페이지 접속 불가",
+    "business_impact": "신규 평가 신청 불가"
+  }
+}
