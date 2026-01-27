@@ -1,0 +1,398 @@
+{
+  "proposal_id": "mypage_integration_20260128",
+  "title": "마이페이지 ↔ 평가 신청 페이지 통합 제안",
+  "date": "2026-01-28",
+  "status": "제안",
+  "problem": {
+    "description": "마이페이지에 회사 정보가 있는 사용자도 평가 신청 시 동일한 정보를 다시 입력해야 함",
+    "impact": "중복 입력으로 인한 UX 저하, 사용자 불편",
+    "user_pain_point": "이미 입력한 정보를 또 입력해야 하는 번거로움"
+  },
+  "data_mapping": {
+    "customers_table": {
+      "description": "마이페이지 회사 정보 (customers 테이블)",
+      "fields": [
+        {
+          "field": "company_name",
+          "type": "VARCHAR(100)",
+          "required": true,
+          "description": "회사명"
+        },
+        {
+          "field": "ceo_name",
+          "type": "VARCHAR(50)",
+          "required": true,
+          "description": "대표자명"
+        },
+        {
+          "field": "business_number",
+          "type": "VARCHAR(20)",
+          "required": true,
+          "description": "사업자등록번호"
+        },
+        {
+          "field": "industry",
+          "type": "VARCHAR(100)",
+          "required": false,
+          "description": "업종"
+        },
+        {
+          "field": "founded_date",
+          "type": "DATE",
+          "required": false,
+          "description": "설립일"
+        },
+        {
+          "field": "email",
+          "type": "VARCHAR(100)",
+          "required": true,
+          "description": "이메일"
+        },
+        {
+          "field": "phone",
+          "type": "VARCHAR(20)",
+          "required": false,
+          "description": "전화번호"
+        },
+        {
+          "field": "address",
+          "type": "TEXT",
+          "required": false,
+          "description": "주소"
+        },
+        {
+          "field": "employees",
+          "type": "INTEGER",
+          "required": false,
+          "description": "직원수"
+        },
+        {
+          "field": "company_website",
+          "type": "VARCHAR(200)",
+          "required": false,
+          "description": "회사 웹사이트"
+        }
+      ]
+    },
+    "project_create_form": {
+      "description": "평가 신청 페이지 입력 필드",
+      "fields": [
+        {
+          "field": "companyNameKr",
+          "html_id": "companyNameKr",
+          "required": true,
+          "maps_to": "customers.company_name",
+          "auto_fill": true,
+          "description": "회사명 (국문)"
+        },
+        {
+          "field": "companyNameEn",
+          "html_id": "companyNameEn",
+          "required": true,
+          "maps_to": null,
+          "auto_fill": false,
+          "description": "회사명 (영문) - customers 테이블에 없음, 입력 필요"
+        },
+        {
+          "field": "bizNumber",
+          "html_id": "bizNumber",
+          "required": true,
+          "maps_to": "customers.business_number",
+          "auto_fill": true,
+          "description": "사업자등록번호"
+        },
+        {
+          "field": "ceoName",
+          "html_id": "ceoName",
+          "required": true,
+          "maps_to": "customers.ceo_name",
+          "auto_fill": true,
+          "description": "대표자명"
+        },
+        {
+          "field": "industry",
+          "html_id": "industry",
+          "required": false,
+          "maps_to": "customers.industry",
+          "auto_fill": true,
+          "description": "업종"
+        },
+        {
+          "field": "foundedDate",
+          "html_id": "foundedDate",
+          "required": false,
+          "maps_to": "customers.founded_date",
+          "auto_fill": true,
+          "description": "설립일"
+        },
+        {
+          "field": "contactEmail",
+          "html_id": "contactEmail",
+          "required": false,
+          "maps_to": "customers.email",
+          "auto_fill": true,
+          "description": "담당자 이메일"
+        },
+        {
+          "field": "contactName",
+          "html_id": "contactName",
+          "required": false,
+          "maps_to": null,
+          "auto_fill": false,
+          "description": "담당자 성명 - customers 테이블에 없음, 입력 필요"
+        }
+      ]
+    },
+    "auto_fill_summary": {
+      "total_fields": 8,
+      "auto_fillable": 6,
+      "requires_input": 2,
+      "auto_fill_fields": [
+        "companyNameKr",
+        "bizNumber",
+        "ceoName",
+        "industry",
+        "foundedDate",
+        "contactEmail"
+      ],
+      "manual_input_fields": [
+        "companyNameEn",
+        "contactName"
+      ]
+    }
+  },
+  "proposed_solution": {
+    "approach": "로그인 사용자의 마이페이지 정보를 자동으로 불러와 폼에 채우기",
+    "scenarios": [
+      {
+        "scenario": "A. 로그인 사용자 + 마이페이지 정보 있음",
+        "flow": [
+          "1. 페이지 로드 시 Supabase auth로 로그인 확인",
+          "2. 로그인 이메일로 customers 테이블 조회",
+          "3. 6개 필드 자동 채우기 (companyNameKr, bizNumber, ceoName, industry, foundedDate, contactEmail)",
+          "4. 2개 필드는 사용자 입력 (companyNameEn, contactName)",
+          "5. 사용자가 자동 채워진 정보 수정 가능",
+          "6. 평가 신청 버튼 클릭 → projects 테이블 저장"
+        ],
+        "ux_benefit": "6개 필드 자동 입력 → 입력 시간 75% 단축"
+      },
+      {
+        "scenario": "B. 로그인 사용자 + 마이페이지 정보 없음",
+        "flow": [
+          "1. 페이지 로드 시 Supabase auth로 로그인 확인",
+          "2. 로그인 이메일로 customers 테이블 조회 → 데이터 없음",
+          "3. 모든 필드를 사용자가 입력",
+          "4. 평가 신청 버튼 클릭 시:",
+          "   - projects 테이블에 저장",
+          "   - customers 테이블에도 신규 생성 (마이페이지 자동 생성)"
+        ],
+        "ux_benefit": "한 번 입력으로 마이페이지 자동 생성 → 이후 자동 채우기 가능"
+      },
+      {
+        "scenario": "C. 비로그인 사용자",
+        "flow": [
+          "1. 로그인 안내 모달 표시",
+          "2. 로그인/회원가입 유도",
+          "3. 로그인 후 시나리오 A 또는 B 진행"
+        ],
+        "ux_benefit": "로그인 유도 → 회원 전환율 증가"
+      }
+    ]
+  },
+  "implementation_plan": {
+    "phase_1": {
+      "name": "자동 채우기 기능 구현",
+      "tasks": [
+        {
+          "task": "페이지 로드 시 로그인 확인",
+          "code": "const { data: { user } } = await supabase.auth.getUser();",
+          "location": "project-create.html (DOMContentLoaded)"
+        },
+        {
+          "task": "customers 테이블 조회",
+          "code": "const { data: customer } = await supabase.from('customers').select('*').eq('email', user.email).single();",
+          "location": "project-create.html (autoFillCustomerInfo 함수)"
+        },
+        {
+          "task": "폼 필드 자동 채우기",
+          "mapping": {
+            "companyNameKr": "customer.company_name",
+            "bizNumber": "customer.business_number",
+            "ceoName": "customer.ceo_name",
+            "industry": "customer.industry",
+            "foundedDate": "customer.founded_date",
+            "contactEmail": "customer.email"
+          }
+        },
+        {
+          "task": "자동 채우기 알림 표시",
+          "ui": "상단에 파란색 정보 배너: '마이페이지 정보를 불러왔습니다. 수정 가능합니다.'"
+        }
+      ],
+      "estimated_effort": "2시간"
+    },
+    "phase_2": {
+      "name": "양방향 동기화 (평가 신청 → 마이페이지)",
+      "tasks": [
+        {
+          "task": "평가 신청 시 customers 테이블 확인",
+          "logic": "customers 테이블에 해당 이메일 레코드 없으면 신규 생성"
+        },
+        {
+          "task": "customers 테이블 INSERT",
+          "code": "await supabase.from('customers').insert({ company_name, ceo_name, business_number, industry, founded_date, email });",
+          "condition": "customer 데이터 없을 때만"
+        },
+        {
+          "task": "사용자 안내 메시지",
+          "ui": "평가 신청 성공 후: '마이페이지가 자동으로 생성되었습니다.'"
+        }
+      ],
+      "estimated_effort": "1시간"
+    },
+    "phase_3": {
+      "name": "비로그인 사용자 처리",
+      "tasks": [
+        {
+          "task": "로그인 체크",
+          "logic": "user 없으면 로그인 안내 모달 표시"
+        },
+        {
+          "task": "로그인 유도 UI",
+          "ui": "모달: '평가 신청을 위해 로그인이 필요합니다. 로그인 시 정보를 자동으로 불러올 수 있습니다.'"
+        },
+        {
+          "task": "로그인 페이지 리다이렉트",
+          "code": "window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);"
+        }
+      ],
+      "estimated_effort": "1시간"
+    }
+  },
+  "code_example": {
+    "auto_fill_function": {
+      "language": "javascript",
+      "code": "async function autoFillCustomerInfo() {\n    // 1. 로그인 확인\n    const { data: { user }, error: authError } = await supabase.auth.getUser();\n    \n    if (!user) {\n        // 비로그인 사용자 → 로그인 유도\n        showLoginPrompt();\n        return;\n    }\n    \n    // 2. customers 테이블 조회\n    const { data: customer, error } = await supabase\n        .from('customers')\n        .select('*')\n        .eq('email', user.email)\n        .single();\n    \n    if (error || !customer) {\n        // 마이페이지 정보 없음 → 입력 필요\n        console.log('마이페이지 정보 없음. 신규 입력 필요.');\n        return;\n    }\n    \n    // 3. 폼 필드 자동 채우기\n    document.getElementById('companyNameKr').value = customer.company_name || '';\n    document.getElementById('bizNumber').value = customer.business_number || '';\n    document.getElementById('ceoName').value = customer.ceo_name || '';\n    document.getElementById('industry').value = customer.industry || '';\n    document.getElementById('foundedDate').value = customer.founded_date || '';\n    document.getElementById('contactEmail').value = customer.email || '';\n    \n    // 4. 알림 표시\n    showInfoBanner('마이페이지 정보를 불러왔습니다. 수정 가능합니다.');\n}\n\n// 페이지 로드 시 실행\nwindow.addEventListener('DOMContentLoaded', autoFillCustomerInfo);"
+    },
+    "save_to_customers_function": {
+      "language": "javascript",
+      "code": "async function saveToCustomers(formData) {\n    const { data: { user } } = await supabase.auth.getUser();\n    if (!user) return;\n    \n    // customers 테이블 확인\n    const { data: existing } = await supabase\n        .from('customers')\n        .select('customer_id')\n        .eq('email', user.email)\n        .single();\n    \n    if (existing) {\n        // 이미 존재 → 업데이트 (선택사항)\n        console.log('customers 테이블에 이미 존재');\n        return;\n    }\n    \n    // 신규 생성\n    const customerData = {\n        customer_id: 'CUST' + Date.now(),\n        email: user.email,\n        company_name: formData.companyNameKr,\n        ceo_name: formData.ceoName,\n        business_number: formData.bizNumber,\n        industry: formData.industry,\n        founded_date: formData.foundedDate\n    };\n    \n    const { error } = await supabase.from('customers').insert(customerData);\n    \n    if (!error) {\n        showSuccessBanner('마이페이지가 자동으로 생성되었습니다.');\n    }\n}"
+    }
+  },
+  "ui_changes": {
+    "info_banner": {
+      "when": "마이페이지 정보 자동 채워졌을 때",
+      "style": "파란색 배경, 아이콘 ℹ️",
+      "message": "마이페이지 정보를 불러왔습니다. 수정 가능합니다.",
+      "location": "폼 상단"
+    },
+    "field_indicators": {
+      "auto_filled_fields": {
+        "indicator": "연한 파란색 border",
+        "hint": "자동으로 입력된 정보입니다"
+      },
+      "manual_fields": {
+        "indicator": "기본 border",
+        "hint": "입력이 필요합니다"
+      }
+    },
+    "login_prompt_modal": {
+      "title": "로그인이 필요합니다",
+      "message": "평가 신청을 위해 로그인이 필요합니다.\n로그인 시 마이페이지 정보를 자동으로 불러올 수 있습니다.",
+      "buttons": [
+        {
+          "text": "로그인",
+          "action": "로그인 페이지로 이동"
+        },
+        {
+          "text": "회원가입",
+          "action": "회원가입 페이지로 이동"
+        },
+        {
+          "text": "취소",
+          "action": "모달 닫기"
+        }
+      ]
+    }
+  },
+  "benefits": {
+    "user_experience": [
+      "입력 시간 75% 단축 (8개 → 2개 필드)",
+      "반복 입력 제거 → 사용자 만족도 증가",
+      "오타/실수 방지 (기존 정보 재사용)"
+    ],
+    "business": [
+      "로그인 전환율 증가 (자동 채우기 혜택)",
+      "마이페이지 생성률 증가 (자동 생성)",
+      "평가 신청 완료율 증가 (입력 간소화)"
+    ],
+    "technical": [
+      "customers ↔ projects 데이터 일관성 향상",
+      "중복 데이터 관리 효율화",
+      "사용자 정보 자동 동기화"
+    ]
+  },
+  "potential_issues": {
+    "privacy": {
+      "issue": "자동 채우기 시 정보 노출",
+      "solution": "로그인한 본인의 정보만 자동 채우기 (보안)"
+    },
+    "data_mismatch": {
+      "issue": "마이페이지 정보와 평가 신청 정보가 다를 수 있음",
+      "solution": "사용자가 자동 채워진 정보 수정 가능하도록 함 (readonly 아님)"
+    },
+    "english_name": {
+      "issue": "영문 회사명(companyNameEn)은 customers 테이블에 없음",
+      "solution_options": [
+        "Option 1: customers 테이블에 company_name_en 필드 추가",
+        "Option 2: 평가 신청 시에만 입력받고 projects 테이블에만 저장 (현재 방식 유지)"
+      ],
+      "recommendation": "Option 1 (customers 테이블에 영문명 추가) - 향후 다른 기능에서도 활용 가능"
+    }
+  },
+  "next_steps": [
+    {
+      "step": 1,
+      "action": "사용자 승인 받기",
+      "decision_needed": "구현 방향 확정"
+    },
+    {
+      "step": 2,
+      "action": "customers 테이블 스키마 검토",
+      "decision_needed": "company_name_en 필드 추가 여부"
+    },
+    {
+      "step": 3,
+      "action": "Phase 1 구현 (자동 채우기)",
+      "files_to_modify": [
+        "project-create.html"
+      ]
+    },
+    {
+      "step": 4,
+      "action": "Phase 2 구현 (양방향 동기화)",
+      "files_to_modify": [
+        "project-create.html"
+      ]
+    },
+    {
+      "step": 5,
+      "action": "Phase 3 구현 (비로그인 처리)",
+      "files_to_modify": [
+        "project-create.html"
+      ]
+    },
+    {
+      "step": 6,
+      "action": "테스트 및 배포",
+      "test_cases": [
+        "로그인 + 마이페이지 있음",
+        "로그인 + 마이페이지 없음",
+        "비로그인"
+      ]
+    }
+  ],
+  "total_estimated_effort": "4시간",
+  "priority": "High",
+  "impact": "High"
+}

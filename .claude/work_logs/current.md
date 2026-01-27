@@ -2466,3 +2466,101 @@ Dev Package의 모든 CSV 관련 파일을 JSON 방식으로 변경하여 일반
 
 ### 관련 리포트
 `Human_ClaudeCode_Bridge/Reports/csv_to_json_migration_report.json`
+
+---
+
+## accountant-profile.html DB 연결 버전으로 전환 (2026-01-28)
+
+### 작업 상태: ✅ 완료
+
+### 작업 내용
+
+**문제:**
+- 기존 accountant-profile.html이 하드코딩된 정적 파일
+- 특정 회계사(선웅규) 데이터만 표시
+- DB와 연결되지 않아 실제 사용 불가
+
+**해결:**
+1. 기존 하드코딩 파일 삭제
+2. DB 연결 버전으로 새로 작성
+3. URL 파라미터로 동적 프로필 조회 기능 구현
+
+---
+
+### 주요 기능
+
+1. **URL 파라미터 방식**
+   - `accountant-profile.html?accountant_id=ACC001`
+   - 특정 회계사 프로필 조회
+
+2. **DB 연결**
+   - Supabase에서 accountants 테이블 조회
+   - users 테이블과 JOIN하여 이름, 이메일 가져오기
+
+3. **동적 렌더링**
+   - 학력 배열 (education)
+   - 경력 배열 (career)
+   - 전문 분야 배열 (specialization)
+   - 통계 (평점, 완료 프로젝트, 상태)
+
+4. **에러 처리**
+   - accountant_id 파라미터 없음
+   - 존재하지 않는 ID
+   - DB 조회 오류
+
+---
+
+### 파일 위치
+
+```
+C:\ValueLink\Valuation_Company\valuation-platform\frontend\app\accountant-profile.html
+```
+
+---
+
+### 기존 vs 신규 비교
+
+| 항목 | 기존 (하드코딩) | 신규 (DB 연결) |
+|------|----------------|---------------|
+| 데이터 소스 | HTML에 직접 작성 | Supabase DB |
+| 회계사 | 선웅규 1명만 | URL 파라미터로 선택 |
+| 업데이트 | 코드 수정 필요 | DB에서 자동 반영 |
+| 통계 | 고정값 | 실시간 DB 조회 |
+
+---
+
+### mypage-accountant.html과 차이점
+
+| 파일 | 용도 | 접근 권한 |
+|------|------|----------|
+| **mypage-accountant.html** | 본인 프로필 관리 (수정 가능) | 로그인 필수 |
+| **accountant-profile.html** | 타인이 보는 공개 프로필 (읽기 전용) | 누구나 접근 |
+
+---
+
+### 사용 예시
+
+**프로젝트 상세 페이지에서:**
+```html
+<a href="accountant-profile.html?accountant_id=ACC001">
+  담당 공인회계사 프로필 보기
+</a>
+```
+
+**회계사 목록 페이지에서:**
+```javascript
+accountants.forEach(acc => {
+    const link = `accountant-profile.html?accountant_id=${acc.accountant_id}`;
+    // 링크 렌더링
+});
+```
+
+---
+
+### 다음 단계
+
+- [ ] Phase 3: Access Control 구현
+- [ ] Phase 4: User Registration 구현
+- [ ] 질문하기 기능 (Q&A 시스템)
+- [ ] 회계사 목록 페이지 (검색 및 필터링)
+

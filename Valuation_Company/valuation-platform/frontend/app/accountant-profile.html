@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>담당 공인회계사 - ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --deep-blue: #1D4ED8;
@@ -22,6 +23,74 @@
             padding: 0 20px;
         }
 
+        /* 로딩 화면 */
+        .loading-container {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(29, 78, 216, 0.2);
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #6B7280;
+            font-size: 16px;
+        }
+
+        /* 에러 화면 */
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .error-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #DC2626;
+            margin-bottom: 12px;
+        }
+
+        .error-message {
+            font-size: 15px;
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+        }
+
         /* 프로필 카드 */
         .profile-card {
             background: white;
@@ -29,6 +98,11 @@
             padding: 40px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             text-align: center;
+            display: none;
+        }
+
+        .profile-card.visible {
+            display: block;
         }
 
         .profile-avatar {
@@ -46,7 +120,33 @@
         .profile-credentials {
             font-size: 16px;
             color: #6B7280;
+            margin-bottom: 12px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
             margin-bottom: 32px;
+            padding: 20px;
+            background: #F9FAFB;
+            border-radius: 12px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
         }
 
         /* 질문하기 버튼 */
@@ -112,14 +212,11 @@
             font-weight: 700;
         }
 
-        /* 학력 영역 (3줄) */
-        .education-area {
-            min-height: 90px;
-        }
-
-        /* 경력 영역 (10줄) */
-        .career-area {
-            min-height: 300px;
+        .empty-message {
+            color: #9CA3AF;
+            font-style: italic;
+            padding: 20px;
+            text-align: center;
         }
 
         /* 반응형 */
@@ -140,6 +237,11 @@
                 font-size: 24px;
             }
 
+            .profile-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+
             .section-title {
                 font-size: 16px;
                 padding: 10px 14px;
@@ -155,11 +257,42 @@
     <div id="header-container"></div>
 
     <div class="container">
-        <div class="profile-card">
+        <!-- 로딩 화면 -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="spinner"></div>
+            <div class="loading-text">공인회계사 프로필 로딩 중...</div>
+        </div>
+
+        <!-- 에러 화면 -->
+        <div class="error-container" id="errorContainer" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <h2 class="error-title" id="errorTitle">오류가 발생했습니다</h2>
+            <p class="error-message" id="errorMessage"></p>
+            <a href="/" class="btn">메인으로 돌아가기</a>
+        </div>
+
+        <!-- 프로필 카드 -->
+        <div class="profile-card" id="profileCard">
             <!-- 프로필 헤더 -->
             <div class="profile-avatar">👤</div>
-            <h1 class="profile-name">선웅규 공인회계사</h1>
-            <div class="profile-credentials">CPA | 평가 경력 15년</div>
+            <h1 class="profile-name" id="accountantName">-</h1>
+            <div class="profile-credentials" id="accountantCredentials">-</div>
+
+            <!-- 통계 -->
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="statRating">-</div>
+                    <div class="stat-label">평점</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statProjects">-</div>
+                    <div class="stat-label">완료 프로젝트</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="statStatus">-</div>
+                    <div class="stat-label">상태</div>
+                </div>
+            </div>
 
             <!-- 질문하기 버튼 -->
             <button class="btn-question" onclick="openQuestionModal()">
@@ -169,38 +302,35 @@
             <!-- 학력 섹션 -->
             <div class="section">
                 <div class="section-title">📚 학력</div>
-                <div class="section-content education-area">
-                    <ul>
-                        <li>연세대학교 경영학과 졸업 (2005)</li>
-                    </ul>
+                <div class="section-content" id="educationContent">
+                    <div class="empty-message">학력 정보가 없습니다.</div>
                 </div>
             </div>
 
             <!-- 경력 섹션 -->
             <div class="section">
                 <div class="section-title">💼 경력</div>
-                <div class="section-content career-area">
-                    <ul>
-                        <li>호수회계법인</li>
-                        <li>안건회계법인</li>
-                        <li>세화회계법인</li>
-                        <li>삼일회계법인</li>
-                        <li><strong>주요 프로젝트:</strong>
-                            <ul style="margin-top: 8px;">
-                                <li>○○테크 IPO 기업가치평가 (2023)</li>
-                                <li>△△바이오 M&A 자문 및 평가 (2022)</li>
-                                <li>××스타트업 투자유치 평가 (2021)</li>
-                            </ul>
-                        </li>
-                        <li><strong>평가 완료 건수:</strong> 150+ 건</li>
-                        <li><strong>전문 분야:</strong> DCF평가, 스타트업 기업가치평가, IPO 준비</li>
-                    </ul>
+                <div class="section-content" id="careerContent">
+                    <div class="empty-message">경력 정보가 없습니다.</div>
+                </div>
+            </div>
+
+            <!-- 전문 분야 -->
+            <div class="section">
+                <div class="section-title">⭐ 전문 분야</div>
+                <div class="section-content" id="specializationContent">
+                    <div class="empty-message">전문 분야 정보가 없습니다.</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // 헤더 로드
         fetch('../components/header.html')
             .then(response => response.text())
@@ -209,11 +339,143 @@
             })
             .catch(error => console.error('헤더 로드 실패:', error));
 
-        // 질문하기 모달 (간단하게)
+        // URL 파라미터에서 accountant_id 추출
+        function getAccountantIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('accountant_id');
+        }
+
+        // 에러 표시
+        function showError(title, message) {
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('profileCard').classList.remove('visible');
+
+            const errorContainer = document.getElementById('errorContainer');
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+            errorContainer.style.display = 'block';
+        }
+
+        // 프로필 표시
+        function showProfile() {
+            document.getElementById('loadingContainer').style.display = 'none';
+            document.getElementById('errorContainer').style.display = 'none';
+            document.getElementById('profileCard').classList.add('visible');
+        }
+
+        // 공인회계사 프로필 로드
+        async function loadAccountantProfile() {
+            try {
+                const accountantId = getAccountantIdFromUrl();
+
+                if (!accountantId) {
+                    showError(
+                        '잘못된 접근입니다',
+                        '공인회계사 ID가 제공되지 않았습니다.'
+                    );
+                    return;
+                }
+
+                console.log('Loading accountant profile:', accountantId);
+
+                // accountants 테이블에서 데이터 조회 (users 테이블과 JOIN)
+                const { data: accountantData, error: accountantError } = await supabase
+                    .from('accountants')
+                    .select(`
+                        *,
+                        users (
+                            name,
+                            email,
+                            phone
+                        )
+                    `)
+                    .eq('accountant_id', accountantId)
+                    .single();
+
+                if (accountantError) {
+                    console.error('Accountant fetch error:', accountantError);
+
+                    if (accountantError.code === 'PGRST116') {
+                        showError(
+                            '공인회계사를 찾을 수 없습니다',
+                            '존재하지 않는 공인회계사 ID입니다.'
+                        );
+                    } else {
+                        showError(
+                            '오류가 발생했습니다',
+                            accountantError.message
+                        );
+                    }
+                    return;
+                }
+
+                if (!accountantData) {
+                    showError(
+                        '공인회계사를 찾을 수 없습니다',
+                        '해당 공인회계사의 정보가 없습니다.'
+                    );
+                    return;
+                }
+
+                console.log('Accountant data loaded:', accountantData);
+
+                // 프로필 렌더링
+                renderProfile(accountantData);
+                showProfile();
+
+            } catch (error) {
+                console.error('Load error:', error);
+                showError('오류가 발생했습니다', error.message);
+            }
+        }
+
+        // 프로필 렌더링
+        function renderProfile(data) {
+            // 이름 및 자격
+            const userName = data.users?.name || '이름 없음';
+            document.getElementById('accountantName').textContent = `${userName} 공인회계사`;
+
+            const licenseNumber = data.license_number || '미등록';
+            document.getElementById('accountantCredentials').textContent = `CPA | 면허번호: ${licenseNumber}`;
+
+            // 통계
+            document.getElementById('statRating').textContent = data.rating ? data.rating.toFixed(1) : '0.0';
+            document.getElementById('statProjects').textContent = `${data.total_projects || 0}건`;
+            document.getElementById('statStatus').textContent = data.is_available ? '활동중' : '휴식중';
+
+            // 학력
+            if (data.education && Array.isArray(data.education) && data.education.length > 0) {
+                const educationHtml = '<ul>' +
+                    data.education.map(edu => `<li>${edu}</li>`).join('') +
+                    '</ul>';
+                document.getElementById('educationContent').innerHTML = educationHtml;
+            }
+
+            // 경력
+            if (data.career && Array.isArray(data.career) && data.career.length > 0) {
+                const careerHtml = '<ul>' +
+                    data.career.map(car => `<li>${car}</li>`).join('') +
+                    '</ul>';
+                document.getElementById('careerContent').innerHTML = careerHtml;
+            }
+
+            // 전문 분야
+            if (data.specialization && Array.isArray(data.specialization) && data.specialization.length > 0) {
+                const specializationHtml = '<ul>' +
+                    data.specialization.map(spec => `<li>${spec}</li>`).join('') +
+                    '</ul>';
+                document.getElementById('specializationContent').innerHTML = specializationHtml;
+            }
+        }
+
+        // 질문하기 모달
         function openQuestionModal() {
             alert('질문하기 기능은 개발 중입니다.\n곧 이용하실 수 있습니다.');
             // TODO: 모달 또는 별도 페이지로 연결
         }
+
+        // 페이지 로드 시 프로필 로드
+        window.addEventListener('DOMContentLoaded', loadAccountantProfile);
     </script>
 </body>
 </html>
