@@ -1059,25 +1059,29 @@
 
             <div class="sidebar-title">Investment News Network</div>
             <div class="news-provider-list" id="news-provider-list">
-                <!-- 최적화된 5개 뉴스 소스 (2026-01-27 기준) -->
-                <a href="https://www.wowtale.net" target="_blank" class="news-provider-item">
+                <!-- 더VC (1번) + 5개 뉴스 소스 (2-6번) -->
+                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
                     <span class="provider-number">1</span>
+                    <span class="provider-name">더VC</span>
+                </a>
+                <a href="https://www.wowtale.net" target="_blank" class="news-provider-item">
+                    <span class="provider-number">2</span>
                     <span class="provider-name">WOWTALE</span>
                 </a>
                 <a href="https://www.venturesquare.net" target="_blank" class="news-provider-item">
-                    <span class="provider-number">2</span>
+                    <span class="provider-number">3</span>
                     <span class="provider-name">벤처스퀘어</span>
                 </a>
                 <a href="https://startuptoday.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">3</span>
+                    <span class="provider-number">4</span>
                     <span class="provider-name">스타트업투데이</span>
                 </a>
                 <a href="https://outstanding.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">4</span>
+                    <span class="provider-number">5</span>
                     <span class="provider-name">아웃스탠딩</span>
                 </a>
                 <a href="https://platum.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">5</span>
+                    <span class="provider-number">6</span>
                     <span class="provider-name">플래텀</span>
                 </a>
             </div>
@@ -1511,7 +1515,7 @@
             return classes[stage] || 'stage-seed';
         }
 
-        // Top 5 뉴스 제공사 로드 (Supabase에서 동적 로딩)
+        // 뉴스 네트워크 로드 (더VC + Top 5)
         async function loadNewsProviders() {
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/investment_news_ranking?select=*&order=rank.asc&limit=5`, {
@@ -1525,7 +1529,7 @@
                     const providers = await response.json();
                     if (providers && providers.length > 0) {
                         renderNewsProviders(providers);
-                        console.log('Top 5 뉴스 소스 로드 성공:', providers);
+                        console.log('뉴스 네트워크 로드 성공:', providers);
                     }
                 } else {
                     console.log('뉴스 소스 API 실패, 기본 데이터 사용 (HTML 하드코딩)');
@@ -1535,20 +1539,29 @@
             }
         }
 
-        // Top 5 뉴스 제공사 렌더링
+        // 뉴스 네트워크 렌더링 (더VC 1번 + 뉴스 소스 2-6번)
         function renderNewsProviders(providers) {
             const container = document.getElementById('news-provider-list');
             if (!container) return;
 
-            // 상위 5개만 표시
-            const top5 = providers.slice(0, 5);
+            // 더VC를 1번으로 추가
+            let html = `
+                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
+                    <span class="provider-number">1</span>
+                    <span class="provider-name">더VC</span>
+                </a>
+            `;
 
-            container.innerHTML = top5.map(provider => `
+            // 나머지 5개 뉴스 소스를 2-6번으로 추가
+            const top5 = providers.slice(0, 5);
+            html += top5.map((provider, index) => `
                 <a href="${escapeHtml(provider.site_url)}" target="_blank" class="news-provider-item">
-                    <span class="provider-number">${provider.rank}</span>
+                    <span class="provider-number">${index + 2}</span>
                     <span class="provider-name">${escapeHtml(provider.site_name)}</span>
                 </a>
             `).join('');
+
+            container.innerHTML = html;
         }
 
         // 투자 통계 로드 (어제, 지난주, 금년)
