@@ -1,0 +1,763 @@
+{
+  "proposal_id": "complete_user_roles_20260128",
+  "title": "전체 사용자 유형 분석 및 역할 기반 마이페이지 통합 설계",
+  "date": "2026-01-28",
+  "status": "제안",
+  "executive_summary": {
+    "total_user_types": 6,
+    "categories": {
+      "internal_users": {
+        "count": 3,
+        "description": "플랫폼 운영 및 서비스 제공",
+        "roles": ["customer", "accountant", "admin"]
+      },
+      "external_connectors": {
+        "count": 3,
+        "description": "평가받은 기업과의 연결 희망",
+        "roles": ["investor", "partner", "supporter"]
+      }
+    },
+    "key_insight": "내부 사용자는 Valuation 서비스 중심, 외부 연결자는 Link 서비스 중심"
+  },
+  "complete_user_roles": {
+    "category_1_internal_users": {
+      "description": "Valuation 서비스 이용자 (평가 관련)",
+      "roles": [
+        {
+          "role": "customer",
+          "korean_name": "고객",
+          "icon": "🏢",
+          "color": "#1D4ED8",
+          "description": "기업가치 평가를 받고 싶은 기업/개인",
+          "main_service": "Valuation",
+          "main_tasks": [
+            "회사 정보 등록/관리",
+            "평가 신청",
+            "프로젝트 진행 상황 확인",
+            "평가 자료 제출",
+            "평가 결과 확인",
+            "결제 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "회사 정보",
+              "source": "customers 테이블",
+              "fields": ["회사명", "사업자번호", "대표자명", "업종", "설립일", "주소", "직원수"]
+            },
+            {
+              "section": "내 프로젝트",
+              "source": "projects 테이블 (customer_id 필터)",
+              "display": ["프로젝트 목록", "진행 상태", "현재 단계"]
+            },
+            {
+              "section": "진행 중인 평가",
+              "source": "projects 테이블 (status IN ('in_progress', 'pending'))",
+              "display": ["평가 방법", "담당 회계사", "진행률"]
+            },
+            {
+              "section": "결제 내역",
+              "source": "payments 테이블 (미구현)",
+              "display": ["결제 날짜", "금액", "결제 방법"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "service_guide": "읽기",
+              "project_create": "생성",
+              "project_detail": "본인 프로젝트만",
+              "report_download": "본인 프로젝트만"
+            },
+            "link": {
+              "company_list": "읽기",
+              "inquiry": "제한 없음"
+            }
+          }
+        },
+        {
+          "role": "accountant",
+          "korean_name": "공인회계사",
+          "icon": "👨‍💼",
+          "color": "#059669",
+          "description": "기업가치 평가를 수행하는 전문가",
+          "main_service": "Valuation",
+          "main_tasks": [
+            "프로필 관리 (학력, 경력, 자격증)",
+            "배정된 프로젝트 확인",
+            "평가 업무 수행",
+            "평가 보고서 작성",
+            "고객 문의 응답",
+            "일정 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "개인 프로필",
+              "source": "accountants 테이블",
+              "fields": ["이름", "자격증 번호", "학력", "경력", "전문분야", "소개"]
+            },
+            {
+              "section": "담당 프로젝트",
+              "source": "projects 테이블 (assigned_accountant_id 필터)",
+              "display": ["프로젝트 목록", "평가 방법", "고객사명", "진행 상태"]
+            },
+            {
+              "section": "진행 중인 평가",
+              "source": "projects 테이블 (status = 'in_progress')",
+              "display": ["현재 단계", "마감일", "우선순위"]
+            },
+            {
+              "section": "완료한 평가 통계",
+              "source": "projects 테이블 (status = 'completed')",
+              "display": ["총 프로젝트 수", "평가 방법별 통계", "평균 평점"]
+            },
+            {
+              "section": "일정 관리",
+              "source": "schedules 테이블 (미구현)",
+              "display": ["진행 중인 평가 일정", "예정된 미팅"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "service_guide": "읽기",
+              "project_create": "차단",
+              "project_detail": "담당 프로젝트만",
+              "report_creation": "담당 프로젝트만"
+            },
+            "link": {
+              "company_list": "읽기",
+              "inquiry": "읽기만"
+            }
+          }
+        },
+        {
+          "role": "admin",
+          "korean_name": "관리자",
+          "icon": "👨‍💻",
+          "color": "#DC2626",
+          "description": "플랫폼을 관리하는 운영자",
+          "main_service": "전체 시스템",
+          "main_tasks": [
+            "사용자 관리 (고객, 회계사)",
+            "프로젝트 승인/거부",
+            "공인회계사 배정",
+            "통계 확인",
+            "시스템 설정",
+            "공지사항 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "전체 프로젝트 현황",
+              "source": "projects 테이블 (전체)",
+              "display": ["진행 중", "대기 중", "완료", "승인 필요"]
+            },
+            {
+              "section": "사용자 통계",
+              "source": "users, customers, accountants 테이블",
+              "display": ["총 고객 수", "총 회계사 수", "신규 가입자", "활성 사용자"]
+            },
+            {
+              "section": "매출 통계",
+              "source": "payments 테이블 (미구현)",
+              "display": ["월별 매출", "평가 방법별 매출", "평균 프로젝트 단가"]
+            },
+            {
+              "section": "시스템 설정",
+              "source": "settings 테이블 (미구현)",
+              "display": ["플랫폼 설정", "알림 설정", "요금 설정"]
+            },
+            {
+              "section": "공지사항 관리",
+              "source": "announcements 테이블 (미구현)",
+              "display": ["공지사항 목록", "작성/수정/삭제"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "all_features": "전체 접근",
+              "approval": "승인/거부 권한",
+              "assignment": "회계사 배정 권한"
+            },
+            "link": {
+              "all_features": "전체 접근",
+              "moderation": "기업 목록 관리"
+            }
+          }
+        }
+      ]
+    },
+    "category_2_external_connectors": {
+      "description": "Link 서비스 이용자 (연결 희망)",
+      "roles": [
+        {
+          "role": "investor",
+          "korean_name": "투자자",
+          "icon": "💰",
+          "color": "#F59E0B",
+          "description": "평가받은 기업에 투자하고 싶은 개인/기관",
+          "main_service": "Link",
+          "main_tasks": [
+            "관심 산업/기업 설정",
+            "평가받은 기업 목록 확인",
+            "투자 문의 발송",
+            "문의 응답 확인",
+            "투자 관심 목록 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "투자자 프로필",
+              "source": "investors 테이블 (신규 필요)",
+              "fields": ["이름/기관명", "투자 유형", "관심 산업", "투자 규모", "연락처"]
+            },
+            {
+              "section": "관심 기업 목록",
+              "source": "investor_interests 테이블 (신규 필요)",
+              "display": ["기업명", "평가액", "관심 등록일"]
+            },
+            {
+              "section": "투자 문의 내역",
+              "source": "inquiries 테이블 (type = 'invest')",
+              "display": ["문의 날짜", "기업명", "문의 내용", "응답 상태"]
+            },
+            {
+              "section": "투자 선호 설정",
+              "source": "investor_preferences 테이블 (신규 필요)",
+              "display": ["관심 산업", "투자 단계", "투자 규모", "지역"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "service_guide": "읽기",
+              "project_create": "차단",
+              "report_summary": "읽기"
+            },
+            "link": {
+              "company_list": "읽기",
+              "inquiry_invest": "생성",
+              "company_contact": "투자 문의만"
+            }
+          }
+        },
+        {
+          "role": "partner",
+          "korean_name": "제휴자",
+          "icon": "🤝",
+          "color": "#166534",
+          "description": "평가받은 기업과 비즈니스 파트너십을 맺고 싶은 개인/기업",
+          "main_service": "Link",
+          "main_tasks": [
+            "제휴 유형 설정 (유통, 기술, 마케팅 등)",
+            "평가받은 기업 목록 확인",
+            "제휴 문의 발송",
+            "문의 응답 확인",
+            "제휴 관심 목록 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "제휴자 프로필",
+              "source": "partners 테이블 (신규 필요)",
+              "fields": ["이름/기업명", "제휴 유형", "제공 가능 리소스", "관심 산업", "연락처"]
+            },
+            {
+              "section": "관심 기업 목록",
+              "source": "partner_interests 테이블 (신규 필요)",
+              "display": ["기업명", "평가액", "관심 등록일", "제휴 가능 분야"]
+            },
+            {
+              "section": "제휴 문의 내역",
+              "source": "inquiries 테이블 (type = 'partner')",
+              "display": ["문의 날짜", "기업명", "제휴 유형", "응답 상태"]
+            },
+            {
+              "section": "제휴 선호 설정",
+              "source": "partner_preferences 테이블 (신규 필요)",
+              "display": ["제휴 유형", "관심 산업", "제공 리소스", "지역"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "service_guide": "읽기",
+              "project_create": "차단",
+              "report_summary": "읽기"
+            },
+            "link": {
+              "company_list": "읽기",
+              "inquiry_partner": "생성",
+              "company_contact": "제휴 문의만"
+            }
+          }
+        },
+        {
+          "role": "supporter",
+          "korean_name": "서포터",
+          "icon": "🌟",
+          "color": "#7C3AED",
+          "description": "평가받은 기업을 지원하고 싶은 멘토/자문가",
+          "main_service": "Link",
+          "main_tasks": [
+            "전문 분야 설정 (멘토링, 자문, 교육 등)",
+            "평가받은 기업 목록 확인",
+            "서포터 문의 발송",
+            "문의 응답 확인",
+            "지원 관심 목록 관리"
+          ],
+          "mypage_sections": [
+            {
+              "section": "서포터 프로필",
+              "source": "supporters 테이블 (신규 필요)",
+              "fields": ["이름", "전문 분야", "경력", "제공 가능 지원", "연락처"]
+            },
+            {
+              "section": "관심 기업 목록",
+              "source": "supporter_interests 테이블 (신규 필요)",
+              "display": ["기업명", "평가액", "관심 등록일", "지원 가능 분야"]
+            },
+            {
+              "section": "서포터 문의 내역",
+              "source": "inquiries 테이블 (type = 'supporter')",
+              "display": ["문의 날짜", "기업명", "지원 유형", "응답 상태"]
+            },
+            {
+              "section": "서포터 선호 설정",
+              "source": "supporter_preferences 테이블 (신규 필요)",
+              "display": ["지원 유형", "전문 분야", "관심 산업", "지역"]
+            }
+          ],
+          "access_permissions": {
+            "valuation": {
+              "service_guide": "읽기",
+              "project_create": "차단",
+              "report_summary": "읽기"
+            },
+            "link": {
+              "company_list": "읽기",
+              "inquiry_supporter": "생성",
+              "company_contact": "서포터 문의만"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "database_design": {
+    "core_table": {
+      "users": {
+        "description": "모든 사용자의 기본 정보 및 역할 관리",
+        "fields": [
+          "user_id UUID PRIMARY KEY (Supabase auth.users.id)",
+          "email VARCHAR(100) UNIQUE NOT NULL",
+          "role VARCHAR(20) NOT NULL CHECK (role IN ('customer', 'accountant', 'admin', 'investor', 'partner', 'supporter'))",
+          "name VARCHAR(50) NOT NULL",
+          "phone VARCHAR(20)",
+          "profile_image_url TEXT",
+          "is_active BOOLEAN DEFAULT true",
+          "created_at TIMESTAMPTZ DEFAULT NOW()",
+          "updated_at TIMESTAMPTZ DEFAULT NOW()"
+        ],
+        "indexes": [
+          "idx_users_email",
+          "idx_users_role",
+          "idx_users_is_active"
+        ]
+      }
+    },
+    "internal_user_tables": {
+      "customers": {
+        "description": "고객사 정보 (기존 테이블 수정)",
+        "add_fields": [
+          "user_id UUID REFERENCES users(user_id)",
+          "company_name_en VARCHAR(100)"
+        ]
+      },
+      "accountants": {
+        "description": "공인회계사 프로필 (신규 테이블)",
+        "status": "신규 필요"
+      }
+    },
+    "external_connector_tables": {
+      "investors": {
+        "description": "투자자 프로필",
+        "fields": [
+          "investor_id VARCHAR(20) PRIMARY KEY",
+          "user_id UUID REFERENCES users(user_id)",
+          "investor_type VARCHAR(50) (개인/기관/VC/엔젤)",
+          "interest_industries TEXT[]",
+          "investment_range VARCHAR(50) (예: 1억~10억)",
+          "investment_stage VARCHAR(50)[] (시드/시리즈A/시리즈B 등)",
+          "bio TEXT",
+          "website VARCHAR(200)",
+          "created_at TIMESTAMPTZ DEFAULT NOW()"
+        ],
+        "status": "신규 필요"
+      },
+      "partners": {
+        "description": "제휴자 프로필",
+        "fields": [
+          "partner_id VARCHAR(20) PRIMARY KEY",
+          "user_id UUID REFERENCES users(user_id)",
+          "company_name VARCHAR(100) (제휴자가 기업인 경우)",
+          "partnership_types TEXT[] (유통/기술/마케팅/제조 등)",
+          "resources TEXT[] (제공 가능 리소스)",
+          "interest_industries TEXT[]",
+          "bio TEXT",
+          "website VARCHAR(200)",
+          "created_at TIMESTAMPTZ DEFAULT NOW()"
+        ],
+        "status": "신규 필요"
+      },
+      "supporters": {
+        "description": "서포터 프로필",
+        "fields": [
+          "supporter_id VARCHAR(20) PRIMARY KEY",
+          "user_id UUID REFERENCES users(user_id)",
+          "expertise TEXT[] (전문 분야)",
+          "career TEXT[] (경력)",
+          "support_types TEXT[] (멘토링/자문/교육 등)",
+          "interest_industries TEXT[]",
+          "bio TEXT",
+          "linkedin VARCHAR(200)",
+          "created_at TIMESTAMPTZ DEFAULT NOW()"
+        ],
+        "status": "신규 필요"
+      }
+    },
+    "interest_tracking_tables": {
+      "investor_interests": {
+        "description": "투자자가 관심있는 기업 목록",
+        "fields": [
+          "interest_id SERIAL PRIMARY KEY",
+          "investor_id VARCHAR(20) REFERENCES investors(investor_id)",
+          "company_name VARCHAR(100)",
+          "valuation_report_id INT REFERENCES valuation_reports(id)",
+          "created_at TIMESTAMPTZ DEFAULT NOW()"
+        ]
+      },
+      "partner_interests": {
+        "description": "제휴자가 관심있는 기업 목록"
+      },
+      "supporter_interests": {
+        "description": "서포터가 관심있는 기업 목록"
+      }
+    },
+    "inquiries_table": {
+      "inquiries": {
+        "description": "모든 문의 통합 관리",
+        "fields": [
+          "inquiry_id SERIAL PRIMARY KEY",
+          "inquiry_type VARCHAR(20) (invest/partner/supporter)",
+          "sender_user_id UUID REFERENCES users(user_id)",
+          "target_company VARCHAR(100)",
+          "message TEXT",
+          "contact_info TEXT",
+          "status VARCHAR(20) DEFAULT 'pending' (pending/replied/closed)",
+          "created_at TIMESTAMPTZ DEFAULT NOW()",
+          "replied_at TIMESTAMPTZ"
+        ]
+      }
+    }
+  },
+  "mypage_file_structure": {
+    "approach": "역할별 별도 파일 (Option 2)",
+    "directory": "frontend/app/core/",
+    "files": [
+      {
+        "file": "mypage.html",
+        "role": "라우터",
+        "description": "로그인 확인 + 역할 판단 + 적절한 페이지로 리다이렉트",
+        "logic": "users 테이블에서 role 조회 → mypage-{role}.html로 리다이렉트"
+      },
+      {
+        "file": "mypage-customer.html",
+        "role": "customer",
+        "category": "내부 사용자",
+        "color": "#1D4ED8",
+        "icon": "🏢"
+      },
+      {
+        "file": "mypage-accountant.html",
+        "role": "accountant",
+        "category": "내부 사용자",
+        "color": "#059669",
+        "icon": "👨‍💼"
+      },
+      {
+        "file": "mypage-admin.html",
+        "role": "admin",
+        "category": "내부 사용자",
+        "color": "#DC2626",
+        "icon": "👨‍💻"
+      },
+      {
+        "file": "mypage-investor.html",
+        "role": "investor",
+        "category": "외부 연결자",
+        "color": "#F59E0B",
+        "icon": "💰"
+      },
+      {
+        "file": "mypage-partner.html",
+        "role": "partner",
+        "category": "외부 연결자",
+        "color": "#166534",
+        "icon": "🤝"
+      },
+      {
+        "file": "mypage-supporter.html",
+        "role": "supporter",
+        "category": "외부 연결자",
+        "color": "#7C3AED",
+        "icon": "🌟"
+      }
+    ]
+  },
+  "user_registration_flow": {
+    "step_1": {
+      "page": "register.html",
+      "action": "회원가입 폼",
+      "role_selection": {
+        "description": "2단계 선택 UI",
+        "step_1_category": "어떤 서비스를 주로 이용하시나요?",
+        "options": [
+          {
+            "value": "valuation",
+            "label": "Valuation - 기업가치 평가",
+            "description": "평가를 받거나 수행하고 싶어요",
+            "next": "step_2_valuation_roles"
+          },
+          {
+            "value": "link",
+            "label": "Link - 기업 연결",
+            "description": "평가받은 기업과 연결되고 싶어요",
+            "next": "step_2_link_roles"
+          }
+        ]
+      }
+    },
+    "step_2_valuation_roles": {
+      "question": "어떤 역할로 가입하시나요?",
+      "options": [
+        {
+          "role": "customer",
+          "label": "고객 - 평가 받고 싶어요",
+          "icon": "🏢",
+          "additional_fields": ["회사명", "사업자등록번호"]
+        },
+        {
+          "role": "accountant",
+          "label": "공인회계사 - 평가를 수행하고 싶어요",
+          "icon": "👨‍💼",
+          "additional_fields": ["자격증 번호", "학력", "경력"],
+          "note": "자격 검증 필요"
+        }
+      ]
+    },
+    "step_2_link_roles": {
+      "question": "어떤 방식으로 기업과 연결되고 싶으신가요?",
+      "options": [
+        {
+          "role": "investor",
+          "label": "투자자 - 투자하고 싶어요",
+          "icon": "💰",
+          "additional_fields": ["투자 유형", "투자 규모", "관심 산업"]
+        },
+        {
+          "role": "partner",
+          "label": "제휴자 - 파트너십을 맺고 싶어요",
+          "icon": "🤝",
+          "additional_fields": ["제휴 유형", "제공 리소스", "관심 산업"]
+        },
+        {
+          "role": "supporter",
+          "label": "서포터 - 멘토링/자문하고 싶어요",
+          "icon": "🌟",
+          "additional_fields": ["전문 분야", "경력", "지원 유형"]
+        }
+      ]
+    },
+    "admin_registration": {
+      "method": "기존 관리자가 수동으로 등록",
+      "no_public_signup": true
+    }
+  },
+  "access_control_matrix": {
+    "description": "역할별 접근 권한 매트릭스",
+    "services": {
+      "valuation": {
+        "service_guide": {
+          "customer": "✅ 읽기",
+          "accountant": "✅ 읽기",
+          "admin": "✅ 전체",
+          "investor": "✅ 읽기",
+          "partner": "✅ 읽기",
+          "supporter": "✅ 읽기"
+        },
+        "project_create": {
+          "customer": "✅ 생성",
+          "accountant": "❌ 차단",
+          "admin": "✅ 전체",
+          "investor": "❌ 차단",
+          "partner": "❌ 차단",
+          "supporter": "❌ 차단"
+        },
+        "project_detail": {
+          "customer": "✅ 본인만",
+          "accountant": "✅ 담당만",
+          "admin": "✅ 전체",
+          "investor": "❌ 차단",
+          "partner": "❌ 차단",
+          "supporter": "❌ 차단"
+        },
+        "report_download": {
+          "customer": "✅ 본인만",
+          "accountant": "✅ 담당만",
+          "admin": "✅ 전체",
+          "investor": "❌ 차단",
+          "partner": "❌ 차단",
+          "supporter": "❌ 차단"
+        }
+      },
+      "link": {
+        "company_list": {
+          "customer": "✅ 읽기",
+          "accountant": "✅ 읽기",
+          "admin": "✅ 전체",
+          "investor": "✅ 읽기",
+          "partner": "✅ 읽기",
+          "supporter": "✅ 읽기"
+        },
+        "inquiry_invest": {
+          "customer": "❌ 차단",
+          "accountant": "❌ 차단",
+          "admin": "✅ 읽기",
+          "investor": "✅ 생성",
+          "partner": "❌ 차단",
+          "supporter": "❌ 차단"
+        },
+        "inquiry_partner": {
+          "customer": "❌ 차단",
+          "accountant": "❌ 차단",
+          "admin": "✅ 읽기",
+          "investor": "❌ 차단",
+          "partner": "✅ 생성",
+          "supporter": "❌ 차단"
+        },
+        "inquiry_supporter": {
+          "customer": "❌ 차단",
+          "accountant": "❌ 차단",
+          "admin": "✅ 읽기",
+          "investor": "❌ 차단",
+          "partner": "❌ 차단",
+          "supporter": "✅ 생성"
+        }
+      }
+    }
+  },
+  "implementation_plan": {
+    "phase_1": {
+      "name": "데이터베이스 스키마 구축",
+      "tasks": [
+        "users 테이블 생성 (6가지 role 지원)",
+        "accountants 테이블 생성",
+        "investors 테이블 생성",
+        "partners 테이블 생성",
+        "supporters 테이블 생성",
+        "inquiries 테이블 생성",
+        "interest tracking 테이블 생성 (3개)",
+        "customers 테이블 수정"
+      ],
+      "estimated_effort": "4시간"
+    },
+    "phase_2": {
+      "name": "역할별 마이페이지 구축 (6개)",
+      "tasks": [
+        "mypage.html 라우터 구현",
+        "mypage-customer.html",
+        "mypage-accountant.html",
+        "mypage-admin.html",
+        "mypage-investor.html",
+        "mypage-partner.html",
+        "mypage-supporter.html"
+      ],
+      "estimated_effort": "12시간"
+    },
+    "phase_3": {
+      "name": "접근 제어 구현",
+      "tasks": [
+        "역할 기반 접근 제어 (RBAC)",
+        "project-create 페이지 (고객만)",
+        "inquiry 페이지 (해당 역할만)",
+        "report-download 페이지 (고객/회계사만)"
+      ],
+      "estimated_effort": "6시간"
+    },
+    "phase_4": {
+      "name": "회원가입 페이지 수정",
+      "tasks": [
+        "2단계 역할 선택 UI",
+        "역할별 추가 정보 입력 폼",
+        "자격 검증 로직 (공인회계사)"
+      ],
+      "estimated_effort": "4시간"
+    },
+    "phase_5": {
+      "name": "Link 서비스 연결",
+      "tasks": [
+        "관심 기업 목록 기능",
+        "문의 내역 관리",
+        "알림 시스템 (문의 응답 시)"
+      ],
+      "estimated_effort": "6시간"
+    }
+  },
+  "total_estimated_effort": "32시간",
+  "priority": "High",
+  "impact": "Very High",
+  "benefits": {
+    "user_experience": [
+      "역할에 최적화된 마이페이지",
+      "명확한 서비스 분리 (Valuation vs Link)",
+      "직관적인 네비게이션",
+      "불필요한 정보 제거"
+    ],
+    "business": [
+      "6가지 사용자 유형 모두 수용",
+      "Link 서비스 활성화 (투자자/제휴자/서포터)",
+      "기업-외부 연결 생태계 구축",
+      "플랫폼 가치 증대"
+    ],
+    "security": [
+      "역할 기반 접근 제어 (RBAC)",
+      "명확한 권한 분리",
+      "데이터 보안 강화"
+    ]
+  },
+  "next_steps": [
+    {
+      "step": 1,
+      "action": "사용자 승인 및 우선순위 결정",
+      "questions": [
+        "6가지 역할을 모두 구현할 것인가?",
+        "우선순위: 내부 사용자 (Valuation) vs 외부 연결자 (Link)?",
+        "Phase별 순차 구현 vs 전체 동시 구현?"
+      ]
+    },
+    {
+      "step": 2,
+      "action": "데이터베이스 스키마 설계 확정"
+    },
+    {
+      "step": 3,
+      "action": "구현 시작 (Phase 1부터)"
+    }
+  ],
+  "recommendations": {
+    "phased_approach": {
+      "priority_1": "내부 사용자 먼저 (Customer, Accountant, Admin)",
+      "reason": "Valuation 서비스가 핵심 비즈니스",
+      "estimated_effort": "Phase 1-4: 26시간"
+    },
+    "priority_2": {
+      "description": "외부 연결자 나중에 (Investor, Partner, Supporter)",
+      "reason": "Link 서비스 활성화 전략",
+      "estimated_effort": "Phase 5 추가: 6시간"
+    }
+  }
+}
