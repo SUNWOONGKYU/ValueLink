@@ -58,8 +58,23 @@ const PROCESS_STEPS = [
 function getStepUrl(stepInfo, method, projectId) {
     const { page, params } = stepInfo;
 
-    // 기본 경로 (현재 위치에서 상대 경로)
-    let basePath = '../';
+    // 현재 경로에서 app 폴더까지의 상대 경로 계산
+    const currentPath = window.location.pathname;
+    let basePath = '';
+
+    if (currentPath.includes('/valuation/guides/')) {
+        basePath = '../../';  // guides -> valuation -> app
+    } else if (currentPath.includes('/valuation/results/')) {
+        basePath = '../../';  // results -> valuation -> app
+    } else if (currentPath.includes('/valuation/portals/')) {
+        basePath = '../../';  // portals -> valuation -> app
+    } else if (currentPath.includes('/valuation/')) {
+        basePath = '../';     // valuation -> app
+    } else if (currentPath.includes('/app/')) {
+        basePath = '';        // app 폴더 내부
+    } else {
+        basePath = 'app/';    // app 폴더 외부
+    }
 
     // 페이지별 URL 매핑
     switch (page) {
@@ -78,7 +93,8 @@ function getStepUrl(stepInfo, method, projectId) {
         case 'portal':
             // 4단계: 평가 기초자료 제출 (평가법별)
             if (method) {
-                return basePath + `valuation/portals/${method}-portal.html${projectId ? '?projectId=' + projectId : ''}`;
+                const portalMethod = method === 'inheritance_tax' ? 'tax' : method;
+                return basePath + `valuation/portals/${portalMethod}-portal.html${projectId ? '?projectId=' + projectId : ''}`;
             }
             return null;
 
@@ -96,7 +112,8 @@ function getStepUrl(stepInfo, method, projectId) {
         case 'result':
             // 9, 12단계: 평가보고서 확인 (초안/최종안)
             if (method) {
-                return basePath + `valuation/results/${method}-valuation.html${projectId ? '?projectId=' + projectId : ''}${params ? '&' + params : ''}`;
+                const resultMethod = method === 'inheritance_tax' ? 'tax' : method;
+                return basePath + `valuation/results/${resultMethod}-valuation.html${projectId ? '?projectId=' + projectId : ''}${params ? '&' + params : ''}`;
             }
             return null;
 
