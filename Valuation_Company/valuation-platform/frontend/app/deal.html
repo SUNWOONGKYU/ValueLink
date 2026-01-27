@@ -351,18 +351,17 @@
             white-space: nowrap;
         }
 
-        /* 컬럼별 너비 조정 */
-        .deals-table th:nth-child(1) { width: 10%; } /* 기업명 */
-        .deals-table th:nth-child(2) { width: 7%; }  /* 대표자 */
-        .deals-table th:nth-child(3) { width: 10%; } /* 업종 */
-        .deals-table th:nth-child(4) { width: 7%; }  /* 설립일 */
-        .deals-table th:nth-child(5) { width: 5%; }  /* 지역 */
-        .deals-table th:nth-child(6) { width: 5%; }  /* 직원수 */
-        .deals-table th:nth-child(7) { width: 10%; } /* 투자단계 (8%→10% 증가) */
-        .deals-table th:nth-child(8) { width: 18%; } /* 투자자 */
-        .deals-table th:nth-child(9) { width: 10%; } /* 투자금액 */
-        .deals-table th:nth-child(10) { width: 10%; } /* 누적투자액 */
-        .deals-table th:nth-child(11) { width: 8%; }  /* 뉴스 (10%→8% 감소) */
+        /* 컬럼별 너비 조정 (직원수 삭제, 10개 컬럼) */
+        .deals-table th:nth-child(1) { width: 12%; } /* 기업명 */
+        .deals-table th:nth-child(2) { width: 8%; }  /* 대표자 */
+        .deals-table th:nth-child(3) { width: 12%; } /* 업종 */
+        .deals-table th:nth-child(4) { width: 8%; }  /* 설립일 */
+        .deals-table th:nth-child(5) { width: 6%; }  /* 지역 */
+        .deals-table th:nth-child(6) { width: 10%; } /* 투자단계 */
+        .deals-table th:nth-child(7) { width: 18%; } /* 투자자 */
+        .deals-table th:nth-child(8) { width: 10%; } /* 투자금액 */
+        .deals-table th:nth-child(9) { width: 10%; } /* 누적투자액 */
+        .deals-table th:nth-child(10) { width: 6%; } /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -932,7 +931,6 @@
                         <th>주요사업</th>
                         <th>설립일</th>
                         <th>지역</th>
-                        <th>직원수</th>
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
@@ -943,7 +941,7 @@
                 <tbody id="deals-tbody">
                     <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
                     <tr>
-                        <td colspan="11" style="text-align: center; padding: 40px; color: #6B7280;">
+                        <td colspan="10" style="text-align: center; padding: 40px; color: #6B7280;">
                             데이터 로딩 중...
                         </td>
                     </tr>
@@ -976,46 +974,26 @@
 
             <div class="sidebar-title">Investment News Network</div>
             <div class="news-provider-list" id="news-provider-list">
-                <!-- 실제 순위 (2026-01-26 기준) -->
-                <a href="https://www.venturesquare.net" target="_blank" class="news-provider-item">
+                <!-- 최적화된 5개 뉴스 소스 (2026-01-27 기준) -->
+                <a href="https://www.wowtale.net" target="_blank" class="news-provider-item">
                     <span class="provider-number">1</span>
+                    <span class="provider-name">WOWTALE</span>
+                </a>
+                <a href="https://www.venturesquare.net" target="_blank" class="news-provider-item">
+                    <span class="provider-number">2</span>
                     <span class="provider-name">벤처스퀘어</span>
                 </a>
                 <a href="https://startuptoday.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">2</span>
+                    <span class="provider-number">3</span>
                     <span class="provider-name">스타트업투데이</span>
                 </a>
                 <a href="https://outstanding.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">3</span>
+                    <span class="provider-number">4</span>
                     <span class="provider-name">아웃스탠딩</span>
                 </a>
-                <a href="https://www.thebell.co.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">4</span>
-                    <span class="provider-name">더벨</span>
-                </a>
-                <a href="https://thevc.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">5</span>
-                    <span class="provider-name">더브이씨</span>
-                </a>
-                <a href="https://startupn.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">6</span>
-                    <span class="provider-name">스타트업엔</span>
-                </a>
-                <a href="https://www.bloter.net" target="_blank" class="news-provider-item">
-                    <span class="provider-number">7</span>
-                    <span class="provider-name">블로터</span>
-                </a>
-                <a href="https://www.economist.co.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">8</span>
-                    <span class="provider-name">이코노미스트</span>
-                </a>
                 <a href="https://platum.kr" target="_blank" class="news-provider-item">
-                    <span class="provider-number">9</span>
+                    <span class="provider-number">5</span>
                     <span class="provider-name">플래텀</span>
-                </a>
-                <a href="https://www.aitimes.com" target="_blank" class="news-provider-item">
-                    <span class="provider-number">10</span>
-                    <span class="provider-name">AI타임스</span>
                 </a>
             </div>
         </aside>
@@ -1324,7 +1302,7 @@
             }
         }
 
-        // Deal 테이블 렌더링
+        // Deal 테이블 렌더링 (직원수 컬럼 제거)
         function renderDealsTable(deals) {
             const tbody = document.getElementById('deals-tbody');
             if (!tbody) return;
@@ -1336,7 +1314,6 @@
                 const amount = deal.amount ? `${deal.amount}억원` : '-';
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
-                const employees = deal.employees || '-';
                 const newsUrl = deal.news_url || '#';
                 const newsDate = deal.news_date || '';
 
@@ -1353,7 +1330,6 @@
                         <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
                         <td data-label="설립일" class="deal-founded">-</td>
                         <td data-label="지역" class="deal-region">${escapeHtml(location)}</td>
-                        <td data-label="직원수" class="deal-employees">${employees || '-'}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
