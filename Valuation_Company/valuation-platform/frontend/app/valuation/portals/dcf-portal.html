@@ -46,7 +46,32 @@
         .breadcrumb a:hover { color: var(--deep-blue-light); }
         .breadcrumb span { color: var(--text-muted); }
 
-        .main-content { max-width: 1200px; margin: 0 auto; padding: 40px; }
+        /* Layout Container */
+        .page-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .page-container {
+                flex-direction: column;
+            }
+            .sidebar-wrapper {
+                width: 100%;
+            }
+        }
         .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .project-title { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
@@ -398,7 +423,8 @@
         </div>
     </div>
 
-    <main class="main-content">
+    <div class="page-container">
+        <main class="main-content">
         <section class="project-info-card">
             <div class="project-header">
                 <div>
@@ -662,7 +688,13 @@
                 <button class="btn-submit" disabled>자료 제출하기</button>
             </div>
         </section>
-    </main>
+        </main>
+
+        <!-- 사이드바 -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트 주입 -->
+        </aside>
+    </div>
 
     <footer>
         <div class="footer-content">
@@ -702,15 +734,30 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+        import { injectSidebar } from '../../components/common-sidebar.js';
+
         // Supabase 설정
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // URL에서 프로젝트 ID 가져오기
+        // URL에서 프로젝트 ID와 평가법 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const PROJECT_ID = urlParams.get('id') || 'SAMSU-2501191430-DC';
+        const projectId = urlParams.get('projectId') || 'FINDE-2601270530-DC';
+        const method = 'dcf'; // DCF 포털
+
+        // 사이드바 렌더링 (4단계 - 평가 기초자료 제출)
+        injectSidebar(
+            'sidebar-container',
+            4,                      // 현재 단계
+            'in_progress',          // 진행 중 상태
+            method,                 // 평가법
+            projectId,              // 프로젝트 ID
+            4,                      // startStep: 4
+            14                      // endStep: 14
+        );
 
         const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.csv', '.json', '.xml', '.md', '.html', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.gif', '.webp', '.bmp'];
         const CONVERT_REQUIRED = ['.hwp'];
