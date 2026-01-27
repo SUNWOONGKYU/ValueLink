@@ -1269,21 +1269,35 @@
                 const employees = news.employees || '-';
                 const region = news.region || '-';
 
-                // 투자자를 쉼표로 분리하여 한 줄씩 표시
-                const investorList = investor === '-' ? '-' :
-                    investor.split(',').map(inv =>
-                        `<div style="white-space: nowrap;">${escapeHtml(inv.trim())}</div>`
-                    ).join('');
+                // 투자자 최대 3개만 표시, 나머지는 +N개
+                let investorList = '-';
+                if (investor !== '-') {
+                    const investorArray = investor.split(',').map(inv => inv.trim());
+                    if (investorArray.length <= 3) {
+                        investorList = investorArray.map(inv =>
+                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
+                        ).join('');
+                    } else {
+                        const first3 = investorArray.slice(0, 3).map(inv =>
+                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
+                        ).join('');
+                        const remaining = investorArray.length - 3;
+                        investorList = first3 + `<div style="color: #6B7280; font-size: 12px; padding: 2px 0;">+${remaining}개</div>`;
+                    }
+                }
+
+                const dealData = JSON.stringify({
+                    company, ceo, founded, totalFunding: totalFunding, industry, location: region, stage, investors: investor, amount, newsUrl: url
+                }).replace(/"/g, '&quot;');
 
                 return `
-                    <tr onclick="showDealDetail('${escapeHtml(company)}', '${escapeHtml(ceo)}', '${escapeHtml(founded)}', '${escapeHtml(totalFunding)}', '${escapeHtml(industry)}', '${escapeHtml(region)}', '${escapeHtml(stage)}', '${investorList.replace(/'/g, "\\'")}', '${escapeHtml(amount)}', '${url}')" style="cursor: pointer;">
+                    <tr onclick='showDealDetail(${dealData})' style="cursor: pointer;">
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
-                        <td data-label="업종" class="deal-industry">${escapeHtml(industry)}</td>
-                        <td data-label="지역" class="deal-region">${escapeHtml(region)}</td>
+                        <td data-label="주요사업" class="deal-industry">${escapeHtml(industry)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="뉴스" onclick="event.stopPropagation();"><a href="${url}" target="_blank" class="link-btn link-news">원문</a></td>
+                        <td data-label="뉴스"><a href="${url}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">원문</a></td>
                     </tr>
                 `;
             }).join('');
@@ -1402,11 +1416,22 @@
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
-                // 투자자를 쉼표로 분리하여 한 줄씩 표시
-                const investorList = investors === '-' ? '-' :
-                    investors.split(',').map(inv =>
-                        `<div style="white-space: nowrap;">${escapeHtml(inv.trim())}</div>`
-                    ).join('');
+                // 투자자 최대 3개만 표시, 나머지는 +N개
+                let investorList = '-';
+                if (investors !== '-') {
+                    const investorArray = investors.split(',').map(inv => inv.trim());
+                    if (investorArray.length <= 3) {
+                        investorList = investorArray.map(inv =>
+                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
+                        ).join('');
+                    } else {
+                        const first3 = investorArray.slice(0, 3).map(inv =>
+                            `<div style="white-space: nowrap; padding: 2px 0;">${escapeHtml(inv)}</div>`
+                        ).join('');
+                        const remaining = investorArray.length - 3;
+                        investorList = first3 + `<div style="color: #6B7280; font-size: 12px; padding: 2px 0;">+${remaining}개</div>`;
+                    }
+                }
 
                 // JSON 데이터를 안전하게 전달하기 위해 escape
                 const dealData = JSON.stringify({
@@ -1420,7 +1445,7 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="뉴스" onclick="event.stopPropagation();"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news">원문</a></td>
+                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">원문</a></td>
                     </tr>
                 `;
             }).join('');
