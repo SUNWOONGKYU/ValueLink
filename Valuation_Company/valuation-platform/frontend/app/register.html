@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            color: white;
+            padding: 40px 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* 진행 단계 표시 */
+        .progress-container {
+            background: white;
+            padding: 24px 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: var(--deep-blue);
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-light);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: var(--deep-blue);
+            border-color: var(--deep-blue);
+            color: white;
+        }
+
+        .step.completed .step-circle {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .step.active .step-label {
+            color: var(--deep-blue);
+            font-weight: 600;
+        }
+
+        /* 폼 영역 */
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        .form-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: var(--error);
+            margin-left: 2px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px var(--deep-blue-pale);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .error-message {
+            font-size: 13px;
+            color: var(--error);
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* 역할 선택 */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .role-card {
+            position: relative;
+        }
+
+        .role-card input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .role-card label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .role-card label:hover {
+            border-color: var(--deep-blue-light);
+            background: var(--deep-blue-pale);
+        }
+
+        .role-card input:checked + label {
+            border-color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+        }
+
+        .role-card input:checked + label::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .role-card input:disabled + label {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--bg-light);
+        }
+
+        .role-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .role-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .role-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .coming-soon {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        /* 버튼 */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 로그인 링크 */
+        .login-link {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .login-link a {
+            color: var(--deep-blue);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* 학력/경력 배열 입력 */
+        .array-input-group {
+            margin-bottom: 20px;
+        }
+
+        .array-input-item {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .array-input-item input {
+            flex: 1;
+        }
+
+        .btn-remove {
+            padding: 12px 16px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-add {
+            padding: 10px 20px;
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+            border: 2px dashed var(--deep-blue);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+        }
+
+        .btn-add:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 20px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .progress-container {
+                padding: 20px 20px;
+            }
+
+            .step-label {
+                font-size: 11px;
+            }
+
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-title {
+                font-size: 20px;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1>ValueLink 회원가입</h1>
+            <p>프로젝트 평가를 시작하세요</p>
+        </div>
+
+        <!-- 진행 단계 -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-line" id="progressLine" style="width: 0%;"></div>
+                <div class="step active" id="stepIndicator1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">기본 정보</div>
+                </div>
+                <div class="step" id="stepIndicator2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">역할 선택</div>
+                </div>
+                <div class="step" id="stepIndicator3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">추가 정보</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 폼 -->
+        <div class="form-container">
+            <!-- Step 1: 기본 정보 -->
+            <div class="form-step active" id="step1">
+                <h2 class="form-title">기본 정보</h2>
+                <p class="form-subtitle">먼저 기본 정보를 입력해주세요</p>
+
+                <div class="form-group">
+                    <label>이름 <span class="required">*</span></label>
+                    <input type="text" id="userName" placeholder="홍길동" autocomplete="name">
+                    <div class="error-message" id="userNameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>이메일 <span class="required">*</span></label>
+                    <input type="email" id="userEmail" placeholder="example@email.com" autocomplete="email">
+                    <div class="hint">로그인 ID로 사용됩니다</div>
+                    <div class="error-message" id="userEmailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>비밀번호 <span class="required">*</span></label>
+                    <input type="password" id="userPassword" placeholder="영문, 숫자, 특수문자 포함 8자 이상" autocomplete="new-password">
+                    <div class="error-message" id="userPasswordError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>비밀번호 확인 <span class="required">*</span></label>
+                    <input type="password" id="userPasswordConfirm" placeholder="비밀번호를 다시 입력하세요" autocomplete="new-password">
+                    <div class="error-message" id="userPasswordConfirmError"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="goToStep2()">다음 단계</button>
+                </div>
+
+                <div class="login-link">
+                    이미 계정이 있으신가요? <a href="login.html">로그인</a>
+                </div>
+            </div>
+
+            <!-- Step 2: 역할 선택 -->
+            <div class="form-step" id="step2">
+                <h2 class="form-title">역할 선택</h2>
+                <p class="form-subtitle">서비스 이용 목적을 선택해주세요</p>
+
+                <div class="role-grid">
+                    <!-- Customer (Company) -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="roleCustomer" value="customer">
+                        <label for="roleCustomer">
+                            <div class="role-icon">🏢</div>
+                            <div class="role-name">고객</div>
+                            <div class="role-desc">평가 신청</div>
+                        </label>
+                    </div>
+
+                    <!-- Accountant -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="roleAccountant" value="accountant">
+                        <label for="roleAccountant">
+                            <div class="role-icon">👨‍💼</div>
+                            <div class="role-name">공인회계사</div>
+                            <div class="role-desc">평가 수행</div>
+                        </label>
+                    </div>
+
+                    <!-- Admin -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="roleAdmin" value="admin">
+                        <label for="roleAdmin">
+                            <div class="role-icon">⚙️</div>
+                            <div class="role-name">관리자</div>
+                            <div class="role-desc">플랫폼 관리</div>
+                        </label>
+                    </div>
+
+                    <!-- Investor (Phase 5) -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="roleInvestor" value="investor" disabled>
+                        <label for="roleInvestor">
+                            <div class="role-icon">💰</div>
+                            <div class="role-name">투자자</div>
+                            <div class="role-desc">투자 검토</div>
+                            <div class="coming-soon">곧 서비스 예정</div>
+                        </label>
+                    </div>
+
+                    <!-- Partner (Phase 5) -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="rolePartner" value="partner" disabled>
+                        <label for="rolePartner">
+                            <div class="role-icon">🤝</div>
+                            <div class="role-name">제휴자</div>
+                            <div class="role-desc">제휴 협력</div>
+                            <div class="coming-soon">곧 서비스 예정</div>
+                        </label>
+                    </div>
+
+                    <!-- Supporter (Phase 5) -->
+                    <div class="role-card">
+                        <input type="radio" name="role" id="roleSupporter" value="supporter" disabled>
+                        <label for="roleSupporter">
+                            <div class="role-icon">🎯</div>
+                            <div class="role-name">서포터</div>
+                            <div class="role-desc">지원 활동</div>
+                            <div class="coming-soon">곧 서비스 예정</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="error-message" id="roleError"></div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goToStep1()">이전</button>
+                    <button class="btn btn-primary" onclick="goToStep3()">다음 단계</button>
+                </div>
+            </div>
+
+            <!-- Step 3: 추가 정보 (역할별) -->
+            <div class="form-step" id="step3">
+                <!-- Customer (Company) 추가 정보 -->
+                <div id="customerFields" style="display: none;">
+                    <h2 class="form-title">회사 정보</h2>
+                    <p class="form-subtitle">회사의 기본 정보를 입력해주세요</p>
+
+                    <div class="form-group">
+                        <label>회사명 (국문) <span class="required">*</span></label>
+                        <input type="text" id="companyName" placeholder="예: 삼성전자">
+                    </div>
+
+                    <div class="form-group">
+                        <label>회사명 (영문) <span class="required">*</span></label>
+                        <input type="text" id="companyNameEn" placeholder="예: Samsung Electronics">
+                        <div class="hint">영문명이 없으면 한글 발음을 로마자로 입력</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>사업자등록번호 <span class="required">*</span></label>
+                        <input type="text" id="businessNumber" placeholder="000-00-00000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>대표자명 <span class="required">*</span></label>
+                        <input type="text" id="ceoName" placeholder="대표이사 성명">
+                    </div>
+
+                    <div class="form-group">
+                        <label>업종</label>
+                        <input type="text" id="industry" placeholder="예: 소프트웨어 개발업">
+                    </div>
+
+                    <div class="form-group">
+                        <label>설립일</label>
+                        <input type="date" id="foundedDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label>전화번호</label>
+                        <input type="tel" id="phone" placeholder="02-1234-5678">
+                    </div>
+                </div>
+
+                <!-- Accountant 추가 정보 -->
+                <div id="accountantFields" style="display: none;">
+                    <h2 class="form-title">공인회계사 정보</h2>
+                    <p class="form-subtitle">자격 및 경력 정보를 입력해주세요</p>
+
+                    <div class="form-group">
+                        <label>공인회계사 면허번호 <span class="required">*</span></label>
+                        <input type="text" id="licenseNumber" placeholder="예: 12345">
+                        <div class="hint">금융감독원 공인회계사 등록번호</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>전화번호</label>
+                        <input type="tel" id="accountantPhone" placeholder="010-1234-5678">
+                    </div>
+
+                    <div class="array-input-group">
+                        <label>학력</label>
+                        <div id="educationContainer">
+                            <div class="array-input-item">
+                                <input type="text" class="education-input" placeholder="예: 연세대학교 경영학과 졸업 (2010)">
+                                <button type="button" class="btn-remove" onclick="removeEducation(this)">삭제</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addEducation()">+ 학력 추가</button>
+                    </div>
+
+                    <div class="array-input-group">
+                        <label>경력</label>
+                        <div id="careerContainer">
+                            <div class="array-input-item">
+                                <input type="text" class="career-input" placeholder="예: 삼일회계법인 (2010-2015)">
+                                <button type="button" class="btn-remove" onclick="removeCareer(this)">삭제</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addCareer()">+ 경력 추가</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>전문 분야</label>
+                        <textarea id="specialization" placeholder="예: DCF평가, IPO 준비, M&A 자문"></textarea>
+                        <div class="hint">쉼표(,)로 구분하여 입력</div>
+                    </div>
+                </div>
+
+                <!-- Admin 추가 정보 -->
+                <div id="adminFields" style="display: none;">
+                    <h2 class="form-title">관리자 인증</h2>
+                    <p class="form-subtitle">관리자 인증 코드를 입력해주세요</p>
+
+                    <div class="form-group">
+                        <label>관리자 인증 코드 <span class="required">*</span></label>
+                        <input type="password" id="adminCode" placeholder="관리자 인증 코드">
+                        <div class="hint">관리자로부터 받은 인증 코드를 입력하세요</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goToStep2()">이전</button>
+                    <button class="btn btn-primary" onclick="submitRegistration()">회원가입 완료</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 현재 단계
+        let currentStep = 1;
+
+        // 단계 이동
+        function goToStep1() {
+            showStep(1);
+        }
+
+        function goToStep2() {
+            if (!validateStep1()) return;
+            showStep(2);
+        }
+
+        function goToStep3() {
+            if (!validateStep2()) return;
+            showRoleFields();
+            showStep(3);
+        }
+
+        function showStep(step) {
+            // 모든 단계 숨기기
+            document.querySelectorAll('.form-step').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active', 'completed'));
+
+            // 현재 단계 표시
+            document.getElementById(`step${step}`).classList.add('active');
+            document.getElementById(`stepIndicator${step}`).classList.add('active');
+
+            // 이전 단계들 완료 표시
+            for (let i = 1; i < step; i++) {
+                document.getElementById(`stepIndicator${i}`).classList.add('completed');
+            }
+
+            // 진행 바 업데이트
+            const progress = ((step - 1) / 2) * 100;
+            document.getElementById('progressLine').style.width = `${progress}%`;
+
+            currentStep = step;
+        }
+
+        // Step 1 검증
+        function validateStep1() {
+            let isValid = true;
+
+            // 이름
+            const userName = document.getElementById('userName').value.trim();
+            if (!userName) {
+                showError('userNameError', '이름을 입력해주세요');
+                isValid = false;
+            } else {
+                hideError('userNameError');
+            }
+
+            // 이메일
+            const userEmail = document.getElementById('userEmail').value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!userEmail) {
+                showError('userEmailError', '이메일을 입력해주세요');
+                isValid = false;
+            } else if (!emailPattern.test(userEmail)) {
+                showError('userEmailError', '올바른 이메일 형식이 아닙니다');
+                isValid = false;
+            } else {
+                hideError('userEmailError');
+            }
+
+            // 비밀번호
+            const userPassword = document.getElementById('userPassword').value;
+            if (!userPassword) {
+                showError('userPasswordError', '비밀번호를 입력해주세요');
+                isValid = false;
+            } else if (userPassword.length < 8) {
+                showError('userPasswordError', '비밀번호는 최소 8자 이상이어야 합니다');
+                isValid = false;
+            } else {
+                hideError('userPasswordError');
+            }
+
+            // 비밀번호 확인
+            const userPasswordConfirm = document.getElementById('userPasswordConfirm').value;
+            if (!userPasswordConfirm) {
+                showError('userPasswordConfirmError', '비밀번호 확인을 입력해주세요');
+                isValid = false;
+            } else if (userPassword !== userPasswordConfirm) {
+                showError('userPasswordConfirmError', '비밀번호가 일치하지 않습니다');
+                isValid = false;
+            } else {
+                hideError('userPasswordConfirmError');
+            }
+
+            return isValid;
+        }
+
+        // Step 2 검증
+        function validateStep2() {
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            if (!selectedRole) {
+                showError('roleError', '역할을 선택해주세요');
+                return false;
+            }
+            hideError('roleError');
+            return true;
+        }
+
+        // 역할별 추가 정보 필드 표시
+        function showRoleFields() {
+            const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+            // 모든 필드 숨기기
+            document.getElementById('customerFields').style.display = 'none';
+            document.getElementById('accountantFields').style.display = 'none';
+            document.getElementById('adminFields').style.display = 'none';
+
+            // 선택된 역할 필드 표시
+            if (selectedRole === 'customer') {
+                document.getElementById('customerFields').style.display = 'block';
+            } else if (selectedRole === 'accountant') {
+                document.getElementById('accountantFields').style.display = 'block';
+            } else if (selectedRole === 'admin') {
+                document.getElementById('adminFields').style.display = 'block';
+            }
+        }
+
+        // 학력 추가/삭제
+        function addEducation() {
+            const container = document.getElementById('educationContainer');
+            const item = document.createElement('div');
+            item.className = 'array-input-item';
+            item.innerHTML = `
+                <input type="text" class="education-input" placeholder="예: 연세대학교 경영학과 졸업 (2010)">
+                <button type="button" class="btn-remove" onclick="removeEducation(this)">삭제</button>
+            `;
+            container.appendChild(item);
+        }
+
+        function removeEducation(btn) {
+            const container = document.getElementById('educationContainer');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('최소 1개 이상의 학력이 필요합니다');
+            }
+        }
+
+        // 경력 추가/삭제
+        function addCareer() {
+            const container = document.getElementById('careerContainer');
+            const item = document.createElement('div');
+            item.className = 'array-input-item';
+            item.innerHTML = `
+                <input type="text" class="career-input" placeholder="예: 삼일회계법인 (2010-2015)">
+                <button type="button" class="btn-remove" onclick="removeCareer(this)">삭제</button>
+            `;
+            container.appendChild(item);
+        }
+
+        function removeCareer(btn) {
+            const container = document.getElementById('careerContainer');
+            if (container.children.length > 1) {
+                btn.parentElement.remove();
+            } else {
+                alert('최소 1개 이상의 경력이 필요합니다');
+            }
+        }
+
+        // 에러 표시/숨김
+        function showError(id, message) {
+            const errorEl = document.getElementById(id);
+            errorEl.textContent = message;
+            errorEl.classList.add('show');
+        }
+
+        function hideError(id) {
+            const errorEl = document.getElementById(id);
+            errorEl.classList.remove('show');
+        }
+
+        // 회원가입 제출
+        async function submitRegistration() {
+            try {
+                const selectedRole = document.querySelector('input[name="role"]:checked').value;
+
+                // Step 1 데이터
+                const userName = document.getElementById('userName').value.trim();
+                const userEmail = document.getElementById('userEmail').value.trim();
+                const userPassword = document.getElementById('userPassword').value;
+
+                // 1. Supabase Auth 회원가입
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: userEmail,
+                    password: userPassword
+                });
+
+                if (authError) throw authError;
+
+                const userId = authData.user.id;
+                console.log('Auth signup success:', userId);
+
+                // 2. users 테이블에 기본 정보 저장
+                const { error: userError } = await supabase
+                    .from('users')
+                    .insert([{
+                        user_id: userId,
+                        email: userEmail,
+                        name: userName,
+                        role: selectedRole,
+                        is_active: true
+                    }]);
+
+                if (userError) throw userError;
+
+                console.log('User table insert success');
+
+                // 3. 역할별 추가 정보 저장
+                if (selectedRole === 'customer') {
+                    await saveCustomerData(userId);
+                } else if (selectedRole === 'accountant') {
+                    await saveAccountantData(userId);
+                } else if (selectedRole === 'admin') {
+                    await saveAdminData(userId);
+                }
+
+                // 성공
+                alert('회원가입이 완료되었습니다!\n로그인 페이지로 이동합니다.');
+                window.location.href = 'login.html';
+
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('회원가입 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // Customer 데이터 저장
+        async function saveCustomerData(userId) {
+            const companyName = document.getElementById('companyName').value.trim();
+            const companyNameEn = document.getElementById('companyNameEn').value.trim();
+            const businessNumber = document.getElementById('businessNumber').value.trim();
+            const ceoName = document.getElementById('ceoName').value.trim();
+
+            if (!companyName || !companyNameEn || !businessNumber || !ceoName) {
+                throw new Error('필수 항목을 모두 입력해주세요');
+            }
+
+            const { error } = await supabase
+                .from('customers')
+                .insert([{
+                    user_id: userId,
+                    company_name: companyName,
+                    company_name_en: companyNameEn,
+                    business_number: businessNumber,
+                    ceo_name: ceoName,
+                    industry: document.getElementById('industry').value.trim() || null,
+                    founded_date: document.getElementById('foundedDate').value || null,
+                    phone: document.getElementById('phone').value.trim() || null
+                }]);
+
+            if (error) throw error;
+            console.log('Customer data saved');
+        }
+
+        // Accountant 데이터 저장
+        async function saveAccountantData(userId) {
+            const licenseNumber = document.getElementById('licenseNumber').value.trim();
+
+            if (!licenseNumber) {
+                throw new Error('공인회계사 면허번호를 입력해주세요');
+            }
+
+            // 학력 배열
+            const educationInputs = document.querySelectorAll('.education-input');
+            const education = Array.from(educationInputs)
+                .map(input => input.value.trim())
+                .filter(val => val);
+
+            // 경력 배열
+            const careerInputs = document.querySelectorAll('.career-input');
+            const career = Array.from(careerInputs)
+                .map(input => input.value.trim())
+                .filter(val => val);
+
+            // 전문 분야 (쉼표로 구분)
+            const specializationText = document.getElementById('specialization').value.trim();
+            const specialization = specializationText
+                ? specializationText.split(',').map(s => s.trim()).filter(s => s)
+                : [];
+
+            // accountant_id 생성 (ACC + 타임스탬프)
+            const accountantId = 'ACC' + Date.now().toString().slice(-8);
+
+            const { error } = await supabase
+                .from('accountants')
+                .insert([{
+                    accountant_id: accountantId,
+                    user_id: userId,
+                    license_number: licenseNumber,
+                    education: education.length > 0 ? education : null,
+                    career: career.length > 0 ? career : null,
+                    specialization: specialization.length > 0 ? specialization : null,
+                    rating: 0.00,
+                    total_projects: 0,
+                    is_available: true
+                }]);
+
+            if (error) throw error;
+            console.log('Accountant data saved:', accountantId);
+        }
+
+        // Admin 데이터 저장
+        async function saveAdminData(userId) {
+            const adminCode = document.getElementById('adminCode').value.trim();
+
+            // 관리자 코드 검증 (예시: "ADMIN2026")
+            const VALID_ADMIN_CODE = 'ADMIN2026';
+
+            if (adminCode !== VALID_ADMIN_CODE) {
+                throw new Error('관리자 인증 코드가 올바르지 않습니다');
+            }
+
+            console.log('Admin verified:', userId);
+            // Admin은 users 테이블에만 저장 (별도 테이블 없음)
+        }
+    </script>
+</body>
+</html>

@@ -2705,3 +2705,161 @@ users 테이블에서 role 조회
 - 회계사 자격 검증
 - 프로필 완성 플로우
 
+
+---
+
+## Phase 4: User Registration 구현 완료 (2026-01-28)
+
+### 작업 상태: ✅ 완료
+
+### 작업 내용
+
+**목표:**
+- 3단계 회원가입 시스템 구현
+- 역할별 추가 정보 입력
+- 회계사 자격 검증
+- 로그인 페이지 구현
+
+---
+
+### 1. 회원가입 페이지 (register.html)
+
+**파일:** `C:\ValueLink\Valuation_Company\valuation-platform\frontend\app\register.html`
+
+**3단계 프로세스:**
+
+**Step 1: 기본 정보**
+- 이름
+- 이메일
+- 비밀번호
+- 비밀번호 확인
+
+**Step 2: 역할 선택**
+- ✅ customer (고객) - 평가 신청
+- ✅ accountant (공인회계사) - 평가 수행
+- ✅ admin (관리자) - 플랫폼 관리
+- ⏸️ investor (투자자) - Phase 5
+- ⏸️ partner (제휴자) - Phase 5
+- ⏸️ supporter (서포터) - Phase 5
+
+**Step 3: 역할별 추가 정보**
+
+**Customer 필드:**
+- 회사명 (국문/영문) - 필수
+- 사업자등록번호 - 필수
+- 대표자명 - 필수
+- 업종 - 선택
+- 설립일 - 선택
+- 전화번호 - 선택
+
+**Accountant 필드:**
+- 공인회계사 면허번호 - 필수
+- 전화번호 - 선택
+- 학력 - 배열 입력 (추가/삭제 가능)
+- 경력 - 배열 입력 (추가/삭제 가능)
+- 전문 분야 - 선택 (쉼표 구분)
+
+**Admin 필드:**
+- 관리자 인증 코드 - 필수
+- 코드: `ADMIN2026`
+
+---
+
+### 2. DB 저장 프로세스
+
+```
+Step 1 데이터 입력
+    ↓
+Supabase Auth 회원가입 (email, password)
+    ↓
+users 테이블에 기본 정보 저장 (user_id, email, name, role)
+    ↓
+역할별 테이블에 추가 정보 저장
+    - customer → customers 테이블
+    - accountant → accountants 테이블
+    - admin → (별도 테이블 없음)
+    ↓
+회원가입 완료 → login.html로 리다이렉트
+```
+
+---
+
+### 3. 로그인 페이지 (login.html)
+
+**파일:** `C:\ValueLink\Valuation_Company\valuation-platform\frontend\app\login.html`
+
+**기능:**
+- 이메일/비밀번호 로그인
+- Supabase Auth 인증
+- users 테이블에서 role 조회
+- 계정 활성화 여부 확인 (is_active)
+- 역할별 리다이렉트 (/core/mypage.html)
+- 이미 로그인된 경우 자동 리다이렉트
+- 로그인 상태 유지 옵션
+- 비밀번호 찾기 링크
+
+**에러 처리:**
+- Invalid login credentials
+- Email not confirmed
+- 비활성화된 계정
+
+---
+
+### 4. 주요 기능
+
+**회원가입 검증:**
+- 이메일 형식 검증
+- 비밀번호 8자 이상
+- 비밀번호 일치 확인
+- 역할 선택 필수
+- 역할별 필수 필드 검증
+
+**학력/경력 배열 입력:**
+- 동적으로 추가/삭제 가능
+- 최소 1개 이상 유지
+- PostgreSQL TEXT[] 타입으로 저장
+
+**관리자 인증:**
+- 인증 코드 검증 (`ADMIN2026`)
+- 잘못된 코드 입력 시 회원가입 실패
+
+**accountant_id 생성:**
+- 형식: `ACC + 8자리 타임스탬프`
+- 예: `ACC12345678`
+
+---
+
+### 5. UI/UX 개선
+
+**진행 단계 표시:**
+- 3단계 프로그레스 바
+- 현재 단계 강조 표시
+- 완료된 단계 체크 표시
+
+**역할 선택 카드:**
+- 6개 역할 카드 (3개 활성, 3개 비활성)
+- 선택 시 체크 아이콘 표시
+- Phase 5 역할은 "곧 서비스 예정" 표시
+
+**반응형 디자인:**
+- 모바일 최적화
+- 3단계 그리드 → 1열로 변경
+- 버튼 세로 정렬
+
+---
+
+### 파일 변경 사항
+
+**생성:**
+- `app/register.html` (700+ lines)
+- `app/login.html` (300+ lines)
+
+---
+
+### 다음 단계: Phase 5
+
+- Investor, Partner, Supporter 역할 활성화
+- Link 서비스 inquiry 시스템
+- 관심 분야 추적 테이블
+- 외부 사용자용 mypage 구현
+
