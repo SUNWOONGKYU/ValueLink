@@ -523,7 +523,16 @@
 
             <!-- 기업 정보 입력 -->
             <div class="company-info">
-                <h2 class="section-title">기업 기본 정보</h2>
+                <h2 class="section-title">평가 대상 회사 정보</h2>
+
+                <!-- 마이 페이지 정보 없을 때 안내 -->
+                <div id="mypageAlert" style="display: none; background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <p style="color: #92400E; font-size: 14px; margin: 0;">
+                        💡 <strong>마이 페이지</strong>에 회사 정보를 미리 등록하시면 자동으로 입력됩니다.
+                        <a href="../core/mypage-company.html" style="color: #166534; text-decoration: underline; font-weight: 600;">마이 페이지로 이동 →</a>
+                    </p>
+                </div>
+
                 <form id="requestForm">
                     <div class="form-group">
                         <label class="form-label required">회사명</label>
@@ -674,6 +683,9 @@
             if (data.companyName) document.getElementById('companyName').value = data.companyName;
             if (data.ceoName) document.getElementById('ceoName').value = data.ceoName;
             if (data.industry) document.getElementById('industry').value = data.industry;
+        } else {
+            // 마이 페이지 정보가 없으면 알림 표시
+            document.getElementById('mypageAlert').style.display = 'block';
         }
     </script>
 </body>
