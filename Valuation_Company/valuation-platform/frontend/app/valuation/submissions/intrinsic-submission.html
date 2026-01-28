@@ -8,28 +8,15 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root { --deep-blue: #1D4ED8; --deep-blue-pale: #DBEAFE; --text-primary: #111827; --text-muted: #6B7280; --bg-light: #F3F4F6; --white: #FFFFFF; --success: #10B981; --error: #EF4444; }
         body { font-family: 'Pretendard', -apple-system, sans-serif; background-color: var(--bg-light); color: var(--text-primary); min-height: 100vh; }
-        header { background: var(--white); border-bottom: 1px solid #E5E7EB; padding: 0 40px; height: 72px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .header-left { display: flex; align-items: center; gap: 48px; }
-        .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-        .portal-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--deep-blue-pale); color: var(--deep-blue); border-radius: 8px; font-size: 14px; font-weight: 600; }
-        .header-right { display: flex; align-items: center; gap: 16px; }
-        .user-info { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 40px; height: 40px; background: var(--deep-blue-pale); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--deep-blue); }
-        .user-name { font-size: 14px; font-weight: 600; }
-        .user-company { font-size: 12px; color: var(--text-muted); }
-        .btn-logout { padding: 8px 16px; font-size: 14px; color: var(--text-muted); background: transparent; border: 1px solid #E5E7EB; border-radius: 8px; cursor: pointer; }
-        .main-nav { display: flex; gap: 8px; }
-        .nav-item { padding: 10px 20px; font-size: 15px; font-weight: 600; text-decoration: none; color: var(--text-secondary); border-radius: 8px; transition: all 0.2s ease; }
-        .nav-item:hover { background: var(--bg-light); }
+        /* Header styles moved to header.html component */
 
         /* BREADCRUMB */
-        .breadcrumb-container { background: var(--white); border-bottom: 1px solid #E5E7EB; padding: 12px 40px; }
-        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); max-width: 1200px; margin: 0 auto; }
-        .breadcrumb a { color: var(--deep-blue); text-decoration: none; transition: color 0.2s ease; }
-        .breadcrumb a:hover { color: #1E40AF; }
-        .breadcrumb span { color: var(--text-muted); }
+        /* HERO SECTION */
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+        .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
         .main-content { max-width: 1200px; margin: 0 auto; padding: 40px; }
         .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
@@ -137,14 +124,22 @@
                 height: 36px;
             }
 
-            /* Breadcrumb */
-            .breadcrumb-container {
-                padding: 10px 20px;
+            /* Hero Section Responsive */
+            .hero-section {
+                padding: 40px 20px;
             }
 
-            .breadcrumb {
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-badge {
                 font-size: 12px;
-                flex-wrap: wrap;
+                padding: 6px 12px;
             }
 
             /* Main Content */
@@ -292,14 +287,17 @@
     <!-- 헤더 -->
     <div id="header-container"></div>
 
-    <!-- BREADCRUMB -->
-    <div class="breadcrumb-container">
-        <div class="breadcrumb">
-            <a href="../index.html">홈</a>
-            <span>></span>
-            <a href="mockup-valuation.html">평가방법</a>
-            <span>></span>
-            <a href="mockup-valuation.html#ipo">자본시장법평가법</a>
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">자본시장법 평가</h1>
+            <p class="hero-subtitle">자료 제출 및 추가 정보 입력</p>
+            <div class="hero-badge">
+                <span>프로젝트 ID: </span>
+                <span id="hero-project-id">-</span>
+            </div>
+        </div>
+    </div>
             <span>></span>
             <span>자료제출</span>
         </div>
@@ -473,6 +471,14 @@
 
     <!-- 페이지 스크립트 -->
     <script>
+        // URL에서 프로젝트 ID 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId') || '-';
+
+        // Hero section에 프로젝트 ID 표시
+        const heroProjectId = document.getElementById('hero-project-id');
+        if (heroProjectId) heroProjectId.textContent = projectId;
+
         const uploadedFiles = { financial: [], business_plan: [], shareholder: [], articles: [], company_intro: [], others: [] };
 
         document.querySelectorAll('.upload-dropzone').forEach(dropzone => {
