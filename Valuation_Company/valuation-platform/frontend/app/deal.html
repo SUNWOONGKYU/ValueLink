@@ -358,11 +358,11 @@
         /* 컬럼별 너비 조정 (7개 컬럼: No. 추가) */
         .deals-table th:nth-child(1) { width: 5%; }  /* No. */
         .deals-table th:nth-child(2) { width: 12%; } /* 기업명 */
-        .deals-table th:nth-child(3) { width: 18%; } /* 주요사업 */
+        .deals-table th:nth-child(3) { width: 20%; } /* 주요사업 */
         .deals-table th:nth-child(4) { width: 10%; } /* 투자단계 */
-        .deals-table th:nth-child(5) { width: 30%; } /* 투자자 */
+        .deals-table th:nth-child(5) { width: 20%; } /* 투자자 */
         .deals-table th:nth-child(6) { width: 12%; } /* 투자금액 */
-        .deals-table th:nth-child(7) { width: 8%; }  /* 뉴스 */
+        .deals-table th:nth-child(7) { width: 13%; }  /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -997,7 +997,7 @@
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
-                        <th>뉴스 게재 시간</th>
+                        <th>뉴스</th>
                     </tr>
                 </thead>
                 <tbody id="deals-tbody">
@@ -1021,15 +1021,15 @@
             <!-- - 정확한 투자유치 기업 수로 업데이트 -->
             <div style="margin-bottom: 24px;">
                 <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-yesterday" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">8</div>
+                    <div class="stat-value" id="stat-yesterday" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
                     <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">어제 투자유치 기업 수</div>
                 </div>
                 <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-last-week" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">100</div>
+                    <div class="stat-value" id="stat-last-week" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
                     <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">지난주 투자유치 기업 수</div>
                 </div>
                 <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-year-total" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">100</div>
+                    <div class="stat-value" id="stat-year-total" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
                     <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">금년 누적 투자유치 기업 수</div>
                 </div>
             </div>
@@ -1506,10 +1506,7 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="뉴스 게재 시간" style="font-size: 13px;">
-                            <div style="margin-bottom: 4px; color: var(--text-primary);">${escapeHtml(newsDate)}</div>
-                            <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(siteName)}</div>
-                        </td>
+                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">뉴스 보기</a></td>
                     </tr>
                 `;
             }).join('');
