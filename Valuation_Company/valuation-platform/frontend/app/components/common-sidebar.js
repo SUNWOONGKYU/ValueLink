@@ -29,7 +29,7 @@ function getStatusDisplay(status) {
 }
 
 /**
- * 14단계 프로세스 정의
+ * 15단계 프로세스 정의
  */
 const PROCESS_STEPS = [
     { step: 1, name: '서비스 안내문 보기', page: 'guide', visible: true },
@@ -44,8 +44,9 @@ const PROCESS_STEPS = [
     { step: 10, name: '평가보고서 초안 수정 요청하기', page: 'revision-request', visible: true },
     { step: 11, name: '평가보고서 최종안 작성', page: 'final-preparation', visible: false },
     { step: 12, name: '평가보고서 최종안 확인하기', page: 'result', params: 'mode=final', visible: true },
-    { step: 13, name: '대금 결제하기', page: 'payment', visible: true },
-    { step: 14, name: '평가보고서 수령하기', page: 'report-download', visible: true }
+    { step: 13, name: '계약금 결제하기', page: 'deposit-payment', visible: true },
+    { step: 14, name: '잔금 결제하기', page: 'balance-payment', visible: true },
+    { step: 15, name: '평가보고서 수령하기', page: 'report-download', visible: true }
 ];
 
 /**
@@ -121,12 +122,16 @@ function getStepUrl(stepInfo, method, projectId) {
             // 10단계: 수정 요청
             return basePath + `valuation/revision-request.html${projectId ? '?projectId=' + projectId : ''}`;
 
-        case 'payment':
-            // 13단계: 결제하기
+        case 'deposit-payment':
+            // 13단계: 계약금 결제하기
+            return basePath + `valuation/deposit-payment.html${projectId ? '?projectId=' + projectId : ''}`;
+
+        case 'balance-payment':
+            // 14단계: 잔금 결제하기
             return basePath + `valuation/balance-payment.html${projectId ? '?projectId=' + projectId : ''}`;
 
         case 'report-download':
-            // 14단계: 평가보고서 수령
+            // 15단계: 평가보고서 수령
             return basePath + `valuation/report-download.html${projectId ? '?projectId=' + projectId : ''}`;
 
         default:
@@ -135,14 +140,14 @@ function getStepUrl(stepInfo, method, projectId) {
 }
 
 /**
- * 14단계 프로세스 사이드바 렌더링
- * @param {number} currentStep - 현재 단계 (1~14)
+ * 15단계 프로세스 사이드바 렌더링
+ * @param {number} currentStep - 현재 단계 (1~15)
  * @param {string} methodStatus - 평가법 상태 (approved, in_progress 등)
  * @param {string} method - 평가법 코드 (dcf, relative 등) - 4단계부터 필요
  * @param {string} projectId - 프로젝트 ID
  * @returns {string} HTML 문자열
  */
-export function renderSidebar(currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 14) {
+export function renderSidebar(currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15) {
     const statusInfo = getStatusDisplay(methodStatus);
 
     let html = `
@@ -467,7 +472,7 @@ export const SIDEBAR_STYLES = `
  * @param {string} method - 평가법 코드
  * @param {string} projectId - 프로젝트 ID
  */
-export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 14) {
+export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
