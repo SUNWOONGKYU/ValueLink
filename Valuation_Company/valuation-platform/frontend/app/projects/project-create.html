@@ -434,9 +434,9 @@
     <!-- MAIN -->
     <main class="main-content">
 
-        <!-- 고객사 정보 -->
+        <!-- 평가 대상 회사 정보 -->
         <div class="form-card">
-            <h2>고객사 정보</h2>
+            <h2>평가 대상 회사 정보</h2>
 
             <div class="form-row">
                 <div class="form-group">
@@ -452,19 +452,19 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label>사업자등록번호 <span class="required">*</span></label>
-                    <input type="text" id="bizNumber" placeholder="000-00-00000">
+                    <label>대표자명 <span class="required">*</span></label>
+                    <input type="text" id="ceoName" placeholder="예: 홍길동">
                 </div>
                 <div class="form-group">
-                    <label>대표자명 <span class="required">*</span></label>
-                    <input type="text" id="ceoName" placeholder="대표이사 성명">
+                    <label>사업자등록번호 <span class="required">*</span></label>
+                    <input type="text" id="bizNumber" placeholder="예: 123-45-67890">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label>업종</label>
-                    <input type="text" id="industry" placeholder="예: 소프트웨어 개발업">
+                    <input type="text" id="industry" placeholder="예: 소프트웨어 개발">
                 </div>
                 <div class="form-group">
                     <label>설립일</label>
@@ -472,18 +472,37 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>담당자 연락처</label>
-                <div class="form-row">
-                    <input type="text" id="contactName" placeholder="담당자 성명">
-                    <input type="email" id="contactEmail" placeholder="이메일 주소">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>직원 수</label>
+                    <input type="number" id="employees" placeholder="예: 50">
                 </div>
+                <div class="form-group">
+                    <label>전화번호</label>
+                    <input type="tel" id="phone" placeholder="예: 02-1234-5678">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>회사 홈페이지</label>
+                    <input type="url" id="companyWebsite" placeholder="예: https://www.valuelink.com">
+                </div>
+                <div class="form-group">
+                    <label>팩스 번호</label>
+                    <input type="tel" id="fax" placeholder="예: 02-1234-5679">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>주소</label>
+                <input type="text" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123" style="width: 100%;">
             </div>
         </div>
 
-        <!-- 평가 정보 -->
+        <!-- 평가 방법 선택 -->
         <div class="form-card">
-            <h2>평가 정보</h2>
+            <h2>평가 방법 선택</h2>
 
             <div class="form-group">
                 <label>평가 방법 <span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
@@ -657,14 +676,14 @@
                 document.getElementById('companyNameEn').value = customerData.company_name_en;
             }
 
-            // 사업자등록번호
-            if (customerData.business_number && !document.getElementById('bizNumber').value) {
-                document.getElementById('bizNumber').value = customerData.business_number;
-            }
-
             // 대표자명
             if (customerData.ceo_name && !document.getElementById('ceoName').value) {
                 document.getElementById('ceoName').value = customerData.ceo_name;
+            }
+
+            // 사업자등록번호
+            if (customerData.business_number && !document.getElementById('bizNumber').value) {
+                document.getElementById('bizNumber').value = customerData.business_number;
             }
 
             // 업종
@@ -677,13 +696,43 @@
                 document.getElementById('foundedDate').value = customerData.founded_date;
             }
 
+            // 직원 수
+            if (customerData.employees && !document.getElementById('employees').value) {
+                document.getElementById('employees').value = customerData.employees;
+            }
+
+            // 전화번호
+            if (customerData.phone && !document.getElementById('phone').value) {
+                document.getElementById('phone').value = customerData.phone;
+            }
+
+            // 회사 홈페이지
+            if (customerData.company_website && !document.getElementById('companyWebsite').value) {
+                document.getElementById('companyWebsite').value = customerData.company_website;
+            }
+
+            // 팩스 번호
+            if (customerData.fax && !document.getElementById('fax').value) {
+                document.getElementById('fax').value = customerData.fax;
+            }
+
+            // 주소
+            if (customerData.address && !document.getElementById('address').value) {
+                document.getElementById('address').value = customerData.address;
+            }
+
             console.log('Auto-fill completed:', {
                 companyNameKr: customerData.company_name,
                 companyNameEn: customerData.company_name_en,
-                bizNumber: customerData.business_number,
                 ceoName: customerData.ceo_name,
+                bizNumber: customerData.business_number,
                 industry: customerData.industry,
-                foundedDate: customerData.founded_date
+                foundedDate: customerData.founded_date,
+                employees: customerData.employees,
+                phone: customerData.phone,
+                companyWebsite: customerData.company_website,
+                fax: customerData.fax,
+                address: customerData.address
             });
         }
         // ===== END: PHASE 3 =====
@@ -778,6 +827,15 @@
                         .update({
                             company_name_kr: companyNameKr,
                             company_name_en: companyNameEn,
+                            ceo_name: document.getElementById('ceoName').value,
+                            business_number: document.getElementById('bizNumber').value,
+                            industry: document.getElementById('industry').value,
+                            founded_date: document.getElementById('foundedDate').value,
+                            employees: document.getElementById('employees').value,
+                            phone: document.getElementById('phone').value,
+                            company_website: document.getElementById('companyWebsite').value,
+                            fax: document.getElementById('fax').value,
+                            address: document.getElementById('address').value,
                             budget: budget,
                             valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
                             purpose: document.getElementById('purpose').value,
@@ -799,6 +857,15 @@
                         project_id: projectId,
                         company_name_kr: companyNameKr,
                         company_name_en: companyNameEn,
+                        ceo_name: document.getElementById('ceoName').value,
+                        business_number: document.getElementById('bizNumber').value,
+                        industry: document.getElementById('industry').value,
+                        founded_date: document.getElementById('foundedDate').value,
+                        employees: document.getElementById('employees').value,
+                        phone: document.getElementById('phone').value,
+                        company_website: document.getElementById('companyWebsite').value,
+                        fax: document.getElementById('fax').value,
+                        address: document.getElementById('address').value,
                         budget: budget,
                         valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
                         purpose: document.getElementById('purpose').value,
@@ -867,8 +934,17 @@
 
                 if (project) {
                     // 폼에 데이터 채우기
-                    document.getElementById('companyNameKr').value = project.company_name_kr;
-                    document.getElementById('companyNameEn').value = project.company_name_en;
+                    document.getElementById('companyNameKr').value = project.company_name_kr || '';
+                    document.getElementById('companyNameEn').value = project.company_name_en || '';
+                    document.getElementById('ceoName').value = project.ceo_name || '';
+                    document.getElementById('bizNumber').value = project.business_number || '';
+                    document.getElementById('industry').value = project.industry || '';
+                    document.getElementById('foundedDate').value = project.founded_date || '';
+                    document.getElementById('employees').value = project.employees || '';
+                    document.getElementById('phone').value = project.phone || '';
+                    document.getElementById('companyWebsite').value = project.company_website || '';
+                    document.getElementById('fax').value = project.fax || '';
+                    document.getElementById('address').value = project.address || '';
                     document.getElementById('valuationDate').value = project.valuation_date;
                     document.getElementById('purpose').value = project.purpose || '';
                     document.getElementById('assignedAccountant').value = project.assigned_accountant || '';
