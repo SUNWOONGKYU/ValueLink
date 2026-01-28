@@ -368,7 +368,7 @@
             padding: 12px 10px;
             font-size: 14px;
             border-bottom: 1px solid #F3F4F6;
-            vertical-align: top;
+            vertical-align: middle;
         }
 
         .deals-table tr:hover {
@@ -1151,16 +1151,25 @@
                     console.log('최신 Deal 뉴스:', deals);
 
                     if (deals && deals.length > 0) {
-                        const newsItems = deals.map(deal => ({
-                            title: deal.news_title || `${deal.company_name} ${deal.stage} 투자 유치`,
-                            source: deal.site_name || '미디어',
-                            source_url: deal.news_url || '#',
-                            date: deal.news_date,
-                            created_at: deal.created_at,
-                            company: deal.company_name || '-',
-                            stage: deal.stage || '-',
-                            amount: deal.amount ? `${deal.amount}억원` : '비공개'
-                        }));
+                        const newsItems = deals.map(deal => {
+                            // 언론사 필터링
+                            let siteName = deal.site_name || '미디어';
+                            const invalidSites = ['네이버 뉴스', 'Google News', 'VC 포트폴리오'];
+                            if (invalidSites.includes(siteName)) {
+                                siteName = '미디어';
+                            }
+
+                            return {
+                                title: deal.news_title || `${deal.company_name} ${deal.stage} 투자 유치`,
+                                source: siteName,
+                                source_url: deal.news_url || '#',
+                                date: deal.news_date,
+                                created_at: deal.created_at,
+                                company: deal.company_name || '-',
+                                stage: deal.stage || '-',
+                                amount: deal.amount ? `${deal.amount}억원` : '비공개'
+                            };
+                        });
 
                         renderNewsCards(newsItems);
                     } else {
