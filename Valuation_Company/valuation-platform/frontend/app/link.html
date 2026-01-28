@@ -86,8 +86,9 @@
             width: 100%;
             background: white;
             border-radius: 12px;
-            overflow: hidden;
+            overflow: visible;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            table-layout: fixed;
         }
 
         .company-table th {
@@ -102,23 +103,25 @@
         }
 
         .company-table th:nth-child(1) { width: 4%; text-align: center; } /* No. */
-        .company-table th:nth-child(2) { width: 15%; } /* 기업명 */
-        .company-table th:nth-child(3) { width: 6%; } /* 대표자 */
-        .company-table th:nth-child(4) { width: 12%; } /* 업종 */
-        .company-table th:nth-child(5) { width: 7%; } /* 설립일 */
-        .company-table th:nth-child(6) { width: 7%; } /* 지역 */
-        .company-table th:nth-child(7) { width: 12%; } /* 기업가치 */
-        .company-table th:nth-child(8) { width: 15%; } /* 평가방법 */
-        .company-table th:nth-child(9) { width: 22%; } /* 연결 문의 */
+        .company-table th:nth-child(2) { width: 14%; } /* 기업명 */
+        .company-table th:nth-child(3) { width: 7%; } /* 대표자 */
+        .company-table th:nth-child(4) { width: 11%; } /* 업종 */
+        .company-table th:nth-child(5) { width: 8%; } /* 설립일 */
+        .company-table th:nth-child(6) { width: 6%; } /* 지역 */
+        .company-table th:nth-child(7) { width: 11%; } /* 기업가치 */
+        .company-table th:nth-child(8) { width: 14%; } /* 평가방법 */
+        .company-table th:nth-child(9) { width: 25%; } /* 연결 문의 */
 
         .company-table td {
             padding: 16px 12px;
             border-bottom: 1px solid #F3F4F6;
             color: var(--text-primary);
             font-size: 14px;
+            white-space: nowrap;
         }
 
         .company-table td:nth-child(1) { text-align: center; font-weight: 500; color: var(--text-secondary); } /* No. */
+        .company-table td:nth-child(9) { white-space: normal; } /* 연결 문의 - 버튼 줄바꿈 허용 */
 
         .company-table tr:hover {
             background: #F9FAFB;
@@ -138,11 +141,11 @@
 
         .need-tag {
             display: inline-block;
-            padding: 6px 10px;
-            margin: 2px;
+            padding: 5px 8px;
+            margin: 1px;
             background: #F3F4F6;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-decoration: none;
             transition: all 0.2s ease;
@@ -710,7 +713,7 @@
         <!-- 메인 영역 -->
         <div class="main-area">
             <!-- Company List -->
-            <h2 class="section-title" id="companies">평가받은 기업 목록 <span style="color: red; font-size: 14px;">[최신버전 17:29]</span></h2>
+            <h2 class="section-title" id="companies">평가받은 기업 목록</h2>
 
             <table class="company-table">
             <thead>
