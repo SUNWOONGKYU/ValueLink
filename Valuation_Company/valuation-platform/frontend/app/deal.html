@@ -375,20 +375,14 @@
             background: #FEFCE8;
         }
 
-        /* 투자자 셀 스타일 - 두 줄로 강제 표시 */
+        /* 투자자 셀 스타일 - 자동 줄바꿈 */
         .deal-investors {
             font-size: 13px !important;
             color: var(--text-secondary) !important;
-            line-height: 1.5 !important;
-            min-height: 42px !important; /* 최소 2줄 높이 */
-            max-height: 42px !important; /* 최대 2줄 높이 */
+            line-height: 1.6 !important;
             word-break: break-word !important;
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
-            display: -webkit-box !important;
-            -webkit-line-clamp: 2 !important; /* 2줄로 제한 */
-            -webkit-box-orient: vertical !important;
-            overflow: hidden !important;
             white-space: normal !important;
             max-width: 100% !important;
         }
@@ -1243,28 +1237,21 @@
 
         // 시간 포맷 함수 (YYYY-MM-DD HH:MM)
         function formatDateTime(publishedDate, createdAt) {
-            let dateStr = publishedDate;
+            // news_date(실제 뉴스 발행일)만 사용
+            if (!publishedDate) return '-';
 
-            // published_date가 날짜만 있으면 (YYYY-MM-DD 형식)
-            if (dateStr && dateStr.length === 10) {
-                // created_at 사용 (시간 정보 포함)
-                if (createdAt) {
-                    dateStr = createdAt;
-                } else {
-                    // 시간 정보 없으면 날짜만 표시
-                    return dateStr;
-                }
+            // YYYY-MM-DD 형식이면 그대로 반환
+            if (publishedDate.length === 10) {
+                return publishedDate;
             }
 
-            // ISO 8601 형식 (2026-01-26T15:30:00Z) → YYYY-MM-DD HH:MM
-            const date = new Date(dateStr);
+            // ISO 8601 형식 (시간 포함)이면 YYYY-MM-DD만 추출
+            const date = new Date(publishedDate);
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
-            const hour = String(date.getHours()).padStart(2, '0');
-            const minute = String(date.getMinutes()).padStart(2, '0');
 
-            return `${year}-${month}-${day} ${hour}:${minute}`;
+            return `${year}-${month}-${day}`;
         }
 
         // 뉴스 테이블 렌더링 - 상세 정보 표시
