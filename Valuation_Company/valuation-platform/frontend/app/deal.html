@@ -1450,8 +1450,8 @@
             const tbody = document.getElementById('deals-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = deals.map(deal => {
-                const number = deal.number || '-';
+            tbody.innerHTML = deals.map((deal, index) => {
+                const number = index + 1;  // 화면 표시용 순서 번호 (1부터 시작)
                 const company = deal.company_name || '-';
                 const industry = deal.industry || '-';
                 let stage = deal.stage || '-';
@@ -1499,7 +1499,7 @@
 
                 return `
                     <tr onclick='showDealDetail(${dealData})' style="cursor: pointer;">
-                        <td data-label="No." style="text-align: center; color: var(--text-muted);">${escapeHtml(String(number))}</td>
+                        <td data-label="No." style="text-align: center; color: var(--text-muted);">${number}</td>
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
                         <td data-label="주요사업" class="deal-industry">${escapeHtml(industry)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
