@@ -351,13 +351,14 @@
             white-space: nowrap;
         }
 
-        /* 컬럼별 너비 조정 (대표자/설립일/지역/누적투자액 제거, 6개 컬럼) */
-        .deals-table th:nth-child(1) { width: 13%; } /* 기업명 */
-        .deals-table th:nth-child(2) { width: 20%; } /* 주요사업 */
-        .deals-table th:nth-child(3) { width: 12%; } /* 투자단계 */
-        .deals-table th:nth-child(4) { width: 30%; } /* 투자자 */
-        .deals-table th:nth-child(5) { width: 14%; } /* 투자금액 */
-        .deals-table th:nth-child(6) { width: 11%; } /* 뉴스 */
+        /* 컬럼별 너비 조정 (7개 컬럼: No. 추가) */
+        .deals-table th:nth-child(1) { width: 5%; }  /* No. */
+        .deals-table th:nth-child(2) { width: 12%; } /* 기업명 */
+        .deals-table th:nth-child(3) { width: 18%; } /* 주요사업 */
+        .deals-table th:nth-child(4) { width: 10%; } /* 투자단계 */
+        .deals-table th:nth-child(5) { width: 30%; } /* 투자자 */
+        .deals-table th:nth-child(6) { width: 12%; } /* 투자금액 */
+        .deals-table th:nth-child(7) { width: 8%; }  /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -370,19 +371,19 @@
             background: #FEFCE8;
         }
 
-        /* 투자자 셀 스타일 - 두 줄로 표시 */
+        /* 투자자 셀 스타일 - 두 줄로 강제 표시 */
         .deal-investors {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.7;
-            min-height: 48px; /* 최소 2줄 높이 확보 */
-            max-height: 48px; /* 2줄 제한 강제 (14px * 1.7 * 2 = 47.6px) */
+            line-height: 1.6;
+            min-height: 42px !important; /* 최소 2줄 높이 강제 */
+            max-height: 42px !important; /* 2줄 제한 강제 */
             word-break: keep-all;
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* 2줄 제한 */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            white-space: normal; /* 여러 줄 표시 가능 */
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important; /* 2줄 제한 */
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            white-space: normal !important; /* 여러 줄 표시 */
         }
 
         .deal-company {
@@ -451,15 +452,14 @@
         }
 
         .link-btn {
-            padding: 6px 10px;
+            padding: 4px 8px;
             font-size: 11px;
-            font-weight: 500;
-            border-radius: 6px;
+            font-weight: 400;
+            border-radius: 4px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            display: inline-block;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
         .link-news {
@@ -991,6 +991,7 @@
             <table class="deals-table">
                 <thead>
                     <tr>
+                        <th>No.</th>
                         <th>기업명</th>
                         <th>주요사업</th>
                         <th>투자단계</th>
@@ -1002,7 +1003,7 @@
                 <tbody id="deals-tbody">
                     <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 40px; color: #6B7280;">
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #6B7280;">
                             데이터 로딩 중...
                         </td>
                     </tr>
@@ -1312,8 +1313,8 @@
             try {
                 console.log('Deal 테이블 로딩 중...');
 
-                // Supabase에서 Deal 데이터 가져오기 (최신순 정렬)
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc`, {
+                // Supabase에서 Deal 데이터 가져오기 (number 순서대로 정렬)
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=*&order=number.asc`, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -1322,7 +1323,7 @@
 
                 if (response.ok) {
                     const deals = await response.json();
-                    console.log('Deal 데이터:', deals);
+                    console.log('Deal 데이터:', deals.length, '개');
 
                     if (deals && deals.length > 0) {
                         renderDealsTable(deals);
@@ -1330,7 +1331,7 @@
                         console.log('DB에 Deal 없음');
                         const tbody = document.getElementById('deals-tbody');
                         if (tbody) {
-                            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
+                            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
                         }
                     }
                 } else {
@@ -1444,15 +1445,16 @@
             }
         }
 
-        // Deal 테이블 렌더링 (대표자/설립일/지역/누적투자액 제거)
+        // Deal 테이블 렌더링 (No. 컬럼 추가)
         function renderDealsTable(deals) {
             const tbody = document.getElementById('deals-tbody');
             if (!tbody) return;
 
             tbody.innerHTML = deals.map(deal => {
+                const number = deal.number || '-';
                 const company = deal.company_name || '-';
                 const industry = deal.industry || '-';
-                const stage = deal.stage || '-';
+                let stage = deal.stage || '-';
                 const amount = deal.amount ? `${deal.amount}억원` : '-';
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
@@ -1460,6 +1462,12 @@
                 const ceo = deal.ceo || '-';
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
+
+                // 투자단계 정제 (시드, 프리A, 시리즈A/B/C만 허용)
+                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C'];
+                if (stage !== '-' && !validStages.some(v => stage.includes(v))) {
+                    stage = '-';
+                }
 
                 // 투자자 콤마로 구분, 두 줄로 표시 (5개까지만)
                 let investorList = '-';
@@ -1483,6 +1491,7 @@
 
                 return `
                     <tr onclick='showDealDetail(${dealData})' style="cursor: pointer;">
+                        <td data-label="No." style="text-align: center; color: var(--text-muted);">${escapeHtml(String(number))}</td>
                         <td data-label="기업명"><div class="deal-name">${escapeHtml(company)}</div></td>
                         <td data-label="주요사업" class="deal-industry">${escapeHtml(industry)}</td>
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
