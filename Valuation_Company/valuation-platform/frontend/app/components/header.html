@@ -1,0 +1,65 @@
+<!-- ValueLink 공통 헤더 -->
+<header>
+    <div class="header-left">
+        <a href="/" class="logo">
+            <svg class="logo-symbol" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" rx="20" fill="#1E3A5F"/>
+                <path d="M25 35L50 65L75 35" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="logo-text">ValueLink</span>
+        </a>
+        <nav class="main-nav">
+            <a href="/app/index.html" class="nav-item" id="menu-valuation">평가</a>
+            <a href="/app/core/deal.html" class="nav-item" id="menu-deal">Deal</a>
+        </nav>
+    </div>
+    <div class="header-right">
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div>
+                <div class="user-name" id="userName">사용자</div>
+                <div class="user-company" id="userCompany">회사명</div>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
+    </div>
+</header>
+
+<script>
+// 로그아웃 처리
+async function handleLogout() {
+    if (confirm('로그아웃 하시겠습니까?')) {
+        // Supabase 로그아웃 (페이지에 이미 supabase 인스턴스가 있다고 가정)
+        if (typeof supabase !== 'undefined') {
+            await supabase.auth.signOut();
+        }
+        window.location.href = '/app/login.html';
+    }
+}
+
+// 사용자 정보 로드 (옵션)
+async function loadUserInfo() {
+    if (typeof supabase !== 'undefined') {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('name')
+                .eq('user_id', user.id)
+                .single();
+
+            if (userData) {
+                document.getElementById('userName').textContent = userData.name || '사용자';
+                document.getElementById('userAvatar').textContent = userData.name?.charAt(0) || 'U';
+            }
+        }
+    }
+}
+
+// 페이지 로드 시 사용자 정보 로드
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadUserInfo);
+} else {
+    loadUserInfo();
+}
+</script>
