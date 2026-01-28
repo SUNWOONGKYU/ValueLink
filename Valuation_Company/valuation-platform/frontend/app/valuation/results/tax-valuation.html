@@ -29,80 +29,14 @@
             color: var(--text-primary);
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid #E5E7EB;
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* Header styles moved to header.html component */
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .main-nav { display: flex; gap: 8px; }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item { color: var(--text-secondary); }
-        .nav-item:hover { background: var(--bg-light); }
-
-        /* BREADCRUMB */
-        .breadcrumb-container {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 40px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .breadcrumb a {
-            color: var(--deep-blue);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--deep-blue-light);
-        }
-
-        .breadcrumb span {
-            color: var(--text-muted);
-        }
+        /* HERO SECTION */
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+        .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
 
         /* HERO */
         .hero {
@@ -843,46 +777,20 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../../../frontend/index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="../guides/mockup-valuation.html" class="nav-item">평가방법</a>
-                <a href="../../core/valuation-list.html" class="nav-item">프로젝트 목록</a>
-                <a href="../../projects/project-create.html" class="nav-item">신규</a>
-                <a href="../../dev/deal.html" class="nav-item">Deal</a>
-            </nav>
-        </div>
-    </header>
+    <!-- Header -->
+    <div id="header-container"></div>
 
-    <!-- BREADCRUMB -->
-    <div class="breadcrumb-container">
-        <div class="breadcrumb">
-            <a href="../../../frontend/index.html">홈</a>
-            <span>></span>
-            <a href="../guides/mockup-valuation.html">평가방법</a>
-            <span>></span>
-            <span>상증세법평가법</span>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">상증세법 평가</h1>
+            <p class="hero-subtitle">상속세 및 증여세법에 따른 비상장주식 보충적 평가방법</p>
+            <div class="hero-badge">
+                <span>프로젝트 ID: </span>
+                <span id="hero-project-id">-</span>
+            </div>
         </div>
     </div>
-
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-badge">TAX LAW VALUATION</div>
-        <h1>상증법 평가</h1>
-        <p>상속세 및 증여세법에 따른 비상장주식 보충적 평가방법</p>
-        <a href="tax-portal.html" style="display: inline-block; margin-top: 20px; padding: 12px 32px; background: #10B981; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">📁 평가 신청하기</a>
-    </section>
 
     <!-- MAIN -->
     <!-- MAIN -->
@@ -1279,6 +1187,32 @@
 
         // Set today's date
         document.getElementById('valuation-date').valueAsDate = new Date();
+    </script>
+
+    <!-- Header Load Script -->
+    <script>
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // Hero section에 프로젝트 ID 표시
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId') || '-';
+        const heroProjectId = document.getElementById('hero-project-id');
+        if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
     <!-- 사이드바 초기화 -->
