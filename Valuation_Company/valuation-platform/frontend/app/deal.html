@@ -1269,7 +1269,7 @@
                 const url = news.source_url || '#';
                 const industry = news.industry || extractIndustry(news.title);
                 const stage = news.stage || extractStage(news.title);
-                const amount = news.amount || extractAmount(news.title);
+                const amount = news.amount ? (typeof news.amount === 'number' ? `${news.amount}억원` : news.amount) : '비공개';
                 const totalFunding = news.totalFunding || '-';
                 const investor = news.investor || '-';
                 const founded = news.founded || '-';
@@ -1455,7 +1455,7 @@
                 const company = deal.company_name || '-';
                 const industry = deal.industry || '-';
                 let stage = deal.stage || '-';
-                const amount = deal.amount ? `${deal.amount}억원` : '-';
+                const amount = deal.amount ? `${deal.amount}억원` : '비공개';
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
                 const newsUrl = deal.news_url || '#';
