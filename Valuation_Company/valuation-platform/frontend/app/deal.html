@@ -1440,7 +1440,7 @@
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
                 // 투자단계 정제 (시드, 프리A, 시리즈A/B/C만 허용)
-                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C', 'M&A', '프리IPO', 'Pre-IPO'];
+                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C', 'M&A', '프리IPO'];
                 if (stage !== '-' && !validStages.some(v => stage.includes(v))) {
                     stage = '-';
                 }
