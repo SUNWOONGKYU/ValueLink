@@ -264,6 +264,10 @@
             color: var(--text-primary);
             line-height: 1.5;
             margin-bottom: 12px;
+            min-height: 48px !important; /* 최소 2줄 */
+            white-space: normal !important; /* 여러 줄 표시 */
+            overflow: visible !important; /* 전체 표시 */
+            word-break: break-word !important;
         }
 
         .news-company {
@@ -376,13 +380,16 @@
             font-size: 13px !important;
             color: var(--text-secondary) !important;
             line-height: 1.5 !important;
-            height: 42px !important; /* 정확히 2줄 높이 */
+            min-height: 42px !important; /* 최소 2줄 높이 */
+            max-height: 42px !important; /* 최대 2줄 높이 */
             word-break: break-word !important;
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
-            display: block !important; /* -webkit-box 대신 block */
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important; /* 2줄로 제한 */
+            -webkit-box-orient: vertical !important;
             overflow: hidden !important;
-            white-space: normal !important; /* 여러 줄 표시 강제 */
+            white-space: normal !important;
             max-width: 100% !important;
         }
 
@@ -990,7 +997,7 @@
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
-                        <th>뉴스</th>
+                        <th>뉴스 게재 시간</th>
                     </tr>
                 </thead>
                 <tbody id="deals-tbody">
@@ -1319,6 +1326,22 @@
                     console.log('Deal 데이터:', deals.length, '개');
 
                     if (deals && deals.length > 0) {
+                        // 통계 계산
+                        const now = new Date();
+                        const today = now.toISOString().split('T')[0];
+                        const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                        const yearStart = `${now.getFullYear()}-01-01`;
+
+                        const yesterdayCount = deals.filter(d => d.news_date === yesterday).length;
+                        const lastWeekCount = deals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
+                        const yearTotalCount = deals.filter(d => d.news_date >= yearStart).length;
+
+                        // 통계 업데이트
+                        document.getElementById('stat-yesterday').textContent = yesterdayCount;
+                        document.getElementById('stat-last-week').textContent = lastWeekCount;
+                        document.getElementById('stat-year-total').textContent = yearTotalCount;
+
                         renderDealsTable(deals);
                     } else {
                         console.log('DB에 Deal 없음');
@@ -1435,6 +1458,14 @@
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
                 const newsUrl = deal.news_url || '#';
+                const newsDate = deal.news_date || '-';
+                let siteName = deal.site_name || '-';
+
+                // Google News, 네이버 뉴스, VC 포트폴리오 같은 잘못된 언론사 제거
+                const invalidSites = ['VC 포트폴리오', 'Google News', '네이버 뉴스'];
+                if (invalidSites.includes(siteName)) {
+                    siteName = '-';
+                }
                 const ceo = deal.ceo || '-';
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
@@ -1473,7 +1504,10 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">원문</a></td>
+                        <td data-label="뉴스 게재 시간" style="font-size: 13px;">
+                            <div style="margin-bottom: 4px; color: var(--text-primary);">${escapeHtml(newsDate)}</div>
+                            <div style="font-size: 11px; color: var(--text-muted);">${escapeHtml(siteName)}</div>
+                        </td>
                     </tr>
                 `;
             }).join('');
