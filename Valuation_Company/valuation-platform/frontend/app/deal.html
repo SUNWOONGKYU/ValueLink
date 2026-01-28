@@ -1369,30 +1369,32 @@
             });
         }
 
-        // 필터 옵션 동적 생성 (DB 기반)
+        // 필터 옵션 동적 생성 (고정 목록)
         async function populateFilterOptions() {
             try {
-                // Deals 테이블에서 데이터 가져오기
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=industry,investment_stage`, {
-                    headers: {
-                        'apikey': SUPABASE_KEY,
-                        'Authorization': `Bearer ${SUPABASE_KEY}`
-                    }
+                // 투자 단계 필터 - 모든 옵션 표시
+                const allStages = [
+                    'M&A',
+                    'Pre-A',
+                    'Seed',
+                    'Series A',
+                    'Series B',
+                    'Series C',
+                    '시드',
+                    '시리즈A',
+                    '시리즈B',
+                    '시리즈C',
+                    '프리A',
+                    '프리IPO'
+                ];
+
+                const stageSelect = document.querySelectorAll('.filter-select')[0];
+                allStages.forEach(stage => {
+                    const option = document.createElement('option');
+                    option.value = stage;
+                    option.textContent = stage;
+                    stageSelect.appendChild(option);
                 });
-
-                if (response.ok) {
-                    const deals = await response.json();
-
-                    // 투자 단계 필터 생성 (M&A, 프리IPO 포함)
-                    const stages = [...new Set(deals.map(d => d.stage).filter(s => s && s !== '-'))];
-                    const stageSelect = document.querySelectorAll('.filter-select')[0];
-                    stages.sort().forEach(stage => {
-                        const option = document.createElement('option');
-                        option.value = stage;
-                        option.textContent = stage;
-                        stageSelect.appendChild(option);
-                    });
-                }
             } catch (err) {
                 console.error('필터 옵션 생성 실패:', err);
             }
