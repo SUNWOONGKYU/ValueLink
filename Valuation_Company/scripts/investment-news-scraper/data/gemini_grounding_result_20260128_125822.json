@@ -1,0 +1,42 @@
+{
+  "test_companies": [
+    "부스터즈",
+    "엘리시젠",
+    "소서릭스"
+  ],
+  "results": [
+    {
+      "company": "부스터즈",
+      "found": 1,
+      "articles": [
+        {
+          "article_title": "FSN 자회사 부스터즈, 374억 투자유치...몸값 1900억 '껑충'",
+          "article_url": "https://news.mt.co.kr/mtview.php?no=2026011513404711906",
+          "site_name": "머니투데이",
+          "published_date": "2026-01-15",
+          "summary": "부스터즈는 2026년 1월 15일 374억 원 규모의 상환전환우선주(RCPS) 투자를 유치했습니다. 투자자로는 SBI인베스트먼트, 엔베스터, 레이크브릿지 에쿼티파트너스, 하나벤처스 등이 참여했습니다. 이번 투자로 부스터즈의 누적 투자 유치 금액은 637억 원이 되었습니다."
+        }
+      ]
+    },
+    {
+      "company": "엘리시젠",
+      "found": 1,
+      "articles": [
+        {
+          "article_title": "유전자치료제기업 엘리시젠, 시리즈C 투자 총 420억 원 최종 클로징",
+          "article_url": "https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGGAVyr8LdSmS9aF8sIQaQuQeQA70G22GGSojJKvMNC38zsy6sxQbGP8c7fixGXm_qdo2LM7CIgFfinpZ3DeQVdYf9ZqJKeaW9AZuq8CsrbDtfGwbVKfcLA8M6ddwdupeo=",
+          "site_name": "매일경제",
+          "published_date": "2026-01-19",
+          "summary": "엘리시젠은 데일리파트너스와 NH투자증권으로부터 50억 원의 추가 투자를 유치하며 총 420억 원 규모의 시리즈C 유상증자 라운드를 성공적으로 마무리했습니다. 이번 시리즈C 라운드에는 한국산업은행, 프리미어파트너스, 한국투자파트너스, 유안타인베스트먼트, KB인베스트먼트 등 주요 기관투자자들이 참여했으며, 누적 투자 유치 금액은 880억 원입니다."
+        }
+      ]
+    },
+    {
+      "company": "소서릭스",
+      "found": 0
+    }
+  ],
+  "total_articles": 2,
+  "success_rate": "2/3",
+  "timestamp": "2026-01-28T12:58:22.548087"
+}

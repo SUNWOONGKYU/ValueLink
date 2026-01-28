@@ -1,0 +1,70 @@
+{
+  "test_companies": [
+    {
+      "name": "부스터즈",
+      "expected": {
+        "amount": "200억",
+        "investor": "FSN",
+        "site": "이투데이"
+      }
+    },
+    {
+      "name": "소서릭스",
+      "expected": {
+        "investor": "네이버 D2SF",
+        "site": "머니S"
+      }
+    },
+    {
+      "name": "엘리시젠",
+      "expected": {
+        "amount": "50억",
+        "investor": "데일리파트너스",
+        "site": "금융경제플러스"
+      }
+    }
+  ],
+  "results": [
+    {
+      "company": "부스터즈",
+      "expected": {
+        "amount": "200억",
+        "investor": "FSN",
+        "site": "이투데이"
+      },
+      "found": 0,
+      "success": false
+    },
+    {
+      "company": "소서릭스",
+      "expected": {
+        "investor": "네이버 D2SF",
+        "site": "머니S"
+      },
+      "found": 1,
+      "articles": [
+        {
+          "article_title": "소서릭스, 100억 규모 시리즈A 투자 유치…'AI 기반 신약개발'",
+          "article_url": "https://www.thebell.co.kr/free/content/ArticleView.asp?key=20240313160000001",
+          "site_name": "더벨",
+          "published_date": "2024-03-14",
+          "summary": "AI 기반 신약개발 기업 소서릭스가 한국투자파트너스, 스톤브릿지벤처스, 데일리파트너스, 아주IB투자, IMM인베스트먼트, KB인베스트먼트, 미래에셋벤처투자, 신한벤처투자, 스마일게이트인베스트먼트, 컴퍼니케이파트너스, 인터베스트, 에이티넘인베스트먼트 등으로부터 총 100억 원 규모의 시리즈A 투자를 유치했습니다."
+        }
+      ],
+      "success": true
+    },
+    {
+      "company": "엘리시젠",
+      "expected": {
+        "amount": "50억",
+        "investor": "데일리파트너스",
+        "site": "금융경제플러스"
+      },
+      "found": 0,
+      "success": false
+    }
+  ],
+  "success_rate": "1/3",
+  "total_articles": 1,
+  "timestamp": "2026-01-28T12:55:26.795756"
+}

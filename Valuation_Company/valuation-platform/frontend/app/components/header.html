@@ -1,4 +1,77 @@
 <!-- ValueLink 공통 헤더 -->
+<style>
+    /* Header Styles */
+    header {
+        background: var(--white, #FFFFFF);
+        border-bottom: 1px solid #E5E7EB;
+        padding: 0 40px;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+    .header-left { display: flex; align-items: center; gap: 48px; }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-symbol { width: 44px; height: 44px; }
+    .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
+    .portal-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: var(--deep-blue-pale, #DBEAFE);
+        color: var(--deep-blue, #1D4ED8);
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .user-info { display: flex; align-items: center; gap: 12px; }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--deep-blue-pale, #DBEAFE);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: var(--deep-blue, #1D4ED8);
+    }
+    .user-name { font-size: 14px; font-weight: 600; color: var(--text-primary, #111827); }
+    .user-company { font-size: 12px; color: var(--text-muted, #6B7280); }
+    .btn-logout {
+        padding: 8px 16px;
+        font-size: 14px;
+        color: var(--text-muted, #6B7280);
+        background: transparent;
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    .btn-logout:hover {
+        background: #F3F4F6;
+    }
+    .main-nav { display: flex; gap: 8px; }
+    .nav-item {
+        padding: 10px 20px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--text-secondary, #374151);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    .nav-item:hover { background: var(--bg-light, #F3F4F6); }
+    .nav-item.active {
+        background: var(--deep-blue-pale, #DBEAFE);
+        color: var(--deep-blue, #1D4ED8);
+    }
+</style>
+
 <header>
     <div class="header-left">
         <a href="/" class="logo">
