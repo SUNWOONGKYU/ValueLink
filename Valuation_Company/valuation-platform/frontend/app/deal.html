@@ -1344,7 +1344,7 @@
 
                         const yesterdayCount = deals.filter(d => d.news_date === yesterday).length;
                         const lastWeekCount = deals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
-                        const yearTotalCount = deals.filter(d => d.news_date >= yearStart).length;
+                        const yearTotalCount = deals.length; // 전체 Deal 수
 
                         // 통계 업데이트
                         document.getElementById('stat-yesterday').textContent = yesterdayCount;
