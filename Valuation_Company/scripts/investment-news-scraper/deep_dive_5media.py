@@ -57,14 +57,13 @@ MEDIA_SOURCES = {
             "https://www.venturesquare.net/page/4/",
         ]
     },
-    "아웃스탠딩": {
-        "name": "아웃스탠딩",
-        "number": 13,
+    "더벨": {
+        "name": "더벨",
+        "number": 16,
         "urls": [
-            "https://outstanding.kr/investment",
-            "https://outstanding.kr/startup",
-            "https://outstanding.kr/page/2",
-            "https://outstanding.kr/page/3",
+            "https://www.thebell.co.kr/free/content/NewsList.asp?svccode=00&trustkey=00",
+            "https://www.thebell.co.kr/free/content/NewsList.asp?page=2",
+            "https://www.thebell.co.kr/free/content/NewsList.asp?page=3",
         ]
     },
     "플래텀": {

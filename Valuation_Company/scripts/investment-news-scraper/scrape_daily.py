@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 매일 자동 실행되는 투자 뉴스 스크래퍼 (Gemini API 사용)
-Top 10 사이트에서만 뉴스 수집
+Top 5 사이트에서만 뉴스 수집 (WOWTALE, 벤처스퀘어, 더벨, 플래텀, 스타트업투데이)
 """
 
 import os
@@ -19,18 +19,13 @@ SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-# Top 10 사이트 정의
-TOP_10_SITES = [
+# Top 5 사이트 정의 (분석 결과 기반)
+TOP_5_SITES = [
+    {'number': 1, 'name': 'WOWTALE', 'url': 'https://wowtale.net'},
     {'number': 9, 'name': '벤처스퀘어', 'url': 'https://www.venturesquare.net'},
-    {'number': 11, 'name': '스타트업투데이', 'url': 'https://startuptoday.kr'},
-    {'number': 13, 'name': '아웃스탠딩', 'url': 'https://outstanding.kr'},
     {'number': 16, 'name': '더벨', 'url': 'https://www.thebell.co.kr'},
-    {'number': 8, 'name': '더브이씨', 'url': 'https://thevc.kr'},
-    {'number': 12, 'name': '스타트업엔', 'url': 'https://startupn.kr'},
-    {'number': 22, 'name': '블로터', 'url': 'https://www.bloter.net'},
-    {'number': 23, 'name': '이코노미스트', 'url': 'https://www.economist.co.kr'},
     {'number': 10, 'name': '플래텀', 'url': 'https://platum.kr'},
-    {'number': 19, 'name': 'AI타임스', 'url': 'https://www.aitimes.com'},
+    {'number': 11, 'name': '스타트업투데이', 'url': 'https://startuptoday.kr'},
 ]
 
 def collect_news_with_gemini():
@@ -48,7 +43,7 @@ def collect_news_with_gemini():
 
     # 프롬프트 생성
     sites_list = "\n".join([f"{i+1}. {site['name']} (site_number: {site['number']}) - {site['url']}"
-                            for i, site in enumerate(TOP_10_SITES)])
+                            for i, site in enumerate(TOP_5_SITES)])
 
     prompt = f"""
 다음 10개 사이트에서 {yesterday} 날짜의 투자 유치 관련 뉴스를 수집해주세요.

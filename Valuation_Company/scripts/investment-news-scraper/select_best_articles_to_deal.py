@@ -141,6 +141,22 @@ def select_best_article(articles):
     return best
 
 
+def extract_amount_number(amount_str):
+    """
+    투자금액 문자열에서 숫자만 추출
+    예: "300억원" → 300, "20.0억" → 20, "비공개" → None
+    """
+    if not amount_str or amount_str in ['비공개', '-', '신규']:
+        return None
+
+    # 숫자와 소수점만 추출
+    match = re.search(r'(\d+(?:\.\d+)?)', str(amount_str))
+    if match:
+        return float(match.group(1))
+
+    return None
+
+
 def extract_investment_data(article, company_data):
     """
     기사 제목에서 투자 데이터 추출
@@ -152,7 +168,7 @@ def extract_investment_data(article, company_data):
     amount = None
     amount_match = re.search(r'(\d+)억\s*원', title)
     if amount_match:
-        amount = f"{amount_match.group(1)}억원"
+        amount = int(amount_match.group(1))
 
     # 투자단계 추출
     stage = None
@@ -172,7 +188,7 @@ def extract_investment_data(article, company_data):
     # 센서블박스 데이터에서 가져오기 (기사에 없으면)
     if company_data:
         if not amount and company_data.get('신규'):
-            amount = company_data['신규']
+            amount = extract_amount_number(company_data['신규'])
         if not stage and company_data.get('단계'):
             stage = company_data['단계']
 
@@ -268,16 +284,14 @@ def main():
         # Deal 레코드 생성
         deal_record = {
             'company_name': company_name,
-            'sector': inv_data['sector'][:100] if inv_data['sector'] else None,
+            'industry': inv_data['sector'][:100] if inv_data['sector'] else None,
             'stage': inv_data['stage'],
             'investors': inv_data['investors'][:200] if inv_data['investors'] else None,
             'amount': inv_data['amount'],
-            'region': None,  # 기사에서 추출 안 됨
-            'employees': None,  # 기사에서 추출 안 됨
             'news_title': article['article_title'],
             'news_url': article['article_url'],
-            'news_site': article['site_name'],
-            'published_date': article['published_date'],
+            'site_name': article['site_name'],
+            'news_date': article['published_date'],
             'created_at': datetime.now().isoformat()
         }
 
