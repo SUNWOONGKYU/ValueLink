@@ -1,0 +1,354 @@
+{
+  "report_id": "phase5_external_user_types_2026_01_28",
+  "report_title": "Phase 5: External User Types 구현 완료",
+  "created_at": "2026-01-28T00:00:00Z",
+  "status": "completed",
+  "phase": 5,
+
+  "summary": {
+    "objective": "Investor, Partner, Supporter 역할 활성화 및 외부 사용자 Mypage 구현",
+    "completion_time": "8 hours (estimated)",
+    "key_achievements": [
+      "3개 외부 사용자 Mypage 생성 (investor, partner, supporter)",
+      "register.html에서 3개 역할 활성화",
+      "mypage.html 라우터에 3개 역할 추가",
+      "6개 역할 모두 사용 가능",
+      "Phase 1-5 통합 완료"
+    ]
+  },
+
+  "implemented_features": {
+    "1_mypage_investor": {
+      "file": "app/core/mypage-investor.html",
+      "role": "investor",
+      "korean_name": "투자자",
+      "purpose": "투자 기회 발굴 및 관리",
+      "statistics": [
+        {"label": "검토 중인 딜", "icon": "📊"},
+        {"label": "투자 완료", "icon": "✅"},
+        {"label": "관심 기업", "icon": "⭐"},
+        {"label": "총 투자액", "icon": "💰"}
+      ],
+      "sections": [
+        {"title": "검토 중인 딜", "status": "empty (TODO)"},
+        {"title": "관심 기업", "status": "empty (TODO)"},
+        {"title": "투자자 프로필", "status": "implemented"}
+      ],
+      "features_to_implement": [
+        "딜 목록 로드 (deals 테이블)",
+        "관심 기업 watchlist (watchlist 테이블)",
+        "투자 히스토리 (investments 테이블)"
+      ]
+    },
+
+    "2_mypage_partner": {
+      "file": "app/core/mypage-partner.html",
+      "role": "partner",
+      "korean_name": "제휴자",
+      "purpose": "제휴 현황 관리",
+      "statistics": [
+        {"label": "진행 중 제휴", "icon": "🤝"},
+        {"label": "완료된 제휴", "icon": "✅"},
+        {"label": "추천 건수", "icon": "📊"},
+        {"label": "정산 금액", "icon": "💰"}
+      ],
+      "sections": [
+        {"title": "진행 중 제휴", "status": "empty (TODO)"},
+        {"title": "제휴자 프로필", "status": "implemented"}
+      ],
+      "features_to_implement": [
+        "제휴 목록 로드 (partnerships 테이블)",
+        "추천 현황 (referrals 테이블)",
+        "정산 내역 (settlements 테이블)"
+      ]
+    },
+
+    "3_mypage_supporter": {
+      "file": "app/core/mypage-supporter.html",
+      "role": "supporter",
+      "korean_name": "서포터",
+      "purpose": "지원 활동 관리",
+      "statistics": [
+        {"label": "지원 활동", "icon": "🎯"},
+        {"label": "완료된 지원", "icon": "✅"},
+        {"label": "멘토링 횟수", "icon": "📊"},
+        {"label": "포인트", "icon": "⭐"}
+      ],
+      "sections": [
+        {"title": "최근 활동", "status": "empty (TODO)"},
+        {"title": "서포터 프로필", "status": "implemented"}
+      ],
+      "features_to_implement": [
+        "활동 목록 로드 (activities 테이블)",
+        "멘토링 현황 (mentoring 테이블)",
+        "포인트 시스템 (points 테이블)"
+      ]
+    },
+
+    "4_router_update": {
+      "file": "app/core/mypage.html",
+      "description": "역할별 라우팅 로직 업데이트",
+      "before": {
+        "investor": "showError('준비 중입니다', ...)",
+        "partner": "showError('준비 중입니다', ...)",
+        "supporter": "showError('준비 중입니다', ...)"
+      },
+      "after": {
+        "investor": "targetPage = '/core/mypage-investor.html'",
+        "partner": "targetPage = '/core/mypage-partner.html'",
+        "supporter": "targetPage = '/core/mypage-supporter.html'"
+      },
+      "total_roles": 6,
+      "all_roles": ["customer", "accountant", "admin", "investor", "partner", "supporter"]
+    },
+
+    "5_registration_update": {
+      "file": "app/register.html",
+      "changes": [
+        "Investor role: disabled 속성 제거",
+        "Partner role: disabled 속성 제거",
+        "Supporter role: disabled 속성 제거",
+        "'곧 서비스 예정' 문구 제거"
+      ],
+      "enabled_roles": 6,
+      "role_grid": "3열 × 2행 (모바일: 1열)"
+    }
+  },
+
+  "database_requirements": {
+    "phase1_tables": {
+      "users": {
+        "description": "모든 사용자 기본 정보",
+        "sql_file": "create_users_table.sql",
+        "status": "수동 실행 필요"
+      },
+      "accountants": {
+        "description": "회계사 추가 정보",
+        "sql_file": "create_accountants_table.sql",
+        "status": "수동 실행 필요"
+      },
+      "customers_alter": {
+        "description": "customers 테이블에 user_id 추가",
+        "sql_file": "alter_customers_table.sql",
+        "status": "수동 실행 필요"
+      },
+      "projects_alter": {
+        "description": "projects 테이블에 assigned_accountant_id 추가",
+        "sql_file": "alter_projects_table.sql",
+        "status": "수동 실행 필요"
+      }
+    },
+    "future_tables": {
+      "deals": "투자 딜 정보 (Investor용)",
+      "watchlist": "관심 기업 (Investor용)",
+      "partnerships": "제휴 현황 (Partner용)",
+      "activities": "지원 활동 (Supporter용)"
+    }
+  },
+
+  "phase_1_to_5_integration": {
+    "phase1": {
+      "name": "Database Setup",
+      "deliverables": ["users", "customers", "accountants", "projects 테이블"],
+      "status": "SQL 수동 실행 필요"
+    },
+    "phase2": {
+      "name": "Internal User Mypage",
+      "deliverables": ["mypage-company.html", "mypage-accountant.html", "mypage-admin.html"],
+      "status": "완료"
+    },
+    "phase3": {
+      "name": "Access Control",
+      "deliverables": ["auth-check.js", "project-create.html auto-fill"],
+      "status": "완료"
+    },
+    "phase4": {
+      "name": "Registration & Login",
+      "deliverables": ["register.html", "login.html"],
+      "status": "완료"
+    },
+    "phase5": {
+      "name": "External User Mypage",
+      "deliverables": ["mypage-investor.html", "mypage-partner.html", "mypage-supporter.html"],
+      "status": "완료"
+    },
+    "integration_status": "Phase 1 SQL 실행 후 전체 시스템 사용 가능"
+  },
+
+  "user_journey": {
+    "registration": [
+      "1. register.html 접속",
+      "2. 기본 정보 입력 (Step 1)",
+      "3. 역할 선택 (Step 2) - 6개 중 선택",
+      "4. 역할별 추가 정보 입력 (Step 3)",
+      "5. 회원가입 완료 → users 테이블 저장",
+      "6. 역할별 테이블에 추가 정보 저장"
+    ],
+    "login": [
+      "1. login.html 접속",
+      "2. 이메일/비밀번호 입력",
+      "3. Supabase Auth 인증",
+      "4. users 테이블에서 role 조회",
+      "5. /core/mypage.html로 리다이렉트"
+    ],
+    "mypage_routing": [
+      "1. mypage.html이 role 확인",
+      "2. customer → mypage-company.html",
+      "3. accountant → mypage-accountant.html",
+      "4. admin → mypage-admin.html",
+      "5. investor → mypage-investor.html",
+      "6. partner → mypage-partner.html",
+      "7. supporter → mypage-supporter.html"
+    ]
+  },
+
+  "file_changes": {
+    "created": [
+      {
+        "path": "app/core/mypage-investor.html",
+        "description": "투자자 마이페이지",
+        "lines": 400,
+        "status": "기본 UI 완성, TODO 기능 남음"
+      },
+      {
+        "path": "app/core/mypage-partner.html",
+        "description": "제휴자 마이페이지",
+        "lines": 350,
+        "status": "기본 UI 완성, TODO 기능 남음"
+      },
+      {
+        "path": "app/core/mypage-supporter.html",
+        "description": "서포터 마이페이지",
+        "lines": 350,
+        "status": "기본 UI 완성, TODO 기능 남음"
+      },
+      {
+        "path": "backend/database/run-phase1-migrations.js",
+        "description": "SQL 자동 실행 스크립트 (pg 패키지 필요)",
+        "lines": 100,
+        "status": "pg 설치 문제로 수동 실행 권장"
+      }
+    ],
+    "modified": [
+      {
+        "path": "app/core/mypage.html",
+        "changes": ["3개 역할 라우팅 추가 (investor, partner, supporter)"],
+        "lines_changed": 10
+      },
+      {
+        "path": "app/register.html",
+        "changes": ["3개 역할 disabled 속성 제거", "'곧 서비스 예정' 문구 제거"],
+        "lines_changed": 30
+      }
+    ]
+  },
+
+  "sql_execution_guide": {
+    "method": "Supabase Dashboard (수동)",
+    "url": "https://app.supabase.com",
+    "steps": [
+      "1. Supabase Dashboard 접속",
+      "2. 프로젝트 선택 (arxrfetgaitkgiiqabap)",
+      "3. SQL Editor 메뉴 클릭",
+      "4. New query 버튼 클릭",
+      "5. SQL 파일 내용 복사 → 붙여넣기",
+      "6. Run 버튼 클릭",
+      "7. 성공 확인 후 다음 파일로 이동"
+    ],
+    "execution_order": [
+      "1. create_users_table.sql",
+      "2. create_accountants_table.sql",
+      "3. alter_customers_table.sql",
+      "4. alter_projects_table.sql"
+    ],
+    "files_location": "backend/database/"
+  },
+
+  "testing_checklist": {
+    "phase1_sql": [
+      "[ ] create_users_table.sql 실행",
+      "[ ] create_accountants_table.sql 실행",
+      "[ ] alter_customers_table.sql 실행",
+      "[ ] alter_projects_table.sql 실행",
+      "[ ] 테이블 생성 확인 (Supabase Table Editor)"
+    ],
+    "registration": [
+      "[ ] customer 역할로 회원가입",
+      "[ ] accountant 역할로 회원가입",
+      "[ ] admin 역할로 회원가입 (코드: ADMIN2026)",
+      "[ ] investor 역할로 회원가입",
+      "[ ] partner 역할로 회원가입",
+      "[ ] supporter 역할로 회원가입"
+    ],
+    "login": [
+      "[ ] customer 로그인 → mypage-company.html",
+      "[ ] accountant 로그인 → mypage-accountant.html",
+      "[ ] admin 로그인 → mypage-admin.html",
+      "[ ] investor 로그인 → mypage-investor.html",
+      "[ ] partner 로그인 → mypage-partner.html",
+      "[ ] supporter 로그인 → mypage-supporter.html"
+    ],
+    "mypage": [
+      "[ ] 각 mypage 접근 권한 확인",
+      "[ ] 프로필 정보 표시 확인",
+      "[ ] 통계 카드 표시 확인",
+      "[ ] Empty state 표시 확인"
+    ]
+  },
+
+  "future_work": {
+    "investor": [
+      "Deal 테이블 생성 및 목록 로드",
+      "Watchlist 테이블 생성 및 관심 기업 추가/삭제",
+      "투자 히스토리 테이블 및 통계",
+      "Deal 상세 페이지",
+      "투자 의사 결정 플로우"
+    ],
+    "partner": [
+      "Partnership 테이블 생성 및 제휴 목록",
+      "Referral 테이블 생성 및 추천 현황",
+      "Settlement 테이블 생성 및 정산 내역",
+      "제휴 신청 플로우",
+      "제휴 계약서 관리"
+    ],
+    "supporter": [
+      "Activity 테이블 생성 및 활동 목록",
+      "Mentoring 테이블 생성 및 멘토링 현황",
+      "Points 테이블 생성 및 포인트 시스템",
+      "활동 신청 플로우",
+      "포인트 리워드 시스템"
+    ],
+    "common": [
+      "프로필 수정 기능",
+      "알림 시스템",
+      "대시보드 실시간 업데이트",
+      "검색 및 필터링",
+      "페이지네이션"
+    ]
+  },
+
+  "related_files": {
+    "phase1": ["create_users_table.sql", "create_accountants_table.sql", "alter_customers_table.sql", "alter_projects_table.sql"],
+    "phase2": ["mypage.html", "mypage-company.html", "mypage-accountant.html", "mypage-admin.html"],
+    "phase3": ["auth-check.js", "project-create.html"],
+    "phase4": ["register.html", "login.html"],
+    "phase5": ["mypage-investor.html", "mypage-partner.html", "mypage-supporter.html", "run-phase1-migrations.js"]
+  },
+
+  "lessons_learned": {
+    "progressive_rollout": "Phase 2에서 내부 사용자 먼저, Phase 5에서 외부 사용자 나중에 구현하여 점진적 확장",
+    "empty_states": "TODO 기능은 empty state로 표시하여 향후 구현 예정임을 명확히 표시",
+    "consistent_ui": "6개 mypage 모두 동일한 UI 패턴 사용으로 일관성 유지",
+    "role_based_routing": "mypage.html 라우터 패턴으로 역할별 페이지 관리 간소화"
+  },
+
+  "verification": {
+    "mypage_investor_exists": true,
+    "mypage_partner_exists": true,
+    "mypage_supporter_exists": true,
+    "router_updated": true,
+    "register_roles_enabled": true,
+    "sql_migration_script": true,
+    "testing_required": "Phase 1 SQL 수동 실행 후 전체 테스트 필요"
+  }
+}

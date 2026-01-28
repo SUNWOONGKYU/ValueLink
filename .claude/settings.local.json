@@ -3,7 +3,10 @@
     "allow": [
       "Bash(curl:*)",
       "Bash(python -c:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(psql:*)",
+      "Bash(supabase --version:*)",
+      "Bash(supabase db pull:*)"
     ]
   }
 }

@@ -178,15 +178,14 @@
                         targetPage = '/core/mypage-admin.html';
                         break;
                     case 'investor':
+                        targetPage = '/core/mypage-investor.html';
+                        break;
                     case 'partner':
+                        targetPage = '/core/mypage-partner.html';
+                        break;
                     case 'supporter':
-                        // Phase 5에서 구현 예정
-                        showError(
-                            '준비 중입니다',
-                            `${getRoleKoreanName(role)} 마이페이지는 곧 서비스될 예정입니다.`,
-                            '/'
-                        );
-                        return;
+                        targetPage = '/core/mypage-supporter.html';
+                        break;
                     default:
                         showError('알 수 없는 사용자 역할입니다', '관리자에게 문의해주세요.', '/');
                         return;

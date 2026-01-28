@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서포터 마이페이지 - ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #F9FAFB;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #6B7280;
+        }
+
+        /* 통계 카드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* 섹션 */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        /* 활동 목록 */
+        .activity-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .activity-item {
+            padding: 20px;
+            border: 1px solid #E5E7EB;
+            border-radius: 12px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .activity-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .activity-date {
+            font-size: 13px;
+            color: #9CA3AF;
+        }
+
+        .activity-desc {
+            color: #6B7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 프로필 정보 */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .profile-item {
+            padding: 16px;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .profile-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B7280;
+            margin-bottom: 6px;
+        }
+
+        .profile-value {
+            font-size: 15px;
+            color: #111827;
+        }
+
+        .btn-edit {
+            padding: 10px 20px;
+            background: #1D4ED8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .btn-edit:hover {
+            background: #1E40AF;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">서포터 마이페이지</h1>
+            <p class="page-subtitle">지원 활동을 관리합니다</p>
+        </div>
+
+        <!-- 통계 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-label">지원 활동</div>
+                <div class="stat-value" id="statActivities">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">완료된 지원</div>
+                <div class="stat-value" id="statCompleted">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">멘토링 횟수</div>
+                <div class="stat-value" id="statMentoring">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-label">포인트</div>
+                <div class="stat-value" id="statPoints">0P</div>
+            </div>
+        </div>
+
+        <!-- 최근 활동 -->
+        <div class="section">
+            <h2 class="section-title">최근 활동</h2>
+            <div class="activity-list" id="activityList">
+                <div class="empty-state">
+                    <div class="empty-icon">🎯</div>
+                    <div class="empty-text">최근 활동이 없습니다</div>
+                    <div class="empty-subtext">지원 활동을 시작해보세요</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 서포터 프로필 -->
+        <div class="section">
+            <h2 class="section-title">서포터 프로필</h2>
+            <div class="profile-grid" id="profileGrid">
+                <div class="profile-item">
+                    <div class="profile-label">이름</div>
+                    <div class="profile-value" id="profileName">-</div>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-label">이메일</div>
+                    <div class="profile-value" id="profileEmail">-</div>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-label">전문 분야</div>
+                    <div class="profile-value" id="profileExpertise">-</div>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-label">활동 지역</div>
+                    <div class="profile-value" id="profileRegion">-</div>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-label">계정 상태</div>
+                    <div class="profile-value" style="color: #059669;">활성</div>
+                </div>
+                <div class="profile-item">
+                    <div class="profile-label">가입일</div>
+                    <div class="profile-value" id="profileCreatedAt">-</div>
+                </div>
+            </div>
+            <button class="btn-edit" onclick="editProfile()">프로필 수정</button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // 헤더 로드
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 페이지 초기화
+        async function initPage() {
+            try {
+                // 로그인 확인
+                const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+                if (authError || !user) {
+                    alert('로그인이 필요합니다');
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // users 테이블에서 정보 조회
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .single();
+
+                if (userError || !userData) {
+                    alert('사용자 정보를 찾을 수 없습니다');
+                    window.location.href = '/';
+                    return;
+                }
+
+                // 역할 확인
+                if (userData.role !== 'supporter') {
+                    alert('서포터 전용 페이지입니다');
+                    window.location.href = '/core/mypage.html';
+                    return;
+                }
+
+                // 프로필 표시
+                loadProfile(userData);
+
+                // TODO: 활동 목록 로드 (Phase 5에서 구현)
+                loadActivities();
+
+            } catch (error) {
+                console.error('Page init error:', error);
+                alert('오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 프로필 로드
+        function loadProfile(userData) {
+            document.getElementById('profileName').textContent = userData.name || '-';
+            document.getElementById('profileEmail').textContent = userData.email || '-';
+            document.getElementById('profileExpertise').textContent = '미설정';
+            document.getElementById('profileRegion').textContent = '미설정';
+
+            if (userData.created_at) {
+                const date = new Date(userData.created_at);
+                document.getElementById('profileCreatedAt').textContent =
+                    `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+            }
+        }
+
+        // 활동 목록 로드 (TODO)
+        function loadActivities() {
+            // Phase 5에서 구현 예정
+            console.log('Activities loading...');
+        }
+
+        // 프로필 수정
+        function editProfile() {
+            alert('프로필 수정 기능은 개발 중입니다');
+            // TODO: 프로필 수정 모달 또는 페이지
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

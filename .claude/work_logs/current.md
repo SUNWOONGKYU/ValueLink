@@ -2863,3 +2863,136 @@ users 테이블에 기본 정보 저장 (user_id, email, name, role)
 - 관심 분야 추적 테이블
 - 외부 사용자용 mypage 구현
 
+
+---
+
+## Phase 5: External User Types 구현 완료 (2026-01-28)
+
+### 작업 상태: ✅ 완료
+
+### 작업 내용
+
+**목표:**
+- Investor, Partner, Supporter mypage 구현
+- register.html에서 3개 역할 활성화
+- mypage.html 라우터에 3개 역할 추가
+
+---
+
+### 1. 외부 사용자 Mypage 생성 (3개)
+
+**mypage-investor.html**
+- 투자자 전용 페이지
+- 통계: 검토 중인 딜, 투자 완료, 관심 기업, 총 투자액
+- 검토 중인 딜 목록 (TODO)
+- 관심 기업 watchlist (TODO)
+
+**mypage-partner.html**
+- 제휴자 전용 페이지
+- 통계: 진행 중 제휴, 완료된 제휴, 추천 건수, 정산 금액
+- 진행 중 제휴 목록 (TODO)
+
+**mypage-supporter.html**
+- 서포터 전용 페이지
+- 통계: 지원 활동, 완료된 지원, 멘토링 횟수, 포인트
+- 최근 활동 목록 (TODO)
+
+---
+
+### 2. mypage.html 라우터 수정
+
+**변경 전:**
+```javascript
+case 'investor':
+case 'partner':
+case 'supporter':
+    showError('준비 중입니다', ..., '/');
+    return;
+```
+
+**변경 후:**
+```javascript
+case 'investor':
+    targetPage = '/core/mypage-investor.html';
+    break;
+case 'partner':
+    targetPage = '/core/mypage-partner.html';
+    break;
+case 'supporter':
+    targetPage = '/core/mypage-supporter.html';
+    break;
+```
+
+---
+
+### 3. register.html 수정
+
+**변경 사항:**
+- Investor, Partner, Supporter 역할 `disabled` 속성 제거
+- "곧 서비스 예정" 문구 제거
+- 6개 역할 모두 활성화
+
+**역할 선택 (6개):**
+| Role | 아이콘 | 설명 | 상태 |
+|------|--------|------|------|
+| customer | 🏢 | 평가 신청 | ✅ 활성 |
+| accountant | 👨‍💼 | 평가 수행 | ✅ 활성 |
+| admin | ⚙️ | 플랫폼 관리 | ✅ 활성 |
+| investor | 💰 | 투자 검토 | ✅ 활성 (Phase 5) |
+| partner | 🤝 | 제휴 협력 | ✅ 활성 (Phase 5) |
+| supporter | 🎯 | 지원 활동 | ✅ 활성 (Phase 5) |
+
+---
+
+### 4. 파일 변경 사항
+
+**생성:**
+- `app/core/mypage-investor.html`
+- `app/core/mypage-partner.html`
+- `app/core/mypage-supporter.html`
+- `backend/database/run-phase1-migrations.js` (SQL 실행 스크립트)
+
+**수정:**
+- `app/core/mypage.html` (라우터에 3개 역할 추가)
+- `app/register.html` (3개 역할 활성화)
+
+---
+
+### 5. Phase 1-5 통합 완료
+
+| Phase | 내용 | 파일 |
+|-------|------|------|
+| Phase 1 | DB 스키마 | users, customers, accountants 테이블 |
+| Phase 2 | Mypage (내부) | company, accountant, admin |
+| Phase 3 | Access Control | auth-check.js, auto-fill |
+| Phase 4 | Registration | register.html, login.html |
+| Phase 5 | Mypage (외부) | investor, partner, supporter |
+
+---
+
+### 6. SQL 실행 필요 (수동)
+
+Phase 1 SQL 파일들을 Supabase Dashboard에서 수동으로 실행해야 합니다.
+
+**실행 순서:**
+1. create_users_table.sql
+2. create_accountants_table.sql
+3. alter_customers_table.sql
+4. alter_projects_table.sql
+
+**위치:** `backend/database/` 폴더
+
+**실행 방법:**
+- Supabase Dashboard (https://app.supabase.com) 접속
+- SQL Editor에서 각 파일 내용 복사 → 실행
+
+---
+
+### 다음 단계
+
+- [ ] Phase 1 SQL 파일 실행 (수동)
+- [ ] 회원가입 테스트 (6개 역할)
+- [ ] 로그인 테스트 (역할별 리다이렉트)
+- [ ] Mypage 접근 테스트 (6개 페이지)
+- [ ] TODO 기능 구현 (딜 목록, 관심 기업, 제휴 목록 등)
+
