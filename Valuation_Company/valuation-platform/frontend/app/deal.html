@@ -373,17 +373,17 @@
 
         /* 투자자 셀 스타일 - 두 줄로 강제 표시 */
         .deal-investors {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-            min-height: 42px !important; /* 최소 2줄 높이 강제 */
-            max-height: 42px !important; /* 2줄 제한 강제 */
-            word-break: keep-all;
-            display: -webkit-box !important;
-            -webkit-line-clamp: 2 !important; /* 2줄 제한 */
-            -webkit-box-orient: vertical !important;
+            font-size: 13px !important;
+            color: var(--text-secondary) !important;
+            line-height: 1.5 !important;
+            height: 42px !important; /* 정확히 2줄 높이 */
+            word-break: break-word !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            display: block !important; /* -webkit-box 대신 block */
             overflow: hidden !important;
-            white-space: normal !important; /* 여러 줄 표시 */
+            white-space: normal !important; /* 여러 줄 표시 강제 */
+            max-width: 100% !important;
         }
 
         .deal-company {
