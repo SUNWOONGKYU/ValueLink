@@ -27,85 +27,14 @@
             color: var(--text-primary);
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* Header styles moved to header.html component */
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .main-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-light);
-        }
-
-        /* BREADCRUMB */
-        .breadcrumb-container {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 12px 40px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .breadcrumb a {
-            color: var(--deep-blue);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .breadcrumb a:hover {
-            color: var(--deep-blue-light);
-        }
-
-        .breadcrumb span {
-            color: var(--text-muted);
-        }
+        /* HERO SECTION */
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+        .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
 
         /* MAIN */
         .main-content {
@@ -697,51 +626,24 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../../../app/core/index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="../../../app/valuation/guides/mockup-valuation.html" class="nav-item link">평가방법</a>
-                <a href="../../../app/core/valuation-list.html" class="nav-item link">프로젝트 목록</a>
-                <a href="../../../app/projects/project-create.html" class="nav-item link">신규</a>
-                <a href="../../../app/dev/deal.html" class="nav-item link">Deal</a>
-            </nav>
-        </div>
-    </header>
+    <!-- Header -->
+    <div id="header-container"></div>
 
-    <!-- BREADCRUMB -->
-    <div class="breadcrumb-container">
-        <div class="breadcrumb">
-            <a href="../../../app/core/index.html">홈</a>
-            <span>></span>
-            <a href="../guides/mockup-valuation.html">평가방법</a>
-            <span>></span>
-            <span>DCF평가법</span>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">DCF 기업가치 평가</h1>
+            <p class="hero-subtitle">현금흐름할인법(Discounted Cash Flow)으로 기업의 본질가치를 산정합니다</p>
+            <div class="hero-badge">
+                <span>프로젝트 ID: </span>
+                <span id="hero-project-id">-</span>
+            </div>
         </div>
     </div>
 
-        <!-- MAIN -->
-        <div class="container">
-            <div class="main-area">
-                <div class="page-title">
-                    <div class="page-title-content">
-                        <h1>DCF 기업가치 평가</h1>
-                        <p>현금흐름할인법(Discounted Cash Flow)으로 기업의 본질가치를 산정합니다</p>
-                    </div>
-                    <a href="dcf-portal.html" class="btn-portal">
-                        <span>📁</span> 자료 업로드
-                    </a>
-                </div>
+    <!-- MAIN -->
+    <div class="container">
+        <div class="main-area">
     
                 <div class="form-container">
                     <!-- 기본 정보 -->
@@ -1164,6 +1066,32 @@
     </script>
 
     <!-- 사이드바 초기화 -->
+    <!-- Header Load Script -->
+    <script>
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // Hero section에 프로젝트 ID 표시
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('projectId') || '-';
+        const heroProjectId = document.getElementById('hero-project-id');
+        if (heroProjectId) heroProjectId.textContent = projectId;
+    </script>
+
     <script type="module">
         import { injectSidebar } from '../../components/common-sidebar.js';
 
