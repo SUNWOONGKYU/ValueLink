@@ -30,107 +30,14 @@
             min-height: 100vh;
         }
 
-        /* Header */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* Header styles moved to header.html component */
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol {
-            width: 44px;
-            height: 44px;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1E3A5F;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-light);
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--deep-blue-pale);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--deep-blue);
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-company {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .btn-logout {
-            padding: 8px 16px;
-            font-size: 14px;
-            color: var(--text-muted);
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-        }
+        /* HERO SECTION */
+        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
+        .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
 
         /* Main Layout */
         .page-wrapper {
@@ -537,47 +444,23 @@
 </head>
 <body>
     <!-- Header -->
-    <header id="header-container">
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="../guides/valuation-guide.html" class="nav-item">📚 평가방법</a>
-                <a href="../project-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="../project-create.html" class="nav-item">➕ 신규</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info">
-                <div class="user-avatar">김</div>
-                <div>
-                    <div class="user-name" id="user-name">로딩 중...</div>
-                    <div class="user-company" id="user-company">-</div>
-                </div>
+    <div id="header-container"></div>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">평가보고서 초안 생성</h1>
+            <p class="hero-subtitle">AI가 평가 결과를 바탕으로 보고서 초안을 자동으로 작성합니다 (약 5-10분 소요)</p>
+            <div class="hero-badge">
+                <span>프로젝트 ID: </span>
+                <span id="hero-project-id">-</span>
             </div>
-            <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
         </div>
-    </header>
+    </div>
 
     <!-- Main Content -->
     <div class="page-wrapper">
         <main class="main-content">
-            <!-- Page Header -->
-            <div class="page-header">
-                <h1 class="page-title">평가보고서 초안 생성</h1>
-                <p class="page-description">
-                    AI가 평가 결과를 바탕으로 보고서 초안을 자동으로 작성하고 있습니다.
-                    완료까지 약 5-10분 소요됩니다.
-                </p>
-            </div>
 
             <!-- Project Info Card -->
             <section class="project-info-card">
@@ -712,6 +595,26 @@
         </div>
     </footer>
 
+    <!-- Header Load Script -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
     <!-- Module Script -->
     <script type="module">
         import { injectSidebar } from '../components/common-sidebar.js';
@@ -721,6 +624,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('id') || 'DEMO-2026-DCF';
         const method = urlParams.get('method') || 'dcf';
+
+        // Hero section에 프로젝트 ID 표시
+        const heroProjectId = document.getElementById('hero-project-id');
+        if (heroProjectId) heroProjectId.textContent = projectId;
 
         // 보고서 섹션 정의
         const reportSections = [
