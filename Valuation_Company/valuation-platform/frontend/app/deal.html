@@ -964,13 +964,6 @@
             <!-- 필터 -->
             <div class="filter-bar">
                 <div class="filter-group">
-                    <span class="filter-label">주요사업</span>
-                    <select class="filter-select">
-                        <option value="">전체</option>
-                        <!-- 동적으로 생성됨 -->
-                    </select>
-                </div>
-                <div class="filter-group">
                     <span class="filter-label">투자 단계</span>
                     <select class="filter-select">
                         <option value="">전체</option>
@@ -1367,19 +1360,9 @@
                 if (response.ok) {
                     const deals = await response.json();
 
-                    // 주요사업 필터 생성
-                    const industries = [...new Set(deals.map(d => d.industry).filter(i => i && i !== '-'))];
-                    const industrySelect = document.querySelectorAll('.filter-select')[0];
-                    industries.sort().forEach(industry => {
-                        const option = document.createElement('option');
-                        option.value = industry;
-                        option.textContent = industry;
-                        industrySelect.appendChild(option);
-                    });
-
-                    // 투자 단계 필터 생성
-                    const stages = [...new Set(deals.map(d => d.investment_stage).filter(s => s && s !== '-'))];
-                    const stageSelect = document.querySelectorAll('.filter-select')[1];
+                    // 투자 단계 필터 생성 (M&A, 프리IPO 포함)
+                    const stages = [...new Set(deals.map(d => d.stage).filter(s => s && s !== '-'))];
+                    const stageSelect = document.querySelectorAll('.filter-select')[0];
                     stages.sort().forEach(stage => {
                         const option = document.createElement('option');
                         option.value = stage;
@@ -1394,9 +1377,8 @@
 
         // Deal 필터링
         async function filterDeals() {
-            const industryFilter = document.querySelectorAll('.filter-select')[0].value;
-            const stageFilter = document.querySelectorAll('.filter-select')[1].value;
-            const periodFilter = document.querySelectorAll('.filter-select')[2].value;
+            const stageFilter = document.querySelectorAll('.filter-select')[0].value;
+            const periodFilter = document.querySelectorAll('.filter-select')[1].value;
 
             // 기간 계산
             const now = new Date();
@@ -1412,16 +1394,10 @@
             }
 
             // Supabase 쿼리 생성
-            let query = `${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc`;
+            let query = `${SUPABASE_URL}/rest/v1/deals?select=*&order=number.asc`;
 
-            if (industryFilter) {
-                query += `&industry=ilike.*${industryFilter}*`;
-            }
             if (stageFilter) {
                 query += `&stage=ilike.*${stageFilter}*`;
-            }
-            if (locationFilter) {
-                query += `&location=ilike.*${locationFilter}*`;
             }
             if (dateFilter) {
                 const dateStr = dateFilter.toISOString().split('T')[0];
@@ -1464,7 +1440,7 @@
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
                 // 투자단계 정제 (시드, 프리A, 시리즈A/B/C만 허용)
-                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C'];
+                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C', 'M&A', '프리IPO', 'Pre-IPO'];
                 if (stage !== '-' && !validStages.some(v => stage.includes(v))) {
                     stage = '-';
                 }
