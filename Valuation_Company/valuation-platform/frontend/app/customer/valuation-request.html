@@ -536,17 +536,52 @@
                 <form id="requestForm">
                     <div class="form-group">
                         <label class="form-label required">회사명</label>
-                        <input type="text" class="form-input" id="companyName" required>
+                        <input type="text" class="form-input" id="companyName" placeholder="예: (주)밸류링크" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label required">대표자명</label>
-                        <input type="text" class="form-input" id="ceoName" required>
+                        <input type="text" class="form-input" id="ceoName" placeholder="예: 홍길동" required>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label required">업종</label>
-                        <input type="text" class="form-input" id="industry" required>
+                        <label class="form-label">업종</label>
+                        <input type="text" class="form-input" id="industry" placeholder="예: 소프트웨어 개발">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">설립일</label>
+                        <input type="date" class="form-input" id="foundedDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">사업자등록번호</label>
+                        <input type="text" class="form-input" id="businessNumber" placeholder="예: 123-45-67890">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">직원 수</label>
+                        <input type="number" class="form-input" id="employees" placeholder="예: 50">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">회사 홈페이지</label>
+                        <input type="url" class="form-input" id="companyWebsite" placeholder="예: https://www.valuelink.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">주소</label>
+                        <input type="text" class="form-input" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">전화번호</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="예: 02-1234-5678">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">팩스 번호</label>
+                        <input type="tel" class="form-input" id="fax" placeholder="예: 02-1234-5679">
                     </div>
 
                     <div class="form-group">
@@ -663,6 +698,13 @@
                 companyName: document.getElementById('companyName').value,
                 ceoName: document.getElementById('ceoName').value,
                 industry: document.getElementById('industry').value,
+                foundedDate: document.getElementById('foundedDate').value,
+                businessNumber: document.getElementById('businessNumber').value,
+                employees: document.getElementById('employees').value,
+                companyWebsite: document.getElementById('companyWebsite').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                fax: document.getElementById('fax').value,
                 purpose: document.getElementById('purpose').value,
                 additionalRequest: document.getElementById('additionalRequest').value,
                 timestamp: new Date().toISOString()
@@ -683,6 +725,13 @@
             if (data.companyName) document.getElementById('companyName').value = data.companyName;
             if (data.ceoName) document.getElementById('ceoName').value = data.ceoName;
             if (data.industry) document.getElementById('industry').value = data.industry;
+            if (data.foundedDate) document.getElementById('foundedDate').value = data.foundedDate;
+            if (data.businessNumber) document.getElementById('businessNumber').value = data.businessNumber;
+            if (data.employees) document.getElementById('employees').value = data.employees;
+            if (data.companyWebsite) document.getElementById('companyWebsite').value = data.companyWebsite;
+            if (data.address) document.getElementById('address').value = data.address;
+            if (data.phone) document.getElementById('phone').value = data.phone;
+            if (data.fax) document.getElementById('fax').value = data.fax;
         } else {
             // 마이 페이지 정보가 없으면 알림 표시
             document.getElementById('mypageAlert').style.display = 'block';
