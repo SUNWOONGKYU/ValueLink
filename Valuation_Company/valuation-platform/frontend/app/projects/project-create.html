@@ -505,46 +505,41 @@
             <h2>평가 방법 선택</h2>
 
             <div class="form-group">
-                <label>평가 방법 <span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
+                <label><span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
                 <div class="method-selector">
                     <div class="method-option">
                         <input type="checkbox" name="methods[]" id="methodDC" value="dcf">
                         <label for="methodDC">
                             <span class="icon">💰</span>
-                            <span class="name">DCF</span>
-                            <span class="code">DC</span>
+                            <span class="name">현금흐름할인법 (DCF)</span>
                         </label>
                     </div>
                     <div class="method-option">
                         <input type="checkbox" name="methods[]" id="methodRV" value="relative">
                         <label for="methodRV">
                             <span class="icon">⚖️</span>
-                            <span class="name">상대가치</span>
-                            <span class="code">RV</span>
+                            <span class="name">상대가치평가법</span>
                         </label>
                     </div>
                     <div class="method-option">
                         <input type="checkbox" name="methods[]" id="methodIV" value="intrinsic">
                         <label for="methodIV">
                             <span class="icon">💎</span>
-                            <span class="name">본질가치</span>
-                            <span class="code">IV</span>
+                            <span class="name">본질가치평가법</span>
                         </label>
                     </div>
                     <div class="method-option">
                         <input type="checkbox" name="methods[]" id="methodAV" value="asset">
                         <label for="methodAV">
                             <span class="icon">🏦</span>
-                            <span class="name">자산가치</span>
-                            <span class="code">AV</span>
+                            <span class="name">자산가치평가법</span>
                         </label>
                     </div>
                     <div class="method-option">
                         <input type="checkbox" name="methods[]" id="methodTX" value="inheritance_tax">
                         <label for="methodTX">
                             <span class="icon">📋</span>
-                            <span class="name">상증법</span>
-                            <span class="code">TX</span>
+                            <span class="name">상증세법평가법</span>
                         </label>
                     </div>
                 </div>
@@ -557,61 +552,37 @@
                 </div>
                 <div class="form-group">
                     <label>평가 목적</label>
-                    <select id="purpose">
+                    <select id="purpose" onchange="toggleOtherPurpose()">
                         <option value="">선택하세요</option>
                         <option value="investment">투자 유치</option>
                         <option value="ma">M&A</option>
                         <option value="tax">세무 신고 (상속/증여)</option>
                         <option value="ipo">기업공개 (IPO)</option>
                         <option value="internal">내부 의사결정</option>
-                        <option value="litigation">소송/분쟁</option>
                         <option value="other">기타</option>
                     </select>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>평가 요청 사항</label>
-                <textarea id="requirements" placeholder="특별히 고려해야 할 사항이나 요청 사항을 입력해주세요"></textarea>
+            <!-- 기타 목적 입력란 (기타 선택 시 표시) -->
+            <div class="form-group" id="otherPurposeGroup" style="display: none;">
+                <label>기타 목적 내용</label>
+                <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요">
             </div>
 
             <div class="form-group">
-                <label>고객 예산 <span class="required">*</span></label>
-                <input type="text" id="budget" placeholder="예: 500만원">
+                <label>평가 시 고려사항</label>
+                <textarea id="requirements" placeholder="특별히 고려해야 할 사항을 입력해주세요"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>예산 범위 <span class="required">*</span></label>
+                <div class="form-row">
+                    <input type="text" id="budgetMin" placeholder="최소 예산 (예: 300만원)">
+                    <input type="text" id="budgetMax" placeholder="최대 예산 (예: 500만원)">
+                </div>
                 <div class="hint" style="margin-top: 12px; padding: 16px; background: #F0F9FF; border-radius: 8px; border-left: 4px solid var(--deep-blue);">
-                    <strong>평가방법별 예산 가이드</strong><br>
-                    • DCF평가법: 500만원 ~ 1,000만원<br>
-                    • 본질가치평가법: 400만원 ~ 900만원<br>
-                    • 상대가치평가법: 300만원 ~ 700만원<br>
-                    • 자산가치평가법: 300만원 ~ 600만원<br>
-                    • 상증세법평가법: 200만원 ~ 500만원<br>
-                    <br>
                     <strong style="color: var(--deep-blue);">※ 참고사항:</strong> 예산을 제시해 주실 때, 시중 일반 가격 대비 50% 수준으로 제시해 주시기 바랍니다.
-                </div>
-            </div>
-        </div>
-
-        <!-- 담당자 배정 -->
-        <div class="form-card">
-            <h2>담당자 배정</h2>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label>담당 회계사 <span class="required">*</span></label>
-                    <select id="assignedAccountant">
-                        <option value="">선택하세요</option>
-                        <option value="kim">김철수 회계사</option>
-                        <option value="lee">이영희 회계사</option>
-                        <option value="park">박민수 회계사</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>검토자</label>
-                    <select id="reviewer">
-                        <option value="">선택하세요</option>
-                        <option value="choi">최상무 이사</option>
-                        <option value="jung">정부장 상무</option>
-                    </select>
                 </div>
             </div>
         </div>
@@ -619,7 +590,7 @@
         <!-- 버튼 -->
         <div class="btn-group">
             <button class="btn btn-secondary" onclick="history.back()">취소</button>
-            <button class="btn btn-primary" onclick="createProject()">프로젝트 생성</button>
+            <button class="btn btn-primary" onclick="createProject()">평가 요청하기</button>
         </div>
     </main>
 
@@ -627,8 +598,8 @@
     <div class="modal-overlay" id="successModal">
         <div class="modal">
             <div class="success-icon">✓</div>
-            <h2>프로젝트가 생성되었습니다</h2>
-            <p>고객에게 자료 제출 안내 메일이 발송됩니다</p>
+            <h2>평가 요청이 접수되었습니다</h2>
+            <p>담당자 배정 후 안내 메일이 발송됩니다</p>
             <div class="project-id" id="modalProjectId">SAMSU-2501191430-DC</div>
             <div class="btn-group">
                 <button class="btn btn-secondary" onclick="location.href='valuation-list.html'">목록으로</button>
@@ -780,6 +751,18 @@
             return codeMap[selected.value] || 'XX';
         }
 
+        // 기타 목적 입력란 토글
+        function toggleOtherPurpose() {
+            const purposeSelect = document.getElementById('purpose');
+            const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+
+            if (purposeSelect.value === 'other') {
+                otherPurposeGroup.style.display = 'block';
+            } else {
+                otherPurposeGroup.style.display = 'none';
+                document.getElementById('otherPurpose').value = '';
+            }
+        }
 
         // 프로젝트 생성/수정
         async function createProject() {
@@ -802,9 +785,10 @@
                 return;
             }
 
-            const budget = document.getElementById('budget').value;
-            if (!budget) {
-                alert('고객 예산을 입력해주세요.');
+            const budgetMin = document.getElementById('budgetMin').value;
+            const budgetMax = document.getElementById('budgetMax').value;
+            if (!budgetMin || !budgetMax) {
+                alert('예산 범위를 입력해주세요.');
                 return;
             }
 
@@ -836,17 +820,20 @@
                             company_website: document.getElementById('companyWebsite').value,
                             fax: document.getElementById('fax').value,
                             address: document.getElementById('address').value,
-                            budget: budget,
+                            budget_min: budgetMin,
+                            budget_max: budgetMax,
                             valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
-                            purpose: document.getElementById('purpose').value,
-                            assigned_accountant: document.getElementById('assignedAccountant').value
+                            purpose: document.getElementById('purpose').value === 'other'
+                                ? document.getElementById('otherPurpose').value
+                                : document.getElementById('purpose').value,
+                            requirements: document.getElementById('requirements').value
                         })
                         .eq('project_id', projectId)
                         .select();
 
                     if (projectError) throw projectError;
 
-                    alert('프로젝트가 수정되었습니다.');
+                    alert('평가 요청이 수정되었습니다.');
                     location.href = `project-detail.html?id=${projectId}`;
 
                 } else {
@@ -866,10 +853,13 @@
                         company_website: document.getElementById('companyWebsite').value,
                         fax: document.getElementById('fax').value,
                         address: document.getElementById('address').value,
-                        budget: budget,
+                        budget_min: budgetMin,
+                        budget_max: budgetMax,
                         valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
-                        purpose: document.getElementById('purpose').value,
-                        assigned_accountant: document.getElementById('assignedAccountant').value,
+                        purpose: document.getElementById('purpose').value === 'other'
+                            ? document.getElementById('otherPurpose').value
+                            : document.getElementById('purpose').value,
+                        requirements: document.getElementById('requirements').value,
                         status: 'pending',
                         current_step: 2,  // 2단계 (평가 신청)
 
@@ -898,11 +888,11 @@
 
                     if (projectError) throw projectError;
 
-                    console.log('프로젝트 생성 성공:', project);
+                    console.log('평가 요청 접수 성공:', project);
                     console.log('선택된 평가법:', selectedMethods);
 
                     // 성공 후 approval-waiting.html로 이동
-                    alert(`프로젝트가 생성되었습니다.\n선택한 평가법: ${selectedMethods.length}개\n\n관리자 승인 대기 페이지로 이동합니다.`);
+                    alert(`평가 요청이 접수되었습니다.\n선택한 평가법: ${selectedMethods.length}개\n\n담당자 배정 후 안내 메일이 발송됩니다.`);
                     location.href = `../approval-waiting.html?projectId=${projectId}`;
                     const portalBtn = document.getElementById('goToPortalBtn');
                     portalBtn.onclick = () => {
@@ -945,9 +935,11 @@
                     document.getElementById('companyWebsite').value = project.company_website || '';
                     document.getElementById('fax').value = project.fax || '';
                     document.getElementById('address').value = project.address || '';
+                    document.getElementById('budgetMin').value = project.budget_min || '';
+                    document.getElementById('budgetMax').value = project.budget_max || '';
                     document.getElementById('valuationDate').value = project.valuation_date || '';
                     document.getElementById('purpose').value = project.purpose || '';
-                    document.getElementById('assignedAccountant').value = project.assigned_accountant || '';
+                    document.getElementById('requirements').value = project.requirements || '';
 
                     // 평가 방법 선택
                     if (project.valuation_results && project.valuation_results.length > 0) {
@@ -967,8 +959,8 @@
                     }
 
                     // 버튼 텍스트 변경
-                    document.querySelector('.btn-primary').textContent = '프로젝트 수정';
-                    document.querySelector('.page-title h1').textContent = '프로젝트 수정';
+                    document.querySelector('.btn-primary').textContent = '평가 요청 수정';
+                    document.querySelector('.page-title h1').textContent = '평가 요청 수정';
 
                     // 수정 모드 - projectId는 변경 불가
                 }
