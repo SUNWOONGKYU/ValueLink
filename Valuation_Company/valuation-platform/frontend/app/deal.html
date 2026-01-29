@@ -706,8 +706,26 @@
             border-color: var(--amber);
         }
 
-        /* 더보기 버튼 - 강조 스타일 */
+        /* 더보기 버튼 - 심플 스타일 */
         .btn-see-more {
+            padding: 6px 14px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-see-more:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        /* 구독 신청 버튼 - 강조 스타일 */
+        .btn-subscribe {
             padding: 10px 24px;
             background: var(--amber);
             color: white;
@@ -720,28 +738,10 @@
             box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
         }
 
-        .btn-see-more:hover {
+        .btn-subscribe:hover {
             background: var(--amber-dark);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-        }
-
-        /* 구독 신청 버튼 - 심플 스타일 */
-        .btn-subscribe {
-            padding: 6px 14px;
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 400;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-subscribe:hover {
-            border-color: var(--amber);
-            color: var(--amber);
         }
 
         /* 구독 모달 */
