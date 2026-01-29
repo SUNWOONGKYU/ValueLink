@@ -248,10 +248,10 @@
         }
 
         /* 데스크톱 메뉴 및 버튼 숨김 */
-        .main-menu,
-        .btn-login,
-        .btn-signup {
-            display: none;
+        .header-right .main-menu,
+        .header-right .btn-login,
+        .header-right .btn-signup {
+            display: none !important;
         }
 
         /* 햄버거 버튼 표시 */
@@ -404,8 +404,8 @@
         <a href="app/core/mypage.html" class="mobile-menu-item" id="mobile-menu-mypage">My Page</a>
 
         <div class="mobile-auth-buttons">
-            <button class="btn-login" onclick="location.href='/login'" style="display:block">로그인</button>
-            <button class="btn-signup" onclick="location.href='/register'" style="display:block">회원가입</button>
+            <button class="btn-login" onclick="location.href='/login'">로그인</button>
+            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
         </div>
     </div>
 </header>
