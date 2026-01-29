@@ -9,16 +9,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --deep-green: #166534;
             --deep-blue: #1D4ED8;
+            --deep-green: #166534;
             --amber: #F59E0B;
-            --deep-blue-light: #3B82F6;
-            --deep-blue-pale: #DBEAFE;
+            --red: #DC2626;
             --text-primary: #111827;
             --text-secondary: #374151;
             --text-muted: #6B7280;
-            --bg-light: #F3F4F6;
+            --bg-light: #F9FAFB;
             --white: #FFFFFF;
+            --border: #E5E7EB;
         }
 
         body {
@@ -27,54 +27,9 @@
             color: var(--text-primary);
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid #E5E7EB;
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .main-nav { display: flex; gap: 8px; }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item.valuation { color: var(--deep-blue); background: var(--deep-blue-pale); }
-        .nav-item.deal { color: var(--amber); }
-        .nav-item.deal:hover { background: #FEF3C7; }
-
-        /* MAIN */
+        /* 컨테이너 */
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px;
         }
@@ -95,244 +50,268 @@
             color: var(--text-muted);
         }
 
-        /* FILTERS */
-        .filters {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 500;
-            border: 1px solid #E5E7EB;
-            background: var(--white);
-            color: var(--text-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .filter-btn:hover {
-            background: var(--bg-light);
-        }
-
-        .filter-btn.active {
-            background: var(--deep-blue);
-            color: var(--white);
-            border-color: var(--deep-blue);
-        }
-
-        .stats {
-            margin-left: auto;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        /* PROJECT GRID */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 24px;
-        }
-
-        .project-card {
+        /* 섹션 */
+        .section {
             background: var(--white);
             border-radius: 16px;
             padding: 24px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
-        .project-card:hover {
-            border-color: var(--deep-blue);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(29, 78, 216, 0.15);
-        }
-
-        .project-card.verified {
-            border-left: 4px solid var(--deep-green);
-        }
-
-        .card-header {
+        .section-header {
             display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 16px;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
         }
 
-        .method-badge {
-            padding: 6px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            border-radius: 6px;
-            background: var(--deep-blue-pale);
-            color: var(--deep-blue);
-        }
-
-        .verified-badge {
-            padding: 4px 8px;
-            font-size: 11px;
-            font-weight: 600;
-            border-radius: 4px;
-            background: var(--deep-green);
-            color: var(--white);
-        }
-
-        .card-title {
+        .section-title {
             font-size: 20px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 8px;
         }
 
-        .card-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-        }
-
-        .card-values {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .value-item {
-            background: var(--bg-light);
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .value-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .value-amount {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .card-footer {
-            padding-top: 16px;
-            border-top: 1px solid #E5E7EB;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            font-size: 12px;
+        .section-count {
+            padding: 4px 12px;
+            font-size: 13px;
             font-weight: 600;
-            border-radius: 6px;
+            border-radius: 20px;
+            background: var(--bg-light);
+            color: var(--text-muted);
         }
 
-        .status-completed {
-            background: #D1FAE5;
-            color: #065F46;
-        }
-
-        .status-evaluating {
+        /* 진행 중 뱃지 색상 */
+        .section-count.in-progress {
             background: #FEF3C7;
             color: #92400E;
         }
 
-        .status-requested {
+        /* 완료 뱃지 색상 */
+        .section-count.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* 테이블 */
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .project-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .project-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .project-table tbody tr:hover {
+            background: #F3F4F6;
+        }
+
+        .project-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* No 컬럼 */
+        .col-no {
+            width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* 평가방법 뱃지 */
+        .method-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            background: #DBEAFE;
+            color: var(--deep-blue);
+        }
+
+        /* 현재 단계 */
+        .stage-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stage-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .stage-badge.waiting {
             background: #E0E7FF;
             color: #3730A3;
         }
 
-        .card-date {
-            font-size: 12px;
-            color: var(--text-muted);
+        .stage-badge.review {
+            background: #FEF3C7;
+            color: #92400E;
         }
 
-        /* LOADING */
+        .stage-badge.document-request {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .stage-badge.complete {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* 추가 자료 요청 알림 */
+        .request-alert {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #FEE2E2;
+            color: #991B1B;
+            border-radius: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 보고서 수령일 (완료) */
+        .report-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-green);
+        }
+
+        /* 상세 버튼 */
+        .btn-detail {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: transparent;
+            border: 1px solid var(--deep-blue);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-detail:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        /* 하단 새 신청 버튼 */
+        .bottom-action {
+            text-align: center;
+            padding: 32px 0;
+        }
+
+        .btn-new-request {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-new-request:hover {
+            background: #1E40AF;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 빈 상태 */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* 로딩 */
         .loading {
             text-align: center;
-            padding: 60px;
-            font-size: 16px;
-            color: var(--text-muted);
+            padding: 40px;
         }
 
         .spinner {
             border: 3px solid #E5E7EB;
             border-top-color: var(--deep-blue);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 16px;
+            margin: 0 auto 12px;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 80px 40px;
-        }
-
-        .empty-state h3 {
-            font-size: 20px;
-            font-weight: 600;
+        /* 담당 회계사 정보 */
+        .accountant-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
             color: var(--text-secondary);
-            margin-bottom: 8px;
         }
 
-        .empty-state p {
-            font-size: 14px;
-            color: var(--text-muted);
+        .btn-inquiry {
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: #EFF6FF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-inquiry:hover {
+            background: #DBEAFE;
         }
 
         /* 모바일 반응형 */
         @media (max-width: 768px) {
-            header {
-                padding: 0 16px;
-                height: auto;
-                flex-direction: column;
-                gap: 12px;
-                padding: 16px;
-            }
-
-            .header-left {
-                flex-direction: column;
-                gap: 16px;
-                width: 100%;
-            }
-
-            .logo-text {
-                font-size: 20px;
-            }
-
-            .main-nav {
-                flex-wrap: wrap;
-                gap: 4px;
-            }
-
-            .nav-item {
-                padding: 8px 12px;
-                font-size: 13px;
-            }
-
             .container {
                 padding: 20px 16px;
             }
@@ -341,283 +320,261 @@
                 font-size: 24px;
             }
 
-            .page-header p {
-                font-size: 14px;
-            }
-
-            .filters {
-                flex-direction: column;
+            .section {
                 padding: 16px;
-                gap: 12px;
+                border-radius: 12px;
             }
 
-            .filter-group {
+            .section-header {
                 flex-wrap: wrap;
-                width: 100%;
             }
 
-            .filter-btn {
-                padding: 8px 16px;
+            .project-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .project-table th,
+            .project-table td {
+                padding: 12px;
                 font-size: 13px;
-                flex: 1;
-                min-width: calc(50% - 4px);
+                white-space: nowrap;
             }
 
-            .stats {
+            .btn-new-request {
                 width: 100%;
-                text-align: center;
-            }
-
-            .project-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .project-card {
-                padding: 20px 16px;
-            }
-
-            .card-title {
-                font-size: 18px;
-            }
-
-            .card-subtitle {
-                font-size: 13px;
-            }
-
-            .card-values {
-                grid-template-columns: 1fr;
-            }
-
-            .value-amount {
-                font-size: 16px;
-            }
-
-            .empty-state {
-                padding: 60px 20px;
+                justify-content: center;
             }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item link">평가방법</a>
-                <a href="valuation-list.html" class="nav-item valuation">프로젝트 목록</a>
-                <a href="deal.html" class="nav-item deal">Deal</a>
-            </nav>
-        </div>
-    </header>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
 
-    <!-- MAIN -->
+    <!-- 메인 -->
     <div class="container">
         <div class="page-header">
             <h1>평가 프로젝트 목록</h1>
-            <p>실제 검증 사례 5건 포함, 총 25건의 프로젝트</p>
+            <p>신청한 평가 프로젝트 현황을 확인하세요</p>
         </div>
 
-        <!-- FILTERS -->
-        <div class="filters">
-            <div class="filter-group">
-                <button class="filter-btn active" data-method="all">전체</button>
-                <button class="filter-btn" data-method="dcf">DCF평가법</button>
-                <button class="filter-btn" data-method="relative">상대가치</button>
-                <button class="filter-btn" data-method="capital_market_law">본질가치</button>
-                <button class="filter-btn" data-method="asset">자산가치</button>
-                <button class="filter-btn" data-method="inheritance_tax_law">상증세법</button>
+        <!-- 평가 중 섹션 -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">평가 중</h2>
+                <span class="section-count in-progress" id="in-progress-count">0건</span>
             </div>
-            <a href="project-create.html" style="padding: 10px 24px; background: #1D4ED8; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">➕ 신규 프로젝트</a>
-            <div class="stats">
-                총 <strong id="total-count">0</strong>건
+            <div id="in-progress-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>불러오는 중...</p>
+                </div>
             </div>
         </div>
 
-        <!-- LOADING -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>데이터를 불러오는 중...</p>
+        <!-- 평가 완료 섹션 -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">평가 완료</h2>
+                <span class="section-count completed" id="completed-count">0건</span>
+            </div>
+            <div id="completed-content">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>불러오는 중...</p>
+                </div>
+            </div>
         </div>
 
-        <!-- PROJECT GRID -->
-        <div class="project-grid" id="project-grid" style="display: none;">
-            <!-- 카드가 동적으로 추가됩니다 -->
-        </div>
-
-        <!-- EMPTY STATE -->
-        <div class="empty-state" id="empty-state" style="display: none;">
-            <h3>프로젝트가 없습니다</h3>
-            <p>해당 조건의 평가 프로젝트가 없습니다.</p>
+        <!-- 새로운 평가 신청 버튼 -->
+        <div class="bottom-action">
+            <a href="../projects/project-create.html" class="btn-new-request">
+                ➕ 새로운 평가 신청하기
+            </a>
         </div>
     </div>
 
     <script>
+        // 헤더 로드
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+
+                // 현재 페이지 메뉴 활성화 (Valuation)
+                setTimeout(() => {
+                    const menuValuation = document.getElementById('menu-valuation');
+                    if (menuValuation) menuValuation.classList.add('active');
+                }, 100);
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
         // Supabase 설정
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let allProjects = [];
-        let currentFilter = 'all';
-
-        // 평가법 한글명 매핑
+        // 평가방법 한글명
         const methodNames = {
-            'dcf': 'DCF평가법',
+            'dcf': 'DCF 할인법',
             'relative': '상대가치평가법',
             'capital_market_law': '본질가치평가법',
             'asset': '자산가치평가법',
             'inheritance_tax_law': '상증세법평가법'
         };
 
-        // 상태 한글명 매핑
-        const statusNames = {
-            'requested': '평가 요청',
-            'evaluating': '평가 진행중',
-            'completed': '평가 완료'
+        // 단계 정보
+        const stageInfo = {
+            'requested': { label: '접수 대기', class: 'waiting' },
+            'reviewing': { label: '검토 중', class: 'review' },
+            'document_request': { label: '추가 자료 요청', class: 'document-request' },
+            'evaluating': { label: '평가 진행 중', class: 'review' },
+            'completed': { label: '평가 완료', class: 'complete' }
         };
 
-        // 실제 검증 사례 ID 목록
-        const verifiedCases = [
-            'DCF-ENKINOAI-001',
-            'REL-SAMSUNG-001',
-            'CML-KAKAO-001',
-            'NAV-CLASSYS-001',
-            'ITL-CASE-001'
-        ];
+        // 테스트 데이터 (DB 연동 전)
+        const testData = {
+            inProgress: [
+                {
+                    id: 1,
+                    method: 'dcf',
+                    request_date: '2026-01-20',
+                    stage: 'document_request',
+                    has_document_request: true,
+                    accountant: '김회계',
+                    company: '(주)파인드월드'
+                },
+                {
+                    id: 2,
+                    method: 'relative',
+                    request_date: '2026-01-25',
+                    stage: 'evaluating',
+                    has_document_request: false,
+                    accountant: '박평가',
+                    company: '(주)파인드월드'
+                }
+            ],
+            completed: [
+                {
+                    id: 3,
+                    method: 'asset',
+                    request_date: '2025-11-15',
+                    report_date: '2025-12-10',
+                    company: '(주)파인드월드'
+                }
+            ]
+        };
 
-        // 숫자 포맷팅
-        function formatNumber(num) {
-            if (num >= 1000000000000) {
-                return (num / 1000000000000).toFixed(1) + '조';
-            } else if (num >= 100000000) {
-                return (num / 100000000).toFixed(0) + '억';
-            } else {
-                return num.toLocaleString() + '원';
-            }
-        }
-
-        // 데이터 로드
-        async function loadProjects() {
-            try {
-                // Projects와 Valuation Results를 조인해서 가져오기
-                const { data: projects, error } = await supabase
-                    .from('projects')
-                    .select(`
-                        *,
-                        valuation_results (*)
-                    `)
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                allProjects = projects;
-                renderProjects(projects);
-                updateStats(projects.length);
-
-            } catch (error) {
-                console.error('Error loading projects:', error);
-                document.getElementById('loading').innerHTML = `
-                    <p style="color: #DC2626;">데이터 로드 실패: ${error.message}</p>
-                `;
-            }
-        }
-
-        // 프로젝트 렌더링
-        function renderProjects(projects) {
-            const grid = document.getElementById('project-grid');
-            const loading = document.getElementById('loading');
-            const emptyState = document.getElementById('empty-state');
-
-            loading.style.display = 'none';
+        // 평가 중 테이블 렌더링
+        function renderInProgressTable(projects) {
+            const container = document.getElementById('in-progress-content');
+            document.getElementById('in-progress-count').textContent = projects.length + '건';
 
             if (projects.length === 0) {
-                grid.style.display = 'none';
-                emptyState.style.display = 'block';
+                container.innerHTML = '<p class="empty-message">현재 진행 중인 평가가 없습니다.</p>';
                 return;
             }
 
-            emptyState.style.display = 'none';
-            grid.style.display = 'grid';
-            grid.innerHTML = '';
+            let html = `
+                <table class="project-table">
+                    <thead>
+                        <tr>
+                            <th class="col-no">No</th>
+                            <th>평가방법</th>
+                            <th>신청일</th>
+                            <th>현재 단계</th>
+                            <th>담당 회계사</th>
+                            <th>상세</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-            projects.forEach(project => {
-                const result = project.valuation_results?.[0];
-                if (!result) return;
+            projects.forEach((project, index) => {
+                const stage = stageInfo[project.stage] || stageInfo['requested'];
 
-                const isVerified = verifiedCases.includes(project.project_id);
-
-                const card = document.createElement('div');
-                card.className = `project-card ${isVerified ? 'verified' : ''}`;
-                card.innerHTML = `
-                    <div class="card-header">
-                        <span class="method-badge">${methodNames[result.method] || result.method}</span>
-                        ${isVerified ? '<span class="verified-badge">실제 사례</span>' : ''}
-                    </div>
-                    <div class="card-title">${project.company_name_kr}</div>
-                    <div class="card-subtitle">${project.company_name_en || ''}</div>
-                    <div class="card-values">
-                        <div class="value-item">
-                            <div class="value-label">기업가치</div>
-                            <div class="value-amount">${formatNumber(result.enterprise_value)}</div>
-                        </div>
-                        <div class="value-item">
-                            <div class="value-label">주당가치</div>
-                            <div class="value-amount">${result.value_per_share?.toLocaleString()}원</div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <span class="status-badge status-${project.status}">${statusNames[project.status]}</span>
-                        <span class="card-date">${new Date(project.created_at).toLocaleDateString('ko-KR')}</span>
-                    </div>
+                html += `
+                    <tr>
+                        <td class="col-no">${index + 1}</td>
+                        <td><span class="method-badge">${methodNames[project.method] || project.method}</span></td>
+                        <td>${project.request_date}</td>
+                        <td>
+                            <div class="stage-wrapper">
+                                <span class="stage-badge ${stage.class}">${stage.label}</span>
+                                ${project.has_document_request ? '<span class="request-alert">📋 추가 자료 제출 필요</span>' : ''}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="accountant-info">
+                                <span>${project.accountant || '-'}</span>
+                                ${project.accountant ? '<button class="btn-inquiry" onclick="openInquiry(' + project.id + ')">문의하기</button>' : ''}
+                            </div>
+                        </td>
+                        <td><a href="project-detail.html?id=${project.id}" class="btn-detail">상세 보기</a></td>
+                    </tr>
                 `;
-
-                // 클릭 시 상세 페이지로 이동
-                card.addEventListener('click', () => {
-                    window.location.href = `project-detail.html?id=${project.project_id}`;
-                });
-
-                grid.appendChild(card);
             });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
 
-        // 통계 업데이트
-        function updateStats(count) {
-            document.getElementById('total-count').textContent = count;
-        }
+        // 평가 완료 테이블 렌더링
+        function renderCompletedTable(projects) {
+            const container = document.getElementById('completed-content');
+            document.getElementById('completed-count').textContent = projects.length + '건';
 
-        // 필터링
-        function filterProjects(method) {
-            currentFilter = method;
+            if (projects.length === 0) {
+                container.innerHTML = '<p class="empty-message">완료된 평가가 없습니다.</p>';
+                return;
+            }
 
-            const filtered = method === 'all'
-                ? allProjects
-                : allProjects.filter(p => p.valuation_results?.[0]?.method === method);
+            let html = `
+                <table class="project-table">
+                    <thead>
+                        <tr>
+                            <th class="col-no">No</th>
+                            <th>평가방법</th>
+                            <th>신청일</th>
+                            <th>보고서 수령일</th>
+                            <th>상세</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
-            renderProjects(filtered);
-            updateStats(filtered.length);
-        }
-
-        // 필터 버튼 이벤트
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                filterProjects(btn.dataset.method);
+            projects.forEach((project, index) => {
+                html += `
+                    <tr>
+                        <td class="col-no">${index + 1}</td>
+                        <td><span class="method-badge">${methodNames[project.method] || project.method}</span></td>
+                        <td>${project.request_date}</td>
+                        <td><span class="report-date">${project.report_date}</span></td>
+                        <td><a href="project-detail.html?id=${project.id}" class="btn-detail">보고서 보기</a></td>
+                    </tr>
+                `;
             });
-        });
 
-        // 페이지 로드 시 데이터 로드
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // 문의하기 열기
+        function openInquiry(projectId) {
+            alert('문의하기 기능은 추후 구현됩니다.\n\n프로젝트 ID: ' + projectId);
+        }
+
+        // 데이터 로드 (테스트 데이터 사용)
+        function loadProjects() {
+            // 테스트 데이터로 렌더링
+            setTimeout(() => {
+                renderInProgressTable(testData.inProgress);
+                renderCompletedTable(testData.completed);
+            }, 500);
+        }
+
+        // 페이지 로드
         loadProjects();
     </script>
 </body>
