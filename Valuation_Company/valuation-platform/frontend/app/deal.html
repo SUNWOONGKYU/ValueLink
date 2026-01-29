@@ -1,19 +1,11 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <title>Deal News - 투자받은 스타트업 | ValueLink</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --deep-green: #166534;
@@ -28,7 +20,6 @@
             --text-muted: #6B7280;
             --bg-light: #F3F4F6;
             --white: #FFFFFF;
-            --container-padding-mobile: 20px;
         }
 
         body {
@@ -215,7 +206,7 @@
 
         .news-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
         }
 
         .news-content {
@@ -368,41 +359,13 @@
         }
 
         /* 컬럼별 너비 조정 (7개 컬럼: No. 추가) */
-        .deals-table th:nth-child(1) {
-            width: 5%;
-        }
-
-        /* No. */
-        .deals-table th:nth-child(2) {
-            width: 14%;
-        }
-
-        /* 기업명 */
-        .deals-table th:nth-child(3) {
-            width: 20%;
-        }
-
-        /* 주요사업 */
-        .deals-table th:nth-child(4) {
-            width: 10%;
-        }
-
-        /* 투자단계 */
-        .deals-table th:nth-child(5) {
-            width: 20%;
-        }
-
-        /* 투자자 */
-        .deals-table th:nth-child(6) {
-            width: 11%;
-        }
-
-        /* 투자금액 */
-        .deals-table th:nth-child(7) {
-            width: 10%;
-        }
-
-        /* 뉴스 */
+        .deals-table th:nth-child(1) { width: 5%; }  /* No. */
+        .deals-table th:nth-child(2) { width: 14%; } /* 기업명 */
+        .deals-table th:nth-child(3) { width: 20%; } /* 주요사업 */
+        .deals-table th:nth-child(4) { width: 10%; } /* 투자단계 */
+        .deals-table th:nth-child(5) { width: 20%; } /* 투자자 */
+        .deals-table th:nth-child(6) { width: 11%; } /* 투자금액 */
+        .deals-table th:nth-child(7) { width: 10%; }  /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -468,30 +431,11 @@
             border-radius: 10px;
         }
 
-        .stage-seed {
-            background: #DCFCE7;
-            color: #166534;
-        }
-
-        .stage-prea {
-            background: #DBEAFE;
-            color: #1D4ED8;
-        }
-
-        .stage-a {
-            background: #FEF3C7;
-            color: #B45309;
-        }
-
-        .stage-b {
-            background: #FCE7F3;
-            color: #BE185D;
-        }
-
-        .stage-c {
-            background: #E0E7FF;
-            color: #4338CA;
-        }
+        .stage-seed { background: #DCFCE7; color: #166534; }
+        .stage-prea { background: #DBEAFE; color: #1D4ED8; }
+        .stage-a { background: #FEF3C7; color: #B45309; }
+        .stage-b { background: #FCE7F3; color: #BE185D; }
+        .stage-c { background: #E0E7FF; color: #4338CA; }
 
         .deal-region {
             font-size: 12px;
@@ -572,10 +516,9 @@
         }
 
         @media (max-width: 768px) {
-
             /* Hero Section */
             .hero {
-                padding: 24px var(--container-padding-mobile) 32px var(--container-padding-mobile);
+                padding: 24px 20px 32px 20px;
             }
 
             .hero-title {
@@ -634,13 +577,11 @@
 
             .filter-select {
                 width: 100%;
-                font-size: 16px;
-                /* Prevent iOS zoom */
             }
 
             /* Deals Section */
             .deals-section {
-                padding: var(--container-padding-mobile);
+                padding: 20px;
                 overflow-x: auto;
             }
 
@@ -679,57 +620,13 @@
 
             .deals-table td::before {
                 content: attr(data-label);
-                font-weight: 600;
-                /* Bold for readability */
+                font-weight: 400;
                 color: var(--text-muted);
-                font-size: 14px;
-                /* Increased from 13px */
-            }
-
-            .deal-industry,
-            .deal-region,
-            .deal-employees,
-            .deal-founded {
-                font-size: 14px !important;
-                /* Increased from 13px */
-            }
-
-            .deal-stage {
-                font-size: 13px;
-                /* Increased from 12px */
-                padding: 6px 14px;
-            }
-
-            .link-btn {
-                font-size: 13px;
-                /* Increased from 12px */
-                padding: 8px 16px;
-                /* Larger touch target */
+                font-size: 12px;
             }
 
             .deal-company {
                 justify-content: flex-end;
-            }
-
-            /* Additional Mobile Font Adjustments */
-            .news-link-btn {
-                font-size: 13px;
-                padding: 8px 14px;
-            }
-
-            .news-source,
-            .news-date {
-                font-size: 14px;
-            }
-
-            .company-website {
-                font-size: 13px;
-                padding: 6px 10px;
-            }
-
-            .company-website {
-                font-size: 12px;
-                padding: 4px 8px;
             }
 
             /* Footer */
@@ -767,15 +664,8 @@
             align-items: center;
         }
 
-        .footer-logo {
-            font-size: 18px;
-            font-weight: 400;
-        }
-
-        .footer-text {
-            font-size: 13px;
-            opacity: 0.7;
-        }
+        .footer-logo { font-size: 18px; font-weight: 400; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
 
         /* 필터 바 */
         .filter-bar {
@@ -1039,7 +929,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- 헤더 -->
     <div id="header-container"></div>
@@ -1063,61 +952,61 @@
                 </button>
             </div>
 
-            <div class="news-grid" id="news-grid">
-                <!-- 실제 데이터가 JavaScript로 로드됩니다 (최신 3개만) -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6B7280;">
-                    데이터 로딩 중...
+        <div class="news-grid" id="news-grid">
+            <!-- 실제 데이터가 JavaScript로 로드됩니다 (최신 3개만) -->
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #6B7280;">
+                데이터 로딩 중...
+            </div>
+        </div>
+
+        <!-- 투자유치 기업 목록 -->
+        <div class="section-header">
+            <h2>투자유치 기업 목록</h2>
+        </div>
+
+        <div class="deals-section">
+            <!-- 필터 -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <span class="filter-label">투자 단계</span>
+                    <select class="filter-select">
+                        <option value="">전체</option>
+                        <!-- 동적으로 생성됨 -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">기간</span>
+                    <select class="filter-select">
+                        <option>최근 1주</option>
+                        <option>최근 1개월</option>
+                        <option>최근 3개월</option>
+                        <option>최근 1년</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- 투자유치 기업 목록 -->
-            <div class="section-header">
-                <h2>투자유치 기업 목록</h2>
-            </div>
-
-            <div class="deals-section">
-                <!-- 필터 -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <span class="filter-label">투자 단계</span>
-                        <select class="filter-select">
-                            <option value="">전체</option>
-                            <!-- 동적으로 생성됨 -->
-                        </select>
-                    </div>
-                    <div class="filter-group">
-                        <span class="filter-label">기간</span>
-                        <select class="filter-select">
-                            <option>최근 1주</option>
-                            <option>최근 1개월</option>
-                            <option>최근 3개월</option>
-                            <option>최근 1년</option>
-                        </select>
-                    </div>
-                </div>
-
-                <table class="deals-table">
-                    <thead>
-                        <tr>
-                            <th>No.</th>
-                            <th>기업명</th>
-                            <th>주요사업</th>
-                            <th>투자단계</th>
-                            <th>투자자</th>
-                            <th>투자금액</th>
-                            <th>뉴스</th>
-                        </tr>
-                    </thead>
-                    <tbody id="deals-tbody">
-                        <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: #6B7280;">
-                                데이터 로딩 중...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="deals-table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>기업명</th>
+                        <th>주요사업</th>
+                        <th>투자단계</th>
+                        <th>투자자</th>
+                        <th>투자금액</th>
+                        <th>뉴스</th>
+                    </tr>
+                </thead>
+                <tbody id="deals-tbody">
+                    <!-- 실제 데이터가 JavaScript로 로드됩니다 -->
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #6B7280;">
+                            데이터 로딩 중...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         </div>
 
         <!-- 우측 사이드바 -->
@@ -1128,26 +1017,17 @@
             <!-- - 중복 기업 제거 (같은 기업이 여러 투자 라운드 받은 경우) -->
             <!-- - 정확한 투자유치 기업 수로 업데이트 -->
             <div style="margin-bottom: 24px;">
-                <div class="stat-item"
-                    style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-yesterday"
-                        style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
-                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">어제 투자유치
-                        기업 수</div>
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-yesterday" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">어제 투자유치 기업 수</div>
                 </div>
-                <div class="stat-item"
-                    style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-last-week"
-                        style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
-                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">지난주 투자유치
-                        기업 수</div>
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-last-week" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">지난주 투자유치 기업 수</div>
                 </div>
-                <div class="stat-item"
-                    style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
-                    <div class="stat-value" id="stat-year-total"
-                        style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
-                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">금년 누적
-                        투자유치 기업 수</div>
+                <div class="stat-item" style="margin-bottom: 16px; padding: 16px; background: var(--amber-pale); border-radius: 12px;">
+                    <div class="stat-value" id="stat-year-total" style="font-size: 20px; font-weight: 400; color: var(--amber-dark);">-</div>
+                    <div class="stat-label" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">금년 누적 투자유치 기업 수</div>
                 </div>
             </div>
 
@@ -1872,7 +1752,7 @@
         }
 
         // 모달 외부 클릭 시 닫기
-        window.onclick = function (event) {
+        window.onclick = function(event) {
             const newsModal = document.getElementById('newsModal');
             const detailModal = document.getElementById('detailModal');
 
@@ -2024,5 +1904,4 @@
         </div>
     </div>
 </body>
-
 </html>

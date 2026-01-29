@@ -10,11 +10,7 @@
         --border: #E5E7EB;
     }
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
         font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -213,107 +209,83 @@
         box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     }
 
-    /* 햄버거 버튼 */
-    .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-    }
-
-    .hamburger-icon {
-        width: 24px;
-        height: 24px;
-        fill: var(--text-primary);
-    }
-
     /* MOBILE RESPONSIVE */
-    /* MOBILE RESPONSIVE (Included Tablet) */
-    @media (max-width: 1024px) {
+    @media (max-width: 768px) {
         .main-header {
-            padding: 0 20px;
-            height: 60px;
-            position: sticky;
-            top: 0;
-            background: white;
-            z-index: 1000;
-        }
-
-        .header-left {
-            flex: 0;
-        }
-
-        .logo-svg {
-            height: 32px;
-        }
-
-        /* 데스크톱 메뉴 및 버튼 숨김 */
-        .header-right .main-menu,
-        .header-right .btn-login,
-        .header-right .btn-signup {
-            display: none !important;
-        }
-
-        /* 햄버거 버튼 표시 */
-        .hamburger-btn {
-            display: block;
-            margin-left: 8px;
-        }
-
-        .header-right {
-            gap: 4px;
-        }
-
-        /* 모바일 메뉴 컨테이너 */
-        .mobile-menu-container {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            background: white;
-            border-bottom: 1px solid #E5E7EB;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            display: none;
-            flex-direction: column;
-            padding: 16px;
+            padding: 12px 20px;
+            height: auto;
+            flex-wrap: wrap;
             gap: 12px;
         }
 
-        .mobile-menu-container.open {
-            display: flex;
-        }
-
-        .mobile-menu-item {
-            display: block;
-            padding: 12px;
-            font-size: 16px;
-            /* 16px for readability */
-            font-weight: 500;
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 8px;
-            background: #F9FAFB;
-        }
-
-        .mobile-menu-item.active {
-            font-weight: 700;
-            background: #EFF6FF;
-            color: var(--deep-blue);
-        }
-
-        .mobile-auth-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            padding-top: 12px;
-            border-top: 1px solid #F3F4F6;
-        }
-
-        .mobile-auth-buttons button {
+        .header-left {
             flex: 1;
-            padding: 12px;
-            font-size: 14px;
+            min-width: 150px;
+        }
+
+        .logo-svg {
+            height: 40px;
+        }
+
+        .header-right {
+            width: 100%;
+            justify-content: space-between;
+            order: 3;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .main-menu {
+            flex: 1;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .menu-item {
+            padding: 6px 12px;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        #menu-mypage {
+            margin-left: 0;
+        }
+
+        .notification-btn {
+            width: 36px;
+            height: 36px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+        }
+
+        .notification-badge {
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+    }
+
+    /* Tablet (769px ~ 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .main-header {
+            padding: 0 32px;
+        }
+
+        .logo-svg {
+            height: 60px;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            font-size: 15px;
         }
     }
 </style>
@@ -324,23 +296,22 @@
         <a href="index.html" class="logo-container">
             <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 100">
                 <!-- 배경 -->
-                <rect width="500" height="100" fill="#FFFFFF" />
+                <rect width="500" height="100" fill="#FFFFFF"/>
 
                 <!-- V + L 심볼 (높이 40px, 균형 조정) -->
                 <g transform="translate(50, 30)">
                     <!-- 선1: 평가 - 딥블루 (왼쪽) -->
-                    <line x1="0" y1="0" x2="28" y2="40" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round" />
+                    <line x1="0" y1="0" x2="28" y2="40" stroke="#1D4ED8" stroke-width="12" stroke-linecap="round"/>
 
                     <!-- 선2: 기업 - 딥그린 (가운데) 👑 -->
-                    <line x1="56" y1="0" x2="28" y2="40" stroke="#166534" stroke-width="12" stroke-linecap="round" />
+                    <line x1="56" y1="0" x2="28" y2="40" stroke="#166534" stroke-width="12" stroke-linecap="round"/>
 
                     <!-- 선3: 연결 - 앰버 (아래) -->
-                    <line x1="28" y1="40" x2="84" y2="40" stroke="#F59E0B" stroke-width="12" stroke-linecap="round" />
+                    <line x1="28" y1="40" x2="84" y2="40" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
                 </g>
 
                 <!-- 텍스트: ValueLink (세로 중앙 정렬) -->
-                <text x="155" y="50" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1E3A5F"
-                    dominant-baseline="middle">ValueLink</text>
+                <text x="155" y="50" font-family="Arial, sans-serif" font-size="42" font-weight="bold" fill="#1E3A5F" dominant-baseline="middle">ValueLink</text>
             </svg>
         </a>
     </div>
@@ -371,101 +342,75 @@
         <!-- 로그인/회원가입 -->
         <button class="btn-login" onclick="location.href='/login'">로그인</button>
         <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
-
-        <!-- 햄버거 버튼 -->
-        <button class="hamburger-btn" onclick="toggleMobileMenu()">
-            <svg class="hamburger-icon" viewBox="0 0 24 24">
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
-            </svg>
-        </button>
-    </div>
-
-    <!-- 모바일 메뉴 드롭다운 -->
-    <div class="mobile-menu-container" id="mobileMenu">
-        <a href="index.html" class="mobile-menu-item" id="mobile-menu-valuation">Valuation</a>
-        <a href="app/link.html" class="mobile-menu-item" id="mobile-menu-link">Link</a>
-        <a href="app/deal.html" class="mobile-menu-item" id="mobile-menu-deal">Deals</a>
-        <a href="app/core/mypage.html" class="mobile-menu-item" id="mobile-menu-mypage">My Page</a>
-
-        <div class="mobile-auth-buttons">
-            <button class="btn-login" onclick="location.href='/login'">로그인</button>
-            <button class="btn-signup" onclick="location.href='/register'">회원가입</button>
-        </div>
     </div>
 </header>
 
 <script>
-    // 현재 페이지에 따라 경로 및 active 메뉴 설정 (즉시 실행)
-    (function () {
-        const currentPath = window.location.pathname;
+// 현재 페이지에 따라 경로 및 active 메뉴 설정 (즉시 실행)
+(function() {
+    const currentPath = window.location.pathname;
 
-        // /app/ 폴더 기준으로 깊이 계산
-        const appIndex = currentPath.indexOf('/app/');
-        let basePath = '';
+    // /app/ 폴더 기준으로 깊이 계산
+    const appIndex = currentPath.indexOf('/app/');
+    let basePath = '';
 
+    if (appIndex !== -1) {
+        // /app/ 이후의 경로에서 폴더 깊이 계산
+        const afterApp = currentPath.substring(appIndex + 5); // '/app/' 이후
+        const depth = (afterApp.match(/\//g) || []).length; // 슬래시 개수 = 하위 폴더 깊이
+
+        // 깊이만큼 '../' 추가
+        basePath = '../'.repeat(depth);
+    } else {
+        // /app/ 폴더 밖 (예: index.html)
+        basePath = 'app/';
+    }
+
+    // 로고 링크 업데이트 (항상 루트의 index.html로)
+    const logoLink = document.querySelector('.logo-container');
+    if (logoLink) {
         if (appIndex !== -1) {
-            // /app/ 이후의 경로에서 폴더 깊이 계산
-            const afterApp = currentPath.substring(appIndex + 5); // '/app/' 이후
-            const depth = (afterApp.match(/\//g) || []).length; // 슬래시 개수 = 하위 폴더 깊이
-
-            // 깊이만큼 '../' 추가
-            basePath = '../'.repeat(depth);
+            const afterApp = currentPath.substring(appIndex + 5);
+            const depth = (afterApp.match(/\//g) || []).length;
+            logoLink.href = '../'.repeat(depth + 1) + 'index.html';
         } else {
-            // /app/ 폴더 밖 (예: index.html)
-            basePath = 'app/';
+            logoLink.href = 'index.html';
         }
-
-        // 로고 링크 업데이트 (항상 루트의 index.html로)
-        const logoLink = document.querySelector('.logo-container');
-        if (logoLink) {
-            if (appIndex !== -1) {
-                const afterApp = currentPath.substring(appIndex + 5);
-                const depth = (afterApp.match(/\//g) || []).length;
-                logoLink.href = '../'.repeat(depth + 1) + 'index.html';
-            } else {
-                logoLink.href = 'index.html';
-            }
-        }
-
-        // 메뉴 링크 업데이트
-        const menuValuation = document.getElementById('menu-valuation');
-        const menuLink = document.getElementById('menu-link');
-        const menuDeal = document.getElementById('menu-deal');
-        const menuMypage = document.getElementById('menu-mypage');
-
-        if (menuValuation) menuValuation.href = basePath + 'valuation.html';
-        if (menuLink) menuLink.href = basePath + 'link.html';
-        if (menuDeal) menuDeal.href = basePath + 'deal.html';
-        if (menuMypage) menuMypage.href = basePath + 'core/mypage.html';
-
-        // 모든 메뉴 active 제거
-        if (menuValuation) menuValuation.classList.remove('active');
-        if (menuLink) menuLink.classList.remove('active');
-        if (menuDeal) menuDeal.classList.remove('active');
-        if (menuMypage) menuMypage.classList.remove('active');
-
-        // 현재 페이지에 따라 active 추가
-        if (currentPath.includes('link') || currentPath.includes('inquiry')) {
-            if (menuLink) menuLink.classList.add('active');
-        } else if (currentPath.includes('deal')) {
-            if (menuDeal) menuDeal.classList.add('active');
-        } else if (currentPath.includes('mypage')) {
-            if (menuMypage) menuMypage.classList.add('active');
-        } else if (currentPath.includes('valuation') || currentPath.includes('guide') || currentPath.includes('portal') || currentPath.includes('project')) {
-            if (menuValuation) menuValuation.classList.add('active');
-        } else {
-            // 인트로 화면에서는 아무 메뉴도 active 안 함
-        }
-    })();
-
-    // 모바일 메뉴 토글 함수
-    function toggleMobileMenu() {
-        const menu = document.getElementById('mobileMenu');
-        menu.classList.toggle('open');
     }
 
-    // 알람 토글
-    function toggleNotifications() {
-        alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+    // 메뉴 링크 업데이트
+    const menuValuation = document.getElementById('menu-valuation');
+    const menuLink = document.getElementById('menu-link');
+    const menuDeal = document.getElementById('menu-deal');
+    const menuMypage = document.getElementById('menu-mypage');
+
+    if (menuValuation) menuValuation.href = basePath + 'valuation.html';
+    if (menuLink) menuLink.href = basePath + 'link.html';
+    if (menuDeal) menuDeal.href = basePath + 'deal.html';
+    if (menuMypage) menuMypage.href = basePath + 'core/mypage.html';
+
+    // 모든 메뉴 active 제거
+    if (menuValuation) menuValuation.classList.remove('active');
+    if (menuLink) menuLink.classList.remove('active');
+    if (menuDeal) menuDeal.classList.remove('active');
+    if (menuMypage) menuMypage.classList.remove('active');
+
+    // 현재 페이지에 따라 active 추가
+    if (currentPath.includes('link') || currentPath.includes('inquiry')) {
+        if (menuLink) menuLink.classList.add('active');
+    } else if (currentPath.includes('deal')) {
+        if (menuDeal) menuDeal.classList.add('active');
+    } else if (currentPath.includes('mypage')) {
+        if (menuMypage) menuMypage.classList.add('active');
+    } else if (currentPath.includes('valuation') || currentPath.includes('guide') || currentPath.includes('portal') || currentPath.includes('project')) {
+        if (menuValuation) menuValuation.classList.add('active');
+    } else {
+        // 인트로 화면에서는 아무 메뉴도 active 안 함
     }
+})();
+
+// 알람 토글
+function toggleNotifications() {
+    alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+}
 </script>
