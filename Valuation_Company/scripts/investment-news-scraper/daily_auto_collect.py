@@ -170,7 +170,7 @@ def extract_deal_info_with_gemini(title, url):
 
 JSON 형식으로만 답변:
 {{
-    "company_name": "회사명",
+    "company_name": "회사명 (법인명)",
     "industry": "주요사업 (AI/헬스케어/핀테크 등)",
     "stage": "투자단계 (시드/프리A/시리즈A 등)",
     "investors": "투자자 (콤마로 구분)",
@@ -184,6 +184,9 @@ JSON 형식으로만 답변:
 - amount는 억원 단위 숫자만 (50억 → 50)
 - employees는 숫자만
 - 투자유치 뉴스가 아니면 company_name을 null로
+- ⚠️ company_name은 반드시 법인명/회사명이어야 함 (서비스명/브랜드명/플랫폼명 금지!)
+  예: "차즘을 운영하는 디자인앤프랙티스" → company_name은 "디자인앤프랙티스" (차즘 아님)
+  예: "토스를 운영하는 비바리퍼블리카" → company_name은 "비바리퍼블리카" (토스 아님)
 """
 
     try:
