@@ -1,0 +1,556 @@
+/**
+ * 모바일 최적화 CSS
+ * PC 버전에 영향 없음 - 미디어 쿼리 안에서만 동작
+ *
+ * 사용법: 각 HTML 파일의 <head>에 추가
+ * <link rel="stylesheet" href="styles/mobile-optimize.css">
+ */
+
+/* ===== 기본 모바일 (768px 이하) ===== */
+@media (max-width: 768px) {
+
+    /* --- 공통 요소 --- */
+    body {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 터치 친화적 버튼/링크 크기 */
+    button,
+    .btn,
+    a.btn,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* 입력 필드 최적화 (iOS 자동 확대 방지) */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="search"],
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+
+    /* --- 헤더 모바일 최적화 --- */
+    .simple-header,
+    header {
+        padding: 12px 16px !important;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .logo-text {
+        font-size: 20px !important;
+    }
+
+    .nav-links {
+        gap: 12px !important;
+        flex-wrap: wrap;
+    }
+
+    .nav-links a {
+        font-size: 13px !important;
+        padding: 8px 4px;
+    }
+
+    /* --- 컨테이너 모바일 최적화 --- */
+    .container {
+        padding: 20px 16px !important;
+    }
+
+    /* --- 페이지 헤더 모바일 --- */
+    .page-header h1 {
+        font-size: 24px !important;
+    }
+
+    .page-header p {
+        font-size: 14px !important;
+    }
+
+    /* --- Hero 섹션 모바일 --- */
+    .hero {
+        padding: 24px 16px 32px 16px !important;
+    }
+
+    .hero-title {
+        font-size: 26px !important;
+    }
+
+    .hero-description {
+        font-size: 14px !important;
+        padding: 0 8px;
+        line-height: 1.5;
+    }
+
+    /* --- 섹션 모바일 --- */
+    .section {
+        padding: 16px !important;
+        border-radius: 12px !important;
+    }
+
+    .section-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
+    }
+
+    .section-header h2,
+    .section-title {
+        font-size: 18px !important;
+    }
+
+    /* --- 필터바 모바일 --- */
+    .filter-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 16px !important;
+        gap: 12px !important;
+    }
+
+    .filter-group {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+    }
+
+    .filter-label {
+        font-size: 13px !important;
+    }
+
+    .filter-select {
+        width: 100% !important;
+        padding: 12px 14px !important;
+        font-size: 16px !important;
+    }
+
+    /* --- 테이블 → 카드 변환 (모바일) --- */
+    .project-table,
+    .deals-table,
+    table.responsive-table {
+        display: block !important;
+    }
+
+    .project-table thead,
+    .deals-table thead,
+    table.responsive-table thead {
+        display: none !important;
+    }
+
+    .project-table tbody,
+    .deals-table tbody,
+    table.responsive-table tbody {
+        display: block !important;
+    }
+
+    .project-table tr,
+    .deals-table tr,
+    table.responsive-table tr {
+        display: block !important;
+        margin-bottom: 16px !important;
+        padding: 16px !important;
+        background: #F9FAFB !important;
+        border-radius: 12px !important;
+        border: none !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+    }
+
+    .project-table td,
+    .deals-table td,
+    table.responsive-table td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 10px 0 !important;
+        border-bottom: 1px solid #E5E7EB !important;
+        font-size: 14px !important;
+    }
+
+    .project-table td:last-child,
+    .deals-table td:last-child,
+    table.responsive-table td:last-child {
+        border-bottom: none !important;
+        padding-top: 14px !important;
+    }
+
+    .project-table td::before,
+    .deals-table td::before,
+    table.responsive-table td::before {
+        content: attr(data-label);
+        font-weight: 500 !important;
+        color: #6B7280 !important;
+        font-size: 12px !important;
+        flex-shrink: 0;
+        margin-right: 12px;
+    }
+
+    /* --- 카드 그리드 모바일 --- */
+    .news-grid,
+    .card-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+
+    /* --- 뉴스 카드 모바일 --- */
+    .news-card {
+        border-radius: 12px !important;
+    }
+
+    .news-content {
+        padding: 16px !important;
+    }
+
+    .news-title {
+        font-size: 14px !important;
+        height: auto !important;
+        -webkit-line-clamp: 3;
+    }
+
+    .news-link-btn {
+        padding: 6px 14px !important;
+        font-size: 12px !important;
+    }
+
+    /* --- 사이드바 모바일 --- */
+    .sidebar {
+        width: 100% !important;
+        position: static !important;
+        padding: 20px !important;
+        border-radius: 12px !important;
+        margin-top: 8px !important;
+    }
+
+    .sidebar-title {
+        font-size: 16px !important;
+        padding: 10px 14px !important;
+    }
+
+    .news-provider-item {
+        padding: 14px 16px !important;
+        font-size: 14px !important;
+    }
+
+    .provider-number {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 13px !important;
+    }
+
+    /* --- 버튼 모바일 --- */
+    .btn-see-more {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+        margin-left: 0 !important;
+    }
+
+    .btn-subscribe,
+    .btn-new-request {
+        width: 100% !important;
+        padding: 14px 20px !important;
+        font-size: 15px !important;
+        justify-content: center !important;
+    }
+
+    .btn-detail {
+        padding: 10px 16px !important;
+        font-size: 13px !important;
+    }
+
+    .link-btn {
+        padding: 10px 18px !important;
+        font-size: 14px !important;
+    }
+
+    /* --- 모달 모바일 최적화 --- */
+    .news-modal-content,
+    .detail-modal-content,
+    .modal-content {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 10px !important;
+        max-height: 90vh !important;
+        border-radius: 12px !important;
+    }
+
+    .subscribe-modal-content {
+        width: 92% !important;
+        max-width: none !important;
+        padding: 24px 20px !important;
+        border-radius: 12px !important;
+    }
+
+    .news-modal-header,
+    .detail-modal-header,
+    .modal-header {
+        padding: 16px 20px !important;
+    }
+
+    .news-modal-header h2,
+    .detail-modal-header h2,
+    .modal-header h2 {
+        font-size: 18px !important;
+    }
+
+    .news-modal-close,
+    .detail-modal-close,
+    .modal-close {
+        font-size: 28px !important;
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .news-modal-body,
+    .detail-modal-body,
+    .modal-body {
+        padding: 16px 20px !important;
+    }
+
+    .modal-news-item {
+        padding: 16px 12px !important;
+    }
+
+    /* 상세 모달 행 */
+    .detail-row {
+        flex-direction: column !important;
+        gap: 4px !important;
+        padding: 12px 0 !important;
+    }
+
+    .detail-label {
+        width: 100% !important;
+        font-size: 12px !important;
+    }
+
+    .detail-value {
+        font-size: 14px !important;
+    }
+
+    /* 구독 모달 */
+    .subscribe-modal h3 {
+        font-size: 18px !important;
+    }
+
+    .subscribe-form input {
+        padding: 14px !important;
+        font-size: 16px !important;
+    }
+
+    .subscribe-form .checkbox-group {
+        flex-direction: column !important;
+        gap: 12px !important;
+    }
+
+    .btn-submit-subscribe {
+        padding: 16px !important;
+        font-size: 16px !important;
+    }
+
+    /* --- 폼 모바일 --- */
+    .form-container {
+        padding: 24px 20px !important;
+    }
+
+    .form-group {
+        margin-bottom: 16px !important;
+    }
+
+    .form-group label {
+        font-size: 14px !important;
+    }
+
+    .form-group input {
+        padding: 14px 16px !important;
+        font-size: 16px !important;
+    }
+
+    .form-options {
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: flex-start !important;
+    }
+
+    /* --- 푸터 모바일 --- */
+    footer {
+        padding: 24px 16px !important;
+        margin-top: 40px !important;
+    }
+
+    .footer-content {
+        flex-direction: column !important;
+        gap: 12px !important;
+        text-align: center !important;
+    }
+
+    .footer-logo {
+        font-size: 16px !important;
+    }
+
+    .footer-text {
+        font-size: 12px !important;
+    }
+
+    /* --- 딜/투자 정보 모바일 --- */
+    .deal-name {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+    }
+
+    .deal-investors {
+        text-align: right !important;
+        font-size: 13px !important;
+    }
+
+    .deal-amount {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+    }
+
+    .deal-stage {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+
+    /* --- 스탯/통계 모바일 --- */
+    .stats-bar {
+        padding: 20px !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+
+    .stat-value {
+        font-size: 24px !important;
+    }
+
+    .stat-label {
+        font-size: 12px !important;
+    }
+
+    /* --- 평가방법/단계 뱃지 모바일 --- */
+    .method-badge {
+        padding: 6px 10px !important;
+        font-size: 11px !important;
+    }
+
+    .stage-badge {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+    }
+
+    /* --- 담당자 정보 모바일 --- */
+    .accountant-info {
+        flex-direction: column !important;
+        align-items: flex-end !important;
+        gap: 6px !important;
+    }
+
+    .btn-inquiry {
+        padding: 6px 12px !important;
+        font-size: 12px !important;
+    }
+
+    /* --- 추가 자료 요청 알림 모바일 --- */
+    .request-alert {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+    }
+}
+
+/* ===== 매우 작은 화면 (375px 이하) ===== */
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 22px !important;
+    }
+
+    .hero-description {
+        font-size: 13px !important;
+    }
+
+    .section-header h2,
+    .section-title {
+        font-size: 16px !important;
+    }
+
+    .page-header h1 {
+        font-size: 22px !important;
+    }
+
+    .deals-table td,
+    .project-table td {
+        font-size: 13px !important;
+    }
+
+    .news-title {
+        font-size: 13px !important;
+    }
+
+    .btn-subscribe,
+    .btn-new-request {
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+    }
+
+    .form-container {
+        padding: 20px 16px !important;
+    }
+}
+
+/* ===== 태블릿 (768px ~ 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .news-grid,
+    .card-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .main-content {
+        padding: 32px !important;
+        flex-direction: column !important;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        position: static !important;
+    }
+
+    .container {
+        padding: 32px !important;
+    }
+}
+
+/* ===== 가로 모드 모바일 (landscape) ===== */
+@media (max-width: 896px) and (orientation: landscape) {
+    .hero {
+        padding: 16px !important;
+    }
+
+    .hero-title {
+        font-size: 24px !important;
+    }
+
+    .modal-content,
+    .news-modal-content,
+    .detail-modal-content {
+        max-height: 85vh !important;
+    }
+}
+
+/* ===== iOS Safari 안전 영역 대응 ===== */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+    footer {
+        padding-bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+    }
+}
+
+/* ===== 스크롤 최적화 ===== */
+@media (max-width: 768px) {
+    .modal-body,
+    .news-modal-body,
+    .detail-modal-body {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+}
