@@ -556,18 +556,14 @@
                         <option value="">선택하세요</option>
                         <option value="investment">투자 유치</option>
                         <option value="ma">M&A</option>
-                        <option value="tax">세무 신고 (상속/증여)</option>
                         <option value="ipo">기업공개 (IPO)</option>
                         <option value="internal">내부 의사결정</option>
+                        <option value="tax">세무 신고 (상속/증여)</option>
                         <option value="other">기타</option>
                     </select>
+                    <!-- 기타 선택 시 바로 아래에 입력란 표시 -->
+                    <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요" style="display: none; margin-top: 12px;">
                 </div>
-            </div>
-
-            <!-- 기타 목적 입력란 (기타 선택 시 표시) -->
-            <div class="form-group" id="otherPurposeGroup" style="display: none;">
-                <label>기타 목적 내용</label>
-                <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요">
             </div>
 
             <div class="form-group">
@@ -754,13 +750,13 @@
         // 기타 목적 입력란 토글
         function toggleOtherPurpose() {
             const purposeSelect = document.getElementById('purpose');
-            const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+            const otherPurposeInput = document.getElementById('otherPurpose');
 
             if (purposeSelect.value === 'other') {
-                otherPurposeGroup.style.display = 'block';
+                otherPurposeInput.style.display = 'block';
             } else {
-                otherPurposeGroup.style.display = 'none';
-                document.getElementById('otherPurpose').value = '';
+                otherPurposeInput.style.display = 'none';
+                otherPurposeInput.value = '';
             }
         }
 

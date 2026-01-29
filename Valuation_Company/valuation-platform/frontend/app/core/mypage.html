@@ -115,8 +115,10 @@
                 // 1. 로그인 확인
                 const { data: { user }, error: authError } = await supabase.auth.getUser();
 
+                // 테스트용: 로그인 안 되어 있으면 회사 마이페이지로 바로 이동
                 if (authError || !user) {
-                    showError('로그인이 필요합니다', '마이페이지를 이용하려면 먼저 로그인해주세요.', '/login');
+                    console.log('테스트 모드: 회사 마이페이지로 이동');
+                    window.location.href = 'mypage-company.html';
                     return;
                 }
 
