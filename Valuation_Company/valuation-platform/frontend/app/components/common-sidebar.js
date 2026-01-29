@@ -255,20 +255,8 @@ function renderAccountantSection() {
  * 단계 접근 가능 여부 판단
  */
 function shouldStepBeAccessible(stepNumber, currentStep, methodStatus) {
-    // 1~3단계: 항상 접근 가능 (홈 프로세스)
-    if (stepNumber <= 3) {
-        return true;
-    }
-
-    // 4~14단계: 승인되어야 접근 가능
-    if (methodStatus === 'approved' ||
-        methodStatus === 'in_progress' ||
-        methodStatus === 'completed') {
-        // 현재 단계 이하만 접근 가능
-        return stepNumber <= currentStep;
-    }
-
-    return false;
+    // 테스트 단계: 모든 단계 항상 접근 가능
+    return true;
 }
 
 /**
