@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가 프로젝트 목록 | ValueLink</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --red: #DC2626;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F9FAFB;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* 기본 헤더 */
+        .simple-header {
+            background: var(--white);
+            padding: 16px 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .simple-header a {
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E3A5F;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .nav-links a.active {
+            color: var(--deep-blue);
+        }
+
+        /* 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        /* 섹션 */
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-count {
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 20px;
+            background: var(--bg-light);
+            color: var(--text-muted);
+        }
+
+        .section-count.in-progress {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .section-count.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* 테이블 */
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .project-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .project-table td {
+            padding: 16px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .project-table tbody tr:hover {
+            background: #F3F4F6;
+        }
+
+        .project-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .col-no {
+            width: 60px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* 평가방법 뱃지 */
+        .method-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            background: #DBEAFE;
+            color: var(--deep-blue);
+        }
+
+        /* 현재 단계 */
+        .stage-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stage-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .stage-badge.waiting {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .stage-badge.review {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .stage-badge.document-request {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .stage-badge.complete {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        /* 추가 자료 요청 알림 */
+        .request-alert {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #FEE2E2;
+            color: #991B1B;
+            border-radius: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* 보고서 수령일 */
+        .report-date {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--deep-green);
+        }
+
+        /* 상세 버튼 */
+        .btn-detail {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: transparent;
+            border: 1px solid var(--deep-blue);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-detail:hover {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        /* 하단 새 신청 버튼 */
+        .bottom-action {
+            text-align: center;
+            padding: 32px 0;
+        }
+
+        .btn-new-request {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--white);
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-new-request:hover {
+            background: #1E40AF;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+        }
+
+        /* 빈 상태 */
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* 담당 회계사 정보 */
+        .accountant-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .btn-inquiry {
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: #EFF6FF;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-inquiry:hover {
+            background: #DBEAFE;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .simple-header {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 16px;
+                border-radius: 12px;
+            }
+
+            .section-header {
+                flex-wrap: wrap;
+            }
+
+            .project-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .project-table th,
+            .project-table td {
+                padding: 12px;
+                font-size: 13px;
+                white-space: nowrap;
+            }
+
+            .btn-new-request {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="simple-header">
+        <a href="../../index.html" class="logo-text">ValueLink</a>
+        <nav class="nav-links">
+            <a href="../valuation.html" class="active">Valuation</a>
+            <a href="../link.html">Link</a>
+            <a href="../deal.html">Deals</a>
+            <a href="mypage-company.html">My Page</a>
+        </nav>
+    </header>
+
+    <!-- 메인 -->
+    <div class="container">
+        <div class="page-header">
+            <h1>평가 프로젝트 목록</h1>
+            <p>신청한 평가 프로젝트 현황을 확인하세요</p>
+        </div>
+
+        <!-- 평가 중 섹션 -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">평가 중</h2>
+                <span class="section-count in-progress" id="in-progress-count">2건</span>
+            </div>
+            <table class="project-table">
+                <thead>
+                    <tr>
+                        <th class="col-no">No</th>
+                        <th>평가방법</th>
+                        <th>신청일</th>
+                        <th>현재 단계</th>
+                        <th>담당 회계사</th>
+                        <th>상세</th>
+                    </tr>
+                </thead>
+                <tbody id="in-progress-body">
+                    <tr>
+                        <td class="col-no">1</td>
+                        <td><span class="method-badge">DCF 할인법</span></td>
+                        <td>2026-01-20</td>
+                        <td>
+                            <div class="stage-wrapper">
+                                <span class="stage-badge document-request">추가 자료 요청</span>
+                                <span class="request-alert">📋 추가 자료 제출 필요</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="accountant-info">
+                                <span>김회계</span>
+                                <button class="btn-inquiry" onclick="openInquiry(1)">문의하기</button>
+                            </div>
+                        </td>
+                        <td><a href="project-detail.html?id=1" class="btn-detail">상세 보기</a></td>
+                    </tr>
+                    <tr>
+                        <td class="col-no">2</td>
+                        <td><span class="method-badge">상대가치평가법</span></td>
+                        <td>2026-01-25</td>
+                        <td>
+                            <div class="stage-wrapper">
+                                <span class="stage-badge review">평가 진행 중</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="accountant-info">
+                                <span>박평가</span>
+                                <button class="btn-inquiry" onclick="openInquiry(2)">문의하기</button>
+                            </div>
+                        </td>
+                        <td><a href="project-detail.html?id=2" class="btn-detail">상세 보기</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 평가 완료 섹션 -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">평가 완료</h2>
+                <span class="section-count completed" id="completed-count">1건</span>
+            </div>
+            <table class="project-table">
+                <thead>
+                    <tr>
+                        <th class="col-no">No</th>
+                        <th>평가방법</th>
+                        <th>신청일</th>
+                        <th>보고서 수령일</th>
+                        <th>상세</th>
+                    </tr>
+                </thead>
+                <tbody id="completed-body">
+                    <tr>
+                        <td class="col-no">1</td>
+                        <td><span class="method-badge">자산가치평가법</span></td>
+                        <td>2025-11-15</td>
+                        <td><span class="report-date">2025-12-10</span></td>
+                        <td><a href="project-detail.html?id=3" class="btn-detail">보고서 보기</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 새로운 평가 신청 버튼 -->
+        <div class="bottom-action">
+            <a href="../projects/project-create.html" class="btn-new-request">
+                + 새로운 평가 신청하기
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 문의하기 열기
+        function openInquiry(projectId) {
+            alert('문의하기 기능은 추후 구현됩니다.\n\n프로젝트 ID: ' + projectId);
+        }
+    </script>
+</body>
+</html>
