@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Deal News - 투자받은 스타트업 | ValueLink</title>
     <style>
         * {
@@ -676,30 +679,31 @@
 
             .deals-table td::before {
                 content: attr(data-label);
-                font-weight: 400;
+                font-weight: 600;
+                /* Bold for readability */
                 color: var(--text-muted);
-                font-size: 13px;
-                /* Increased from 12px */
+                font-size: 14px;
+                /* Increased from 13px */
             }
 
             .deal-industry,
             .deal-region,
             .deal-employees,
             .deal-founded {
-                font-size: 13px !important;
-                /* Increased from 11px/12px */
+                font-size: 14px !important;
+                /* Increased from 13px */
             }
 
             .deal-stage {
-                font-size: 12px;
-                /* Increased from 11px */
-                padding: 4px 12px;
+                font-size: 13px;
+                /* Increased from 12px */
+                padding: 6px 14px;
             }
 
             .link-btn {
-                font-size: 12px;
-                /* Increased from 11px */
-                padding: 6px 12px;
+                font-size: 13px;
+                /* Increased from 12px */
+                padding: 8px 16px;
                 /* Larger touch target */
             }
 
@@ -709,13 +713,18 @@
 
             /* Additional Mobile Font Adjustments */
             .news-link-btn {
-                font-size: 12px;
-                padding: 6px 12px;
+                font-size: 13px;
+                padding: 8px 14px;
             }
 
             .news-source,
             .news-date {
+                font-size: 14px;
+            }
+
+            .company-website {
                 font-size: 13px;
+                padding: 6px 10px;
             }
 
             .company-website {
