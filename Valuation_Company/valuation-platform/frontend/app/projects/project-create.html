@@ -548,7 +548,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>평가 기준일 <span class="required">*</span></label>
-                    <input type="date" id="valuationDate" value="2025-01-01">
+                    <input type="date" id="valuationDate" value="2026-01-01">
                 </div>
                 <div class="form-group">
                     <label>평가 목적</label>
@@ -561,9 +561,13 @@
                         <option value="tax">세무 신고 (상속/증여)</option>
                         <option value="other">기타</option>
                     </select>
-                    <!-- 기타 선택 시 바로 아래에 입력란 표시 -->
-                    <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요" style="display: none; margin-top: 12px;">
                 </div>
+            </div>
+
+            <!-- 기타 목적 입력란 (기타 선택 시 표시) -->
+            <div class="form-group" id="otherPurposeGroup" style="display: none;">
+                <label>기타 목적 내용 <span class="required">*</span></label>
+                <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요">
             </div>
 
             <div class="form-group">
@@ -586,7 +590,7 @@
         <!-- 버튼 -->
         <div class="btn-group">
             <button class="btn btn-secondary" onclick="history.back()">취소</button>
-            <button class="btn btn-primary" onclick="createProject()">평가 요청하기</button>
+            <button class="btn btn-primary" onclick="createProject()">평가 신청하기</button>
         </div>
     </main>
 
@@ -750,12 +754,13 @@
         // 기타 목적 입력란 토글
         function toggleOtherPurpose() {
             const purposeSelect = document.getElementById('purpose');
+            const otherPurposeGroup = document.getElementById('otherPurposeGroup');
             const otherPurposeInput = document.getElementById('otherPurpose');
 
             if (purposeSelect.value === 'other') {
-                otherPurposeInput.style.display = 'block';
+                otherPurposeGroup.style.display = 'block';
             } else {
-                otherPurposeInput.style.display = 'none';
+                otherPurposeGroup.style.display = 'none';
                 otherPurposeInput.value = '';
             }
         }

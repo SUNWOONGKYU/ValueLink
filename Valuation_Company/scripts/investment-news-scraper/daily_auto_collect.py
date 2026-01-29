@@ -445,6 +445,7 @@ def step2_verify_and_save(articles, target_date):
                     'article_title': article['title'],
                     'article_url': article['url'],
                     'published_date': published_date,
+                    'collected_at': datetime.now().isoformat(),  # 수집 시간 저장
                     'has_amount': gemini_result.get('amount') is not None,
                     'has_investors': gemini_result.get('investors') is not None,
                     'has_stage': gemini_result.get('stage') is not None,
