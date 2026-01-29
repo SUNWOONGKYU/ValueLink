@@ -706,17 +706,18 @@
             border-color: var(--amber);
         }
 
-        /* 더보기 버튼 - 심플 스타일 */
+        /* 더보기 버튼 - outline 박스 스타일 */
         .btn-see-more {
-            padding: 6px 14px;
+            padding: 10px 20px;
             background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 400;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            margin-left: 20px;
         }
 
         .btn-see-more:hover {
@@ -1094,7 +1095,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <h2>최신 투자유치 뉴스</h2>
                     <button class="btn-see-more" onclick="openNewsModal()">
-                        더보기 →
+                        최신 누적 투자유치 뉴스
                     </button>
                 </div>
                 <button class="btn-subscribe" onclick="openSubscribeModal()">
