@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이 페이지 - ValueLink</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #F9FAFB;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #6B7280;
+        }
+
+        /* 섹션 스타일 */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        /* 폼 스타일 */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-input {
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1D4ED8;
+        }
+
+        .form-input:disabled {
+            background: #F3F4F6;
+            color: #6B7280;
+            cursor: not-allowed;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        /* 버튼 스타일 */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            color: white;
+            background: #1D4ED8;
+        }
+
+        .btn-primary:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+        }
+
+        .btn-secondary {
+            color: #374151;
+            background: #F3F4F6;
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        /* 정보 표시 영역 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            padding: 16px;
+            background: #F9FAFB;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6B7280;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #111827;
+        }
+
+        /* 링크 */
+        .link {
+            color: #1D4ED8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            /* 컨테이너 패딩 축소 */
+            .container {
+                padding: 20px;
+            }
+
+            /* 페이지 헤더 */
+            .page-header {
+                margin-bottom: 24px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .page-subtitle {
+                font-size: 14px;
+            }
+
+            /* 섹션 패딩 축소 */
+            .section {
+                padding: 20px;
+                margin-bottom: 16px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 20px;
+                padding-bottom: 12px;
+            }
+
+            /* 그리드 1열로 변경 */
+            .form-grid,
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            /* 버튼 그룹 세로 정렬 */
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* 폼 입력 필드 */
+            .form-input {
+                font-size: 16px; /* iOS 자동 확대 방지 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">마이 페이지</h1>
+            <p class="page-subtitle">회사 정보 및 계정 설정을 관리합니다</p>
+        </div>
+
+        <!-- 회사 기본 정보 -->
+        <div class="section">
+            <h2 class="section-title">회사 기본 정보</h2>
+            <form id="companyForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">회사명 *</label>
+                        <input type="text" class="form-input" id="companyName" placeholder="예: (주)밸류링크" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">대표자명 *</label>
+                        <input type="text" class="form-input" id="ceoName" placeholder="예: 홍길동" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">업종</label>
+                        <input type="text" class="form-input" id="industry" placeholder="예: 소프트웨어 개발">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">설립일</label>
+                        <input type="date" class="form-input" id="foundedDate">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">사업자등록번호 *</label>
+                        <input type="text" class="form-input" id="businessNumber" placeholder="예: 123-45-67890" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">직원 수</label>
+                        <input type="number" class="form-input" id="employees" placeholder="예: 50">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">회사 홈페이지</label>
+                        <input type="url" class="form-input" id="companyWebsite" placeholder="예: https://www.valuelink.com">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">주소</label>
+                        <input type="text" class="form-input" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">전화번호</label>
+                        <input type="tel" class="form-input" id="phone" placeholder="예: 02-1234-5678">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">팩스 번호</label>
+                        <input type="tel" class="form-input" id="fax" placeholder="예: 02-1234-5679">
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">취소</button>
+                    <button type="submit" class="btn btn-primary">저장하기</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 계정 정보 -->
+        <div class="section">
+            <h2 class="section-title">계정 정보</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">계정 이메일</div>
+                    <div class="info-value">user@example.com</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">가입일</div>
+                    <div class="info-value">2025년 1월 20일</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">마지막 로그인</div>
+                    <div class="info-value">2025년 1월 21일 18:30</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">계정 상태</div>
+                    <div class="info-value" style="color: #059669;">활성</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 비밀번호 변경 -->
+        <div class="section">
+            <h2 class="section-title">비밀번호 변경</h2>
+            <form id="passwordForm">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label class="form-label">현재 비밀번호 *</label>
+                        <input type="password" class="form-input" id="currentPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호 *</label>
+                        <input type="password" class="form-input" id="newPassword" required>
+                        <span class="form-hint">최소 8자 이상, 영문/숫자/특수문자 조합</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">새 비밀번호 확인 *</label>
+                        <input type="password" class="form-input" id="confirmPassword" required>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">비밀번호 변경</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 평가 내역 바로가기 -->
+        <div class="section">
+            <h2 class="section-title">평가 프로젝트 관리</h2>
+            <p style="color: #6B7280; margin-bottom: 16px;">
+                진행 중이거나 완료된 평가 프로젝트를 확인하고 관리할 수 있습니다.
+            </p>
+            <a href="valuation-list.html" class="link">내 평가 프로젝트 보기 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+
+                // 헤더 로드 후 메뉴 링크 수정 (마이 페이지는 /app/ 폴더 내부)
+                const menuValuation = document.getElementById('menu-valuation');
+                const menuDeal = document.getElementById('menu-deal');
+                const logoLink = document.querySelector('.logo-container');
+
+                if (menuValuation) menuValuation.href = '../index.html';
+                if (menuDeal) menuDeal.href = 'deal.html';
+                if (logoLink) logoLink.href = '../index.html';
+
+                // 현재 페이지가 마이 페이지이므로 메뉴 active 제거
+                if (menuValuation) menuValuation.classList.remove('active');
+                if (menuDeal) menuDeal.classList.remove('active');
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 회사 정보 폼 제출
+        document.getElementById('companyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = {
+                industry: document.getElementById('industry').value,
+                companyName: document.getElementById('companyName').value,
+                ceoName: document.getElementById('ceoName').value,
+                businessNumber: document.getElementById('businessNumber').value,
+                foundedDate: document.getElementById('foundedDate').value,
+                employees: document.getElementById('employees').value,
+                companyWebsite: document.getElementById('companyWebsite').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                fax: document.getElementById('fax').value
+            };
+
+            localStorage.setItem('companyInfo', JSON.stringify(formData));
+            console.log('회사 정보 저장:', formData);
+            alert('회사 정보가 저장되었습니다.');
+        });
+
+        // 비밀번호 변경 폼 제출
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                alert('새 비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                alert('비밀번호는 최소 8자 이상이어야 합니다.');
+                return;
+            }
+
+            console.log('비밀번호 변경 요청');
+            alert('비밀번호가 변경되었습니다.');
+
+            // 폼 초기화
+            document.getElementById('passwordForm').reset();
+        });
+
+        // 폼 초기화
+        function resetForm() {
+            document.getElementById('companyForm').reset();
+        }
+
+        // 로컬 스토리지에서 회사 정보 불러오기
+        window.addEventListener('load', function() {
+            let savedData = localStorage.getItem('companyInfo');
+
+            // 테스트용: 저장된 데이터가 없으면 파인드월드 테스트 데이터 설정
+            if (!savedData) {
+                const testData = {
+                    companyName: '(주)파인드월드',
+                    ceoName: '김태영',
+                    industry: 'AI 기반 검색 솔루션',
+                    foundedDate: '2019-03-15',
+                    businessNumber: '123-45-67890',
+                    employees: '25',
+                    companyWebsite: 'https://www.findworld.co.kr',
+                    address: '서울특별시 강남구 테헤란로 123, 4층',
+                    phone: '02-1234-5678',
+                    fax: '02-1234-5679'
+                };
+                localStorage.setItem('companyInfo', JSON.stringify(testData));
+                savedData = JSON.stringify(testData);
+            }
+
+            const data = JSON.parse(savedData);
+            document.getElementById('industry').value = data.industry || '';
+            document.getElementById('companyName').value = data.companyName || '';
+            document.getElementById('ceoName').value = data.ceoName || '';
+            document.getElementById('businessNumber').value = data.businessNumber || '';
+            document.getElementById('foundedDate').value = data.foundedDate || '';
+            document.getElementById('employees').value = data.employees || '';
+            document.getElementById('companyWebsite').value = data.companyWebsite || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('fax').value = data.fax || '';
+        });
+    </script>
+</body>
+</html>

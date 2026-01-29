@@ -511,22 +511,35 @@ def step3_register_to_deals(target_date):
         if company not in company_best or score > company_best[company]['score']:
             company_best[company] = news
 
-    # 중복 체크 및 등록 (새로운 투자 라운드면 새로 등록)
-    existing_deals = supabase.table('deals').select('company_name,stage,news_url').execute()
+    # 기존 deals 가져오기 (점수 비교용)
+    existing_deals = supabase.table('deals').select('*').execute()
 
-    # 회사별 기존 투자 라운드 및 뉴스 URL 저장
-    existing_company_stages = {}  # {회사명: [stage1, stage2, ...]}
+    # 회사별 기존 deal 정보 저장 {회사명: {stage: deal_data}}
+    existing_company_deals = {}
     existing_news_urls = set()
 
     for deal in existing_deals.data:
         company = deal['company_name']
-        stage = deal.get('stage')
+        stage = deal.get('stage') or 'unknown'
         news_url = deal.get('news_url')
 
-        if company not in existing_company_stages:
-            existing_company_stages[company] = []
-        if stage:
-            existing_company_stages[company].append(stage)
+        if company not in existing_company_deals:
+            existing_company_deals[company] = {}
+
+        # 기존 deal의 점수 계산
+        existing_score = 0
+        if deal.get('amount'): existing_score += 3
+        if deal.get('investors'): existing_score += 3
+        if deal.get('stage'): existing_score += 2
+        if deal.get('industry'): existing_score += 1
+        if deal.get('location'): existing_score += 1
+
+        existing_company_deals[company][stage] = {
+            'id': deal['id'],
+            'score': existing_score,
+            'deal': deal
+        }
+
         if news_url:
             existing_news_urls.add(news_url)
 
@@ -534,11 +547,13 @@ def step3_register_to_deals(target_date):
     next_number = last_deal.data[0]['number'] + 1 if last_deal.data else 1
 
     registered = 0
+    updated = 0
 
     for company, news in company_best.items():
         article = news['article']
         info = news['info']
-        new_stage = info.get('stage')
+        new_stage = info.get('stage') or 'unknown'
+        new_score = news['score']
         news_url = article.get('article_url')
 
         # 1. 같은 뉴스 URL이면 중복
@@ -546,24 +561,42 @@ def step3_register_to_deals(target_date):
             log(f"    ⚠️ {company}: 같은 뉴스 URL 존재")
             continue
 
-        # 2. 회사가 존재하고, 같은 투자 라운드면 중복
-        if company in existing_company_stages:
-            existing_stages = existing_company_stages[company]
+        # 2. 회사가 존재하는지 확인
+        if company in existing_company_deals:
+            company_stages = existing_company_deals[company]
 
-            # 새로운 투자 라운드인지 확인
-            if new_stage and new_stage in existing_stages:
-                log(f"    ⚠️ {company}: 같은 라운드({new_stage}) 이미 존재")
+            # 같은 라운드가 있는지 확인
+            if new_stage in company_stages:
+                existing_info = company_stages[new_stage]
+                existing_score = existing_info['score']
+
+                # 점수 비교: 새 뉴스가 더 높으면 업데이트
+                if new_score > existing_score:
+                    log(f"    🔄 {company}: 더 높은 점수 뉴스 발견 ({existing_score} → {new_score})")
+
+                    # 기존 deal 업데이트
+                    supabase.table('deals').update({
+                        'industry': info.get('industry') or existing_info['deal'].get('industry'),
+                        'investors': info.get('investors') or existing_info['deal'].get('investors'),
+                        'amount': info.get('amount') or existing_info['deal'].get('amount'),
+                        'location': info.get('location') or existing_info['deal'].get('location'),
+                        'news_title': article['article_title'],
+                        'news_url': article['article_url'],
+                        'news_date': article['published_date'],
+                        'site_name': article['site_name'],
+                    }).eq('id', existing_info['id']).execute()
+
+                    updated += 1
+                    log(f"    ✅ {company} 업데이트 완료")
+                else:
+                    log(f"    ⚠️ {company}: 같은 라운드({new_stage}) 이미 존재 (기존 점수 {existing_score} >= 새 점수 {new_score})")
                 continue
-            elif new_stage:
-                log(f"    🆕 {company}: 새로운 투자 라운드({new_stage}) 발견!")
+
             else:
-                # stage 정보가 없으면 중복으로 처리
-                log(f"    ⚠️ {company}: 이미 존재 (stage 정보 없음)")
-                continue
+                # 새로운 투자 라운드
+                log(f"    🆕 {company}: 새로운 투자 라운드({new_stage}) 발견!")
 
-        article = news['article']
-        info = news['info']
-
+        # 신규 등록
         try:
             supabase.table('deals').insert({
                 'number': next_number,
@@ -582,10 +615,9 @@ def step3_register_to_deals(target_date):
             log(f"    ✅ {company} 등록 (#{next_number})")
 
             # 등록된 회사의 stage 정보 업데이트
-            if company not in existing_company_stages:
-                existing_company_stages[company] = []
-            if new_stage:
-                existing_company_stages[company].append(new_stage)
+            if company not in existing_company_deals:
+                existing_company_deals[company] = {}
+            existing_company_deals[company][new_stage] = {'score': new_score}
             existing_news_urls.add(news_url)
 
             next_number += 1
@@ -594,8 +626,8 @@ def step3_register_to_deals(target_date):
         except Exception as e:
             log(f"    ❌ {company} 오류: {str(e)[:40]}", "ERROR")
 
-    log(f"  📊 {registered}개 신규 등록")
-    return registered
+    log(f"  📊 신규 {registered}개 등록, {updated}개 업데이트")
+    return registered + updated
 
 
 # ============================================================

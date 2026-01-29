@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가 신청하기 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../utils/auth-check.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-pale: #D1FAE5;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #1E40AF 100%);
+            padding: 40px 40px 40px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        /* FORM */
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .form-card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #EF4444;
+            margin-left: 2px;
+        }
+
+        .form-group label .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+            box-shadow: 0 0 0 3px var(--deep-blue-pale);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 평가방법 선택 */
+        .method-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .method-option {
+            position: relative;
+        }
+
+        .method-option input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .method-option label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .method-option label:hover {
+            border-color: var(--deep-blue-light);
+        }
+
+        .method-option input:checked + label {
+            border-color: var(--deep-blue);
+            background: var(--deep-blue-pale);
+            position: relative;
+        }
+
+        .method-option input:checked + label::after {
+            content: '✓';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 20px;
+            height: 20px;
+            background: var(--deep-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .method-option .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .method-option .name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .method-option .code {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+
+        /* 버튼 */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-primary {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #1E40AF;
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* 성공 모달 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal p {
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .modal .project-id {
+            background: var(--bg-light);
+            padding: 16px;
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--deep-blue);
+            margin-bottom: 24px;
+        }
+
+        .modal .btn-group {
+            justify-content: center;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            header {
+                padding: 0 16px;
+                height: auto;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+
+            .header-left {
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+            }
+
+            .logo-text {
+                font-size: 20px;
+            }
+
+            .main-nav {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 13px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-title h1 {
+                font-size: 22px;
+            }
+
+            .page-title p {
+                font-size: 14px;
+            }
+
+            .project-id-preview {
+                padding: 16px;
+            }
+
+            .project-id-preview .id {
+                font-size: 18px;
+                word-break: break-all;
+            }
+
+            .form-card {
+                padding: 20px 16px;
+            }
+
+            .form-card h2 {
+                font-size: 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .method-selector {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+
+            .method-option label {
+                padding: 12px 8px;
+            }
+
+            .method-option .icon {
+                font-size: 24px;
+            }
+
+            .method-option .name {
+                font-size: 13px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .modal {
+                padding: 24px 20px;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1 class="hero-title">평가 신청하기</h1>
+    </section>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <!-- 평가 대상 회사 정보 -->
+        <div class="form-card">
+            <h2>평가 대상 회사 정보</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>회사명 (국문) <span class="required">*</span></label>
+                    <input type="text" id="companyNameKr" placeholder="예: 삼성전자">
+                </div>
+                <div class="form-group">
+                    <label>회사명 (영문) <span class="required">*</span></label>
+                    <input type="text" id="companyNameEn" placeholder="예: Samsung Electronics">
+                    <div class="hint">영문명이 없으면 한글 발음을 로마자로 입력</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>대표자명 <span class="required">*</span></label>
+                    <input type="text" id="ceoName" placeholder="예: 홍길동">
+                </div>
+                <div class="form-group">
+                    <label>사업자등록번호 <span class="required">*</span></label>
+                    <input type="text" id="bizNumber" placeholder="예: 123-45-67890">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>업종</label>
+                    <input type="text" id="industry" placeholder="예: 소프트웨어 개발">
+                </div>
+                <div class="form-group">
+                    <label>설립일</label>
+                    <input type="date" id="foundedDate">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>직원 수</label>
+                    <input type="number" id="employees" placeholder="예: 50">
+                </div>
+                <div class="form-group">
+                    <label>전화번호</label>
+                    <input type="tel" id="phone" placeholder="예: 02-1234-5678">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>회사 홈페이지</label>
+                    <input type="url" id="companyWebsite" placeholder="예: https://www.valuelink.com">
+                </div>
+                <div class="form-group">
+                    <label>팩스 번호</label>
+                    <input type="tel" id="fax" placeholder="예: 02-1234-5679">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>주소</label>
+                <input type="text" id="address" placeholder="예: 서울특별시 강남구 테헤란로 123" style="width: 100%;">
+            </div>
+        </div>
+
+        <!-- 평가 방법 선택 -->
+        <div class="form-card">
+            <h2>평가 방법 선택 <span style="color:red;font-size:12px;">[v3]</span></h2>
+
+            <div class="form-group">
+                <label><span class="required">*</span> <span class="hint">(여러 개 선택 가능)</span></label>
+                <div class="method-selector">
+                    <div class="method-option">
+                        <input type="checkbox" name="methods[]" id="methodDC" value="dcf">
+                        <label for="methodDC">
+                            <span class="icon">💰</span>
+                            <span class="name">DCF 할인법</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="checkbox" name="methods[]" id="methodRV" value="relative">
+                        <label for="methodRV">
+                            <span class="icon">⚖️</span>
+                            <span class="name">상대가치평가법</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="checkbox" name="methods[]" id="methodIV" value="intrinsic">
+                        <label for="methodIV">
+                            <span class="icon">💎</span>
+                            <span class="name">본질가치평가법</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="checkbox" name="methods[]" id="methodAV" value="asset">
+                        <label for="methodAV">
+                            <span class="icon">🏦</span>
+                            <span class="name">자산가치평가법</span>
+                        </label>
+                    </div>
+                    <div class="method-option">
+                        <input type="checkbox" name="methods[]" id="methodTX" value="inheritance_tax">
+                        <label for="methodTX">
+                            <span class="icon">📋</span>
+                            <span class="name">상증세법평가법</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>평가 기준일 <span class="required">*</span></label>
+                    <input type="date" id="valuationDate" value="2026-01-01">
+                </div>
+                <div class="form-group">
+                    <label>평가 목적</label>
+                    <select id="purpose" onchange="toggleOtherPurpose()">
+                        <option value="">선택하세요</option>
+                        <option value="investment">투자 유치</option>
+                        <option value="ma">M&A</option>
+                        <option value="ipo">기업공개 (IPO)</option>
+                        <option value="internal">내부 의사결정</option>
+                        <option value="tax">세무 신고 (상속/증여)</option>
+                        <option value="other">기타</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 기타 목적 입력란 (기타 선택 시 표시) -->
+            <div class="form-group" id="otherPurposeGroup" style="display: none;">
+                <label>기타 목적 내용 <span class="required">*</span></label>
+                <input type="text" id="otherPurpose" placeholder="기타 평가 목적을 입력해주세요">
+            </div>
+
+            <div class="form-group">
+                <label>평가 시 고려사항</label>
+                <textarea id="requirements" placeholder="특별히 고려해야 할 사항을 입력해주세요"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>예산 범위 <span class="required">*</span></label>
+                <div class="form-row">
+                    <input type="text" id="budgetMin" placeholder="최소 예산 (예: 300만원)">
+                    <input type="text" id="budgetMax" placeholder="최대 예산 (예: 500만원)">
+                </div>
+                <div class="hint" style="margin-top: 12px; padding: 16px; background: #F0F9FF; border-radius: 8px; border-left: 4px solid var(--deep-blue);">
+                    <strong style="color: var(--deep-blue);">※ 참고사항:</strong> 예산을 제시해 주실 때, 시중 일반 가격 대비 50% 수준으로 제시해 주시기 바랍니다.
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="history.back()">취소</button>
+            <button class="btn btn-primary" onclick="createProject()">평가 신청하기</button>
+        </div>
+    </main>
+
+    <!-- 성공 모달 -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal">
+            <div class="success-icon">✓</div>
+            <h2>평가 요청이 접수되었습니다</h2>
+            <p>담당자 배정 후 안내 메일이 발송됩니다</p>
+            <div class="project-id" id="modalProjectId">SAMSU-2501191430-DC</div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="location.href='valuation-list.html'">목록으로</button>
+                <button class="btn btn-primary" id="goToPortalBtn">자료 제출하기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 클라이언트 초기화
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // ===== PHASE 3: 접근 제어 및 Auto-Fill =====
+        // 페이지 로드 시 실행
+        (async function initPage() {
+            try {
+                // 1. 접근 제어: company 역할만 허용
+                const { user, userData, customerData } = await AuthCheck.getCustomerData();
+
+                console.log('Authorized user:', userData);
+                console.log('Customer data:', customerData);
+
+                // 2. Auto-Fill: customerData가 있으면 폼 자동 채우기
+                if (customerData) {
+                    autoFillCompanyInfo(customerData);
+                }
+
+            } catch (error) {
+                console.error('Page init failed:', error);
+                // AuthCheck.getCustomerData()가 이미 에러 처리 및 리다이렉트 수행
+            }
+        })();
+
+        // Auto-Fill 함수
+        function autoFillCompanyInfo(customerData) {
+            // 회사명 (국문)
+            if (customerData.company_name && !document.getElementById('companyNameKr').value) {
+                document.getElementById('companyNameKr').value = customerData.company_name;
+            }
+
+            // 회사명 (영문)
+            if (customerData.company_name_en && !document.getElementById('companyNameEn').value) {
+                document.getElementById('companyNameEn').value = customerData.company_name_en;
+            }
+
+            // 사업자등록번호
+            if (customerData.business_number && !document.getElementById('bizNumber').value) {
+                document.getElementById('bizNumber').value = customerData.business_number;
+            }
+
+            // 대표자명
+            if (customerData.ceo_name && !document.getElementById('ceoName').value) {
+                document.getElementById('ceoName').value = customerData.ceo_name;
+            }
+
+            // 업종
+            if (customerData.industry && !document.getElementById('industry').value) {
+                document.getElementById('industry').value = customerData.industry;
+            }
+
+            // 설립일
+            if (customerData.founded_date && !document.getElementById('foundedDate').value) {
+                document.getElementById('foundedDate').value = customerData.founded_date;
+            }
+
+            // 직원 수
+            if (customerData.employees && !document.getElementById('employees').value) {
+                document.getElementById('employees').value = customerData.employees;
+            }
+
+            // 전화번호
+            if (customerData.phone && !document.getElementById('phone').value) {
+                document.getElementById('phone').value = customerData.phone;
+            }
+
+            // 회사 홈페이지
+            if (customerData.company_website && !document.getElementById('companyWebsite').value) {
+                document.getElementById('companyWebsite').value = customerData.company_website;
+            }
+
+            // 팩스 번호
+            if (customerData.fax && !document.getElementById('fax').value) {
+                document.getElementById('fax').value = customerData.fax;
+            }
+
+            // 주소
+            if (customerData.address && !document.getElementById('address').value) {
+                document.getElementById('address').value = customerData.address;
+            }
+
+            console.log('Auto-fill completed:', {
+                companyNameKr: customerData.company_name,
+                companyNameEn: customerData.company_name_en,
+                bizNumber: customerData.business_number,
+                ceoName: customerData.ceo_name,
+                industry: customerData.industry,
+                foundedDate: customerData.founded_date,
+                employees: customerData.employees,
+                phone: customerData.phone,
+                companyWebsite: customerData.company_website,
+                fax: customerData.fax,
+                address: customerData.address
+            });
+        }
+        // ===== END: PHASE 3 =====
+
+        // 영문명에서 5글자 코드 추출
+        function getCompanyCode(englishName) {
+            if (!englishName) return 'XXXXX';
+
+            // 공백, 특수문자 제거하고 대문자로
+            const cleaned = englishName.replace(/[^a-zA-Z]/g, '').toUpperCase();
+
+            if (cleaned.length >= 5) {
+                return cleaned.substring(0, 5);
+            } else {
+                // 5자 미만이면 X로 채움
+                return cleaned.padEnd(5, 'X');
+            }
+        }
+
+        // 현재 시간 코드 생성 (YYMMDDHHmm)
+        function getTimeCode() {
+            const now = new Date();
+            const yy = String(now.getFullYear()).slice(-2);
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            const hh = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            return yy + mm + dd + hh + min;
+        }
+
+        // 선택된 평가방법 코드 (첫 번째 선택된 평가법)
+        function getMethodCode() {
+            const selected = document.querySelector('input[name="methods[]"]:checked');
+            if (!selected) return 'XX';
+
+            // 평가법 값 → 코드 매핑
+            const codeMap = {
+                'dcf': 'DC',
+                'relative': 'RV',
+                'intrinsic': 'IV',
+                'asset': 'AV',
+                'inheritance_tax': 'TX'
+            };
+
+            return codeMap[selected.value] || 'XX';
+        }
+
+        // 기타 목적 입력란 토글
+        function toggleOtherPurpose() {
+            const purposeSelect = document.getElementById('purpose');
+            const otherPurposeGroup = document.getElementById('otherPurposeGroup');
+            const otherPurposeInput = document.getElementById('otherPurpose');
+
+            if (purposeSelect.value === 'other') {
+                otherPurposeGroup.style.display = 'block';
+            } else {
+                otherPurposeGroup.style.display = 'none';
+                otherPurposeInput.value = '';
+            }
+        }
+
+        // 프로젝트 생성/수정
+        async function createProject() {
+            // 필수 입력 검증
+            const companyNameKr = document.getElementById('companyNameKr').value;
+            const companyNameEn = document.getElementById('companyNameEn').value;
+
+            // 선택된 평가법들 (체크박스 배열)
+            const selectedMethods = Array.from(
+                document.querySelectorAll('input[name="methods[]"]:checked')
+            ).map(cb => cb.value);
+
+            if (!companyNameKr || !companyNameEn) {
+                alert('회사명을 입력해주세요.');
+                return;
+            }
+
+            if (selectedMethods.length === 0) {
+                alert('평가 방법을 1개 이상 선택해주세요.');
+                return;
+            }
+
+            const budgetMin = document.getElementById('budgetMin').value;
+            const budgetMax = document.getElementById('budgetMax').value;
+            if (!budgetMin || !budgetMax) {
+                alert('예산 범위를 입력해주세요.');
+                return;
+            }
+
+            // 프로젝트 ID 생성 (회사명 + 타임스탬프 + 평가법)
+            const englishName = companyNameEn;
+            const companyCode = getCompanyCode(englishName);
+            const timeCode = getTimeCode();
+            const methodCode = getMethodCode();
+            const projectId = `${companyCode}-${timeCode}-${methodCode}`;
+
+            // 수정 모드 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const isEditMode = urlParams.has('edit');
+
+            try {
+                if (isEditMode) {
+                    // 수정 모드: 프로젝트 업데이트
+                    const { data: project, error: projectError } = await supabase
+                        .from('projects')
+                        .update({
+                            company_name_kr: companyNameKr,
+                            company_name_en: companyNameEn,
+                            ceo_name: document.getElementById('ceoName').value,
+                            business_number: document.getElementById('bizNumber').value,
+                            industry: document.getElementById('industry').value,
+                            founded_date: document.getElementById('foundedDate').value,
+                            employees: document.getElementById('employees').value,
+                            phone: document.getElementById('phone').value,
+                            company_website: document.getElementById('companyWebsite').value,
+                            fax: document.getElementById('fax').value,
+                            address: document.getElementById('address').value,
+                            budget_min: budgetMin,
+                            budget_max: budgetMax,
+                            valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
+                            purpose: document.getElementById('purpose').value === 'other'
+                                ? document.getElementById('otherPurpose').value
+                                : document.getElementById('purpose').value,
+                            requirements: document.getElementById('requirements').value
+                        })
+                        .eq('project_id', projectId)
+                        .select();
+
+                    if (projectError) throw projectError;
+
+                    alert('평가 요청이 수정되었습니다.');
+                    location.href = `project-detail.html?id=${projectId}`;
+
+                } else {
+                    // 신규 생성 모드
+
+                    // 평가법별 상태 설정
+                    const projectData = {
+                        project_id: projectId,
+                        company_name_kr: companyNameKr,
+                        company_name_en: companyNameEn,
+                        ceo_name: document.getElementById('ceoName').value,
+                        business_number: document.getElementById('bizNumber').value,
+                        industry: document.getElementById('industry').value,
+                        founded_date: document.getElementById('foundedDate').value,
+                        employees: document.getElementById('employees').value,
+                        phone: document.getElementById('phone').value,
+                        company_website: document.getElementById('companyWebsite').value,
+                        fax: document.getElementById('fax').value,
+                        address: document.getElementById('address').value,
+                        budget_min: budgetMin,
+                        budget_max: budgetMax,
+                        valuation_date: document.getElementById('valuationDate').value || new Date().toISOString().split('T')[0],
+                        purpose: document.getElementById('purpose').value === 'other'
+                            ? document.getElementById('otherPurpose').value
+                            : document.getElementById('purpose').value,
+                        requirements: document.getElementById('requirements').value,
+                        status: 'pending',
+                        current_step: 2,  // 2단계 (평가 신청)
+
+                        // 평가법별 상태 필드
+                        dcf_status: selectedMethods.includes('dcf') ? 'pending' : 'not_requested',
+                        dcf_step: selectedMethods.includes('dcf') ? 2 : 1,
+
+                        relative_status: selectedMethods.includes('relative') ? 'pending' : 'not_requested',
+                        relative_step: selectedMethods.includes('relative') ? 2 : 1,
+
+                        intrinsic_status: selectedMethods.includes('intrinsic') ? 'pending' : 'not_requested',
+                        intrinsic_step: selectedMethods.includes('intrinsic') ? 2 : 1,
+
+                        asset_status: selectedMethods.includes('asset') ? 'pending' : 'not_requested',
+                        asset_step: selectedMethods.includes('asset') ? 2 : 1,
+
+                        inheritance_tax_status: selectedMethods.includes('inheritance_tax') ? 'pending' : 'not_requested',
+                        inheritance_tax_step: selectedMethods.includes('inheritance_tax') ? 2 : 1
+                    };
+
+                    // 1. projects 테이블에 프로젝트 생성
+                    const { data: project, error: projectError } = await supabase
+                        .from('projects')
+                        .insert([projectData])
+                        .select();
+
+                    if (projectError) throw projectError;
+
+                    console.log('평가 요청 접수 성공:', project);
+                    console.log('선택된 평가법:', selectedMethods);
+
+                    // 성공 후 approval-waiting.html로 이동
+                    alert(`평가 요청이 접수되었습니다.\n선택한 평가법: ${selectedMethods.length}개\n\n담당자 배정 후 안내 메일이 발송됩니다.`);
+                    location.href = `../approval-waiting.html?projectId=${projectId}`;
+                    const portalBtn = document.getElementById('goToPortalBtn');
+                    portalBtn.onclick = () => {
+                        location.href = portalUrls[method.value] || 'customer-portal.html';
+                    };
+
+                    document.getElementById('successModal').classList.add('show');
+                }
+
+            } catch (error) {
+                console.error('프로젝트 저장 실패:', error);
+                alert('프로젝트 저장 중 오류가 발생했습니다: ' + error.message);
+            }
+        }
+
+        // 수정 모드: 프로젝트 데이터 로드
+        async function loadProjectForEdit(projectId) {
+            try {
+                const { data: project, error } = await supabase
+                    .from('projects')
+                    .select(`
+                        *,
+                        valuation_results (*)
+                    `)
+                    .eq('project_id', projectId)
+                    .single();
+
+                if (error) throw error;
+
+                if (project) {
+                    // 폼에 데이터 채우기
+                    document.getElementById('companyNameKr').value = project.company_name_kr || '';
+                    document.getElementById('companyNameEn').value = project.company_name_en || '';
+                    document.getElementById('ceoName').value = project.ceo_name || '';
+                    document.getElementById('bizNumber').value = project.business_number || '';
+                    document.getElementById('industry').value = project.industry || '';
+                    document.getElementById('foundedDate').value = project.founded_date || '';
+                    document.getElementById('employees').value = project.employees || '';
+                    document.getElementById('phone').value = project.phone || '';
+                    document.getElementById('companyWebsite').value = project.company_website || '';
+                    document.getElementById('fax').value = project.fax || '';
+                    document.getElementById('address').value = project.address || '';
+                    document.getElementById('budgetMin').value = project.budget_min || '';
+                    document.getElementById('budgetMax').value = project.budget_max || '';
+                    document.getElementById('valuationDate').value = project.valuation_date || '';
+                    document.getElementById('purpose').value = project.purpose || '';
+                    document.getElementById('requirements').value = project.requirements || '';
+
+                    // 평가 방법 선택
+                    if (project.valuation_results && project.valuation_results.length > 0) {
+                        const method = project.valuation_results[0].method;
+                        const methodCodeMap = {
+                            'dcf': 'DC',
+                            'relative': 'RV',
+                            'intrinsic': 'IV',
+                            'asset': 'AV',
+                            'inheritance_tax_law': 'TX'
+                        };
+                        const methodCode = methodCodeMap[method];
+                        if (methodCode) {
+                            const radio = document.querySelector(`input[value="${methodCode}"]`);
+                            if (radio) radio.checked = true;
+                        }
+                    }
+
+                    // 버튼 텍스트 변경
+                    document.querySelector('.btn-primary').textContent = '평가 요청 수정';
+                    document.querySelector('.page-title h1').textContent = '평가 요청 수정';
+
+                    // 수정 모드 - projectId는 변경 불가
+                }
+            } catch (error) {
+                console.error('프로젝트 로드 실패:', error);
+                alert('프로젝트 데이터를 불러오는 중 오류가 발생했습니다.');
+                location.href = 'valuation-list.html';
+            }
+        }
+
+        // URL 파라미터 확인
+        const urlParams = new URLSearchParams(window.location.search);
+        const editId = urlParams.get('edit');
+
+        if (editId) {
+            // 수정 모드
+            loadProjectForEdit(editId);
+        }
+    </script>
+
+    <script>
+        // 헤더 로드
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                const container = document.getElementById('header-container');
+                container.innerHTML = data;
+
+                // 삽입된 script 태그를 수동으로 실행
+                const scripts = container.querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+</body>
+</html>
