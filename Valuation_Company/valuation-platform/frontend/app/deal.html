@@ -1989,6 +1989,77 @@
                 `;
             }).join('');
         }
+
+        // ===== 뉴스레터 구독 기능 =====
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function openSubscribeModal() {
+            document.getElementById('subscribe-modal').style.display = 'flex';
+        }
+
+        function closeSubscribeModal() {
+            document.getElementById('subscribe-modal').style.display = 'none';
+        }
+
+        // 모달 바깥 클릭 시 닫기
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('subscribe-modal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) closeSubscribeModal();
+                });
+            }
+        });
+
+        async function submitSubscribe(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('btn-submit');
+            btn.disabled = true;
+            btn.textContent = '처리 중...';
+
+            const email = document.getElementById('subscribe-email').value;
+            const name = document.getElementById('subscribe-name').value || null;
+            const company = document.getElementById('subscribe-company').value || null;
+            const daily = document.getElementById('sub-daily').checked;
+            const weekly = document.getElementById('sub-weekly').checked;
+
+            let subscriptionType = 'none';
+            if (daily && weekly) subscriptionType = 'both';
+            else if (daily) subscriptionType = 'daily';
+            else if (weekly) subscriptionType = 'weekly';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('newsletter_subscribers')
+                    .insert({
+                        email: email,
+                        name: name,
+                        company: company,
+                        subscription_type: subscriptionType,
+                        is_active: true,
+                        subscribed_at: new Date().toISOString()
+                    });
+
+                if (error) {
+                    if (error.code === '23505') {
+                        alert('이미 구독 중인 이메일입니다.');
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    alert('구독이 완료되었습니다!');
+                    closeSubscribeModal();
+                    document.getElementById('subscribe-form').reset();
+                }
+            } catch (err) {
+                console.error('구독 오류:', err);
+                alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.');
+            }
+
+            btn.disabled = false;
+            btn.textContent = '구독하기';
+        }
     </script>
 
     <!-- 뉴스 모달 -->
@@ -2095,74 +2166,5 @@
         </div>
     </div>
 
-    <script>
-    // Supabase 클라이언트 (구독용)
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // 구독 모달 열기/닫기
-    function openSubscribeModal() {
-        document.getElementById('subscribe-modal').style.display = 'flex';
-    }
-
-    function closeSubscribeModal() {
-        document.getElementById('subscribe-modal').style.display = 'none';
-    }
-
-    // 모달 바깥 클릭 시 닫기
-    document.getElementById('subscribe-modal').addEventListener('click', function(e) {
-        if (e.target === this) closeSubscribeModal();
-    });
-
-    // 구독 제출
-    async function submitSubscribe(e) {
-        e.preventDefault();
-
-        const btn = document.getElementById('btn-submit');
-        btn.disabled = true;
-        btn.textContent = '처리 중...';
-
-        const email = document.getElementById('subscribe-email').value;
-        const name = document.getElementById('subscribe-name').value || null;
-        const company = document.getElementById('subscribe-company').value || null;
-        const daily = document.getElementById('sub-daily').checked;
-        const weekly = document.getElementById('sub-weekly').checked;
-
-        let subscriptionType = 'none';
-        if (daily && weekly) subscriptionType = 'both';
-        else if (daily) subscriptionType = 'daily';
-        else if (weekly) subscriptionType = 'weekly';
-
-        try {
-            const { data, error } = await supabaseClient
-                .from('newsletter_subscribers')
-                .insert({
-                    email: email,
-                    name: name,
-                    company: company,
-                    subscription_type: subscriptionType,
-                    is_active: true,
-                    subscribed_at: new Date().toISOString()
-                });
-
-            if (error) {
-                if (error.code === '23505') {
-                    alert('이미 구독 중인 이메일입니다.');
-                } else {
-                    throw error;
-                }
-            } else {
-                alert('구독이 완료되었습니다! 🎉\n매일 아침 투자 뉴스를 보내드릴게요.');
-                closeSubscribeModal();
-                document.getElementById('subscribe-form').reset();
-            }
-        } catch (err) {
-            console.error('구독 오류:', err);
-            alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.');
-        }
-
-        btn.disabled = false;
-        btn.textContent = '구독하기';
-    }
-    </script>
 </body>
 </html>
