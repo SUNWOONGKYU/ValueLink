@@ -3,13 +3,16 @@
 """
 일일 뉴스 이메일 발송 (월-토 9am)
 - 어제 수집된 투자 뉴스 발송
+- Gmail SMTP 사용
 """
 
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 from supabase import create_client
 from datetime import datetime, timedelta
-import requests
 
 load_dotenv()
 
@@ -18,7 +21,9 @@ supabase = create_client(
     os.getenv('SUPABASE_SERVICE_KEY')
 )
 
-RESEND_API_KEY = os.getenv('RESEND_API_KEY')
+# Gmail SMTP 설정
+GMAIL_ADDRESS = os.getenv('GMAIL_ADDRESS')
+GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD')
 
 
 def get_yesterday_deals():
@@ -47,155 +52,124 @@ def generate_email_html(deals):
     """
     date_str = (datetime.now() - timedelta(days=1)).strftime('%Y년 %m월 %d일')
 
-    html = f"""
-<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body {{
-            font-family: 'Noto Sans KR', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }}
-        .header {{
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            border-radius: 10px 10px 0 0;
-        }}
-        .header h1 {{
-            margin: 0;
-            font-size: 24px;
-        }}
-        .header p {{
-            margin: 10px 0 0 0;
-            font-size: 14px;
-            opacity: 0.9;
-        }}
-        .content {{
-            background: #f8f9fa;
-            padding: 30px;
-        }}
-        .deal {{
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }}
-        .deal-title {{
-            font-size: 18px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 10px;
-        }}
-        .deal-info {{
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
-        }}
-        .deal-badge {{
-            background: #e9ecef;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 13px;
-        }}
-        .deal-link {{
-            display: inline-block;
-            margin-top: 10px;
-            color: #667eea;
-            text-decoration: none;
-        }}
-        .footer {{
-            text-align: center;
-            padding: 20px;
-            color: #6c757d;
-            font-size: 12px;
-        }}
-        .stats {{
-            background: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }}
-        .stats-number {{
-            font-size: 36px;
-            font-weight: bold;
-            color: #667eea;
-        }}
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body>
-    <div class="header">
-        <h1>📊 Investment News Daily</h1>
-        <p>{date_str} 투자 뉴스</p>
-    </div>
+<body style="margin:0; padding:0; background-color:#f4f5f7; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;">
 
-    <div class="content">
-        <div class="stats">
-            <div class="stats-number">{len(deals)}</div>
-            <div>건의 투자 뉴스</div>
-        </div>
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f5f7; padding:20px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff; border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+    <!-- Header -->
+    <tr>
+        <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:24px 30px; text-align:center;">
+            <h1 style="margin:0; color:#ffffff; font-size:20px; font-weight:700;">{date_str} 투자 뉴스 ({len(deals)}건)</h1>
+        </td>
+    </tr>
+
+    <!-- Deals List -->
+    <tr>
+        <td style="padding:20px 30px;">
 """
 
     if not deals:
         html += """
-        <div class="deal">
-            <p style="text-align: center; color: #6c757d;">
-                어제 수집된 투자 뉴스가 없습니다.
-            </p>
-        </div>
+            <p style="text-align:center; color:#999; padding:30px 0; font-size:15px;">어제 수집된 투자 뉴스가 없습니다.</p>
 """
     else:
-        for deal in deals:
-            html += f"""
-        <div class="deal">
-            <div class="deal-title">{deal['company_name']}</div>
-            <div>{deal.get('industry', 'N/A')} · {deal.get('location', 'N/A')}</div>
+        for i, deal in enumerate(deals):
+            news_title = deal.get('news_title', '')
+            amount = deal.get('amount', '')
+            investors = deal.get('investors', '')
 
-            <div class="deal-info">
-"""
-            if deal.get('amount'):
-                html += f"""
-                <span class="deal-badge">💰 {deal['amount']}</span>
-"""
-            if deal.get('stage'):
-                html += f"""
-                <span class="deal-badge">📈 {deal['stage']}</span>
-"""
-            if deal.get('investors'):
-                html += f"""
-                <span class="deal-badge">🤝 {deal['investors']}</span>
-"""
+            border_top = 'border-top:1px solid #eee; padding-top:16px; margin-top:16px;' if i > 0 else ''
+
+            # 기업명 | 투자자 | 투자금액
+            info_parts = [f"<b>{deal['company_name']}</b>"]
+            if investors:
+                info_parts.append(investors)
+            info_parts.append(amount if amount else '금액 미공개')
+            info_line = ' | '.join(info_parts)
 
             html += f"""
-            </div>
-
-            <a href="{deal['news_url']}" class="deal-link" target="_blank">
-                기사 전문 보기 →
-            </a>
-        </div>
+            <table width="100%" cellpadding="0" cellspacing="0" style="{border_top}">
+            <tr><td style="padding-bottom:14px;">
+                <p style="margin:0 0 10px; font-size:18px; color:#1a1a1a;">{info_line}</p>
+"""
+            if news_title:
+                html += f"""
+                <p style="margin:0 0 10px; font-size:16px; color:#666; line-height:1.6;">{news_title}</p>
+"""
+            html += f"""
+                <a href="{deal['news_url']}" style="font-size:17px; color:#4f46e5; text-decoration:none;" target="_blank">기사 전문 보기 &rarr;</a>
+            </td></tr>
+            </table>
 """
 
     html += """
-    </div>
+        </td>
+    </tr>
 
-    <div class="footer">
-        <p>Investment News Network</p>
-        <p>구독 취소를 원하시면 <a href="#">여기</a>를 클릭하세요</p>
-    </div>
+    <!-- CTA Button -->
+    <tr>
+        <td style="padding:10px 30px 24px; text-align:center;">
+            <a href="https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/deal.html"
+               style="display:inline-block; background:#4f46e5; color:#ffffff; padding:12px 28px;
+                      border-radius:6px; text-decoration:none; font-size:17px; font-weight:600;">
+                전체 투자 뉴스 보러가기 &rarr;
+            </a>
+        </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+        <td style="background:#fafafa; padding:16px 30px; text-align:center; border-top:1px solid #eee;">
+            <p style="margin:0; font-size:11px; color:#bbb;">ValueLink Deals | 구독 취소는 이 이메일에 회신</p>
+        </td>
+    </tr>
+
+</table>
+</td></tr>
+</table>
+
 </body>
-</html>
-"""
+</html>"""
 
     return html
+
+
+def send_email_via_gmail(to_email, subject, html_content):
+    """
+    Gmail SMTP로 이메일 발송
+
+    Args:
+        to_email: 수신자 이메일
+        subject: 제목
+        html_content: HTML 본문
+
+    Returns:
+        True(성공) / False(실패)
+    """
+    msg = MIMEMultipart('alternative')
+    msg['From'] = f'ValueLink Deals <{GMAIL_ADDRESS}>'
+    msg['To'] = to_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(html_content, 'html', 'utf-8'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            server.starttls()
+            server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            server.send_message(msg)
+        return True
+    except Exception as e:
+        print(f"  [SMTP ERROR] {str(e)[:200]}")
+        return False
 
 
 def send_email_to_subscribers(html_content, deals):
@@ -220,59 +194,21 @@ def send_email_to_subscribers(html_content, deals):
     print(f"  [INFO] Found {len(subscribers)} subscribers")
 
     date_str = (datetime.now() - timedelta(days=1)).strftime('%Y.%m.%d')
-    subject = f"[Investment News] {date_str} 투자 뉴스 ({len(deals)}건)"
+    subject = f"[투자 뉴스] {date_str} ({len(deals)}건)"
 
-    # Resend API로 발송
     sent = 0
     failed = 0
 
     for subscriber in subscribers:
         try:
-            response = requests.post(
-                'https://api.resend.com/emails',
-                headers={
-                    'Authorization': f'Bearer {RESEND_API_KEY}',
-                    'Content-Type': 'application/json'
-                },
-                json={
-                    'from': 'Investment News <news@yourdomain.com>',
-                    'to': subscriber['email'],
-                    'subject': subject,
-                    'html': html_content
-                }
-            )
+            success = send_email_via_gmail(subscriber['email'], subject, html_content)
 
-            if response.status_code == 200:
+            if success:
                 sent += 1
                 print(f"  [SENT] {subscriber['email']}")
-
-                # 발송 로그 저장
-                supabase.table('email_send_log').insert({
-                    'subscriber_id': subscriber['id'],
-                    'email_type': 'daily',
-                    'subject': subject,
-                    'status': 'sent',
-                    'deals_count': len(deals),
-                    'deals_ids': [deal['id'] for deal in deals]
-                }).execute()
-
-                # 마지막 발송 시간 업데이트
-                supabase.table('email_subscribers').update({
-                    'last_sent_at': datetime.now().isoformat()
-                }).eq('id', subscriber['id']).execute()
-
             else:
                 failed += 1
-                print(f"  [FAILED] {subscriber['email']}: {response.status_code}")
-
-                # 실패 로그 저장
-                supabase.table('email_send_log').insert({
-                    'subscriber_id': subscriber['id'],
-                    'email_type': 'daily',
-                    'subject': subject,
-                    'status': 'failed',
-                    'error_message': response.text[:500]
-                }).execute()
+                print(f"  [FAILED] {subscriber['email']}")
 
         except Exception as e:
             failed += 1
@@ -284,9 +220,14 @@ def send_email_to_subscribers(html_content, deals):
 def main():
     """메인 실행"""
     print("="*60)
-    print("Daily Investment News Email")
+    print("Daily Investment News Email (Gmail SMTP)")
     print("="*60)
     print(f"Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+    # Gmail 설정 확인
+    if not GMAIL_ADDRESS or not GMAIL_APP_PASSWORD:
+        print("\n[ERROR] GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set in .env")
+        return
 
     # 어제 Deal 조회
     deals = get_yesterday_deals()
