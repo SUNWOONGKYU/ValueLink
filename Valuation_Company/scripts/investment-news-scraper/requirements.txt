@@ -1,6 +1,6 @@
 # ================================================================
-# 투자 뉴스 스크래핑 - Python 패키지 의존성
-# 작성일: 2026-01-25
+# 투자 뉴스 자동 수집 - Python 패키지 의존성
+# 업데이트: 2026-01-30
 # ================================================================
 
 # HTTP 요청
@@ -16,18 +16,11 @@ supabase>=2.0.0
 # 환경변수 관리
 python-dotenv>=1.0.0
 
-# Gemini API
-google-generativeai>=0.3.2
-
-# RSS 파싱
-feedparser>=6.0.11
+# Google Gemini API
+google-genai>=1.0.0
 
 # 날짜/시간 처리
 python-dateutil>=2.8.0
 
-# PostgreSQL (스키마 적용용)
-psycopg2-binary>=2.9.9
-
-# Selenium (동적 사이트 스크래핑 필요 시)
-# selenium>=4.15.0
-# webdriver-manager>=4.0.0
+# 이메일 발송 (Resend)
+resend>=0.7.0

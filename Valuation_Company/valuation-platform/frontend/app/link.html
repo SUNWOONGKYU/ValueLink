@@ -103,14 +103,15 @@
         }
 
         .company-table th:nth-child(1) { width: 4%; text-align: center; } /* No. */
-        .company-table th:nth-child(2) { width: 14%; } /* 기업명 */
+        .company-table th:nth-child(2) { width: 13%; } /* 기업명 */
         .company-table th:nth-child(3) { width: 7%; } /* 대표자 */
-        .company-table th:nth-child(4) { width: 11%; } /* 업종 */
-        .company-table th:nth-child(5) { width: 8%; } /* 설립일 */
-        .company-table th:nth-child(6) { width: 6%; } /* 지역 */
-        .company-table th:nth-child(7) { width: 11%; } /* 기업가치 */
-        .company-table th:nth-child(8) { width: 14%; } /* 평가방법 */
-        .company-table th:nth-child(9) { width: 25%; } /* 연결 문의 */
+        .company-table th:nth-child(4) { width: 10%; } /* 업종 */
+        .company-table th:nth-child(5) { width: 7%; } /* 설립일 */
+        .company-table th:nth-child(6) { width: 5%; } /* 지역 */
+        .company-table th:nth-child(7) { width: 10%; } /* 기업가치 */
+        .company-table th:nth-child(8) { width: 11%; } /* 평가방법 */
+        .company-table th:nth-child(9) { width: 9%; } /* 평가기준일 */
+        .company-table th:nth-child(10) { width: 24%; } /* 연결 문의 */
 
         .company-table td {
             padding: 16px 12px;
@@ -121,7 +122,7 @@
         }
 
         .company-table td:nth-child(1) { text-align: center; font-weight: 500; color: var(--text-secondary); } /* No. */
-        .company-table td:nth-child(9) { white-space: normal; } /* 연결 문의 - 버튼 줄바꿈 허용 */
+        .company-table td:nth-child(10) { white-space: normal; } /* 연결 문의 - 버튼 줄바꿈 허용 */
 
         .company-table tr:hover {
             background: #F9FAFB;
@@ -726,107 +727,15 @@
                     <th>지역</th>
                     <th>기업가치</th>
                     <th>평가방법</th>
+                    <th>평가기준일</th>
                     <th>연결 문의</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- DCF평가법 -->
+            <tbody id="company-tbody">
+                <!-- Supabase에서 동적으로 로드 -->
                 <tr>
-                    <td>1</td>
-                    <td><a href="report-summary.html?company=엔키노에이아이" class="company-link">엔키노에이아이</a></td>
-                    <td>-</td>
-                    <td>AI/기술</td>
-                    <td>-</td>
-                    <td>서울</td>
-                    <td>163억원</td>
-                    <td>DCF평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=엔키노에이아이&value=163억원&method=DCF평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=엔키노에이아이&value=163억원&method=DCF평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=엔키노에이아이&value=163억원&method=DCF평가법" class="need-tag support">서포팅</a>
-                    </td>
-                </tr>
-
-                <!-- 상대가치평가법 -->
-                <tr>
-                    <td>2</td>
-                    <td><a href="report-summary.html?company=삼성전자" class="company-link">삼성전자</a></td>
-                    <td>한종희</td>
-                    <td>전기전자</td>
-                    <td>1969년</td>
-                    <td>경기</td>
-                    <td>578조원</td>
-                    <td>상대가치평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=삼성전자&value=578조원&method=상대가치평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=삼성전자&value=578조원&method=상대가치평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=삼성전자&value=578조원&method=상대가치평가법" class="need-tag support">서포팅</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td><a href="report-summary.html?company=두산로보틱스" class="company-link">두산로보틱스</a></td>
-                    <td>류정훈</td>
-                    <td>로봇/제조</td>
-                    <td>2015년</td>
-                    <td>경기</td>
-                    <td>PER 38배</td>
-                    <td>상대가치평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=두산로보틱스&value=PER38배&method=상대가치평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=두산로보틱스&value=PER38배&method=상대가치평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=두산로보틱스&value=PER38배&method=상대가치평가법" class="need-tag support">서포팅</a>
-                    </td>
-                </tr>
-
-                <!-- 본질가치평가법 -->
-                <tr>
-                    <td>4</td>
-                    <td><a href="report-summary.html?company=카카오" class="company-link">카카오</a></td>
-                    <td>정신아</td>
-                    <td>플랫폼/IT</td>
-                    <td>2010년</td>
-                    <td>경기</td>
-                    <td>3.1조원</td>
-                    <td>본질가치평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=카카오&value=3.1조원&method=본질가치평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=카카오&value=3.1조원&method=본질가치평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=카카오&value=3.1조원&method=본질가치평가법" class="need-tag support">서포팅</a>
-                    </td>
-                </tr>
-
-                <!-- 자산가치평가법 -->
-                <tr>
-                    <td>5</td>
-                    <td><a href="report-summary.html?company=클래시스" class="company-link">클래시스</a></td>
-                    <td>-</td>
-                    <td>의료기기</td>
-                    <td>-</td>
-                    <td>서울</td>
-                    <td>2,835억원</td>
-                    <td>자산가치평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=클래시스&value=2,835억원&method=자산가치평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=클래시스&value=2,835억원&method=자산가치평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=클래시스&value=2,835억원&method=자산가치평가법" class="need-tag support">서포팅</a>
-                    </td>
-                </tr>
-
-                <!-- 상증세법평가법 -->
-                <tr>
-                    <td>6</td>
-                    <td><a href="report-summary.html?company=비상장법인 (조심 사례)" class="company-link">비상장법인 (조심사례)</a></td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>495억원</td>
-                    <td>상증세법평가법</td>
-                    <td>
-                        <a href="inquiry-invest.html?name=비상장법인&value=495억원&method=상증세법평가법" class="need-tag invest">투자</a>
-                        <a href="inquiry-partner.html?name=비상장법인&value=495억원&method=상증세법평가법" class="need-tag partner">제휴</a>
-                        <a href="inquiry-support.html?name=비상장법인&value=495억원&method=상증세법평가법" class="need-tag support">서포팅</a>
+                    <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        데이터를 불러오는 중...
                     </td>
                 </tr>
             </tbody>
@@ -910,7 +819,93 @@
         </div>
     </footer>
 
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <script>
+        // Supabase 설정
+        const SUPABASE_URL = 'https://gqphwxqnohqfrmhodzqf.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxcGh3eHFub2hxZnJtaG9kenFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc4NzMwNjYsImV4cCI6MjA1MzQ0OTA2Nn0.DLOT1g-UMwfrscJRzB16sIp23xXSLgTjJJaKjqDnZcA';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 평가방법 코드 → 한글 매핑
+        const methodNames = {
+            'dcf': 'DCF평가법',
+            'relative': '상대가치평가법',
+            'intrinsic': '본질가치평가법',
+            'asset': '자산가치평가법',
+            'inheritance_tax': '상증세법평가법'
+        };
+
+        // 날짜 포맷 (YYYY-MM-DD → YYYY.MM.DD)
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+        }
+
+        // 기업 목록 로드
+        async function loadCompanies() {
+            const tbody = document.getElementById('company-tbody');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('valuation_reports')
+                    .select('*')
+                    .order('id', { ascending: true });
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                등록된 기업이 없습니다.
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = data.map((company, index) => {
+                    const methodName = methodNames[company.valuation_method] || company.valuation_method;
+                    const value = company.valuation_amount_display || '-';
+                    const encodedName = encodeURIComponent(company.company_name);
+                    const encodedValue = encodeURIComponent(value);
+                    const encodedMethod = encodeURIComponent(methodName);
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><a href="report-summary.html?company=${encodedName}" class="company-link">${company.company_name}</a></td>
+                            <td>${company.ceo_name || '-'}</td>
+                            <td>${company.industry || '-'}</td>
+                            <td>${company.founded_year || '-'}</td>
+                            <td>${company.location || '-'}</td>
+                            <td>${value}</td>
+                            <td>${methodName}</td>
+                            <td>${formatDate(company.valuation_date)}</td>
+                            <td>
+                                <a href="inquiry-invest.html?name=${encodedName}&value=${encodedValue}&method=${encodedMethod}" class="need-tag invest">투자</a>
+                                <a href="inquiry-partner.html?name=${encodedName}&value=${encodedValue}&method=${encodedMethod}" class="need-tag partner">제휴</a>
+                                <a href="inquiry-support.html?name=${encodedName}&value=${encodedValue}&method=${encodedMethod}" class="need-tag support">서포팅</a>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (err) {
+                console.error('기업 목록 로드 실패:', err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 40px; color: #EF4444;">
+                            데이터 로드 실패: ${err.message}
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
         // 헤더 로드
         fetch('../components/header.html')
             .then(response => response.text())
@@ -953,6 +948,9 @@
                 ? '접기 <span class="arrow">▼</span>'
                 : '더보기 <span class="arrow">▼</span>';
         });
+
+        // 페이지 로드 시 기업 목록 로드
+        document.addEventListener('DOMContentLoaded', loadCompanies);
     </script>
 </body>
 </html>

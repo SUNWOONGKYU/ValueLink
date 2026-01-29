@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd Valuation_Company/scripts/investment-news-scraper
+          cd scripts/investment-news-scraper
           pip install -r requirements.txt
 
       - name: Run daily auto collect
@@ -34,8 +34,10 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: |
-          cd Valuation_Company/scripts/investment-news-scraper
+          cd scripts/investment-news-scraper
           if [ -n "${{ github.event.inputs.target_date }}" ]; then
             python daily_auto_collect.py --date ${{ github.event.inputs.target_date }}
           else
@@ -50,7 +52,7 @@ jobs:
         run: |
           # 일요일이 아닌 경우에만 이메일 발송 (0 = Sunday)
           if [ $(date +%u) -ne 7 ]; then
-            cd Valuation_Company/scripts/investment-news-scraper
+            cd scripts/investment-news-scraper
             python send_daily_email.py
           else
             echo "Skipping daily email (Sunday)"

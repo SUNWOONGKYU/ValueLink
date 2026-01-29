@@ -398,7 +398,10 @@
     <script>
         // 헤더 로드
         fetch('../../components/header.html')
-            .then(response => response.text())
+            .then(response => {
+                if (!response.ok) throw new Error('헤더 파일을 찾을 수 없습니다');
+                return response.text();
+            })
             .then(data => {
                 document.getElementById('header-container').innerHTML = data;
 
@@ -408,7 +411,19 @@
                     if (menuValuation) menuValuation.classList.add('active');
                 }, 100);
             })
-            .catch(error => console.error('헤더 로드 실패:', error));
+            .catch(error => {
+                console.error('헤더 로드 실패:', error);
+                // 헤더 로드 실패해도 페이지는 정상 작동하도록 기본 헤더 표시
+                document.getElementById('header-container').innerHTML = `
+                    <header style="background: white; padding: 16px 40px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; justify-content: space-between;">
+                        <a href="../../index.html" style="font-size: 24px; font-weight: 700; color: #1E3A5F; text-decoration: none;">ValueLink</a>
+                        <nav style="display: flex; gap: 16px;">
+                            <a href="../valuation.html" style="color: #1D4ED8; font-weight: 600; text-decoration: none;">Valuation</a>
+                            <a href="mypage-company.html" style="color: #111827; text-decoration: none;">My Page</a>
+                        </nav>
+                    </header>
+                `;
+            });
 
         // Supabase 설정
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';

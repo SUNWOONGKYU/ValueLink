@@ -724,6 +724,130 @@
             transform: translateX(4px);
         }
 
+        /* 구독하기 버튼 */
+        .btn-subscribe {
+            padding: 8px 20px;
+            background: transparent;
+            color: var(--amber);
+            border: 1px solid var(--amber);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-subscribe:hover {
+            background: var(--amber);
+            color: white;
+        }
+
+        /* 구독 모달 */
+        .subscribe-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .subscribe-modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .subscribe-modal h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .subscribe-modal p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .subscribe-form .form-group {
+            margin-bottom: 16px;
+        }
+
+        .subscribe-form label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .subscribe-form label .required {
+            color: #EF4444;
+        }
+
+        .subscribe-form input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .subscribe-form input:focus {
+            outline: none;
+            border-color: var(--amber);
+        }
+
+        .subscribe-form .checkbox-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .subscribe-form .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .subscribe-form .checkbox-label input[type="checkbox"] {
+            width: auto;
+        }
+
+        .btn-submit-subscribe {
+            width: 100%;
+            padding: 14px;
+            background: var(--amber);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit-subscribe:hover {
+            background: var(--amber-dark);
+        }
+
+        .btn-submit-subscribe:disabled {
+            background: #6B7280;
+            cursor: not-allowed;
+        }
+
         /* 뉴스 모달 */
         .news-modal {
             display: none;
@@ -946,9 +1070,14 @@
         <div class="content-main">
             <!-- 최신 투자유치 뉴스 (최신 3개) -->
             <div class="section-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>최신 투자유치 뉴스</h2>
-                <button class="btn-see-more" onclick="openNewsModal()">
-                    더보기 →
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <h2>최신 투자유치 뉴스</h2>
+                    <button class="btn-see-more" onclick="openNewsModal()">
+                        더보기 →
+                    </button>
+                </div>
+                <button class="btn-subscribe" onclick="openSubscribeModal()">
+                    📧 뉴스레터 구독
                 </button>
             </div>
 
@@ -1903,5 +2032,110 @@
             </div>
         </div>
     </div>
+
+    <!-- 구독 모달 -->
+    <div class="subscribe-modal" id="subscribe-modal">
+        <div class="subscribe-modal-content">
+            <button class="modal-close" onclick="closeSubscribeModal()">&times;</button>
+            <h3>📧 투자 뉴스레터 구독</h3>
+            <p>매일 아침, 최신 스타트업 투자유치 소식을 이메일로 받아보세요.</p>
+
+            <form class="subscribe-form" id="subscribe-form" onsubmit="submitSubscribe(event)">
+                <div class="form-group">
+                    <label>이메일 <span class="required">*</span></label>
+                    <input type="email" id="subscribe-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>이름 (선택)</label>
+                    <input type="text" id="subscribe-name" placeholder="홍길동">
+                </div>
+                <div class="form-group">
+                    <label>회사명 (선택)</label>
+                    <input type="text" id="subscribe-company" placeholder="회사명">
+                </div>
+                <div class="form-group">
+                    <label>구독 유형</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="sub-daily" checked> 일간 뉴스
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="sub-weekly"> 주간 리포트
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit-subscribe" id="btn-submit">
+                    구독하기
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    // 구독 모달 열기/닫기
+    function openSubscribeModal() {
+        document.getElementById('subscribe-modal').style.display = 'flex';
+    }
+
+    function closeSubscribeModal() {
+        document.getElementById('subscribe-modal').style.display = 'none';
+    }
+
+    // 모달 바깥 클릭 시 닫기
+    document.getElementById('subscribe-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeSubscribeModal();
+    });
+
+    // 구독 제출
+    async function submitSubscribe(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('btn-submit');
+        btn.disabled = true;
+        btn.textContent = '처리 중...';
+
+        const email = document.getElementById('subscribe-email').value;
+        const name = document.getElementById('subscribe-name').value || null;
+        const company = document.getElementById('subscribe-company').value || null;
+        const daily = document.getElementById('sub-daily').checked;
+        const weekly = document.getElementById('sub-weekly').checked;
+
+        let subscriptionType = 'none';
+        if (daily && weekly) subscriptionType = 'both';
+        else if (daily) subscriptionType = 'daily';
+        else if (weekly) subscriptionType = 'weekly';
+
+        try {
+            const { data, error } = await supabaseClient
+                .from('newsletter_subscribers')
+                .insert({
+                    email: email,
+                    name: name,
+                    company: company,
+                    subscription_type: subscriptionType,
+                    is_active: true,
+                    subscribed_at: new Date().toISOString()
+                });
+
+            if (error) {
+                if (error.code === '23505') {
+                    alert('이미 구독 중인 이메일입니다.');
+                } else {
+                    throw error;
+                }
+            } else {
+                alert('구독이 완료되었습니다! 🎉\n매일 아침 투자 뉴스를 보내드릴게요.');
+                closeSubscribeModal();
+                document.getElementById('subscribe-form').reset();
+            }
+        } catch (err) {
+            console.error('구독 오류:', err);
+            alert('구독 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+
+        btn.disabled = false;
+        btn.textContent = '구독하기';
+    }
+    </script>
 </body>
 </html>

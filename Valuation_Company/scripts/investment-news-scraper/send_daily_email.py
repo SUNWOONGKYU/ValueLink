@@ -15,7 +15,7 @@ load_dotenv()
 
 supabase = create_client(
     os.getenv('SUPABASE_URL'),
-    os.getenv('SUPABASE_KEY')
+    os.getenv('SUPABASE_SERVICE_KEY')
 )
 
 RESEND_API_KEY = os.getenv('RESEND_API_KEY')
@@ -208,8 +208,8 @@ def send_email_to_subscribers(html_content, deals):
     """
     print("\n[EMAIL] Fetching subscribers...")
 
-    # 일일 뉴스 구독자 조회
-    result = supabase.table('email_subscribers').select('*').eq('is_active', True).eq('daily_news', True).execute()
+    # 일일 뉴스 구독자 조회 (daily 또는 both 구독자)
+    result = supabase.table('newsletter_subscribers').select('*').eq('is_active', True).in_('subscription_type', ['daily', 'both']).execute()
 
     subscribers = result.data
 

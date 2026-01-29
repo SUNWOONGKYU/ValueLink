@@ -417,6 +417,11 @@ def step2_verify_and_save(articles, target_date):
     for i, article in enumerate(articles, 1):
         log(f"  [{i}/{len(articles)}] {article['title'][:40]}...")
 
+        # 와우테일 공지사항 제외
+        if '[공지]' in article['title'] or '공지사항' in article['title']:
+            log(f"    ⚠️ 공지사항 제외")
+            continue
+
         # 중복 체크
         existing = supabase.table('investment_news_articles').select('id').eq('article_url', article['url']).execute()
         if existing.data:
