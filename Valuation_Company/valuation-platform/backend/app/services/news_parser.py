@@ -132,7 +132,7 @@ class NewsParser:
 
     def _build_extraction_prompt(self, title: str, content: str) -> str:
         """
-        데이터 추출을 위한 프롬프트 생성
+        데이터 추출을 위한 프롬프트 생성 (정직하고 구체적인 추출 강조)
 
         Args:
             title: 뉴스 제목
@@ -141,7 +141,7 @@ class NewsParser:
         Returns:
             추출 프롬프트
         """
-        return f"""다음 스타트업 투자 뉴스에서 정보를 추출하세요.
+        return f"""당신은 팩트 기반의 금융 데이터 분석가입니다. 아래 뉴스에서 스타트업 투자 정보를 정확하게 추출하세요.
 
 [뉴스 제목]
 {title}
@@ -149,31 +149,33 @@ class NewsParser:
 [뉴스 본문]
 {content[:5000]}
 
-아래 JSON 형식으로 정확히 응답하세요. 확인할 수 없는 정보는 null로 표시하세요.
+아래 규칙을 엄격히 준수하여 JSON으로 응답하세요:
+
+1. **절대 거짓말하지 마세요.** 뉴스 본문에 없는 내용을 추측하거나 지어내지 마세요.
+2. **투자 금액**:
+   - 구체적인 숫자가 있으면 '억원' 단위 숫자로 변환하세요. (예: "100억 원" -> 100)
+   - "수십억 원", "규모 비공개" 등으로 나오면 **절대 추정하지 말고 null로 표시**하세요.
+3. **업종(Industry)**:
+   - "IT", "플랫폼", "AI", "서비스" 같이 모호한 단어를 **절대 사용하지 마세요.**
+   - 구체적으로 적으세요. (예: "SaaS", "자율주행 로봇", "에듀테크", "바이오 진단키트", "핀테크 보안" 등)
+4. **투자 단계**: 뉴스에 "시리즈A", "프리A" 등이 명시된 경우만 적으세요. 없으면 null.
+5. **투자자**: 본문에 언급된 모든 투자사(VC, AC, 기업 등) 이름을 리스트에 담으세요.
 
 {{
-    "company_name_ko": "한글 기업명 (필수)",
-    "company_name_en": "영문 기업명 또는 null",
-    "industry": "업종/분야 (IT, 바이오, 핀테크, 이커머스, 에듀테크, 헬스케어, 푸드테크, 모빌리티 등)",
-    "sub_industry": "세부 분야 또는 null",
-    "investment_amount_krw": 투자금액(억원, 숫자만),
-    "valuation_pre_krw": Pre-money 밸류에이션(억원, 숫자만) 또는 null,
-    "valuation_post_krw": Post-money 밸류에이션(억원, 숫자만) 또는 null,
-    "investment_stage": "시드/프리A/시리즈A/시리즈B/시리즈C 중 하나",
-    "lead_investor": "리드 투자자 또는 null",
+    "company_name_ko": "한글 기업명 (필수, (주) 제외)",
+    "company_name_en": "영문 기업명 (본문에 없으면 null)",
+    "industry": "구체적인 세부 업종 (IT/AI 금지)",
+    "sub_industry": "더 구체적인 설명 또는 null",
+    "investment_amount_krw": 숫자(억원) 또는 null (비공개/불확실 시 null),
+    "valuation_post_krw": 기업가치(억원) 또는 null,
+    "investment_stage": "시드/프리A/시리즈A/시리즈B 등 (명시된 경우만)",
+    "lead_investor": "리드 투자자 (명시 안됐으면 null)",
     "investors": [
-        {{"name": "투자자명", "type": "VC/엔젤/CVC/기타"}}
+        {{"name": "투자자명"}}
     ],
-    "summary": "2-3문장 요약",
-    "confidence_score": 추출 신뢰도(0.0~1.0)
-}}
-
-중요:
-1. 금액은 억원 단위 숫자만 (예: 100억원 -> 100)
-2. 기업명은 정확하게 (주식회사, (주) 제외)
-3. 투자 단계는 명시된 것만 기입
-4. 투자자가 여러 명이면 모두 나열
-5. 확실하지 않으면 confidence_score를 낮게"""
+    "summary": "핵심 내용 2문장 요약 (투자 내용 위주)",
+    "confidence_score": 1.0 (확실함) ~ 0.0 (불확실)
+}}"""
 
     def _parse_response(self, response_text: str) -> Optional[ExtractedInvestmentData]:
         """

@@ -14,6 +14,9 @@ from app.services.news_crawler.base_crawler import BaseCrawler, CrawledNews
 from app.services.news_crawler.naver_crawler import NaverNewsCrawler
 from app.services.news_crawler.platum_crawler import PlatumCrawler
 from app.services.news_crawler.venturesquare_crawler import VentureSquareCrawler
+from app.services.news_crawler.wowtale_crawler import WowtaleCrawler
+from app.services.news_crawler.startuptoday_crawler import StartupTodayCrawler
+from app.services.news_crawler.outstanding_crawler import OutstandingCrawler
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +31,10 @@ class CrawlerManager:
     AVAILABLE_CRAWLERS: Dict[str, Type[BaseCrawler]] = {
         "platum": PlatumCrawler,
         "venturesquare": VentureSquareCrawler,
-        # "naver": NaverNewsCrawler,  # 차단됨 - 비활성화
+        "naver": NaverNewsCrawler,
+        "wowtale": WowtaleCrawler,
+        "startuptoday": StartupTodayCrawler,
+        "outstanding": OutstandingCrawler,
     }
 
     def __init__(self):

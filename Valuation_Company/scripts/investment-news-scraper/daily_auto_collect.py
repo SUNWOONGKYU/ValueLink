@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-매일 자동 뉴스 수집 스케줄러 (완벽한 통합 버전 v2)
+매일 자동 뉴스 수집 스케줄러 (완벽한 통합 버전 v3)
 
 프로세스:
 1. 5대 언론기관 웹 크롤링
-2. Google Search로 추가 수집
+2. Google Search로 추가 수집 (Gemini)
 3. Gemini로 투자 뉴스 검증
 4. investment_news_articles 테이블 저장
 5. Deal 테이블 등록 (회사당 최고 점수 1개)
@@ -31,7 +31,8 @@ from google import genai
 from google.genai import types
 import time
 import json
-from urllib.parse import urlparse
+import re
+from urllib.parse import urlparse, quote
 
 if sys.platform == 'win32':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
@@ -170,7 +171,7 @@ def extract_deal_info_with_gemini(title, url):
 JSON 형식으로만 답변:
 {{
     "company_name": "회사명",
-    "industry": "업종 (AI/헬스케어/핀테크 등)",
+    "industry": "주요사업 (AI/헬스케어/핀테크 등)",
     "stage": "투자단계 (시드/프리A/시리즈A 등)",
     "investors": "투자자 (콤마로 구분)",
     "amount": "투자금액 (억원 숫자만)",
@@ -318,6 +319,90 @@ def step1_crawl_media_sites(target_date):
 
 
 # ============================================================
+# Step 1.5: Google Search로 추가 수집 (Gemini Grounding)
+# ============================================================
+def step1_5_google_search(target_date, existing_urls):
+    """Google Search로 추가 투자 뉴스 수집"""
+    log(f"Step 1.5: Google Search 추가 수집")
+
+    search_queries = [
+        f"스타트업 투자유치 {target_date}",
+        f"시리즈A 투자 {target_date}",
+        f"벤처투자 유치 {target_date}",
+        f"스타트업 펀딩 {target_date}",
+    ]
+
+    additional_articles = []
+
+    for query in search_queries:
+        log(f"  🔍 검색: {query[:30]}...")
+
+        prompt = f"""
+다음 검색어로 한국 스타트업 투자유치 뉴스를 찾아주세요:
+"{query}"
+
+최근 뉴스 중 실제 투자유치 발표 뉴스만 찾아서 JSON 배열로 답변하세요:
+[
+    {{
+        "title": "기사 제목",
+        "url": "기사 URL",
+        "source": "언론사명"
+    }}
+]
+
+조건:
+- 실제 투자유치 발표 뉴스만 (단순 분석/전망 기사 제외)
+- 한국 스타트업 관련만
+- 최대 5개까지
+- 뉴스가 없으면 빈 배열 []
+"""
+
+        try:
+            response = gemini_client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0,
+                    max_output_tokens=1024,
+                    tools=[types.Tool(google_search=types.GoogleSearch())]
+                )
+            )
+
+            if response and hasattr(response, 'text'):
+                text = response.text.strip()
+
+                # JSON 추출
+                json_match = re.search(r'\[.*\]', text, re.DOTALL)
+                if json_match:
+                    results = json.loads(json_match.group())
+
+                    for item in results:
+                        url = item.get('url', '')
+
+                        # 중복 체크
+                        if url and url not in existing_urls:
+                            additional_articles.append({
+                                'site_id': 0,  # Google Search
+                                'site_name': item.get('source', 'Google Search'),
+                                'title': item.get('title', ''),
+                                'url': url,
+                            })
+                            existing_urls.add(url)
+
+                    log(f"    ✅ {len(results)}개 발견")
+                else:
+                    log(f"    ⚠️ 결과 없음")
+
+        except Exception as e:
+            log(f"    ❌ 검색 오류: {str(e)[:40]}", "ERROR")
+
+        time.sleep(2)  # API 제한 고려
+
+    log(f"  📊 Google Search로 {len(additional_articles)}개 추가 수집")
+    return additional_articles
+
+
+# ============================================================
 # Step 2: Gemini 검증 + 저장
 # ============================================================
 def step2_verify_and_save(articles, target_date):
@@ -422,9 +507,24 @@ def step3_register_to_deals(target_date):
         if company not in company_best or score > company_best[company]['score']:
             company_best[company] = news
 
-    # 중복 체크 및 등록
-    existing_deals = supabase.table('deals').select('company_name').execute()
-    existing_companies = {deal['company_name'] for deal in existing_deals.data}
+    # 중복 체크 및 등록 (새로운 투자 라운드면 새로 등록)
+    existing_deals = supabase.table('deals').select('company_name,stage,news_url').execute()
+
+    # 회사별 기존 투자 라운드 및 뉴스 URL 저장
+    existing_company_stages = {}  # {회사명: [stage1, stage2, ...]}
+    existing_news_urls = set()
+
+    for deal in existing_deals.data:
+        company = deal['company_name']
+        stage = deal.get('stage')
+        news_url = deal.get('news_url')
+
+        if company not in existing_company_stages:
+            existing_company_stages[company] = []
+        if stage:
+            existing_company_stages[company].append(stage)
+        if news_url:
+            existing_news_urls.add(news_url)
 
     last_deal = supabase.table('deals').select('number').order('number', desc=True).limit(1).execute()
     next_number = last_deal.data[0]['number'] + 1 if last_deal.data else 1
@@ -432,9 +532,30 @@ def step3_register_to_deals(target_date):
     registered = 0
 
     for company, news in company_best.items():
-        if company in existing_companies:
-            log(f"    ⚠️ {company}: 이미 존재")
+        article = news['article']
+        info = news['info']
+        new_stage = info.get('stage')
+        news_url = article.get('article_url')
+
+        # 1. 같은 뉴스 URL이면 중복
+        if news_url in existing_news_urls:
+            log(f"    ⚠️ {company}: 같은 뉴스 URL 존재")
             continue
+
+        # 2. 회사가 존재하고, 같은 투자 라운드면 중복
+        if company in existing_company_stages:
+            existing_stages = existing_company_stages[company]
+
+            # 새로운 투자 라운드인지 확인
+            if new_stage and new_stage in existing_stages:
+                log(f"    ⚠️ {company}: 같은 라운드({new_stage}) 이미 존재")
+                continue
+            elif new_stage:
+                log(f"    🆕 {company}: 새로운 투자 라운드({new_stage}) 발견!")
+            else:
+                # stage 정보가 없으면 중복으로 처리
+                log(f"    ⚠️ {company}: 이미 존재 (stage 정보 없음)")
+                continue
 
         article = news['article']
         info = news['info']
@@ -456,7 +577,13 @@ def step3_register_to_deals(target_date):
 
             log(f"    ✅ {company} 등록 (#{next_number})")
 
-            existing_companies.add(company)
+            # 등록된 회사의 stage 정보 업데이트
+            if company not in existing_company_stages:
+                existing_company_stages[company] = []
+            if new_stage:
+                existing_company_stages[company].append(new_stage)
+            existing_news_urls.add(news_url)
+
             next_number += 1
             registered += 1
 
@@ -468,22 +595,97 @@ def step3_register_to_deals(target_date):
 
 
 # ============================================================
-# Step 4: 누락 정보 채우기
+# Step 4: 누락 정보 채우기 (Gemini로 뉴스 본문에서 추출)
 # ============================================================
 def step4_fill_missing_info():
     """투자자 및 주요사업 정보 채우기"""
     log(f"Step 4: 누락 정보 채우기")
 
-    # 투자자 없는 Deal
-    deals_no_investors = supabase.table('deals').select('*').is_('investors', 'null').execute()
-    log(f"  📊 투자자 정보 없는 Deal: {len(deals_no_investors.data)}개")
+    # 정보가 부족한 Deal 가져오기
+    deals = supabase.table('deals').select('*').or_(
+        'investors.is.null,industry.is.null,industry.eq.-'
+    ).execute()
 
-    # 주요사업 없는 Deal
-    deals_no_industry = supabase.table('deals').select('*').or_('industry.is.null,industry.eq.-').execute()
-    log(f"  📊 주요사업 정보 없는 Deal: {len(deals_no_industry.data)}개")
+    if not deals.data:
+        log(f"  ✅ 누락 정보 없음")
+        return
 
-    # (추후 Gemini로 추출 로직 추가 가능)
-    log(f"  ⚠️ 수동 처리 필요")
+    log(f"  📊 정보 부족한 Deal: {len(deals.data)}개")
+
+    updated = 0
+
+    for deal in deals.data:
+        company = deal['company_name']
+        news_url = deal.get('news_url')
+        news_title = deal.get('news_title', '')
+
+        if not news_url:
+            log(f"    ⚠️ {company}: URL 없음")
+            continue
+
+        log(f"    🔍 {company}...")
+
+        # 뉴스 본문 크롤링
+        try:
+            response = requests.get(news_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=10)
+            if response.status_code == 200:
+                soup = BeautifulSoup(response.content, 'html.parser')
+                paragraphs = soup.find_all('p')
+                content = ' '.join([p.get_text(strip=True) for p in paragraphs[:15]])
+            else:
+                content = ""
+        except:
+            content = ""
+
+        # Gemini로 정보 추출
+        prompt = f"""
+다음 투자유치 뉴스에서 정보를 추출하세요:
+
+제목: {news_title}
+본문: {content[:2000]}
+
+JSON 형식으로만 답변:
+{{
+    "investors": "투자자명 (콤마 구분, 없으면 null)",
+    "industry": "주요사업 (2-4단어, 없으면 null)"
+}}
+"""
+
+        try:
+            gemini_response = gemini_client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0,
+                    max_output_tokens=256,
+                    response_mime_type='application/json'
+                )
+            )
+
+            if gemini_response and hasattr(gemini_response, 'text'):
+                info = json.loads(gemini_response.text.strip())
+
+                update_data = {}
+
+                if info.get('investors') and not deal.get('investors'):
+                    update_data['investors'] = info['investors']
+
+                if info.get('industry') and (not deal.get('industry') or deal.get('industry') == '-'):
+                    update_data['industry'] = info['industry']
+
+                if update_data:
+                    supabase.table('deals').update(update_data).eq('id', deal['id']).execute()
+                    log(f"      ✅ 업데이트: {update_data}")
+                    updated += 1
+                else:
+                    log(f"      ⚠️ 추가 정보 없음")
+
+        except Exception as e:
+            log(f"      ❌ 오류: {str(e)[:40]}", "ERROR")
+
+        time.sleep(1)
+
+    log(f"  ✅ {updated}개 정보 채움")
 
 
 # ============================================================
@@ -512,6 +714,121 @@ def step5_fix_naver_news():
         time.sleep(0.5)
 
     log(f"  ✅ {updated}개 변환 완료")
+
+
+# ============================================================
+# Step 5.5: 네이버 API로 데이터 정제/검증
+# ============================================================
+def step5_5_naver_api_enrichment():
+    """네이버 뉴스 API로 데이터 정제 및 추가 정보 수집"""
+    log(f"Step 5.5: 네이버 API 데이터 정제")
+
+    # 네이버 API 키 확인
+    naver_client_id = os.getenv("NAVER_CLIENT_ID")
+    naver_client_secret = os.getenv("NAVER_CLIENT_SECRET")
+
+    if not naver_client_id or not naver_client_secret:
+        log(f"  ⚠️ 네이버 API 키 미설정 (NAVER_CLIENT_ID, NAVER_CLIENT_SECRET)")
+        log(f"  ⚠️ https://developers.naver.com 에서 API 키 발급 필요")
+        return
+
+    # 투자자 정보가 없는 Deal 가져오기
+    deals_to_enrich = supabase.table('deals').select('*').or_(
+        'investors.is.null,industry.is.null,industry.eq.-'
+    ).execute()
+
+    if not deals_to_enrich.data:
+        log(f"  ✅ 정제 필요 없음")
+        return
+
+    log(f"  📊 {len(deals_to_enrich.data)}개 Deal 정제 중...")
+
+    enriched = 0
+
+    for deal in deals_to_enrich.data:
+        company = deal['company_name']
+        log(f"    🔍 {company}...")
+
+        # 네이버 뉴스 검색
+        search_query = f"{company} 투자"
+        url = f"https://openapi.naver.com/v1/search/news.json?query={quote(search_query)}&display=5&sort=date"
+
+        headers = {
+            "X-Naver-Client-Id": naver_client_id,
+            "X-Naver-Client-Secret": naver_client_secret
+        }
+
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+
+            if response.status_code == 200:
+                data = response.json()
+                items = data.get('items', [])
+
+                if items:
+                    # 가장 관련성 높은 기사에서 정보 추출
+                    best_item = items[0]
+                    title = best_item.get('title', '').replace('<b>', '').replace('</b>', '')
+                    description = best_item.get('description', '').replace('<b>', '').replace('</b>', '')
+
+                    # Gemini로 정보 추출
+                    combined_text = f"제목: {title}\n내용: {description}"
+
+                    extract_prompt = f"""
+다음 뉴스에서 투자 정보를 추출하세요:
+{combined_text}
+
+JSON 형식으로만 답변:
+{{
+    "investors": "투자자명 (없으면 null)",
+    "industry": "주요사업 (2-3단어, 없으면 null)",
+    "amount": "투자금액 (억원 숫자만, 없으면 null)"
+}}
+"""
+                    extract_response = gemini_client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=extract_prompt,
+                        config=types.GenerateContentConfig(
+                            temperature=0,
+                            max_output_tokens=256,
+                            response_mime_type='application/json'
+                        )
+                    )
+
+                    if extract_response and hasattr(extract_response, 'text'):
+                        info = json.loads(extract_response.text.strip())
+
+                        # 업데이트할 필드 결정
+                        update_data = {}
+
+                        if info.get('investors') and not deal.get('investors'):
+                            update_data['investors'] = info['investors']
+
+                        if info.get('industry') and (not deal.get('industry') or deal.get('industry') == '-'):
+                            update_data['industry'] = info['industry']
+
+                        if info.get('amount') and not deal.get('amount'):
+                            update_data['amount'] = info['amount']
+
+                        if update_data:
+                            supabase.table('deals').update(update_data).eq('id', deal['id']).execute()
+                            log(f"      ✅ 업데이트: {list(update_data.keys())}")
+                            enriched += 1
+                        else:
+                            log(f"      ⚠️ 추가 정보 없음")
+
+                else:
+                    log(f"      ⚠️ 검색 결과 없음")
+
+            else:
+                log(f"      ❌ API 오류: {response.status_code}", "ERROR")
+
+        except Exception as e:
+            log(f"      ❌ 오류: {str(e)[:40]}", "ERROR")
+
+        time.sleep(0.5)  # API 제한 고려
+
+    log(f"  ✅ {enriched}개 정제 완료")
 
 
 # ============================================================
@@ -561,23 +878,29 @@ def main():
         # Step 1: 웹 크롤링
         articles = step1_crawl_media_sites(target_date)
 
+        # Step 1.5: Google Search 추가 수집
+        existing_urls = {a['url'] for a in articles}
+        google_articles = step1_5_google_search(target_date, existing_urls)
+        articles.extend(google_articles)
+
         if articles:
             # Step 2: 검증 및 저장
             saved = step2_verify_and_save(articles, target_date)
 
-            if saved > 0:
-                # Step 3: Deal 등록
-                registered = step3_register_to_deals(target_date)
+            # Step 3: Deal 등록 (저장된 뉴스 없어도 시도 - 이미 저장된 뉴스가 있을 수 있음)
+            registered = step3_register_to_deals(target_date)
 
-                if registered > 0:
-                    # Step 4: 누락 정보 채우기
-                    step4_fill_missing_info()
+            # Step 4: 누락 정보 채우기
+            step4_fill_missing_info()
 
-                    # Step 5: 네이버 뉴스 변환
-                    step5_fix_naver_news()
+            # Step 5: 네이버 뉴스 변환
+            step5_fix_naver_news()
 
-                    # Step 6: 번호 재정렬
-                    step6_renumber_deals()
+            # Step 5.5: 네이버 API로 데이터 정제
+            step5_5_naver_api_enrichment()
+
+            # Step 6: 번호 재정렬
+            step6_renumber_deals()
 
         print("\n" + "=" * 70)
         print("✅ 모든 작업 완료!")
