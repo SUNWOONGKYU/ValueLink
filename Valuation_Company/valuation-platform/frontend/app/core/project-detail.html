@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로젝트 상세 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --red: #DC2626;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F9FAFB;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* 뒤로가기 */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .back-link:hover {
+            color: var(--deep-blue);
+        }
+
+        /* 페이지 헤더 */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .method-badge {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            background: #DBEAFE;
+            color: var(--deep-blue);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+        }
+
+        .status-badge.in-progress {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-badge.document-request {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-badge.completed {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .date-info {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* 섹션 */
+        .section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* 알림 박스 */
+        .alert-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alert-box.warning {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+        }
+
+        .alert-box.danger {
+            background: #FEE2E2;
+            border: 1px solid #DC2626;
+        }
+
+        .alert-box.success {
+            background: #D1FAE5;
+            border: 1px solid #059669;
+        }
+
+        .alert-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-content h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .alert-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* 정보 그리드 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .info-item {
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 자료 요청 목록 */
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .request-item {
+            padding: 16px;
+            background: #FEF3C7;
+            border-radius: 8px;
+            border-left: 4px solid #F59E0B;
+        }
+
+        .request-item h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .request-item p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .request-docs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .doc-tag {
+            padding: 4px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            background: white;
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        /* 파일 업로드 영역 */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upload-area:hover {
+            border-color: var(--deep-blue);
+            background: #F0F9FF;
+        }
+
+        .upload-area.dragover {
+            border-color: var(--deep-blue);
+            background: #DBEAFE;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 업로드된 파일 목록 */
+        .file-list {
+            margin-top: 16px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .file-delete {
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--red);
+            background: transparent;
+            border: 1px solid var(--red);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .file-delete:hover {
+            background: #FEE2E2;
+        }
+
+        /* 버튼 */
+        .btn {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1E40AF;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        /* 담당 회계사 */
+        .accountant-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+
+        .accountant-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--deep-blue);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .accountant-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .accountant-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .btn-inquiry {
+            margin-left: auto;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--deep-blue);
+            background: white;
+            border: 1px solid var(--deep-blue);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-inquiry:hover {
+            background: var(--deep-blue);
+            color: white;
+        }
+
+        /* 진행 타임라인 */
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -24px;
+            top: 2px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--border);
+            border: 3px solid white;
+        }
+
+        .timeline-dot.active {
+            background: var(--deep-blue);
+        }
+
+        .timeline-dot.completed {
+            background: var(--deep-green);
+        }
+
+        .timeline-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .timeline-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* 숨김 input */
+        .hidden-input {
+            display: none;
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 16px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .accountant-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-inquiry {
+                margin: 12px 0 0 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- 메인 -->
+    <div class="container">
+        <a href="valuation-list.html" class="back-link">← 프로젝트 목록으로</a>
+
+        <div class="page-header">
+            <h1 id="project-title">DCF 할인법 평가</h1>
+            <div class="header-meta">
+                <span class="method-badge" id="method-badge">DCF 할인법</span>
+                <span class="status-badge document-request" id="status-badge">추가 자료 요청</span>
+                <span class="date-info" id="date-info">신청일: 2026-01-20</span>
+            </div>
+        </div>
+
+        <!-- 추가 자료 요청 알림 (있을 경우) -->
+        <div class="alert-box danger" id="document-request-alert">
+            <span class="alert-icon">📋</span>
+            <div class="alert-content">
+                <h4>추가 자료 제출이 필요합니다</h4>
+                <p>담당 회계사가 평가를 위해 추가 자료를 요청했습니다. 아래 목록을 확인하고 자료를 제출해주세요.</p>
+            </div>
+        </div>
+
+        <!-- 자료 요청 상세 -->
+        <div class="section" id="request-section">
+            <h3 class="section-title">요청된 자료</h3>
+            <div class="request-list" id="request-list">
+                <div class="request-item">
+                    <h4>요청자: 김회계 | 요청일: 2026-01-25</h4>
+                    <p>DCF 분석을 위해 정확한 재무 데이터가 필요합니다. 최근 3개년 재무제표와 향후 사업계획을 제출해주세요.</p>
+                    <div class="request-docs">
+                        <span class="doc-tag">최근 3년 재무제표</span>
+                        <span class="doc-tag">사업계획서</span>
+                        <span class="doc-tag">조직도 및 인원 현황</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 파일 업로드 -->
+        <div class="section" id="upload-section">
+            <h3 class="section-title">자료 제출</h3>
+
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+                <div class="upload-icon">📁</div>
+                <p class="upload-text">클릭하거나 파일을 여기에 드래그하세요</p>
+                <p class="upload-hint">PDF, Excel, Word, 이미지 파일 (최대 50MB)</p>
+            </div>
+            <input type="file" id="file-input" class="hidden-input" multiple accept=".pdf,.xlsx,.xls,.doc,.docx,.png,.jpg,.jpeg">
+
+            <div class="file-list" id="file-list">
+                <!-- 동적으로 추가 -->
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="submit-btn" onclick="submitDocuments()" disabled>
+                    자료 제출하기
+                </button>
+            </div>
+        </div>
+
+        <!-- 프로젝트 정보 -->
+        <div class="section">
+            <h3 class="section-title">평가 정보</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">평가방법</div>
+                    <div class="info-value" id="info-method">DCF 할인법</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">평가 기준일</div>
+                    <div class="info-value" id="info-base-date">2026-01-01</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">평가 목적</div>
+                    <div class="info-value" id="info-purpose">투자 유치</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">예산 범위</div>
+                    <div class="info-value" id="info-budget">300만원 ~ 500만원</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 담당 회계사 -->
+        <div class="section">
+            <h3 class="section-title">담당 회계사</h3>
+            <div class="accountant-card">
+                <div class="accountant-avatar">김</div>
+                <div class="accountant-info">
+                    <h4>김회계</h4>
+                    <p>공인회계사</p>
+                </div>
+                <button class="btn-inquiry" onclick="openInquiry()">문의하기</button>
+            </div>
+        </div>
+
+        <!-- 진행 현황 -->
+        <div class="section">
+            <h3 class="section-title">진행 현황</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                        <h4>평가 신청</h4>
+                        <p>2026-01-20</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot completed"></div>
+                    <div class="timeline-content">
+                        <h4>담당자 배정</h4>
+                        <p>2026-01-21 - 김회계 배정</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot active"></div>
+                    <div class="timeline-content">
+                        <h4>추가 자료 요청</h4>
+                        <p>2026-01-25 - 자료 제출 대기 중</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>평가 진행</h4>
+                        <p>대기 중</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>평가 완료</h4>
+                        <p>대기 중</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 헤더 로드
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                setTimeout(() => {
+                    const menuValuation = document.getElementById('menu-valuation');
+                    if (menuValuation) menuValuation.classList.add('active');
+                }, 100);
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+
+        // 업로드된 파일 목록
+        let uploadedFiles = [];
+
+        // 파일 선택 처리
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        // 드래그 앤 드롭
+        const uploadArea = document.getElementById('upload-area');
+
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // 파일 처리
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.size > 50 * 1024 * 1024) {
+                    alert(`${file.name}은(는) 50MB를 초과합니다.`);
+                    continue;
+                }
+                uploadedFiles.push(file);
+            }
+            renderFileList();
+            updateSubmitButton();
+        }
+
+        // 파일 목록 렌더링
+        function renderFileList() {
+            const fileList = document.getElementById('file-list');
+
+            if (uploadedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+
+            fileList.innerHTML = uploadedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <span class="file-icon">${getFileIcon(file.name)}</span>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${formatFileSize(file.size)}</div>
+                        </div>
+                    </div>
+                    <button class="file-delete" onclick="removeFile(${index})">삭제</button>
+                </div>
+            `).join('');
+        }
+
+        // 파일 아이콘
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'pdf': '📄',
+                'xlsx': '📊',
+                'xls': '📊',
+                'doc': '📝',
+                'docx': '📝',
+                'png': '🖼️',
+                'jpg': '🖼️',
+                'jpeg': '🖼️'
+            };
+            return icons[ext] || '📁';
+        }
+
+        // 파일 크기 포맷
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // 파일 삭제
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            renderFileList();
+            updateSubmitButton();
+        }
+
+        // 제출 버튼 상태 업데이트
+        function updateSubmitButton() {
+            const btn = document.getElementById('submit-btn');
+            btn.disabled = uploadedFiles.length === 0;
+        }
+
+        // 자료 제출
+        function submitDocuments() {
+            if (uploadedFiles.length === 0) {
+                alert('제출할 파일을 선택해주세요.');
+                return;
+            }
+
+            // 실제 구현 시 API 호출
+            console.log('제출 파일:', uploadedFiles);
+
+            alert('자료가 성공적으로 제출되었습니다.\n\n제출 파일:\n- ' + uploadedFiles.map(f => f.name).join('\n- '));
+
+            // 초기화
+            uploadedFiles = [];
+            renderFileList();
+            updateSubmitButton();
+
+            // 알림 변경
+            const alertBox = document.getElementById('document-request-alert');
+            alertBox.className = 'alert-box success';
+            alertBox.innerHTML = `
+                <span class="alert-icon">✅</span>
+                <div class="alert-content">
+                    <h4>자료 제출 완료</h4>
+                    <p>요청된 자료가 성공적으로 제출되었습니다. 담당 회계사가 확인 후 평가를 진행합니다.</p>
+                </div>
+            `;
+
+            // 상태 뱃지 변경
+            document.getElementById('status-badge').className = 'status-badge in-progress';
+            document.getElementById('status-badge').textContent = '평가 진행 중';
+        }
+
+        // 문의하기
+        function openInquiry() {
+            alert('문의하기 기능은 추후 구현됩니다.');
+        }
+
+        // URL 파라미터에서 프로젝트 ID 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        console.log('Project ID:', projectId);
+    </script>
+</body>
+</html>
