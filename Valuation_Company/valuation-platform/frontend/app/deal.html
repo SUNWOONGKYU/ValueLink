@@ -20,6 +20,7 @@
             --text-muted: #6B7280;
             --bg-light: #F3F4F6;
             --white: #FFFFFF;
+            --container-padding-mobile: 20px;
         }
 
         body {
@@ -518,7 +519,7 @@
         @media (max-width: 768px) {
             /* Hero Section */
             .hero {
-                padding: 24px 20px 32px 20px;
+                padding: 24px var(--container-padding-mobile) 32px var(--container-padding-mobile);
             }
 
             .hero-title {
@@ -577,11 +578,12 @@
 
             .filter-select {
                 width: 100%;
+                font-size: 16px; /* Prevent iOS zoom */
             }
 
             /* Deals Section */
             .deals-section {
-                padding: 20px;
+                padding: var(--container-padding-mobile);
                 overflow-x: auto;
             }
 
