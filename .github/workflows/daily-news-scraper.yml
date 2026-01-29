@@ -1,0 +1,65 @@
+name: Daily Investment News Scraper
+
+on:
+  schedule:
+    # 매일 오전 6시 (KST = UTC+9, 즉 UTC 21:00 전날)
+    - cron: '0 21 * * *'
+  workflow_dispatch:  # 수동 실행 가능
+    inputs:
+      target_date:
+        description: '수집 대상 날짜 (YYYY-MM-DD)'
+        required: false
+        default: ''
+
+jobs:
+  collect-and-send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd scripts/investment-news-scraper
+          pip install -r requirements.txt
+
+      - name: Run daily auto collect
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+        run: |
+          cd scripts/investment-news-scraper
+          if [ -n "${{ github.event.inputs.target_date }}" ]; then
+            python daily_auto_collect.py --date ${{ github.event.inputs.target_date }}
+          else
+            python daily_auto_collect.py
+          fi
+
+      - name: Send daily email (Mon-Sat only)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          # 일요일이 아닌 경우에만 이메일 발송 (0 = Sunday)
+          if [ $(date +%u) -ne 7 ]; then
+            cd scripts/investment-news-scraper
+            python send_daily_email.py
+          else
+            echo "Skipping daily email (Sunday)"
+          fi
+
+      - name: Log completion
+        run: |
+          echo "✅ Daily news collection completed at $(date)"
+          echo "Target date: ${{ github.event.inputs.target_date || 'yesterday' }}"
