@@ -768,6 +768,24 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #4b5563;
+        }
+
         .subscribe-modal h3 {
             font-size: 20px;
             margin-bottom: 8px;
@@ -2039,9 +2057,9 @@
     <!-- 구독 모달 -->
     <div class="subscribe-modal" id="subscribe-modal">
         <div class="subscribe-modal-content">
-            <button class="modal-close" onclick="closeSubscribeModal()">&times;</button>
-            <h3>📧 투자 뉴스레터 구독</h3>
-            <p>매일 아침, 최신 스타트업 투자유치 소식을 이메일로 받아보세요.</p>
+            <button class="modal-close" onclick="closeSubscribeModal()">✕ 닫기</button>
+            <h3>투자 뉴스레터 구독</h3>
+            <p>최신 스타트업 투자유치 소식을 이메일로 받아보세요.</p>
 
             <form class="subscribe-form" id="subscribe-form" onsubmit="submitSubscribe(event)">
                 <div class="form-group">
