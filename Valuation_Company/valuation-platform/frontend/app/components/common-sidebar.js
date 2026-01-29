@@ -31,22 +31,36 @@ function getStatusDisplay(status) {
 /**
  * 15단계 프로세스 정의
  */
+/**
+ * 고객 사이드바 표시 규칙:
+ * - visible: true  → 고객에게 보이는 단계 (고객이 직접 수행)
+ * - visible: false → 고객에게 숨기는 단계 (내부 프로세스, 회계사/시스템 작업)
+ *
+ * 현재 테스트 중이므로 SHOW_ALL_STEPS = true 로 설정하면 전체 표시
+ */
+const SHOW_ALL_STEPS = true; // 테스트 완료 후 false로 변경
+
 const PROCESS_STEPS = [
-    { step: 1, name: '서비스 안내문 보기', page: 'guide', visible: true },
-    { step: 2, name: '평가 신청하기', page: 'project-create', visible: true },
-    { step: 3, name: '관리자 승인 확인하기', page: 'approval-waiting', visible: true },
-    { step: 4, name: '평가 기초자료 제출하기', page: 'portal', visible: true },
-    { step: 5, name: '데이터 수집 중', page: 'data-collection', visible: true },
-    { step: 6, name: '평가 진행 중', page: 'evaluation-progress', visible: true },
-    { step: 7, name: '공인회계사 검토 중', page: 'accountant-review', visible: true },
-    { step: 8, name: '평가보고서 초안 생성', page: 'draft-generation', visible: true },
-    { step: 9, name: '평가보고서 초안 확인하기', page: 'result', params: 'mode=draft', visible: true },
-    { step: 10, name: '평가보고서 초안 수정 요청하기', page: 'revision-request', visible: true },
-    { step: 11, name: '평가보고서 최종안 작성', page: 'final-preparation', visible: true },
-    { step: 12, name: '평가보고서 최종안 확인하기', page: 'result', params: 'mode=final', visible: true },
-    { step: 13, name: '계약금 결제하기', page: 'deposit-payment', visible: true },
-    { step: 14, name: '잔금 결제하기', page: 'balance-payment', visible: true },
-    { step: 15, name: '평가보고서 수령하기', page: 'report-download', visible: true }
+    // --- 고객에게 보이는 단계 ---
+    { step: 1,  name: '서비스 안내문 보기',           page: 'guide',              visible: true },
+    { step: 2,  name: '평가 신청하기',               page: 'project-create',      visible: true },
+    { step: 3,  name: '관리자 승인 확인하기',         page: 'approval-waiting',    visible: true },
+    { step: 4,  name: '계약금 결제하기',             page: 'deposit-payment',     visible: true },
+    { step: 5,  name: '평가 기초자료 제출하기',       page: 'portal',             visible: true },
+    // --- 내부 프로세스 (고객에게 숨김) ---
+    { step: 6,  name: '데이터 수집 중',              page: 'data-collection',     visible: false },
+    { step: 7,  name: '평가 진행 중',               page: 'evaluation-progress', visible: false },
+    { step: 8,  name: '공인회계사 검토 중',           page: 'accountant-review',   visible: false },
+    { step: 9,  name: '평가보고서 초안 생성',         page: 'draft-generation',    visible: false },
+    // --- 고객에게 보이는 단계 ---
+    { step: 10, name: '평가보고서 초안 확인하기',     page: 'result', params: 'mode=draft', visible: true },
+    { step: 11, name: '평가보고서 초안 수정 요청하기', page: 'revision-request',    visible: true },
+    // --- 내부 프로세스 (고객에게 숨김) ---
+    { step: 12, name: '평가보고서 최종안 작성',       page: 'final-preparation',   visible: false },
+    // --- 고객에게 보이는 단계 ---
+    { step: 13, name: '평가보고서 최종안 확인하기',   page: 'result', params: 'mode=final', visible: true },
+    { step: 14, name: '잔금 결제하기',               page: 'balance-payment',     visible: true },
+    { step: 15, name: '평가보고서 수령하기',          page: 'report-download',     visible: true }
 ];
 
 /**
@@ -168,8 +182,8 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             return;
         }
 
-        // 숨김 처리된 단계는 표시하지 않음
-        if (stepInfo.visible === false) {
+        // 숨김 처리된 단계는 표시하지 않음 (SHOW_ALL_STEPS=true면 테스트용 전체 표시)
+        if (!SHOW_ALL_STEPS && stepInfo.visible === false) {
             return;
         }
 
