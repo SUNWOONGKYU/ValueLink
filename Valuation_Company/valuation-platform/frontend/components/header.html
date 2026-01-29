@@ -209,86 +209,175 @@
         box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
     }
 
+    /* 햄버거 메뉴 버튼 (모바일 전용) */
+    .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1010;
+        flex-shrink: 0;
+    }
+
+    .mobile-menu-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: #1E3A5F;
+        margin: 6px 0;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+    }
+
+    .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+    }
+
+    /* 모바일 오버레이 */
+    .mobile-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+        z-index: 999;
+    }
+
+    .mobile-overlay.show {
+        display: block;
+    }
+
     /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
         .main-header {
-            padding: 12px 20px;
-            height: auto;
-            flex-wrap: wrap;
-            gap: 12px;
+            padding: 0 16px;
+            height: 60px;
+            flex-wrap: nowrap;
+            gap: 0;
         }
 
         .header-left {
             flex: 1;
-            min-width: 150px;
+            min-width: 0;
         }
 
         .logo-svg {
-            height: 40px;
+            height: 36px;
         }
 
+        .mobile-menu-toggle {
+            display: block;
+        }
+
+        /* 오른쪽 영역: 모바일에서 드롭다운 메뉴로 변환 */
         .header-right {
-            width: 100%;
-            justify-content: space-between;
-            order: 3;
-            flex-wrap: wrap;
-            gap: 8px;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            background: white;
+            flex-direction: column;
+            padding: 0;
+            gap: 0;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            border-bottom: 1px solid #E5E7EB;
+            display: none;
+            z-index: 1000;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
         }
 
+        .header-right.show {
+            display: flex;
+        }
+
+        /* 메인 메뉴 - 세로 배치 */
         .main-menu {
-            flex: 1;
-            justify-content: flex-start;
-            flex-wrap: wrap;
-            gap: 4px;
+            flex-direction: column;
+            gap: 0;
+            width: 100%;
+            padding: 8px 0;
+            border-bottom: 1px solid #E5E7EB;
         }
 
         .menu-item {
-            padding: 6px 12px;
-            font-size: 13px;
-            white-space: nowrap;
+            padding: 16px 24px;
+            font-size: 16px;
+            border-radius: 0;
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: #F3F4F6;
+        }
+
+        .menu-item.active {
+            background: #EFF6FF;
         }
 
         #menu-mypage {
             margin-left: 0;
         }
 
+        /* 알림 버튼 */
         .notification-btn {
-            width: 36px;
-            height: 36px;
+            display: none;
         }
 
-        .notification-icon {
-            font-size: 20px;
-        }
-
-        .notification-badge {
-            width: 16px;
-            height: 16px;
-            font-size: 10px;
-        }
-
+        /* 로그인/회원가입 버튼 영역 */
         .btn-login, .btn-signup {
-            padding: 8px 14px;
-            font-size: 12px;
+            width: calc(100% - 48px);
+            margin: 0 24px;
+            padding: 14px 20px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .btn-login {
+            margin-top: 12px;
+        }
+
+        .btn-signup {
+            margin-top: 8px;
+            margin-bottom: 16px;
         }
     }
 
     /* Tablet (769px ~ 1024px) */
     @media (min-width: 769px) and (max-width: 1024px) {
         .main-header {
-            padding: 0 32px;
+            padding: 0 24px;
         }
 
         .logo-svg {
-            height: 60px;
+            height: 55px;
         }
 
         .menu-item {
-            padding: 10px 20px;
+            padding: 10px 16px;
             font-size: 15px;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 8px 16px;
+            font-size: 13px;
         }
     }
 </style>
+
+<!-- 모바일 오버레이 -->
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
 
 <header class="main-header">
     <div class="header-left">
@@ -316,7 +405,12 @@
         </a>
     </div>
 
-    <div class="header-right">
+    <!-- 햄버거 메뉴 버튼 (모바일) -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="toggleHeaderMenu()">
+        <span></span><span></span><span></span>
+    </button>
+
+    <div class="header-right" id="headerRight">
         <!-- 메인 메뉴 -->
         <nav class="main-menu">
             <a href="index.html" class="menu-item active" id="menu-valuation">
@@ -412,5 +506,27 @@
 // 알람 토글
 function toggleNotifications() {
     alert('알람 기능은 추후 구현됩니다.\n\n현재 알람:\n- 평가 요청이 승인되었습니다\n- 자료 제출이 완료되었습니다\n- 평가 결과가 나왔습니다');
+}
+
+// 모바일 메뉴 토글
+function toggleHeaderMenu() {
+    var right = document.getElementById('headerRight');
+    var btn = document.getElementById('mobileMenuToggle');
+    var overlay = document.getElementById('mobileOverlay');
+    if (right && btn) {
+        right.classList.toggle('show');
+        btn.classList.toggle('active');
+        if (overlay) overlay.classList.toggle('show');
+    }
+}
+
+// 모바일 메뉴 닫기
+function closeMobileMenu() {
+    var right = document.getElementById('headerRight');
+    var btn = document.getElementById('mobileMenuToggle');
+    var overlay = document.getElementById('mobileOverlay');
+    if (right) right.classList.remove('show');
+    if (btn) btn.classList.remove('active');
+    if (overlay) overlay.classList.remove('show');
 }
 </script>
