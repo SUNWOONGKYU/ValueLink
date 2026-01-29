@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +16,11 @@
             --border: #E5E7EB;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -153,8 +158,15 @@
             align-items: center;
         }
 
-        .footer-logo { font-size: 18px; font-weight: 700; }
-        .footer-text { font-size: 13px; opacity: 0.7; }
+        .footer-logo {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            opacity: 0.7;
+        }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -173,18 +185,21 @@
         }
 
         @media (max-width: 768px) {
+
             /* Hero Section */
             .hero {
                 padding: 24px 20px 32px 20px;
             }
 
             .hero-logo {
-                font-size: 28px;
+                font-size: 32px;
                 margin-bottom: 12px;
             }
 
             .hero-description {
-                font-size: 13px;
+                font-size: 15px;
+                /* Increased from 13px */
+                line-height: 1.6;
             }
 
             /* Service Cards */
@@ -202,17 +217,22 @@
             }
 
             .service-title {
-                font-size: 22px;
+                font-size: 24px;
+                /* Increased from 22px */
                 margin-bottom: 8px;
             }
 
             .service-subtitle {
-                font-size: 14px;
+                font-size: 16px;
+                /* Increased from 14px */
                 margin-bottom: 16px;
+                font-weight: 600;
             }
 
             .service-description {
-                font-size: 13px;
+                font-size: 15px;
+                /* Increased from 13px */
+                line-height: 1.6;
             }
 
             /* Footer */
@@ -237,6 +257,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- 헤더 -->
     <div id="header-container"></div>
@@ -320,4 +341,5 @@
             .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
+
 </html>
