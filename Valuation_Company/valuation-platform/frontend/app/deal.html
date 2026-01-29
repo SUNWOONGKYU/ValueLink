@@ -771,10 +771,10 @@
 
         .modal-close {
             position: absolute;
-            top: -40px;
-            right: 0;
-            background: #6b7280;
-            color: white;
+            top: 12px;
+            right: 12px;
+            background: #e5e7eb;
+            color: #374151;
             border: none;
             padding: 6px 12px;
             border-radius: 4px;
@@ -784,7 +784,7 @@
         }
 
         .modal-close:hover {
-            background: #4b5563;
+            background: #d1d5db;
         }
 
         .subscribe-modal h3 {
@@ -1074,6 +1074,8 @@
             text-decoration: underline;
         }
     </style>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <!-- 헤더 -->
@@ -2094,6 +2096,11 @@
     </div>
 
     <script>
+    // Supabase 클라이언트 설정
+    const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     // 구독 모달 열기/닫기
     function openSubscribeModal() {
         document.getElementById('subscribe-modal').style.display = 'flex';
