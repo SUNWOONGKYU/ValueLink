@@ -440,20 +440,37 @@
 
         // 로컬 스토리지에서 회사 정보 불러오기
         window.addEventListener('load', function() {
-            const savedData = localStorage.getItem('companyInfo');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                document.getElementById('industry').value = data.industry || '';
-                document.getElementById('companyName').value = data.companyName || '';
-                document.getElementById('ceoName').value = data.ceoName || '';
-                document.getElementById('businessNumber').value = data.businessNumber || '';
-                document.getElementById('foundedDate').value = data.foundedDate || '';
-                document.getElementById('employees').value = data.employees || '';
-                document.getElementById('companyWebsite').value = data.companyWebsite || '';
-                document.getElementById('address').value = data.address || '';
-                document.getElementById('phone').value = data.phone || '';
-                document.getElementById('fax').value = data.fax || '';
+            let savedData = localStorage.getItem('companyInfo');
+
+            // 테스트용: 저장된 데이터가 없으면 파인드월드 테스트 데이터 설정
+            if (!savedData) {
+                const testData = {
+                    companyName: '(주)파인드월드',
+                    ceoName: '김태영',
+                    industry: 'AI 기반 검색 솔루션',
+                    foundedDate: '2019-03-15',
+                    businessNumber: '123-45-67890',
+                    employees: '25',
+                    companyWebsite: 'https://www.findworld.co.kr',
+                    address: '서울특별시 강남구 테헤란로 123, 4층',
+                    phone: '02-1234-5678',
+                    fax: '02-1234-5679'
+                };
+                localStorage.setItem('companyInfo', JSON.stringify(testData));
+                savedData = JSON.stringify(testData);
             }
+
+            const data = JSON.parse(savedData);
+            document.getElementById('industry').value = data.industry || '';
+            document.getElementById('companyName').value = data.companyName || '';
+            document.getElementById('ceoName').value = data.ceoName || '';
+            document.getElementById('businessNumber').value = data.businessNumber || '';
+            document.getElementById('foundedDate').value = data.foundedDate || '';
+            document.getElementById('employees').value = data.employees || '';
+            document.getElementById('companyWebsite').value = data.companyWebsite || '';
+            document.getElementById('address').value = data.address || '';
+            document.getElementById('phone').value = data.phone || '';
+            document.getElementById('fax').value = data.fax || '';
         });
     </script>
 </body>
