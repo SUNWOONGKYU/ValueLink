@@ -381,6 +381,64 @@
         }
 
         /* 투자자 셀 스타일 - 자동 줄바꿈 */
+        /* 페이지네이션 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            padding: 20px 0;
+        }
+
+        .pagination button {
+            min-width: 36px;
+            height: 36px;
+            border: 1px solid #D1D5DB;
+            background: var(--white);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .pagination button:hover:not(:disabled):not(.active) {
+            background: #F3F4F6;
+            border-color: #9CA3AF;
+        }
+
+        .pagination button.active {
+            background: #7C3AED;
+            color: white;
+            border-color: #7C3AED;
+            font-weight: 600;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .pagination .ellipsis {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .pagination-info {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            padding-bottom: 12px;
+        }
+
         .deal-investors {
             font-size: 13px !important;
             color: var(--text-secondary) !important;
@@ -1129,7 +1187,7 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <span class="filter-label">투자 단계</span>
+                    <span class="filter-label">투자 단계 <span onclick="document.getElementById('stageGuideModal').style.display='flex'" style="cursor:pointer; color:#4f46e5; font-size:13px; font-weight:600;" title="투자단계 설명 보기">ⓘ</span></span>
                     <select class="filter-select" id="filter-stage">
                         <option value="">전체</option>
                     </select>
@@ -1166,6 +1224,7 @@
                     </tr>
                 </tbody>
             </table>
+            <div id="deals-pagination"></div>
         </div>
         </div>
 
@@ -1256,6 +1315,11 @@
         // Supabase 설정
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+
+        // 페이지네이션
+        let currentPage = 1;
+        const PAGE_SIZE = 20;
+        let currentDeals = [];
 
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', () => {
@@ -1469,6 +1533,7 @@
 
         // Deal 테이블 로드 (Supabase에서)
         async function loadDeals() {
+            currentPage = 1;
             try {
                 console.log('Deal 테이블 로딩 중...');
 
@@ -1554,8 +1619,9 @@
 
                 // 투자 단계 필터 - 고정 목록
                 const allStages = [
-                    'M&A', 'Pre-A', 'Seed', 'Series A', 'Series B', 'Series C',
-                    '시드', '시리즈A', '시리즈B', '시리즈C', '프리A', '프리IPO'
+                    '프리시드', '시드', '프리A', '프리A 브릿지',
+                    '시리즈A', '시리즈B', '시리즈C', '시리즈D', '시리즈E',
+                    '프리IPO', 'M&A'
                 ];
 
                 const stageSelect = document.getElementById('filter-stage');
@@ -1572,6 +1638,7 @@
 
         // Deal 필터링
         async function filterDeals() {
+            currentPage = 1;
             const industryFilter = document.getElementById('filter-industry').value;
             const stageFilter = document.getElementById('filter-stage').value;
             const periodFilter = document.getElementById('filter-period').value;
@@ -1620,13 +1687,24 @@
             }
         }
 
-        // Deal 테이블 렌더링 (No. 컬럼 추가)
+        // Deal 테이블 렌더링 (No. 컬럼 추가 + 페이지네이션)
         function renderDealsTable(deals) {
             const tbody = document.getElementById('deals-tbody');
             if (!tbody) return;
 
-            tbody.innerHTML = deals.map((deal, index) => {
-                const number = index + 1;  // 화면 표시용 순서 번호 (1부터 시작)
+            // 최초 호출 시에만 currentDeals 갱신 (goToPage에서 재호출 시는 이미 설정됨)
+            if (deals !== currentDeals) {
+                currentDeals = deals;
+            }
+
+            const totalPages = Math.ceil(currentDeals.length / PAGE_SIZE);
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+
+            const startIdx = (currentPage - 1) * PAGE_SIZE;
+            const pageDeals = currentDeals.slice(startIdx, startIdx + PAGE_SIZE);
+
+            tbody.innerHTML = pageDeals.map((deal, index) => {
+                const number = startIdx + index + 1;  // 페이지 기반 순서 번호
                 const company = deal.company_name || '-';
                 const industry = deal.industry || '-';
                 let stage = deal.stage || '-';
@@ -1646,8 +1724,8 @@
                 const founded = deal.founded || '-';
                 const totalFunding = deal.total_funding ? `${deal.total_funding}억원` : '-';
 
-                // 투자단계 정제 (시드, 프리A, 시리즈A/B/C만 허용)
-                const validStages = ['시드', 'Seed', '프리A', 'Pre-A', '시리즈A', 'Series A', '시리즈B', 'Series B', '시리즈C', 'Series C', 'M&A', '프리IPO'];
+                // 투자단계 정제 (한글 통일)
+                const validStages = ['프리시드', '시드', '프리A', '프리A 브릿지', '시리즈A', '시리즈B', '시리즈C', '시리즈D', '시리즈E', '프리IPO', 'M&A', '브릿지'];
                 if (stage !== '-' && !validStages.some(v => stage.includes(v))) {
                     stage = '-';
                 }
@@ -1684,6 +1762,90 @@
                     </tr>
                 `;
             }).join('');
+
+            renderPagination();
+        }
+
+        // 페이지네이션 UI 렌더링
+        function renderPagination() {
+            const container = document.getElementById('deals-pagination');
+            if (!container) return;
+
+            const totalPages = Math.ceil(currentDeals.length / PAGE_SIZE);
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const startIdx = (currentPage - 1) * PAGE_SIZE + 1;
+            const endIdx = Math.min(currentPage * PAGE_SIZE, currentDeals.length);
+
+            let html = `<div class="pagination-info">${currentDeals.length}건 중 ${startIdx}-${endIdx}건 표시</div>`;
+            html += '<div class="pagination">';
+
+            // 이전 버튼
+            html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt; 이전</button>`;
+
+            // 페이지 번호
+            const pages = getPaginationRange(currentPage, totalPages);
+            pages.forEach(p => {
+                if (p === '...') {
+                    html += '<span class="ellipsis">...</span>';
+                } else {
+                    html += `<button class="${p === currentPage ? 'active' : ''}" onclick="goToPage(${p})">${p}</button>`;
+                }
+            });
+
+            // 다음 버튼
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>다음 &gt;</button>`;
+            html += '</div>';
+
+            container.innerHTML = html;
+        }
+
+        // 페이지 범위 계산 (앞뒤 2개 + ... + 처음/마지막)
+        function getPaginationRange(current, total) {
+            if (total <= 7) {
+                return Array.from({length: total}, (_, i) => i + 1);
+            }
+
+            const pages = [];
+            const around = 2; // 현재 페이지 앞뒤 표시 개수
+
+            if (current <= around + 2) {
+                // 앞쪽에 가까울 때
+                for (let i = 1; i <= Math.max(current + around, around + 3); i++) pages.push(i);
+                pages.push('...');
+                pages.push(total);
+            } else if (current >= total - around - 1) {
+                // 뒤쪽에 가까울 때
+                pages.push(1);
+                pages.push('...');
+                for (let i = Math.min(current - around, total - around - 2); i <= total; i++) pages.push(i);
+            } else {
+                // 중간
+                pages.push(1);
+                pages.push('...');
+                for (let i = current - around; i <= current + around; i++) pages.push(i);
+                pages.push('...');
+                pages.push(total);
+            }
+
+            return pages;
+        }
+
+        // 페이지 이동
+        function goToPage(page) {
+            const totalPages = Math.ceil(currentDeals.length / PAGE_SIZE);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderDealsTable(currentDeals);
+
+            // 테이블 상단으로 스크롤
+            const table = document.querySelector('.deals-table');
+            if (table) {
+                table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         // 유틸리티 함수들
@@ -1743,11 +1905,17 @@
         }
 
         function extractStage(title) {
-            if (title.includes('시리즈C') || title.includes('Series C')) return '시리즈C+';
-            if (title.includes('시리즈B') || title.includes('Series B')) return '시리즈B';
-            if (title.includes('시리즈A') || title.includes('Series A')) return '시리즈A';
-            if (title.includes('프리A') || title.includes('Pre-A')) return '프리A';
-            if (title.includes('시드') || title.includes('Seed')) return '시드';
+            if (title.includes('시리즈E')) return '시리즈E';
+            if (title.includes('시리즈D')) return '시리즈D';
+            if (title.includes('시리즈C')) return '시리즈C';
+            if (title.includes('시리즈B')) return '시리즈B';
+            if (title.includes('시리즈A')) return '시리즈A';
+            if (title.includes('프리A 브릿지')) return '프리A 브릿지';
+            if (title.includes('프리A')) return '프리A';
+            if (title.includes('프리시드')) return '프리시드';
+            if (title.includes('시드')) return '시드';
+            if (title.includes('프리IPO')) return '프리IPO';
+            if (title.includes('M&A')) return 'M&A';
             if (title.includes('투자') || title.includes('유치')) return '투자';
             return '-';
         }
@@ -1762,11 +1930,17 @@
 
         function getStageClass(stage) {
             const classes = {
+                '프리시드': 'stage-seed',
                 '시드': 'stage-seed',
                 '프리A': 'stage-prea',
+                '프리A 브릿지': 'stage-prea',
                 '시리즈A': 'stage-a',
                 '시리즈B': 'stage-b',
-                '시리즈C+': 'stage-c',
+                '시리즈C': 'stage-c',
+                '시리즈D': 'stage-c',
+                '시리즈E': 'stage-c',
+                '프리IPO': 'stage-c',
+                'M&A': 'stage-c',
                 '투자': 'stage-seed'
             };
             return classes[stage] || 'stage-seed';
@@ -2185,6 +2359,95 @@
                     구독하기
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- 투자단계 가이드 모달 -->
+    <div id="stageGuideModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:#fff; border-radius:16px; max-width:560px; width:90%; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <!-- 헤더 -->
+            <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:24px 28px; border-radius:16px 16px 0 0; display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="margin:0; color:#fff; font-size:18px; font-weight:700;">투자단계 가이드</h2>
+                <span onclick="document.getElementById('stageGuideModal').style.display='none'" style="color:#fff; font-size:24px; cursor:pointer; line-height:1;">&times;</span>
+            </div>
+            <!-- 흐름도 -->
+            <div style="padding:20px 28px 8px; text-align:center;">
+                <p style="margin:0; font-size:13px; color:#6b7280; line-height:2;">
+                    <span style="display:inline-block; background:#ede9fe; color:#7c3aed; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">프리시드</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#ede9fe; color:#7c3aed; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">시드</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#e0e7ff; color:#4f46e5; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">프리A</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#dbeafe; color:#2563eb; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">시리즈A</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#d1fae5; color:#059669; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">B</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#fef3c7; color:#d97706; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">C</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#fee2e2; color:#dc2626; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">D·E</span>
+                    <span style="color:#d1d5db;">→</span>
+                    <span style="display:inline-block; background:#f3f4f6; color:#374151; padding:3px 10px; border-radius:12px; font-weight:600; margin:2px;">프리IPO</span>
+                </p>
+            </div>
+            <!-- 단계별 설명 -->
+            <div style="padding:12px 28px 24px;">
+                <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                    <tr style="background:#f9fafb;">
+                        <td style="padding:12px 14px; font-weight:700; color:#7c3aed; white-space:nowrap; border-bottom:1px solid #f3f4f6; width:110px;">프리시드</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">아이디어 단계. 팀 구성, 프로토타입 제작</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; white-space:nowrap; text-align:right;">~5억</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:12px 14px; font-weight:700; color:#7c3aed; border-bottom:1px solid #f3f4f6;">시드</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">MVP 완성, 초기 고객 확보 시작</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">3~15억</td>
+                    </tr>
+                    <tr style="background:#f9fafb;">
+                        <td style="padding:12px 14px; font-weight:700; color:#4f46e5; border-bottom:1px solid #f3f4f6;">프리A</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">제품 출시됐지만 매출 본격화 전</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">10~30억</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:12px 14px; font-weight:700; color:#4f46e5; border-bottom:1px solid #f3f4f6;">프리A 브릿지</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">시리즈A 직전, 운영자금 확보를 위한 연결 투자</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">10~30억</td>
+                    </tr>
+                    <tr style="background:#f9fafb;">
+                        <td style="padding:12px 14px; font-weight:700; color:#2563eb; border-bottom:1px solid #f3f4f6;">시리즈A</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">비즈니스 모델 검증 완료, 본격 성장 시작</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">30~100억</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:12px 14px; font-weight:700; color:#059669; border-bottom:1px solid #f3f4f6;">시리즈B</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">매출 성장 가속화, 조직 확대</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">100~300억</td>
+                    </tr>
+                    <tr style="background:#f9fafb;">
+                        <td style="padding:12px 14px; font-weight:700; color:#d97706; border-bottom:1px solid #f3f4f6;">시리즈C</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">시장 지배력 확보, 해외 진출</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">300~1000억</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:12px 14px; font-weight:700; color:#dc2626; border-bottom:1px solid #f3f4f6;">시리즈D·E</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">IPO 준비 단계의 대규모 투자</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">500억~</td>
+                    </tr>
+                    <tr style="background:#f9fafb;">
+                        <td style="padding:12px 14px; font-weight:700; color:#374151; border-bottom:1px solid #f3f4f6;">프리IPO</td>
+                        <td style="padding:12px 14px; color:#374151; border-bottom:1px solid #f3f4f6; line-height:1.5;">상장 직전 마지막 투자</td>
+                        <td style="padding:12px 14px; color:#9ca3af; border-bottom:1px solid #f3f4f6; text-align:right;">수백~수천억</td>
+                    </tr>
+                    <tr>
+                        <td style="padding:12px 14px; font-weight:700; color:#374151;">M&A</td>
+                        <td style="padding:12px 14px; color:#374151; line-height:1.5;">인수합병</td>
+                        <td style="padding:12px 14px; color:#9ca3af; text-align:right;">규모 다양</td>
+                    </tr>
+                </table>
+                <p style="margin:16px 0 0; padding:12px 16px; background:#f8f7ff; border-radius:8px; font-size:13px; color:#6b7280; line-height:1.6;">
+                    <b style="color:#4f46e5;">브릿지(Bridge)</b>란? 다음 라운드까지 자금이 부족할 때 받는 중간 투자입니다. "프리A 브릿지"는 시리즈A를 받기 직전에 운영자금이 떨어져서 급하게 받는 소규모 투자입니다.
+                </p>
+            </div>
         </div>
     </div>
 
