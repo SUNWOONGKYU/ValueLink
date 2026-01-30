@@ -723,7 +723,7 @@
 
         function displayProjectInfo(project) {
             document.getElementById('projectIdDisplay').textContent = project.project_id;
-            document.getElementById('companyNameDisplay').textContent = project.company_name_kr;
+            document.getElementById('companyNameDisplay').textContent = (project.company_name || '-');
             document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
             document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
         }

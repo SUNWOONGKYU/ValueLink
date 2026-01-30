@@ -981,7 +981,7 @@
         function displayProjectInfo(project) {
             document.getElementById('projectIdDisplay').textContent = project.project_id;
             document.getElementById('companyNameDisplay').textContent =
-                `${project.company_name_kr} (${project.company_name_en})`;
+                project.company_name || '-';
             document.getElementById('methodDisplay').textContent = METHOD_NAMES[method];
             document.getElementById('valuationDateDisplay').textContent = project.valuation_date || '-';
 
@@ -1000,7 +1000,7 @@
             }
 
             // 파일명 생성
-            const filename = `${project.company_name_kr}_기업가치평가보고서_${METHOD_NAMES[method]}_${today}.pdf`;
+            const filename = `${project.company_name || '회사'}_기업가치평가보고서_${METHOD_NAMES[method]}_${today}.pdf`;
             document.getElementById('reportFilename').textContent = filename;
         }
 

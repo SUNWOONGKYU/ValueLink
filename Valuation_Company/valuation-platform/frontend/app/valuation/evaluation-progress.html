@@ -545,7 +545,7 @@
 
             document.getElementById('projectIdDisplay').textContent = project.project_id;
             document.getElementById('companyNameDisplay').textContent =
-                `${project.company_name_kr} (${project.company_name_en})`;
+                project.company_name || '-';
             document.getElementById('methodDisplay').textContent = methodName;
             document.getElementById('valuationDateDisplay').textContent =
                 project.valuation_date || '-';
