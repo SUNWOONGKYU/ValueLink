@@ -39,6 +39,36 @@ if sys.platform == 'win32':
 
 load_dotenv()
 
+
+# 업종 대분류 카테고리 매핑
+INDUSTRY_CATEGORIES = {
+    'AI': ['AI', '인공지능', 'AI 기반', 'AI 에이전트', 'AI·양자', '머신러닝', '딥러닝', 'LLM', '생성형'],
+    '헬스케어': ['헬스케어', '바이오', '의료', '제약', '건강', '체성분', '클리닉', '메디', '진단', '신약', '헬스'],
+    '핀테크': ['핀테크', '금융', '공급망 금융', '자산', '보험', '페이', '결제', '증권', '인슈어'],
+    '이커머스': ['이커머스', '커머스', 'M&A 플랫폼', '쇼핑', '리테일', '유통'],
+    '모빌리티': ['모빌리티', '자동차', '리스', '렌트', '자율주행', '물류', '배송'],
+    '뷰티/패션': ['뷰티', '스킨케어', '화장품', '패션', '의류'],
+    '콘텐츠/엔터': ['콘텐츠', '웹툰', 'IP 제작', '엔터', '게임', '미디어', '영상'],
+    '우주항공': ['위성', '우주', '항공', '에어로스페이스', '드론'],
+    'IT/하드웨어': ['IT 기기', '하드웨어', '반도체', '센서', '로봇', '제조'],
+    'SaaS/B2B': ['SaaS', '솔루션', '클라우드', 'B2B', 'HR', 'ERP'],
+    '농업/푸드': ['스마트팜', '농업', '푸드', '식품', '푸드테크', '에어로포닉'],
+    '에듀테크': ['에듀', '교육', '학습', '러닝'],
+    '부동산/건설': ['부동산', '프롭', '건설', '건축', '인테리어'],
+    '에너지/환경': ['에너지', '태양광', '배터리', '탄소', '환경', '그린', '수소', '친환경'],
+}
+
+
+def categorize_industry(raw_industry):
+    """세부 업종을 대분류 카테고리로 매핑"""
+    if not raw_industry:
+        return None
+    for category, keywords in INDUSTRY_CATEGORIES.items():
+        for kw in keywords:
+            if kw in raw_industry:
+                return category
+    return '기타'
+
 # Supabase & Gemini 클라이언트
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -580,8 +610,10 @@ def step3_register_to_deals(target_date):
                     log(f"    🔄 {company}: 더 높은 점수 뉴스 발견 ({existing_score} → {new_score})")
 
                     # 기존 deal 업데이트
+                    new_industry = info.get('industry') or existing_info['deal'].get('industry')
                     supabase.table('deals').update({
-                        'industry': info.get('industry') or existing_info['deal'].get('industry'),
+                        'industry': new_industry,
+                        'industry_category': categorize_industry(new_industry),
                         'investors': info.get('investors') or existing_info['deal'].get('investors'),
                         'amount': info.get('amount') or existing_info['deal'].get('amount'),
                         'location': info.get('location') or existing_info['deal'].get('location'),
@@ -607,6 +639,7 @@ def step3_register_to_deals(target_date):
                 'number': next_number,
                 'company_name': company,
                 'industry': info.get('industry'),
+                'industry_category': categorize_industry(info.get('industry')),
                 'stage': info.get('stage'),
                 'investors': info.get('investors'),
                 'amount': info.get('amount'),
@@ -713,6 +746,7 @@ JSON 형식으로만 답변:
 
                 if info.get('industry') and (not deal.get('industry') or deal.get('industry') == '-'):
                     update_data['industry'] = info['industry']
+                    update_data['industry_category'] = categorize_industry(info['industry'])
 
                 if update_data:
                     supabase.table('deals').update(update_data).eq('id', deal['id']).execute()
@@ -847,6 +881,7 @@ JSON 형식으로만 답변:
 
                         if info.get('industry') and (not deal.get('industry') or deal.get('industry') == '-'):
                             update_data['industry'] = info['industry']
+                            update_data['industry_category'] = categorize_industry(info['industry'])
 
                         if info.get('amount') and not deal.get('amount'):
                             update_data['amount'] = info['amount']

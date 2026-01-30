@@ -1123,15 +1123,20 @@
             <!-- 필터 -->
             <div class="filter-bar">
                 <div class="filter-group">
-                    <span class="filter-label">투자 단계</span>
-                    <select class="filter-select">
+                    <span class="filter-label">업종</span>
+                    <select class="filter-select" id="filter-industry">
                         <option value="">전체</option>
-                        <!-- 동적으로 생성됨 -->
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">투자 단계</span>
+                    <select class="filter-select" id="filter-stage">
+                        <option value="">전체</option>
                     </select>
                 </div>
                 <div class="filter-group">
                     <span class="filter-label">기간</span>
-                    <select class="filter-select">
+                    <select class="filter-select" id="filter-period">
                         <option>최근 1주</option>
                         <option>최근 1개월</option>
                         <option>최근 3개월</option>
@@ -1523,26 +1528,37 @@
             });
         }
 
-        // 필터 옵션 동적 생성 (고정 목록)
+        // 필터 옵션 동적 생성
         async function populateFilterOptions() {
             try {
-                // 투자 단계 필터 - 모든 옵션 표시
+                // 업종 필터 - DB에서 카테고리 목록 가져오기
+                const indResponse = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=industry_category&industry_category=not.is.null&order=industry_category.asc`, {
+                    headers: {
+                        'apikey': SUPABASE_KEY,
+                        'Authorization': `Bearer ${SUPABASE_KEY}`
+                    }
+                });
+
+                if (indResponse.ok) {
+                    const indData = await indResponse.json();
+                    const categories = [...new Set(indData.map(d => d.industry_category).filter(Boolean))].sort();
+
+                    const industrySelect = document.getElementById('filter-industry');
+                    categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat;
+                        option.textContent = cat;
+                        industrySelect.appendChild(option);
+                    });
+                }
+
+                // 투자 단계 필터 - 고정 목록
                 const allStages = [
-                    'M&A',
-                    'Pre-A',
-                    'Seed',
-                    'Series A',
-                    'Series B',
-                    'Series C',
-                    '시드',
-                    '시리즈A',
-                    '시리즈B',
-                    '시리즈C',
-                    '프리A',
-                    '프리IPO'
+                    'M&A', 'Pre-A', 'Seed', 'Series A', 'Series B', 'Series C',
+                    '시드', '시리즈A', '시리즈B', '시리즈C', '프리A', '프리IPO'
                 ];
 
-                const stageSelect = document.querySelectorAll('.filter-select')[0];
+                const stageSelect = document.getElementById('filter-stage');
                 allStages.forEach(stage => {
                     const option = document.createElement('option');
                     option.value = stage;
@@ -1556,8 +1572,9 @@
 
         // Deal 필터링
         async function filterDeals() {
-            const stageFilter = document.querySelectorAll('.filter-select')[0].value;
-            const periodFilter = document.querySelectorAll('.filter-select')[1].value;
+            const industryFilter = document.getElementById('filter-industry').value;
+            const stageFilter = document.getElementById('filter-stage').value;
+            const periodFilter = document.getElementById('filter-period').value;
 
             // 기간 계산
             const now = new Date();
@@ -1575,6 +1592,9 @@
             // Supabase 쿼리 생성
             let query = `${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc,number.desc`;
 
+            if (industryFilter) {
+                query += `&industry_category=eq.${encodeURIComponent(industryFilter)}`;
+            }
             if (stageFilter) {
                 query += `&stage=ilike.*${stageFilter}*`;
             }
