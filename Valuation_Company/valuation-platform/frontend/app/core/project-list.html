@@ -28,40 +28,7 @@
             color: var(--text-primary);
         }
 
-        /* 기본 헤더 */
-        .simple-header {
-            background: var(--white);
-            padding: 16px 40px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .simple-header a {
-            text-decoration: none;
-        }
-
-        .logo-text {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1E3A5F;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 24px;
-        }
-
-        .nav-links a {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-secondary);
-        }
-
-        .nav-links a.active {
-            color: var(--deep-blue);
-        }
+        /* HEADER - 공통 헤더 사용 */
 
         /* 컨테이너 */
         .container {
@@ -380,16 +347,8 @@
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
-    <header class="simple-header">
-        <a href="../../index.html" class="logo-text">ValueLink</a>
-        <nav class="nav-links">
-            <a href="../valuation.html" class="active">Valuation</a>
-            <a href="../link.html">Link</a>
-            <a href="../deal.html">Deals</a>
-            <a href="mypage-company.html">My Page</a>
-        </nav>
-    </header>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
 
     <!-- 메인 -->
     <div class="container">
@@ -496,6 +455,26 @@
         function openInquiry(projectId) {
             alert('문의하기 기능은 추후 구현됩니다.\n\n프로젝트 ID: ' + projectId);
         }
+    </script>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

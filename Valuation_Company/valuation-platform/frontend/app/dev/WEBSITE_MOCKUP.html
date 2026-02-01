@@ -18,53 +18,7 @@
             background: #FFFFFF;
         }
 
-        /* 헤더 */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2563EB;
-        }
-
-        nav {
-            display: flex;
-            gap: 2rem;
-        }
-
-        nav a {
-            text-decoration: none;
-            color: #374151;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #2563EB;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 1rem;
-        }
+        /* HEADER - 공통 헤더 사용 */
 
         .btn {
             padding: 0.5rem 1.5rem;
@@ -100,7 +54,7 @@
 
         /* 히어로 섹션 */
         .hero {
-            margin-top: 80px;
+            margin-top: 0;
             background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
             color: white;
             padding: 8rem 2rem;
@@ -679,23 +633,8 @@
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
-    <header>
-        <div class="header-container">
-            <div class="logo">💼 ValuationAI</div>
-            <nav>
-                <a href="#home">홈</a>
-                <a href="#education">교육센터</a>
-                <a href="#simulator">시뮬레이터</a>
-                <a href="#apply">평가신청</a>
-                <a href="#pricing">가격</a>
-            </nav>
-            <div class="auth-buttons">
-                <a href="#" class="btn btn-secondary">로그인</a>
-                <a href="#" class="btn btn-primary">회원가입</a>
-            </div>
-        </div>
-    </header>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
 
     <!-- 페이지 네비게이션 -->
     <div class="page-nav">
@@ -1009,6 +948,26 @@
                 }
             });
         });
+    </script>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

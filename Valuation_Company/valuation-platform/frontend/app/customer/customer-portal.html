@@ -33,111 +33,7 @@
             min-height: 100vh;
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid #E5E7EB;
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .portal-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: var(--deep-blue-pale);
-            color: var(--deep-blue);
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--deep-blue-pale);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: var(--deep-blue);
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .user-company {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .btn-logout {
-            padding: 8px 16px;
-            font-size: 14px;
-            color: var(--text-muted);
-            background: transparent;
-            border: 1px solid #E5E7EB;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
-            color: var(--text-secondary);
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-light);
-        }
+        /* HEADER - 공통 헤더 사용 */
 
         /* BREADCRUMB */
         .breadcrumb-container {
@@ -911,37 +807,8 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">➕ 신규</a>
-                <a href="deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info">
-                <div class="user-avatar">김</div>
-                <div>
-                    <div class="user-name">김철수</div>
-                    <div class="user-company">삼성전자(주)</div>
-                </div>
-            </div>
-            <button class="btn-logout">로그아웃</button>
-        </div>
-    </header>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
 
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
@@ -1498,6 +1365,26 @@
                 statusBadge.innerHTML = '<span>&#128269;</span><span>자료 검토중</span>';
             }
         });
+    </script>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

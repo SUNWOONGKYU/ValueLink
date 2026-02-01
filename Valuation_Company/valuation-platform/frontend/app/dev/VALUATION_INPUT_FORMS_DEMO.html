@@ -13,8 +13,12 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .demo-wrapper {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            min-height: calc(100vh - 72px);
             padding: 20px;
         }
 
@@ -27,19 +31,19 @@
             overflow: hidden;
         }
 
-        .header {
+        .demo-card-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 30px;
             text-align: center;
         }
 
-        .header h1 {
+        .demo-card-header h1 {
             font-size: 32px;
             margin-bottom: 10px;
         }
 
-        .header p {
+        .demo-card-header p {
             font-size: 16px;
             opacity: 0.9;
         }
@@ -358,15 +362,15 @@
                 border-radius: 10px;
             }
 
-            .header {
+            .demo-card-header {
                 padding: 20px 15px;
             }
 
-            .header h1 {
+            .demo-card-header h1 {
                 font-size: 24px;
             }
 
-            .header p {
+            .demo-card-header p {
                 font-size: 14px;
             }
 
@@ -499,8 +503,12 @@
     </style>
 </head>
 <body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="demo-wrapper">
     <div class="container">
-        <div class="header">
+        <div class="demo-card-header">
             <h1>💼 기업가치평가 플랫폼</h1>
             <p>5가지 평가법 입력 폼 인터랙티브 데모</p>
         </div>
@@ -1068,6 +1076,27 @@
                 });
             });
         });
+    </script>
+    </div> <!-- /demo-wrapper -->
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

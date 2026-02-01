@@ -6,6 +6,9 @@
     <title>Supabase Test</title>
 </head>
 <body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
     <h1>Supabase 연결 테스트</h1>
     <div id="result"></div>
 
@@ -60,6 +63,26 @@
         }
 
         testConnection();
+    </script>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

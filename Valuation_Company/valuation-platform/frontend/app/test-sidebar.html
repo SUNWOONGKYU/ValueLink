@@ -10,6 +10,10 @@
         body {
             font-family: 'Pretendard', -apple-system, sans-serif;
             background: #F3F4F6;
+            margin: 0;
+            padding: 0;
+        }
+        .test-page-content {
             padding: 40px;
         }
 
@@ -48,6 +52,10 @@
     </style>
 </head>
 <body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="test-page-content">
     <div class="test-container">
         <div class="main-content">
             <h1>🧪 사이드바 테스트 페이지</h1>
@@ -86,6 +94,27 @@
         } catch (error) {
             console.error('❌ 사이드바 초기화 실패:', error);
         }
+    </script>
+    </div> <!-- /test-page-content -->
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>

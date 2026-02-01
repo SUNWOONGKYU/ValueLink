@@ -6,8 +6,12 @@
     <style>
         body {
             font-family: Arial;
-            padding: 40px;
+            margin: 0;
+            padding: 0;
             background: #f0f0f0;
+        }
+        .test-content {
+            padding: 40px;
         }
         .container {
             display: flex;
@@ -26,6 +30,10 @@
     </style>
 </head>
 <body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="test-content">
     <h1>🔍 초간단 사이드바 테스트</h1>
 
     <div class="container">
@@ -38,6 +46,27 @@
             여기에 사이드바가 들어갑니다...
         </div>
     </div>
+    </div> <!-- /test-content -->
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
 
     <script>
         console.log('=== 테스트 시작 ===');

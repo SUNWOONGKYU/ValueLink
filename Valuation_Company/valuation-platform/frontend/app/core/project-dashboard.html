@@ -34,72 +34,7 @@
             color: var(--text-primary);
         }
 
-        /* HEADER */
-        header {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 0 40px;
-            height: 72px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 48px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .logo-symbol { width: 44px; height: 44px; }
-        .logo-text { font-size: 24px; font-weight: 700; color: #1E3A5F; }
-
-        .main-nav {
-            display: flex;
-            gap: 8px;
-        }
-
-        .nav-item {
-            padding: 10px 20px;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-light);
-        }
-
-        .nav-item.active {
-            background: var(--deep-blue-pale);
-            color: var(--deep-blue);
-            font-weight: 600;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .user-info {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .user-info strong {
-            color: var(--text-primary);
-        }
+        /* HEADER - 공통 헤더 사용 */
 
         /* MAIN */
         .main-content {
@@ -551,32 +486,8 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
-    <header>
-        <div class="header-left">
-            <a href="../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100">
-                    <g transform="translate(15, 20)">
-                        <line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/>
-                        <line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/>
-                    </g>
-                </svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="mockup-valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="project-create.html" class="nav-item">➕ 신규</a>
-                <a href="deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info">
-                <strong>김철수</strong> 회계사
-            </div>
-        </div>
-    </header>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
 
     <!-- MAIN -->
     <main class="main-content">
@@ -834,6 +745,26 @@
                 window.location.href = `project-detail.html?id=${projectId}`;
             });
         });
+    </script>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) {
+                        newScript.src = script.src;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>
