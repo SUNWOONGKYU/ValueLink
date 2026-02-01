@@ -475,11 +475,17 @@
             font-weight: 400;
             color: var(--text-primary);
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .deal-industry {
             font-size: 11px;
             color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .deal-amount {
@@ -488,7 +494,7 @@
         }
 
         .deal-reason {
-            font-size: 12px;
+            font-size: 11px;
             color: #6B7280;
             line-height: 1.4;
             display: -webkit-box;
@@ -503,6 +509,7 @@
             font-size: 11px;
             font-weight: 400;
             border-radius: 10px;
+            white-space: nowrap;
         }
 
         .stage-seed { background: #DCFCE7; color: #166534; }
@@ -1774,7 +1781,7 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="투자사유" class="deal-reason">${investmentReason ? escapeHtml(investmentReason) : '-'}</td>
+                        <td data-label="투자사유" class="deal-reason">${investmentReason ? escapeHtml(investmentReason) : ''}</td>
                         <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">뉴스 보기</a></td>
                     </tr>
                 `;
