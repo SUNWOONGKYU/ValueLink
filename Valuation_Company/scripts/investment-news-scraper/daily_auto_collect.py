@@ -759,7 +759,7 @@ JSON 형식으로만 답변:
 
         try:
             gemini_response = gemini_client.models.generate_content(
-                model='gemini-2.5-flash',
+                model='gemini-2.0-flash',
                 contents=prompt,
                 config=types.GenerateContentConfig(
                     temperature=0,
