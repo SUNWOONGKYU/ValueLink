@@ -69,6 +69,37 @@ def categorize_industry(raw_industry):
                 return category
     return '기타'
 
+
+# 투자단계 정규화 매핑
+STAGE_MAP = {
+    '시리즈 A': '시리즈A', '시리즈 B': '시리즈B', '시리즈 C': '시리즈C',
+    '시리즈 D': '시리즈D', '시리즈 E': '시리즈E',
+    '프리 A': '프리A', '프리 시드': '프리시드',
+    'Series A': '시리즈A', 'Series B': '시리즈B', 'Series C': '시리즈C',
+    'Series D': '시리즈D', 'Series E': '시리즈E',
+    'Pre-A': '프리A', 'Pre A': '프리A',
+    'Seed': '시드', 'Pre-Seed': '프리시드', 'Pre-seed': '프리시드',
+    'Bridge': '브릿지', 'Pre-IPO': '프리IPO', 'pre-IPO': '프리IPO',
+}
+VALID_STAGES = {'프리시드', '시드', '프리A', '프리A 브릿지', '시리즈A', '시리즈B',
+                '시리즈C', '시리즈D', '시리즈E', '프리IPO', 'M&A', '브릿지'}
+
+
+def normalize_stage(raw_stage):
+    """투자단계를 정규화 (띄어쓰기/영어 통일, 투자자명 오입력 제거)"""
+    if not raw_stage:
+        return None
+    stage = raw_stage.strip()
+    # 매핑 테이블에 있으면 변환
+    if stage in STAGE_MAP:
+        return STAGE_MAP[stage]
+    # 유효한 stage면 그대로
+    if stage in VALID_STAGES:
+        return stage
+    # 유효하지 않으면 null (투자자명 오입력 등)
+    return None
+
+
 # Supabase & Gemini 클라이언트
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
@@ -587,7 +618,7 @@ def step3_register_to_deals(target_date):
     for company, news in company_best.items():
         article = news['article']
         info = news['info']
-        new_stage = info.get('stage') or 'unknown'
+        new_stage = normalize_stage(info.get('stage')) or 'unknown'
         new_score = news['score']
         news_url = article.get('article_url')
 
@@ -640,7 +671,7 @@ def step3_register_to_deals(target_date):
                 'company_name': company,
                 'industry': info.get('industry'),
                 'industry_category': categorize_industry(info.get('industry')),
-                'stage': info.get('stage'),
+                'stage': normalize_stage(info.get('stage')),
                 'investors': info.get('investors'),
                 'amount': info.get('amount'),
                 'location': info.get('location'),
@@ -677,7 +708,7 @@ def step4_fill_missing_info():
 
     # 정보가 부족한 Deal 가져오기
     deals = supabase.table('deals').select('*').or_(
-        'investors.is.null,industry.is.null,industry.eq.-'
+        'investors.is.null,industry.is.null,industry.eq.-,investment_reason.is.null'
     ).execute()
 
     if not deals.data:
@@ -721,7 +752,8 @@ def step4_fill_missing_info():
 JSON 형식으로만 답변:
 {{
     "investors": "투자자명 (콤마 구분, 없으면 null)",
-    "industry": "주요사업 (2-4단어, 없으면 null)"
+    "industry": "주요사업 (2-4단어, 없으면 null)",
+    "investment_reason": "이 회사가 투자를 받은 핵심 이유 (기술력/시장성/매출성장 등 1문장, 없으면 null)"
 }}
 """
 
@@ -747,6 +779,9 @@ JSON 형식으로만 답변:
                 if info.get('industry') and (not deal.get('industry') or deal.get('industry') == '-'):
                     update_data['industry'] = info['industry']
                     update_data['industry_category'] = categorize_industry(info['industry'])
+
+                if info.get('investment_reason') and info['investment_reason'] != 'null':
+                    update_data['investment_reason'] = info['investment_reason']
 
                 if update_data:
                     supabase.table('deals').update(update_data).eq('id', deal['id']).execute()

@@ -361,13 +361,14 @@
         }
 
         /* 컬럼별 너비 조정 (7개 컬럼: No. 추가) */
-        .deals-table th:nth-child(1) { width: 4%; }  /* No. */
-        .deals-table th:nth-child(2) { width: 13%; } /* 기업명 */
-        .deals-table th:nth-child(3) { width: 20%; } /* 주요사업 */
-        .deals-table th:nth-child(4) { width: 10%; } /* 투자단계 */
-        .deals-table th:nth-child(5) { width: 27%; } /* 투자자 */
-        .deals-table th:nth-child(6) { width: 8%; }  /* 투자금액 */
-        .deals-table th:nth-child(7) { width: 7%; }  /* 뉴스 */
+        .deals-table th:nth-child(1) { width: 3%; }  /* No. */
+        .deals-table th:nth-child(2) { width: 11%; } /* 기업명 */
+        .deals-table th:nth-child(3) { width: 13%; } /* 주요사업 */
+        .deals-table th:nth-child(4) { width: 7%; }  /* 투자단계 */
+        .deals-table th:nth-child(5) { width: 22%; } /* 투자자 */
+        .deals-table th:nth-child(6) { width: 7%; }  /* 투자금액 */
+        .deals-table th:nth-child(7) { width: 20%; } /* 투자사유 */
+        .deals-table th:nth-child(8) { width: 6%; }  /* 뉴스 */
 
         .deals-table td {
             padding: 12px 10px;
@@ -481,6 +482,16 @@
         .deal-amount {
             font-weight: 400;
             color: var(--deep-green);
+        }
+
+        .deal-reason {
+            font-size: 12px;
+            color: #6B7280;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .deal-stage {
@@ -1212,6 +1223,7 @@
                         <th>투자단계</th>
                         <th>투자자</th>
                         <th>투자금액</th>
+                        <th>투자사유</th>
                         <th>뉴스</th>
                     </tr>
                 </thead>
@@ -1746,8 +1758,10 @@
                 }
 
                 // JSON 데이터를 안전하게 전달하기 위해 escape
+                const investmentReason = deal.investment_reason || '';
+
                 const dealData = JSON.stringify({
-                    company, ceo, founded, totalFunding, industry, location, stage, investors, amount, newsUrl
+                    company, ceo, founded, totalFunding, industry, location, stage, investors, amount, newsUrl, investmentReason
                 }).replace(/"/g, '&quot;');
 
                 return `
@@ -1758,6 +1772,7 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
+                        <td data-label="투자사유" class="deal-reason">${investmentReason ? escapeHtml(investmentReason) : '-'}</td>
                         <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">뉴스 보기</a></td>
                     </tr>
                 `;
@@ -2085,6 +2100,15 @@
             document.getElementById('detail-amount').textContent = data.amount || '-';
             document.getElementById('detail-total-funding').textContent = data.totalFunding || '-';
 
+            const reasonEl = document.getElementById('detail-investment-reason');
+            const reasonRow = document.getElementById('detail-reason-row');
+            if (data.investmentReason) {
+                reasonEl.textContent = data.investmentReason;
+                reasonRow.style.display = '';
+            } else {
+                reasonRow.style.display = 'none';
+            }
+
             const newsLink = document.getElementById('detail-news-link');
             if (data.newsUrl && data.newsUrl !== '#') {
                 newsLink.href = data.newsUrl;
@@ -2315,6 +2339,10 @@
                 <div class="detail-row">
                     <div class="detail-label">누적투자액</div>
                     <div class="detail-value" id="detail-total-funding"></div>
+                </div>
+                <div class="detail-row" id="detail-reason-row">
+                    <div class="detail-label">투자사유</div>
+                    <div class="detail-value" id="detail-investment-reason"></div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">뉴스</div>
