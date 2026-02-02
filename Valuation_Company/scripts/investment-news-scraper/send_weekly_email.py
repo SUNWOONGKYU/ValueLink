@@ -31,15 +31,15 @@ GMAIL_APP_PASSWORD = os.getenv('GMAIL_APP_PASSWORD')
 def get_last_week_deals():
     """
     지난 주 Deal 조회 (월요일 ~ 일요일)
+    월요일 발행 기준: 지난 월요일(7일 전) ~ 지난 일요일(어제)
 
     Returns:
         Deal 리스트
     """
     today = datetime.now().date()
-    # 일요일 실행 기준: 지난 월요일 ~ 지난 토요일(어제)
-    days_since_monday = (today.weekday() + 7) % 7
-    last_monday = today - timedelta(days=days_since_monday + 6)
-    last_sunday = last_monday + timedelta(days=6)
+    # 월요일 발행 기준: 7일 전(지난 월요일) ~ 어제(일요일)
+    last_monday = today - timedelta(days=7)
+    last_sunday = today - timedelta(days=1)
 
     result = supabase.table('deals').select('*').gte(
         'news_date', last_monday.isoformat()
@@ -185,12 +185,12 @@ def generate_weekly_html(deals, stats):
         HTML 문자열
     """
     today = datetime.now().date()
-    days_since_monday = (today.weekday() + 7) % 7
-    last_monday = today - timedelta(days=days_since_monday + 6)
-    last_sunday = last_monday + timedelta(days=6)
+    # 월요일 발행 기준: 7일 전(지난 월요일) ~ 어제(일요일)
+    last_monday = today - timedelta(days=7)
+    last_sunday = today - timedelta(days=1)
 
-    date_range = f"{last_monday.month}월 {last_monday.day}일 ~ {last_sunday.month}월 {last_sunday.day}일"
-    date_range_short = f"{last_monday.month}.{last_monday.day}~{last_sunday.month}.{last_sunday.day}"
+    date_range = f"{last_monday.year}년 {last_monday.month}월 {last_monday.day}일 ~ {last_sunday.month}월 {last_sunday.day}일"
+    date_range_short = f"{last_monday.year}.{last_monday.month}.{last_monday.day}~{last_sunday.month}.{last_sunday.day}"
     deal_count = len(deals) if deals else 0
 
     html = f"""<!DOCTYPE html>
@@ -207,8 +207,10 @@ def generate_weekly_html(deals, stats):
 
     <!-- Header -->
     <tr>
-        <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:28px 30px; text-align:center;">
-            <h1 style="margin:0; color:#ffffff; font-size:20px; font-weight:700;">{date_range} 주간 투자 리포트 ({deal_count}건)</h1>
+        <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:32px 30px; text-align:center;">
+            <p style="margin:0 0 6px; color:rgba(255,255,255,0.8); font-size:13px; font-weight:400; letter-spacing:0.5px;">WEEKLY DEAL REPORT</p>
+            <h1 style="margin:0; color:#ffffff; font-size:21px; font-weight:700; line-height:1.4;">{date_range}</h1>
+            <p style="margin:8px 0 0; color:rgba(255,255,255,0.9); font-size:14px;">총 {deal_count}건의 투자 뉴스</p>
         </td>
     </tr>
 """
@@ -230,16 +232,57 @@ def generate_weekly_html(deals, stats):
         max_deal_str = f"{max_deal['company_name']} {max_deal.get('amount', '금액 미공개')}" if max_deal else '-'
 
         html += f"""
+    <!-- Section 1: Summary -->
     <tr>
-        <td style="padding:24px 30px 8px;">
-            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0ff; border-radius:8px; border-left:4px solid #4f46e5;">
-            <tr><td style="padding:16px 20px;">
-                <p style="margin:0 0 6px; font-size:14px; color:#333; line-height:1.7;">
-                    &#8226; 이번 주 총 <b>{stats['total_deals']}건</b>, 총 투자금액 <b>{total_amount_str}</b><br>
-                    &#8226; 가장 활발한 업종: <b>{top_ind_name}</b> ({top_ind_count}건)<br>
-                    &#8226; 최대 규모: <b>{max_deal_str}</b>
-                </p>
+        <td style="padding:28px 30px 12px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f7ff; border-radius:10px; border:1px solid #e8e5ff;">
+            <tr><td style="padding:20px 24px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="36" valign="top" style="padding-right:12px;">
+                            <table cellpadding="0" cellspacing="0"><tr><td style="width:32px; height:32px; background:#4f46e5; border-radius:8px; text-align:center; line-height:32px; color:#fff; font-size:15px; font-weight:700;">&#931;</td></tr></table>
+                        </td>
+                        <td valign="middle">
+                            <p style="margin:0; font-size:14px; color:#6b7280; line-height:1.3;">총 투자 건수 / 금액</p>
+                            <p style="margin:4px 0 0; font-size:17px; color:#1a1a1a; font-weight:700;">{stats['total_deals']}건&nbsp;&nbsp;&#183;&nbsp;&nbsp;{total_amount_str}</p>
+                        </td>
+                    </tr>
+                </table>
             </td></tr>
+            <tr><td style="padding:0 24px;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="border-top:1px solid #e8e5ff;"></td></tr></table></td></tr>
+            <tr><td style="padding:14px 24px 0;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td width="50%" valign="top" style="padding-right:10px;">
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="32" valign="top" style="padding-right:10px;">
+                                        <table cellpadding="0" cellspacing="0"><tr><td style="width:28px; height:28px; background:#ede9fe; border-radius:6px; text-align:center; line-height:28px; color:#7c3aed; font-size:13px;">&#9650;</td></tr></table>
+                                    </td>
+                                    <td valign="top">
+                                        <p style="margin:0; font-size:12px; color:#6b7280;">활발한 업종</p>
+                                        <p style="margin:2px 0 0; font-size:14px; color:#1a1a1a; font-weight:600;">{top_ind_name} ({top_ind_count}건)</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td width="50%" valign="top" style="padding-left:10px;">
+                            <table cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td width="32" valign="top" style="padding-right:10px;">
+                                        <table cellpadding="0" cellspacing="0"><tr><td style="width:28px; height:28px; background:#fef3c7; border-radius:6px; text-align:center; line-height:28px; color:#d97706; font-size:13px;">&#9733;</td></tr></table>
+                                    </td>
+                                    <td valign="top">
+                                        <p style="margin:0; font-size:12px; color:#6b7280;">최대 규모</p>
+                                        <p style="margin:2px 0 0; font-size:14px; color:#1a1a1a; font-weight:600;">{max_deal_str}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td></tr>
+            <tr><td style="padding-bottom:6px;"></td></tr>
             </table>
         </td>
     </tr>
@@ -247,36 +290,65 @@ def generate_weekly_html(deals, stats):
 
         # ---- 2) 주요 딜 Top 5 ----
         html += """
+    <!-- Section 2: Top 5 Deals -->
     <tr>
         <td style="padding:20px 30px 8px;">
-            <h2 style="margin:0 0 14px; font-size:16px; color:#4f46e5; font-weight:700;">주요 딜 Top 5</h2>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+            <tr>
+                <td style="padding-bottom:4px; border-bottom:2px solid #4f46e5;">
+                    <h2 style="margin:0; font-size:16px; color:#4f46e5; font-weight:700;">&#x1F4B0; &#xFE0E;주요 딜 Top 5</h2>
+                </td>
+            </tr>
+            </table>
 """
         for i, deal in enumerate(stats['top5_deals']):
-            border_top = 'border-top:1px solid #eee; padding-top:14px; margin-top:14px;' if i > 0 else ''
             company = deal.get('company_name', '')
             investors_str = deal.get('investors', '')
             amount = deal.get('amount', '금액 미공개')
             news_title = deal.get('news_title', '')
             news_url = deal.get('news_url', '#')
+            rank = i + 1
 
-            info_parts = [f"<b>{company}</b>"]
-            if investors_str:
-                info_parts.append(investors_str)
-            info_parts.append(amount if amount else '금액 미공개')
-            info_line = ' | '.join(info_parts)
+            # Alternate row background for visual rhythm
+            card_bg = '#ffffff' if i % 2 == 0 else '#fafbff'
+            border_color = '#e5e7eb' if i > 0 else '#4f46e5'
 
             html += f"""
-            <table width="100%" cellpadding="0" cellspacing="0" style="{border_top}">
-            <tr><td style="padding-bottom:12px;">
-                <p style="margin:0 0 8px; font-size:15px; color:#1a1a1a;">{info_line}</p>
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px; border:1px solid {border_color}; border-radius:8px; overflow:hidden;">
+            <tr>
+                <td style="background:{card_bg}; padding:16px 18px;">
+                    <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <!-- Rank number -->
+                        <td width="36" valign="top" style="padding-right:14px;">
+                            <table cellpadding="0" cellspacing="0"><tr><td style="width:30px; height:30px; background:{'#4f46e5' if rank <= 3 else '#7c3aed' if rank == 4 else '#8b5cf6'}; border-radius:50%; text-align:center; line-height:30px; color:#ffffff; font-size:14px; font-weight:700;">{rank}</td></tr></table>
+                        </td>
+                        <!-- Deal info -->
+                        <td valign="top">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>
+                                    <span style="font-size:16px; font-weight:700; color:#111827;">{company}</span>
+                                    <span style="display:inline-block; margin-left:8px; padding:2px 10px; background:{'#4f46e5' if rank == 1 else '#7c3aed'}; color:#ffffff; border-radius:12px; font-size:12px; font-weight:600; line-height:20px;">{amount if amount else '금액 미공개'}</span>
+                                </td>
+                            </tr>
+                            </table>
+"""
+            if investors_str:
+                html += f"""
+                            <p style="margin:6px 0 0; font-size:13px; color:#6b7280; line-height:1.4;">&#x25B8; 투자자: {investors_str}</p>
 """
             if news_title:
                 html += f"""
-                <p style="margin:0 0 6px; font-size:13px; color:#666; line-height:1.5;">{news_title}</p>
+                            <p style="margin:6px 0 0; font-size:13px; color:#4b5563; line-height:1.5;">{news_title}</p>
 """
             html += f"""
-                <a href="{news_url}" style="font-size:13px; color:#4f46e5; text-decoration:none;" target="_blank">기사 전문 보기 &rarr;</a>
-            </td></tr>
+                            <table cellpadding="0" cellspacing="0" style="margin-top:8px;"><tr><td><a href="{news_url}" style="font-size:12px; color:#4f46e5; text-decoration:none; font-weight:500;" target="_blank">기사 전문 보기 &rarr;</a></td></tr></table>
+                        </td>
+                    </tr>
+                    </table>
+                </td>
+            </tr>
             </table>
 """
 
@@ -287,65 +359,120 @@ def generate_weekly_html(deals, stats):
 
         # ---- 3) 업종별 동향 ----
         if stats['industry_sorted']:
-            industry_items = []
-            for name, data in stats['industry_sorted']:
-                amt = f" ({data['amount']:,.0f}억원)" if data['amount'] > 0 else ""
-                industry_items.append(f"{name}: {data['count']}건{amt}")
-            industry_text = ' | '.join(industry_items)
+            industry_badges = ''
+            badge_colors = ['#4f46e5', '#7c3aed', '#6366f1', '#8b5cf6', '#a78bfa', '#818cf8', '#c4b5fd']
+            for idx, (name, data) in enumerate(stats['industry_sorted']):
+                amt = f" &#183; {data['amount']:,.0f}억" if data['amount'] > 0 else ""
+                bg = badge_colors[idx % len(badge_colors)]
+                industry_badges += f'<td style="padding:0 6px 8px 0;"><table cellpadding="0" cellspacing="0"><tr><td style="background:{bg}; color:#ffffff; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:500; white-space:nowrap;">{name} {data["count"]}건{amt}</td></tr></table></td>'
 
             html += f"""
+    <!-- Section 3: Industry -->
     <tr>
-        <td style="padding:12px 30px 8px;">
-            <h2 style="margin:0 0 10px; font-size:16px; color:#4f46e5; font-weight:700;">업종별 동향</h2>
-            <p style="margin:0; font-size:14px; color:#444; line-height:1.8; background:#fafafa; padding:12px 16px; border-radius:6px;">{industry_text}</p>
+        <td style="padding:22px 30px 8px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+            <tr>
+                <td style="padding-bottom:4px; border-bottom:2px solid #7c3aed;">
+                    <h2 style="margin:0; font-size:16px; color:#7c3aed; font-weight:700;">&#x1F3ED; &#xFE0E;업종별 동향</h2>
+                </td>
+            </tr>
+            </table>
+            <table cellpadding="0" cellspacing="0">
+            <tr>{industry_badges}</tr>
+            </table>
         </td>
     </tr>
 """
 
         # ---- 4) 투자단계별 분포 ----
         if stats['stage_counts']:
-            stage_items = [f"{stage}: {count}건" for stage, count in stats['stage_counts']]
-            stage_text = ' | '.join(stage_items)
+            stage_badges = ''
+            stage_bg_colors = ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5']
+            for idx, (stage, count) in enumerate(stats['stage_counts']):
+                bg = stage_bg_colors[idx % len(stage_bg_colors)]
+                text_color = '#ffffff' if idx < 3 else '#065f46'
+                stage_badges += f'<td style="padding:0 6px 8px 0;"><table cellpadding="0" cellspacing="0"><tr><td style="background:{bg}; color:{text_color}; padding:6px 14px; border-radius:20px; font-size:13px; font-weight:500; white-space:nowrap;">{stage} {count}건</td></tr></table></td>'
 
             html += f"""
+    <!-- Section 4: Investment Stages -->
     <tr>
-        <td style="padding:12px 30px 8px;">
-            <h2 style="margin:0 0 10px; font-size:16px; color:#4f46e5; font-weight:700;">투자단계별 분포</h2>
-            <p style="margin:0; font-size:14px; color:#444; line-height:1.8; background:#fafafa; padding:12px 16px; border-radius:6px;">{stage_text}</p>
+        <td style="padding:22px 30px 8px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+            <tr>
+                <td style="padding-bottom:4px; border-bottom:2px solid #059669;">
+                    <h2 style="margin:0; font-size:16px; color:#059669; font-weight:700;">&#x1F4CA; &#xFE0E;투자단계별 분포</h2>
+                </td>
+            </tr>
+            </table>
+            <table cellpadding="0" cellspacing="0">
+            <tr>{stage_badges}</tr>
+            </table>
         </td>
     </tr>
 """
 
         # ---- 5) 활발한 투자자 Top 5 ----
         if stats['investor_counts']:
-            investor_items = [f"{name} ({count}건)" for name, count in stats['investor_counts']]
-            investor_text = ' | '.join(investor_items)
+            investor_rows = ''
+            for idx, (name, count) in enumerate(stats['investor_counts']):
+                rank = idx + 1
+                bar_width = int((count / stats['investor_counts'][0][1]) * 100) if stats['investor_counts'][0][1] > 0 else 100
+                investor_rows += f"""
+                <tr>
+                    <td style="padding:8px 0; border-bottom:1px solid #f3f4f6;">
+                        <table width="100%" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td width="28" style="font-size:13px; color:#9ca3af; font-weight:600;">{rank}.</td>
+                            <td style="font-size:14px; color:#1f2937; font-weight:600;">{name}</td>
+                            <td width="80" align="right">
+                                <table cellpadding="0" cellspacing="0" align="right"><tr><td style="background:#ede9fe; color:#7c3aed; padding:3px 12px; border-radius:12px; font-size:12px; font-weight:700;">{count}건</td></tr></table>
+                            </td>
+                        </tr>
+                        </table>
+                    </td>
+                </tr>
+"""
 
             html += f"""
+    <!-- Section 5: Top Investors -->
     <tr>
-        <td style="padding:12px 30px 8px;">
-            <h2 style="margin:0 0 10px; font-size:16px; color:#4f46e5; font-weight:700;">이번 주 활발한 투자자 Top 5</h2>
-            <p style="margin:0; font-size:14px; color:#444; line-height:1.8; background:#fafafa; padding:12px 16px; border-radius:6px;">{investor_text}</p>
+        <td style="padding:22px 30px 8px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+            <tr>
+                <td style="padding-bottom:4px; border-bottom:2px solid #d97706;">
+                    <h2 style="margin:0; font-size:16px; color:#d97706; font-weight:700;">&#x1F465; &#xFE0E;이번 주 활발한 투자자 Top 5</h2>
+                </td>
+            </tr>
+            </table>
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb; border-radius:8px; padding:4px 16px;">
+                {investor_rows}
+            </table>
         </td>
     </tr>
 """
 
     # ---- 6) CTA 버튼 ----
     html += """
+    <!-- Section 6: CTA -->
     <tr>
-        <td style="padding:20px 30px 24px; text-align:center;">
-            <a href="https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/deal.html"
-               style="display:inline-block; background:#4f46e5; color:#ffffff; padding:12px 28px;
-                      border-radius:6px; text-decoration:none; font-size:17px; font-weight:600;">
-                전체 투자 뉴스 보러가기 &rarr;
-            </a>
+        <td style="padding:28px 30px 28px; text-align:center;">
+            <table cellpadding="0" cellspacing="0" align="center">
+            <tr><td style="background:linear-gradient(135deg,#4f46e5,#7c3aed); border-radius:8px;">
+                <a href="https://sunwoongkyu.github.io/ValueLink/Valuation_Company/valuation-platform/frontend/app/deal.html"
+                   style="display:inline-block; color:#ffffff; padding:14px 36px;
+                          text-decoration:none; font-size:16px; font-weight:700; letter-spacing:0.3px;">
+                    전체 투자 뉴스 보러가기 &rarr;
+                </a>
+            </td></tr>
+            </table>
         </td>
     </tr>
 
     <!-- Footer -->
     <tr>
-        <td style="background:#fafafa; padding:16px 30px; text-align:center; border-top:1px solid #eee;">
-            <p style="margin:0; font-size:11px; color:#bbb;">ValueLink Deals | 구독 취소는 이 이메일에 회신</p>
+        <td style="background:#f9fafb; padding:20px 30px; text-align:center; border-top:1px solid #e5e7eb;">
+            <p style="margin:0 0 4px; font-size:12px; color:#9ca3af;">ValueLink Deals Weekly Report</p>
+            <p style="margin:0; font-size:11px; color:#d1d5db;">구독 취소는 이 이메일에 회신해 주세요</p>
         </td>
     </tr>
 
@@ -413,12 +540,12 @@ def send_email_to_subscribers(html_content, deals):
     print(f"  [INFO] Found {len(subscribers)} subscribers")
 
     today = datetime.now().date()
-    days_since_monday = (today.weekday() + 7) % 7
-    last_monday = today - timedelta(days=days_since_monday + 6)
-    last_sunday = last_monday + timedelta(days=6)
+    # 월요일 발행 기준: 7일 전(지난 월요일) ~ 어제(일요일)
+    last_monday = today - timedelta(days=7)
+    last_sunday = today - timedelta(days=1)
 
-    date_range = f"{last_monday.month}.{last_monday.day}~{last_sunday.month}.{last_sunday.day}"
-    subject = f"[주간 투자 리포트] {date_range} ({len(deals)}건)"
+    date_range = f"{last_monday.year}.{last_monday.month}.{last_monday.day}~{last_sunday.month}.{last_sunday.day}"
+    subject = f"[주간 딜 리포트] {date_range} ({len(deals)}건)"
 
     sent = 0
     failed = 0
