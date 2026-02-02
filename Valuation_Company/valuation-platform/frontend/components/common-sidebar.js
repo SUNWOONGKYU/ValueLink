@@ -38,7 +38,7 @@ function getStatusDisplay(status) {
  *
  * 현재 테스트 중이므로 SHOW_ALL_STEPS = true 로 설정하면 전체 표시
  */
-const SHOW_ALL_STEPS = true; // 테스트 완료 후 false로 변경
+const SHOW_ALL_STEPS = false; // 내부 프로세스는 작은 회색 참고 표시로 렌더링
 
 const PROCESS_STEPS = [
     // --- 고객에게 보이는 단계 ---
@@ -182,14 +182,16 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             return;
         }
 
-        // 숨김 처리된 단계는 표시하지 않음 (SHOW_ALL_STEPS=true면 테스트용 전체 표시)
+        const isActive = stepInfo.step === currentStep;
+
+        // 내부 프로세스 단계: 작은 회색 참고 표시 (SHOW_ALL_STEPS=true면 일반 표시)
         if (!SHOW_ALL_STEPS && stepInfo.visible === false) {
+            html += renderInternalStep(stepInfo, isActive);
             return;
         }
 
-        displayNumber++; // visible 단계마다 번호 증가
+        displayNumber++; // visible 단계만 번호 증가
 
-        const isActive = stepInfo.step === currentStep;
         const isAccessible = shouldStepBeAccessible(stepInfo.step, currentStep, methodStatus);
         const url = getStepUrl(stepInfo, method, projectId);
 
@@ -224,6 +226,24 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
     `;
 
     return html;
+}
+
+/**
+ * 내부 프로세스 단계 렌더링 (작은 회색 참고 표시)
+ * - 번호 없음, 클릭 불가
+ * - 12px 글씨, 회색(#9CA3AF), 들여쓰기
+ * - 현재 활성 단계면 파란색 하이라이트
+ */
+function renderInternalStep(stepInfo, isActive) {
+    const activeClass = isActive ? 'internal-active' : '';
+    return `
+        <div class="process-step internal-step ${activeClass}">
+            <div class="internal-icon">\u2699</div>
+            <div class="step-content">
+                <div class="step-name">${stepInfo.name}</div>
+            </div>
+        </div>
+    `;
 }
 
 /**
@@ -425,6 +445,48 @@ export const SIDEBAR_STYLES = `
             border-radius: 4px;
         }
 
+        /* 내부 프로세스 단계 (작은 회색 참고 표시) */
+        .process-step.internal-step {
+            padding: 4px 12px 4px 20px;
+            border-left: 2px solid #E5E7EB;
+            margin-left: 16px;
+            cursor: default;
+            opacity: 0.7;
+            gap: 8px;
+        }
+
+        .process-step.internal-step .internal-icon {
+            font-size: 11px;
+            color: #9CA3AF;
+            flex-shrink: 0;
+            width: 16px;
+            text-align: center;
+        }
+
+        .process-step.internal-step .step-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #9CA3AF;
+        }
+
+        .process-step.internal-step:hover {
+            background: transparent;
+        }
+
+        .process-step.internal-step.internal-active {
+            border-left-color: #3B82F6;
+            opacity: 1;
+        }
+
+        .process-step.internal-step.internal-active .internal-icon {
+            color: #3B82F6;
+        }
+
+        .process-step.internal-step.internal-active .step-name {
+            color: #3B82F6;
+            font-weight: 600;
+        }
+
         /* 담당 공인회계사 */
         .accountant-section {
             margin-top: 32px;
@@ -474,7 +536,7 @@ export const SIDEBAR_STYLES = `
  * @param {string} method - 평가법 코드
  * @param {string} projectId - 프로젝트 ID
  */
-export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15) {
+export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15, userRole = 'customer') {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);

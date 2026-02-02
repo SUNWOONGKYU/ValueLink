@@ -18,12 +18,12 @@ simple_script_template = '''    <!-- 사이드바 초기화 -->
         // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
         injectSidebar(
             'sidebar-container',
-            4,                  // 4단계 (평가 기초자료 제출)
+            5,                  // 5단계 (평가 기초자료 제출)
             'approved',         // 상태: 승인됨
             '{method}',         // {method_name}
             null,               // 프로젝트 ID 없음
-            4,                  // startStep: 4단계부터
-            14                  // endStep: 14단계까지 (1-11번으로 표시)
+            5,                  // startStep: 5단계부터 (기초자료 제출부터)
+            15                  // endStep: 15단계까지
         );
     </script>'''
 
