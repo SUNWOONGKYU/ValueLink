@@ -64,6 +64,30 @@ const PROCESS_STEPS = [
 ];
 
 /**
+ * 현재 경로에서 app 폴더까지의 상대 경로 계산
+ * @returns {string} basePath
+ */
+function getBasePath() {
+    const currentPath = window.location.pathname;
+
+    if (currentPath.includes('/valuation/guides/')) {
+        return '../../';  // guides -> valuation -> app
+    } else if (currentPath.includes('/valuation/results/')) {
+        return '../../';  // results -> valuation -> app
+    } else if (currentPath.includes('/valuation/portals/')) {
+        return '../../';  // portals -> valuation -> app
+    } else if (currentPath.includes('/valuation/submissions/')) {
+        return '../../';  // submissions -> valuation -> app
+    } else if (currentPath.includes('/valuation/')) {
+        return '../';     // valuation -> app
+    } else if (currentPath.includes('/app/')) {
+        return '';        // app 폴더 내부
+    } else {
+        return 'app/';    // app 폴더 외부
+    }
+}
+
+/**
  * 단계별 URL 생성
  * @param {object} stepInfo - 단계 정보 객체
  * @param {string} method - 평가법 코드 (dcf, relative 등)
@@ -73,23 +97,7 @@ const PROCESS_STEPS = [
 function getStepUrl(stepInfo, method, projectId) {
     const { page, params } = stepInfo;
 
-    // 현재 경로에서 app 폴더까지의 상대 경로 계산
-    const currentPath = window.location.pathname;
-    let basePath = '';
-
-    if (currentPath.includes('/valuation/guides/')) {
-        basePath = '../../';  // guides -> valuation -> app
-    } else if (currentPath.includes('/valuation/results/')) {
-        basePath = '../../';  // results -> valuation -> app
-    } else if (currentPath.includes('/valuation/portals/')) {
-        basePath = '../../';  // portals -> valuation -> app
-    } else if (currentPath.includes('/valuation/')) {
-        basePath = '../';     // valuation -> app
-    } else if (currentPath.includes('/app/')) {
-        basePath = '';        // app 폴더 내부
-    } else {
-        basePath = 'app/';    // app 폴더 외부
-    }
+    const basePath = getBasePath();
 
     // 페이지별 URL 매핑
     switch (page) {
@@ -221,7 +229,7 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             </div>
 
             <!-- 담당 공인회계사 (4단계부터 표시) -->
-            ${currentStep >= 4 ? renderAccountantSection() : ''}
+            ${currentStep >= 4 ? renderAccountantSection(getBasePath()) : ''}
         </div>
     `;
 
@@ -271,12 +279,13 @@ function renderProjectInfo(method, methodStatus, projectId = null, customerName 
 
 /**
  * 담당 공인회계사 섹션 렌더링
+ * @param {string} basePath - app 폴더까지의 상대 경로
  */
-function renderAccountantSection() {
+function renderAccountantSection(basePath) {
     return `
         <div class="accountant-section">
             <div class="sidebar-title">담당 공인회계사</div>
-            <a href="../../accountant-profile.html" class="accountant-link">
+            <a href="${basePath}accountant-profile.html" class="accountant-link">
                 <span class="accountant-icon">👤</span>
                 <span class="accountant-name">선웅규 회계사</span>
                 <span class="arrow">→</span>
