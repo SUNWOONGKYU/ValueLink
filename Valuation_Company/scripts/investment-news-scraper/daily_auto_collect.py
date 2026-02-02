@@ -770,6 +770,8 @@ JSON 형식으로만 답변:
 
             if gemini_response and hasattr(gemini_response, 'text'):
                 info = json.loads(gemini_response.text.strip())
+                if isinstance(info, list):
+                    info = info[0] if info else {}
 
                 update_data = {}
 
@@ -907,6 +909,8 @@ JSON 형식으로만 답변:
 
                     if extract_response and hasattr(extract_response, 'text'):
                         info = json.loads(extract_response.text.strip())
+                        if isinstance(info, list):
+                            info = info[0] if info else {}
 
                         # 업데이트할 필드 결정
                         update_data = {}

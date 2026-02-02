@@ -92,7 +92,7 @@ def generate_email_html(deals):
             info_parts = [f"<b>{deal['company_name']}</b>"]
             if investors:
                 info_parts.append(investors)
-            info_parts.append(amount if amount else '금액 미공개')
+            info_parts.append(str(amount) if amount else '금액 미공개')
             info_line = ' | '.join(info_parts)
 
             html += f"""
