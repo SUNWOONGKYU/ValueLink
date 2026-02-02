@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가 프로젝트 목록 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- 모바일 최적화 CSS -->
+    <link rel="stylesheet" href="../styles/mobile-optimize.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-pale: #D1FAE5;
+            --warning: #F59E0B;
+            --warning-pale: #FEF3C7;
+            --error: #EF4444;
+            --error-pale: #FEE2E2;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb-container {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 40px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: var(--deep-blue);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--deep-blue-light);
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        /* PAGE HEADER */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .btn-new-project {
+            background: var(--deep-blue);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .btn-new-project:hover {
+            background: var(--deep-blue-light);
+        }
+
+        /* FILTER BAR */
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--white);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .filter-bar select:focus,
+        .filter-bar input:focus {
+            border-color: var(--deep-blue);
+        }
+
+        .filter-bar input[type="search"] {
+            min-width: 280px;
+        }
+
+        /* PROJECT LIST */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .project-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-color: var(--deep-blue-light);
+        }
+
+        .project-card-info {
+            flex: 1;
+        }
+
+        .project-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .project-card-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .project-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .project-card-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: var(--warning-pale);
+            color: #92400E;
+        }
+
+        .status-badge.in-progress {
+            background: var(--deep-blue-pale);
+            color: var(--deep-blue);
+        }
+
+        .status-badge.completed {
+            background: var(--success-pale);
+            color: #065F46;
+        }
+
+        .method-tags {
+            display: flex;
+            gap: 6px;
+        }
+
+        .method-tag {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* PAGINATION */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .pagination button {
+            background: var(--white);
+            border: 1px solid var(--border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pagination button:hover {
+            border-color: var(--deep-blue);
+            color: var(--deep-blue);
+        }
+
+        .pagination button.active {
+            background: var(--deep-blue);
+            color: var(--white);
+            border-color: var(--deep-blue);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-content { padding: 20px 16px; }
+            .breadcrumb-container { padding: 10px 16px; }
+            .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .project-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .project-card-right { width: 100%; justify-content: space-between; }
+            .filter-bar input[type="search"] { min-width: auto; flex: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb-container">
+        <div class="breadcrumb">
+            <a href="../valuation.html">홈</a>
+            <span>></span>
+            <span>평가 프로젝트 목록</span>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1>평가 프로젝트 목록</h1>
+                <p class="subtitle">진행 중인 평가 프로젝트를 확인하고 관리합니다</p>
+            </div>
+            <a href="project-create.html" class="btn-new-project">+ 새 프로젝트</a>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <select id="statusFilter">
+                <option value="">전체 상태</option>
+                <option value="pending">대기중</option>
+                <option value="in_progress">진행중</option>
+                <option value="completed">완료</option>
+            </select>
+            <select id="methodFilter">
+                <option value="">전체 평가법</option>
+                <option value="dcf">DCF</option>
+                <option value="relative">상대가치</option>
+                <option value="intrinsic">본질가치</option>
+                <option value="asset">자산가치</option>
+                <option value="tax">상속세법</option>
+            </select>
+            <input type="search" id="searchInput" placeholder="기업명 또는 프로젝트명 검색...">
+        </div>
+
+        <!-- PROJECT LIST -->
+        <div class="project-list" id="projectList">
+            <!-- 로딩 상태 -->
+            <div class="empty-state" id="loadingState">
+                <p>프로젝트 목록을 불러오는 중...</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 공통 헤더 로드
+        fetch('../../components/header.html')
+            .then(r => r.text())
+            .then(html => document.getElementById('header-container').innerHTML = html)
+            .catch(() => {});
+
+        const methodNames = {
+            dcf: 'DCF',
+            relative: '상대가치',
+            intrinsic: '본질가치',
+            asset: '자산가치',
+            tax: '상속세법'
+        };
+
+        const statusNames = {
+            pending: '대기중',
+            in_progress: '진행중',
+            completed: '완료'
+        };
+
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://fdlbdmsjzqdfumqfblbh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGJkbXNqenFkZnVtcWZibGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3NDUxMjYsImV4cCI6MjA2NDMyMTEyNn0.75p4JJcRH3bVxQCb2E6PjYWnGX6gYrYmGSabNS1VKzk';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allProjects = [];
+
+        async function loadProjects() {
+            try {
+                const { data: projects, error } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allProjects = projects || [];
+                renderProjects(allProjects);
+            } catch (error) {
+                console.error('프로젝트 목록 로드 실패:', error);
+                document.getElementById('projectList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">&#128203;</div>
+                        <h3>등록된 프로젝트가 없습니다</h3>
+                        <p>새 프로젝트를 생성하여 기업 가치평가를 시작하세요.</p>
+                        <a href="project-create.html" class="btn-new-project">+ 새 프로젝트 만들기</a>
+                    </div>
+                `;
+            }
+        }
+
+        function renderProjects(projects) {
+            const listEl = document.getElementById('projectList');
+
+            if (!projects || projects.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">&#128203;</div>
+                        <h3>등록된 프로젝트가 없습니다</h3>
+                        <p>새 프로젝트를 생성하여 기업 가치평가를 시작하세요.</p>
+                        <a href="project-create.html" class="btn-new-project">+ 새 프로젝트 만들기</a>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = projects.map(p => {
+                const status = p.status || 'pending';
+                const statusClass = status.replace('_', '-');
+                const methods = p.selected_methods || [];
+                const createdDate = p.created_at ? new Date(p.created_at).toLocaleDateString('ko-KR') : '-';
+
+                return `
+                    <a href="project-detail.html?id=${p.project_id}" class="project-card">
+                        <div class="project-card-info">
+                            <div class="project-card-title">${p.company_name || p.project_name || '미입력'}</div>
+                            <div class="project-card-meta">
+                                <span>생성일: ${createdDate}</span>
+                                <span>평가목적: ${p.valuation_purpose || '-'}</span>
+                            </div>
+                            <div class="method-tags" style="margin-top:8px;">
+                                ${methods.map(m => `<span class="method-tag">${methodNames[m] || m}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="project-card-right">
+                            <span class="status-badge ${statusClass}">${statusNames[status] || status}</span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function filterProjects() {
+            const statusVal = document.getElementById('statusFilter').value;
+            const methodVal = document.getElementById('methodFilter').value;
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = allProjects;
+
+            if (statusVal) {
+                filtered = filtered.filter(p => p.status === statusVal);
+            }
+            if (methodVal) {
+                filtered = filtered.filter(p => (p.selected_methods || []).includes(methodVal));
+            }
+            if (searchVal) {
+                filtered = filtered.filter(p =>
+                    (p.company_name || '').toLowerCase().includes(searchVal) ||
+                    (p.project_name || '').toLowerCase().includes(searchVal)
+                );
+            }
+
+            renderProjects(filtered);
+        }
+
+        document.getElementById('statusFilter').addEventListener('change', filterProjects);
+        document.getElementById('methodFilter').addEventListener('change', filterProjects);
+        document.getElementById('searchInput').addEventListener('input', filterProjects);
+
+        // 초기 로드
+        loadProjects();
+    </script>
+</body>
+</html>

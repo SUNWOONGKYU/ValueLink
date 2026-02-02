@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자료 제출 완료 | ValueLink</title>
+
+    <!-- 모바일 최적화 CSS -->
+    <link rel="stylesheet" href="../../styles/mobile-optimize.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-blue-light: #3B82F6;
+            --deep-blue-pale: #DBEAFE;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-muted: #6B7280;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --success: #10B981;
+            --success-pale: #D1FAE5;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        /* MAIN */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* SUCCESS CARD */
+        .success-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 48px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-pale);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        .success-card h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .success-card .desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* PROCESS INFO */
+        .process-info {
+            background: var(--bg-light);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: left;
+            margin-bottom: 32px;
+        }
+
+        .process-info h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .process-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .process-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .process-step .step-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .process-step .step-num.done {
+            background: var(--success);
+            color: var(--white);
+        }
+
+        .process-step .step-num.current {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .process-step .step-num.upcoming {
+            background: var(--border);
+            color: var(--text-muted);
+        }
+
+        .process-step.current-step {
+            font-weight: 600;
+            color: var(--deep-blue);
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--deep-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--deep-blue-light);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--deep-blue);
+            color: var(--deep-blue);
+        }
+
+        /* CONTACT */
+        .contact-info {
+            margin-top: 32px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .contact-info a {
+            color: var(--deep-blue);
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-content { padding: 30px 16px; }
+            .success-card { padding: 32px 20px; }
+            .btn-group { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 공통 헤더 -->
+    <div id="header-container"></div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <div class="success-card">
+            <div class="success-icon">&#10003;</div>
+            <h1>평가 기초자료가 제출되었습니다</h1>
+            <p class="desc">
+                제출하신 자료를 바탕으로 전문 평가팀이 기업 가치평가를 진행합니다.<br>
+                평가 진행 상황은 이메일로 안내드리며, 평가보고서 초안이 완성되면 알려드립니다.
+            </p>
+
+            <!-- 진행 프로세스 안내 -->
+            <div class="process-info">
+                <h3>앞으로의 진행 절차</h3>
+                <div class="process-steps">
+                    <div class="process-step">
+                        <span class="step-num done">&#10003;</span>
+                        <span>평가 기초자료 제출</span>
+                    </div>
+                    <div class="process-step current-step">
+                        <span class="step-num current">2</span>
+                        <span>데이터 수집 및 평가 진행 중</span>
+                    </div>
+                    <div class="process-step">
+                        <span class="step-num upcoming">3</span>
+                        <span>공인회계사 검토</span>
+                    </div>
+                    <div class="process-step">
+                        <span class="step-num upcoming">4</span>
+                        <span>평가보고서 초안 확인</span>
+                    </div>
+                    <div class="process-step">
+                        <span class="step-num upcoming">5</span>
+                        <span>잔금 결제 및 최종 보고서 수령</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 버튼 그룹 -->
+            <div class="btn-group">
+                <a href="../valuation.html" class="btn btn-primary">메인 화면으로</a>
+                <a href="../../projects/project-detail.html" class="btn btn-secondary">프로젝트 상세 보기</a>
+            </div>
+
+            <!-- 문의 안내 -->
+            <div class="contact-info">
+                문의사항이 있으신 경우<br>
+                <a href="mailto:support@valuelink.co.kr">support@valuelink.co.kr</a> 로 연락주세요.
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 공통 헤더 로드
+        fetch('../../../components/header.html')
+            .then(r => r.text())
+            .then(html => document.getElementById('header-container').innerHTML = html)
+            .catch(() => {});
+    </script>
+</body>
+</html>

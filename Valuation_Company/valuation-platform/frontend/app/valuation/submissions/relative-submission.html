@@ -326,10 +326,6 @@
             </div>
         </div>
     </div>
-            <span>></span>
-            <span>자료제출</span>
-        </div>
-    </div>
 
     <div class="page-container">
         <main class="main-content">
@@ -535,6 +531,12 @@
                 window.location.href = 'customer-portal.html';
             }
         });
+    </script>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from '../../../components/common-sidebar.js';
+        injectSidebar('sidebar-container', 5, 'in_progress', 'relative', null);
     </script>
 </body>
 </html>

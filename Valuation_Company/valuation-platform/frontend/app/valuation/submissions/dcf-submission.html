@@ -811,7 +811,7 @@
                 const { data: existingResult, error: checkError } = await supabase
                     .from('valuation_results')
                     .select('*')
-                    .eq('project_id', PROJECT_ID)
+                    .eq('project_id', projectId)
                     .single();
 
                 if (existingResult) {
@@ -834,7 +834,7 @@
                             },
                             updated_at: new Date().toISOString()
                         })
-                        .eq('project_id', PROJECT_ID);
+                        .eq('project_id', projectId);
 
                     if (updateError) {
                         console.error('평가 결과 업데이트 실패:', updateError);
@@ -846,7 +846,7 @@
                     const { error: insertError } = await supabase
                         .from('valuation_results')
                         .insert({
-                            project_id: PROJECT_ID,
+                            project_id: projectId,
                             method: 'dcf',
                             enterprise_value: Math.round(enterpriseValue),
                             value_per_share: Math.round(valuePerShare),
@@ -965,6 +965,12 @@
                 window.location.href = 'customer-portal.html';
             }
         });
+    </script>
+
+    <!-- 사이드바 초기화 -->
+    <script type="module">
+        import { injectSidebar } from '../../../components/common-sidebar.js';
+        injectSidebar('sidebar-container', 5, 'in_progress', 'dcf', null);
     </script>
 </body>
 </html>
