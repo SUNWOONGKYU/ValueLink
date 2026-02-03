@@ -210,7 +210,11 @@ const AuthCheck = (function() {
             throw error;
         }
 
-        window.location.href = '/';
+        // 현재 페이지 깊이에 따라 index.html 상대 경로 계산
+        const depth = window.location.pathname.split('/app/')[1];
+        const levels = depth ? depth.split('/').length - 1 : 0;
+        const prefix = levels > 0 ? '../'.repeat(levels) + '../' : '../';
+        window.location.href = prefix + 'index.html';
     }
 
     // Public API

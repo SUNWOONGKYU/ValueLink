@@ -420,7 +420,7 @@
                 const { data: { user } } = await supabase.auth.getUser();
                 if (!user) {
                     alert('로그인이 필요합니다.');
-                    window.location.href = '/login';
+                    window.location.href = '../login.html';
                     return;
                 }
 
@@ -433,7 +433,7 @@
 
                 if (userData?.role !== 'admin') {
                     alert('관리자 권한이 필요합니다.');
-                    window.location.href = '/';
+                    window.location.href = '../../index.html';
                     return;
                 }
 
@@ -500,7 +500,7 @@
 
             document.getElementById('recentProjectsTable').innerHTML = projects.map(p => `
                 <tr>
-                    <td><a href="/projects/project-detail.html?id=${p.project_id}" class="link">${p.project_id}</a></td>
+                    <td><a href="../projects/project-detail.html?id=${p.project_id}" class="link">${p.project_id}</a></td>
                     <td>${p.company_name_kr || p.company_name || '-'}</td>
                     <td><span class="status-badge status-${getStatusClass(p.status)}">${getStatusText(p.status)}</span></td>
                     <td>Step ${p.current_step || 1}</td>
@@ -550,7 +550,7 @@
 
             document.getElementById('pendingProjectsTable').innerHTML = projects.map(p => `
                 <tr>
-                    <td><a href="/projects/project-detail.html?id=${p.project_id}" class="link">${p.project_id}</a></td>
+                    <td><a href="../projects/project-detail.html?id=${p.project_id}" class="link">${p.project_id}</a></td>
                     <td>${p.company_name_kr || p.company_name || '-'}</td>
                     <td>${p.valuation_method || '-'}</td>
                     <td>${p.budget || '-'}</td>

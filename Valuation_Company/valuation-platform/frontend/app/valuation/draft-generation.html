@@ -754,7 +754,16 @@
                     clearInterval(interval);
                     // 완료 후 초안 확인 페이지로 이동
                     setTimeout(() => {
-                        window.location.href = `results/valuation-result.html?id=${projectId}&method=${method}&mode=draft`;
+                        // 평가 방법에 따라 해당 결과 페이지로 이동
+                        const methodResultMap = {
+                            'dcf': 'dcf-valuation.html',
+                            'relative': 'relative-valuation.html',
+                            'asset': 'asset-valuation.html',
+                            'intrinsic': 'intrinsic-valuation.html',
+                            'tax': 'tax-valuation.html'
+                        };
+                        const resultPage = methodResultMap[method] || 'dcf-valuation.html';
+                        window.location.href = `results/${resultPage}?id=${projectId}&method=${method}&mode=draft`;
                     }, 2000);
                     return;
                 }
