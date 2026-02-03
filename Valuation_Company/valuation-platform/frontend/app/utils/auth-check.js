@@ -24,6 +24,16 @@ const AuthCheck = (function() {
     let supabaseClient = null;
 
     /**
+     * 현재 페이지 깊이 기반 상대경로 prefix 계산
+     * app/ 하위 어느 페이지에서든 app/ 상위(frontend root)까지의 ../를 반환
+     */
+    function getRelativePrefix() {
+        const depth = window.location.pathname.split('/app/')[1];
+        const levels = depth ? depth.split('/').length - 1 : 0;
+        return levels > 0 ? '../'.repeat(levels) + '../' : '../';
+    }
+
+    /**
      * Supabase 클라이언트 초기화
      */
     function initSupabase() {
@@ -84,7 +94,7 @@ const AuthCheck = (function() {
      */
     async function requireRole(allowedRoles, options = {}) {
         const defaultOptions = {
-            redirectOnFail: '/login',
+            redirectOnFail: getRelativePrefix() + 'app/login.html',
             showAlert: true
         };
         const opts = { ...defaultOptions, ...options };
@@ -124,7 +134,7 @@ const AuthCheck = (function() {
      */
     async function requireLogin(options = {}) {
         const defaultOptions = {
-            redirectOnFail: '/login',
+            redirectOnFail: getRelativePrefix() + 'app/login.html',
             showAlert: true
         };
         const opts = { ...defaultOptions, ...options };
@@ -210,11 +220,7 @@ const AuthCheck = (function() {
             throw error;
         }
 
-        // 현재 페이지 깊이에 따라 index.html 상대 경로 계산
-        const depth = window.location.pathname.split('/app/')[1];
-        const levels = depth ? depth.split('/').length - 1 : 0;
-        const prefix = levels > 0 ? '../'.repeat(levels) + '../' : '../';
-        window.location.href = prefix + 'index.html';
+        window.location.href = getRelativePrefix() + 'index.html';
     }
 
     // Public API
