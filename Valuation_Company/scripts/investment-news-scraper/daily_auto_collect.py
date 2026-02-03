@@ -21,7 +21,7 @@
 import os
 import sys
 import argparse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 from supabase import create_client
 import requests
@@ -976,12 +976,13 @@ def main():
     parser.add_argument('--date', type=str, help='수집 대상 날짜 (YYYY-MM-DD)', default=None)
     args = parser.parse_args()
 
-    # 대상 날짜 결정
+    # 대상 날짜 결정 (KST 기준)
+    KST = timezone(timedelta(hours=9))
     if args.date:
         target_date = args.date
     else:
-        # 기본: 어제
-        target_date = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+        # 기본: KST 기준 어제 (GitHub Actions는 UTC이므로 KST 변환 필수)
+        target_date = (datetime.now(KST) - timedelta(days=1)).strftime('%Y-%m-%d')
 
     print("=" * 70)
     print("📰 매일 자동 뉴스 수집 시작")

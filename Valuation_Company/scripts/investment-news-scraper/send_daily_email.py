@@ -12,7 +12,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 from supabase import create_client
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 load_dotenv()
 
@@ -33,7 +33,8 @@ def get_yesterday_deals():
     Returns:
         Deal 리스트
     """
-    yesterday = (datetime.now() - timedelta(days=1)).date()
+    KST = timezone(timedelta(hours=9))
+    yesterday = (datetime.now(KST) - timedelta(days=1)).date()
 
     result = supabase.table('deals').select('*').gte('news_date', yesterday.isoformat()).lte('news_date', f"{yesterday.isoformat()} 23:59:59").order('news_date', desc=True).execute()
 
@@ -50,7 +51,8 @@ def generate_email_html(deals):
     Returns:
         HTML 문자열
     """
-    date_str = (datetime.now() - timedelta(days=1)).strftime('%Y년 %m월 %d일')
+    KST = timezone(timedelta(hours=9))
+    date_str = (datetime.now(KST) - timedelta(days=1)).strftime('%Y년 %m월 %d일')
 
     html = f"""<!DOCTYPE html>
 <html>
@@ -193,7 +195,8 @@ def send_email_to_subscribers(html_content, deals):
 
     print(f"  [INFO] Found {len(subscribers)} subscribers")
 
-    date_str = (datetime.now() - timedelta(days=1)).strftime('%Y.%m.%d')
+    KST = timezone(timedelta(hours=9))
+    date_str = (datetime.now(KST) - timedelta(days=1)).strftime('%Y.%m.%d')
     subject = f"[투자 뉴스] {date_str} ({len(deals)}건)"
 
     sent = 0
