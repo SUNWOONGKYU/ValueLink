@@ -237,6 +237,11 @@ def main():
 
     print(f"\nFound {len(deals)} deals from yesterday")
 
+    # 0건이면 이메일 발송 안 함
+    if not deals:
+        print("\n[SKIP] No deals found - skipping email")
+        return
+
     # 이메일 HTML 생성
     html_content = generate_email_html(deals)
 
