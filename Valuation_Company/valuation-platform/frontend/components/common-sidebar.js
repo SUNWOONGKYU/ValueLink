@@ -1,7 +1,81 @@
 /**
  * Common Sidebar Component
- * 14단계 프로세스 사이드바 동적 생성
+ * 15단계 프로세스 사이드바 동적 생성
+ *
+ * 역할별 접근 제어:
+ * - customer (고객 기업): 고객 액션 단계만 클릭 가능, 내부 단계는 프로세스만 표시
+ * - accountant (회계사): 내부 단계도 클릭하여 작업 가능
+ * - admin (관리자): 모든 단계 클릭 가능
  */
+
+/**
+ * 관리자 이메일 목록 (하드코딩)
+ */
+const ADMIN_EMAILS = [
+    'wksun999@gmail.com'
+];
+
+/**
+ * 회계사 이메일 목록 (하드코딩)
+ */
+const ACCOUNTANT_EMAILS = [];
+
+/**
+ * 이메일 기반 역할 판별
+ * @param {string} email - 사용자 이메일
+ * @returns {string} 'admin' | 'accountant' | 'customer'
+ */
+function getRoleByEmail(email) {
+    if (!email) return 'customer';
+    const lowerEmail = email.toLowerCase();
+    if (ADMIN_EMAILS.includes(lowerEmail)) return 'admin';
+    if (ACCOUNTANT_EMAILS.includes(lowerEmail)) return 'accountant';
+    return 'customer';
+}
+
+/**
+ * 현재 사용자 역할 감지 (동기)
+ * localStorage 캐시 → ADMIN_EMAILS 폴백 순으로 확인
+ * @returns {string} 'admin' | 'accountant' | 'customer'
+ */
+export function getUserRole() {
+    try {
+        if (localStorage.getItem('loggedOut')) return 'customer';
+        const stored = localStorage.getItem('userRole');
+        if (stored && ['admin', 'accountant', 'customer'].includes(stored)) {
+            return stored;
+        }
+    } catch (e) {}
+    return 'customer';
+}
+
+/**
+ * Supabase 세션에서 이메일 확인하여 역할 감지 (비동기)
+ * 페이지 로드 시 호출하여 localStorage에 역할 저장
+ * @returns {Promise<string>} 역할
+ */
+export async function detectAndStoreUserRole() {
+    try {
+        // Supabase 세션에서 이메일 가져오기
+        const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+        const supabase = createClient(
+            'https://arxrfetgaitkgiiqabap.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+        );
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session && session.user && session.user.email) {
+            const role = getRoleByEmail(session.user.email);
+            localStorage.setItem('userRole', role);
+            localStorage.setItem('userEmail', session.user.email);
+            return role;
+        }
+    } catch (e) {
+        console.warn('Supabase 세션 확인 실패, 기존 역할 유지:', e.message);
+    }
+
+    return getUserRole();
+}
 
 /**
  * 평가법 이름 매핑
@@ -32,13 +106,14 @@ function getStatusDisplay(status) {
  * 15단계 프로세스 정의
  */
 /**
- * 고객 사이드바 표시 규칙:
- * - visible: true  → 고객에게 보이는 단계 (고객이 직접 수행)
- * - visible: false → 고객에게 숨기는 단계 (내부 프로세스, 회계사/시스템 작업)
+ * 역할별 접근 규칙:
+ * - visible: true  → 고객 액션 단계 (고객이 직접 수행)
+ * - visible: false → 내부 프로세스 단계 (회계사/시스템 작업)
  *
- * 현재 테스트 중이므로 SHOW_ALL_STEPS = true 로 설정하면 전체 표시
+ * 모든 사용자가 15단계 전체 프로세스를 볼 수 있음.
+ * 단, 내부 단계(visible:false)는 회계사/관리자만 클릭하여 접근 가능.
+ * 고객에게는 내부 단계가 "진행 상태 표시"로만 보임 (클릭 불가).
  */
-const SHOW_ALL_STEPS = false; // 내부 프로세스는 작은 회색 참고 표시로 렌더링
 
 const PROCESS_STEPS = [
     // --- 고객에게 보이는 단계 ---
@@ -53,12 +128,12 @@ const PROCESS_STEPS = [
     { step: 8,  name: '공인회계사 검토 중',           page: 'accountant-review',   visible: false },
     { step: 9,  name: '평가보고서 초안 생성',         page: 'draft-generation',    visible: false },
     // --- 고객에게 보이는 단계 ---
-    { step: 10, name: '평가보고서 초안 확인하기',     page: 'result', params: 'mode=draft', visible: true },
+    { step: 10, name: '평가보고서 초안 확인하기',     page: 'report-draft',    visible: true },
     { step: 11, name: '평가보고서 초안 수정 요청하기', page: 'revision-request',    visible: true },
     // --- 내부 프로세스 (고객에게 숨김) ---
     { step: 12, name: '평가보고서 최종안 작성',       page: 'final-preparation',   visible: false },
     // --- 고객에게 보이는 단계 ---
-    { step: 13, name: '평가보고서 최종안 확인하기',   page: 'result', params: 'mode=final', visible: true },
+    { step: 13, name: '평가보고서 최종안 확인하기',   page: 'report-final',    visible: true },
     { step: 14, name: '잔금 결제하기',               page: 'balance-payment',     visible: true },
     { step: 15, name: '평가보고서 수령하기',          page: 'report-download',     visible: true }
 ];
@@ -132,13 +207,13 @@ function getStepUrl(stepInfo, method, projectId) {
             // 7, 8, 11단계: 공인회계사 검토, 초안 생성, 최종안 작성
             return basePath + `valuation/${page}.html${projectId ? '?projectId=' + projectId : ''}`;
 
-        case 'result':
-            // 9, 12단계: 평가보고서 확인 (초안/최종안)
-            if (method) {
-                const resultMethod = method === 'inheritance_tax' ? 'tax' : method;
-                return basePath + `valuation/results/${resultMethod}-valuation.html${projectId ? '?projectId=' + projectId : ''}${params ? '&' + params : ''}`;
-            }
-            return null;
+        case 'report-draft':
+            // 10단계: 평가보고서 초안 확인
+            return basePath + `valuation/report-draft.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
+
+        case 'report-final':
+            // 13단계: 평가보고서 최종안 확인
+            return basePath + `valuation/report-final.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'revision-request':
             // 10단계: 수정 요청
@@ -169,7 +244,7 @@ function getStepUrl(stepInfo, method, projectId) {
  * @param {string} projectId - 프로젝트 ID
  * @returns {string} HTML 문자열
  */
-export function renderSidebar(currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15) {
+export function renderSidebar(currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15, userRole = 'customer') {
     const statusInfo = getStatusDisplay(methodStatus);
 
     let html = `
@@ -182,7 +257,7 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
             <div class="process-steps">
     `;
 
-    let displayNumber = 0; // visible 단계만 카운트하는 변수
+    let displayNumber = 0; // 고객 액션 단계(visible: true)만 번호 부여
 
     PROCESS_STEPS.forEach(stepInfo => {
         // 범위 필터링: startStep ~ endStep만 표시
@@ -191,23 +266,38 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
         }
 
         const isActive = stepInfo.step === currentStep;
+        const isCompleted = stepInfo.step < currentStep;
+        const url = getStepUrl(stepInfo, method, projectId);
 
-        // 내부 프로세스 단계: 작은 회색 참고 표시 (SHOW_ALL_STEPS=true면 일반 표시)
-        if (!SHOW_ALL_STEPS && stepInfo.visible === false) {
-            html += renderInternalStep(stepInfo, isActive);
+        // 내부 프로세스 단계 (visible: false) — 번호 없음, 역할별 분기
+        if (stepInfo.visible === false) {
+            const canAccess = (userRole === 'accountant' || userRole === 'admin');
+
+            if (canAccess && url) {
+                // 회계사/관리자: 내부 단계 클릭 가능 (링크)
+                html += `
+                    <a href="${url}" class="process-step internal-step ${isActive ? 'internal-active' : ''} ${isCompleted ? 'internal-completed' : ''} accessible">
+                        <div class="internal-icon">${isCompleted ? '✓' : '⚙'}</div>
+                        <div class="step-content">
+                            <div class="step-name">${stepInfo.name}</div>
+                        </div>
+                    </a>
+                `;
+            } else {
+                // 고객: 내부 단계 보이지만 클릭 불가 (프로세스 인지만)
+                html += renderInternalStep(stepInfo, isActive, isCompleted);
+            }
             return;
         }
 
-        displayNumber++; // visible 단계만 번호 증가
-
+        // 고객 액션 단계 (visible: true) — 번호 부여
+        displayNumber++;
         const isAccessible = shouldStepBeAccessible(stepInfo.step, currentStep, methodStatus);
-        const url = getStepUrl(stepInfo, method, projectId);
 
-        // 접근 가능한 단계는 링크로, 잠긴 단계는 div로 렌더링
         if (isAccessible && url) {
             html += `
-                <a href="${url}" class="process-step ${isActive ? 'active' : ''} accessible">
-                    <div class="step-number">${displayNumber}</div>
+                <a href="${url}" class="process-step ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''} accessible">
+                    <div class="step-number">${isCompleted ? '✓' : displayNumber}</div>
                     <div class="step-content">
                         <div class="step-name">${stepInfo.name}</div>
                     </div>
@@ -242,11 +332,13 @@ export function renderSidebar(currentStep, methodStatus, method = null, projectI
  * - 12px 글씨, 회색(#9CA3AF), 들여쓰기
  * - 현재 활성 단계면 파란색 하이라이트
  */
-function renderInternalStep(stepInfo, isActive) {
+function renderInternalStep(stepInfo, isActive, isCompleted = false) {
     const activeClass = isActive ? 'internal-active' : '';
+    const completedClass = isCompleted ? 'internal-completed' : '';
+    const icon = isCompleted ? '✓' : '⚙';
     return `
-        <div class="process-step internal-step ${activeClass}">
-            <div class="internal-icon">\u2699</div>
+        <div class="process-step internal-step ${activeClass} ${completedClass}">
+            <div class="internal-icon">${icon}</div>
             <div class="step-content">
                 <div class="step-name">${stepInfo.name}</div>
             </div>
@@ -478,8 +570,25 @@ export const SIDEBAR_STYLES = `
             color: #9CA3AF;
         }
 
-        .process-step.internal-step:hover {
+        .process-step.internal-step:not(.accessible):hover {
             background: transparent;
+        }
+
+        /* 회계사/관리자: 내부 단계 클릭 가능 스타일 */
+        a.process-step.internal-step.accessible {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            opacity: 0.85;
+        }
+
+        a.process-step.internal-step.accessible:hover {
+            background: #F3F4F6;
+            opacity: 1;
+        }
+
+        a.process-step.internal-step.accessible .step-name {
+            color: #4B5563;
         }
 
         .process-step.internal-step.internal-active {
@@ -494,6 +603,25 @@ export const SIDEBAR_STYLES = `
         .process-step.internal-step.internal-active .step-name {
             color: #3B82F6;
             font-weight: 600;
+        }
+
+        /* 완료된 내부 단계 */
+        .process-step.internal-step.internal-completed {
+            opacity: 0.6;
+        }
+
+        .process-step.internal-step.internal-completed .internal-icon {
+            color: #10B981;
+        }
+
+        .process-step.internal-step.internal-completed .step-name {
+            color: #6B7280;
+        }
+
+        /* 완료된 고객 단계 */
+        .process-step.completed .step-number {
+            background: #10B981;
+            color: white;
         }
 
         /* 담당 공인회계사 */
@@ -545,12 +673,15 @@ export const SIDEBAR_STYLES = `
  * @param {string} method - 평가법 코드
  * @param {string} projectId - 프로젝트 ID
  */
-export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15, userRole = 'customer') {
+export function injectSidebar(containerId, currentStep, methodStatus, method = null, projectId = null, startStep = 1, endStep = 15, userRole = null) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Container #${containerId} not found`);
         return;
     }
+
+    // 역할 자동 감지 (명시적으로 전달되지 않은 경우)
+    const resolvedRole = userRole || getUserRole();
 
     // 스타일 주입 (한 번만)
     if (!document.getElementById('sidebar-styles')) {
@@ -560,6 +691,13 @@ export function injectSidebar(containerId, currentStep, methodStatus, method = n
         document.head.appendChild(styleElement);
     }
 
-    // 사이드바 HTML 주입
-    container.innerHTML = renderSidebar(currentStep, methodStatus, method, projectId, startStep, endStep);
+    // 사이드바 HTML 주입 (userRole에 따라 내부 단계 활성화/비활성화)
+    container.innerHTML = renderSidebar(currentStep, methodStatus, method, projectId, startStep, endStep, resolvedRole);
+
+    // 비동기로 Supabase 세션 확인 → 역할이 다르면 재렌더링
+    detectAndStoreUserRole().then(detectedRole => {
+        if (detectedRole && detectedRole !== resolvedRole) {
+            container.innerHTML = renderSidebar(currentStep, methodStatus, method, projectId, startStep, endStep, detectedRole);
+        }
+    }).catch(() => {}); // 실패 시 기존 렌더 유지
 }

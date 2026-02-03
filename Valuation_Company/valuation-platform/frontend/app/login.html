@@ -349,18 +349,32 @@
                 const role = userData.role;
                 console.log('User role:', role);
 
+                // 역할을 localStorage에 저장 (사이드바 + 내부 페이지에서 즉시 인식)
+                localStorage.setItem('userRole', role);
+                localStorage.setItem('userEmail', email);
+                localStorage.removeItem('loggedOut');
+
+                // 사용자 이름 조회 및 저장
+                const { data: profileData } = await supabase
+                    .from('users')
+                    .select('name')
+                    .eq('user_id', data.user.id)
+                    .single();
+                const userName = (profileData && profileData.name) || email.split('@')[0];
+                localStorage.setItem('userName', userName);
+
                 switch (role) {
                     case 'customer':
-                        window.location.href = '/core/mypage.html';
+                        window.location.href = 'core/mypage.html';
                         break;
                     case 'accountant':
-                        window.location.href = '/core/mypage.html';
+                        window.location.href = 'core/mypage.html';
                         break;
                     case 'admin':
-                        window.location.href = '/core/mypage.html';
+                        window.location.href = 'core/mypage.html';
                         break;
                     default:
-                        window.location.href = '/';
+                        window.location.href = './';
                         break;
                 }
 
@@ -399,7 +413,7 @@
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 console.log('Already logged in, redirecting...');
-                window.location.href = '/core/mypage.html';
+                window.location.href = 'core/mypage.html';
             }
         })();
     </script>

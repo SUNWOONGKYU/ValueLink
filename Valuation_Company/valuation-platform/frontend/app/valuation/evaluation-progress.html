@@ -311,20 +311,10 @@
             color: var(--text-secondary);
         }
 
-        /* Sidebar */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
 
             .info-grid {
@@ -334,6 +324,58 @@
     </style>
 </head>
 <body>
+    <!-- 접근 권한 확인 -->
+    <div id="access-denied" style="display:none;">
+        <div style="text-align:center; padding:80px 20px; max-width:500px; margin:0 auto;">
+            <div style="font-size:48px; margin-bottom:20px;">🔒</div>
+            <h2 style="color:#1F2937; margin-bottom:12px;">접근 권한이 없습니다</h2>
+            <p style="color:#6B7280; margin-bottom:24px;">이 페이지는 담당 회계사 및 관리자만 접근할 수 있습니다.<br>현재 진행 상태는 사이드바에서 확인하실 수 있습니다.</p>
+            <a href="../valuation.html" style="display:inline-block; padding:12px 24px; background:#166534; color:white; border-radius:8px; text-decoration:none; font-weight:600;">메인으로 돌아가기</a>
+        </div>
+    </div>
+
+    <script>
+        // Supabase 세션 기반 역할 체크
+        (function() {
+            var role = localStorage.getItem('userRole') || 'customer';
+            if (role === 'accountant' || role === 'admin') return;
+
+            document.getElementById('access-denied').style.display = 'block';
+            document.addEventListener('DOMContentLoaded', function() {
+                var header = document.getElementById('header-container');
+                if (header) header.style.display = 'none';
+                var container = document.querySelector('.container');
+                if (container) container.style.display = 'none';
+
+                var script = document.createElement('script');
+                script.type = 'module';
+                script.textContent = `
+                    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+                    try {
+                        const supabase = createClient(
+                            'https://arxrfetgaitkgiiqabap.supabase.co',
+                            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+                        );
+                        const { data: { session } } = await supabase.auth.getSession();
+                        if (session && session.user) {
+                            const email = session.user.email.toLowerCase();
+                            const { data: userData } = await supabase
+                                .from('users').select('role').eq('user_id', session.user.id).single();
+                            const detectedRole = (userData && userData.role) ? userData.role
+                                : (['wksun999@gmail.com'].includes(email) ? 'admin' : 'customer');
+                            if (detectedRole === 'admin' || detectedRole === 'accountant') {
+                                localStorage.setItem('userRole', detectedRole);
+                                localStorage.setItem('userEmail', email);
+                                location.reload();
+                            }
+                        }
+                    } catch(e) { console.warn('Supabase 세션 확인 실패:', e); }
+                `;
+                document.body.appendChild(script);
+            });
+        })();
+    </script>
+
     <!-- 헤더 -->
     <div id="header-container"></div>
 
@@ -405,10 +447,6 @@
             </div>
         </main>
 
-        <!-- 사이드바 -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트 주입 -->
-        </aside>
     </div>
 
     <!-- 헤더 로드 -->
@@ -434,7 +472,6 @@
     <!-- 페이지 스크립트 -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { injectSidebar } from '../../components/common-sidebar.js';
         import { checkMethodStatus, METHOD_NAMES, STATUS } from '../../components/project-status-checker.js';
 
         // Supabase 클라이언트
@@ -521,15 +558,6 @@
 
                 // 진행률 시뮬레이션 시작
                 startProgressSimulation();
-
-                // 사이드바 렌더링 (6단계 - 평가 진행 중)
-                injectSidebar(
-                    'sidebar-container',
-                    6,                          // 현재 단계
-                    STATUS.IN_PROGRESS,         // 진행 중 상태
-                    method,                     // 평가법
-                    projectId                   // 프로젝트 ID
-                );
 
                 // 로딩 숨김
                 document.getElementById('loadingState').style.display = 'none';
