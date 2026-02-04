@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>수정 요청 | ValueLink</title>
     
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../styles/mobile-optimize.css">
     <style>
@@ -822,14 +825,19 @@
     </script>
 
     <!-- 페이지 스크립트 -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../../components/project-status-checker.js';
-
+    <script>
         // Supabase 클라이언트
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const METHOD_NAMES = {
+            dcf: 'DCF (현금흐름할인법)',
+            relative: '상대가치평가법',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법',
+            inheritance_tax: '상속세법상 평가'
+        };
 
         let currentProjectId = null;
         let currentMethod = null;
@@ -861,9 +869,6 @@
                     return;
                 }
 
-                // 평가법 상태 확인
-                const methodStatus = await checkMethodStatus(currentProjectId, currentMethod);
-
                 // 프로젝트 정보 표시
                 displayProjectInfo(project);
 
@@ -889,13 +894,13 @@
             document.getElementById('projectIdDisplay').textContent = project.project_id;
             document.getElementById('companyNameDisplay').textContent =
                 project.company_name || '-';
-            document.getElementById('methodDisplay').textContent = METHOD_NAMES[currentMethod];
+            document.getElementById('methodDisplay').textContent = METHOD_NAMES[currentMethod] || currentMethod;
             document.getElementById('valuationDateDisplay').textContent =
                 project.valuation_date || '-';
         }
 
         function setupDraftLink() {
-            const draftUrl = `./results/result.html?projectId=${currentProjectId}&method=${currentMethod}&mode=draft`;
+            const draftUrl = `./report-draft.html?projectId=${currentProjectId}&method=${currentMethod}`;
             document.getElementById('btnViewDraft').href = draftUrl;
         }
 
@@ -1102,9 +1107,17 @@
                 const requestType = document.querySelector('input[name="requestType"]:checked').value;
                 const detail = requestDetail.value.trim();
 
-                // 파일 업로드 (실제 구현 시 Supabase Storage 사용)
+                // 파일 업로드 (Supabase Storage)
                 let fileUrls = [];
-                // TODO: 파일 업로드 로직 구현
+                for (const file of uploadedFiles) {
+                    const filePath = `revisions/${currentProjectId}/${currentMethod}/${Date.now()}_${file.name}`;
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('valuation-reports')
+                        .upload(filePath, file);
+                    if (!uploadError && uploadData) {
+                        fileUrls.push(filePath);
+                    }
+                }
 
                 // revision_requests 테이블에 저장
                 const { error } = await supabase
@@ -1126,6 +1139,9 @@
                     btnSubmit.textContent = '수정 요청 제출';
                     return;
                 }
+
+                // projects 테이블 draft_status 업데이트
+                await supabase.from('projects').update({ draft_status: 'revision_requested' }).eq('project_id', currentProjectId);
 
                 alert('수정 요청이 제출되었습니다.\n담당 공인회계사가 검토 후 반영하겠습니다.');
 

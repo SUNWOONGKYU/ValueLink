@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>평가보고서 수령 | ValueLink</title>
 
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../styles/mobile-optimize.css">
     <style>
@@ -552,13 +555,18 @@
     </script>
 
     <!-- 페이지 스크립트 -->
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { checkMethodStatus, METHOD_NAMES, STATUS } from '../../components/project-status-checker.js';
-
+    <script>
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const METHOD_NAMES = {
+            dcf: 'DCF (현금흐름할인법)',
+            relative: '상대가치평가법',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법',
+            inheritance_tax: '상속세법상 평가'
+        };
 
         let projectId, method, reportUrl = null;
 
@@ -589,6 +597,32 @@
                     return;
                 }
 
+                // Check payment status
+                const { data: payment } = await supabase
+                    .from('balance_payments')
+                    .select('status')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .single();
+
+                if (!payment || payment.status !== 'confirmed') {
+                    // Show payment required message instead of main content
+                    document.getElementById('loadingState').style.display = 'none';
+                    // Create and show a payment-required notice
+                    const container = document.querySelector('.container');
+                    container.innerHTML = `
+                        <div style="text-align:center; padding:80px 20px;">
+                            <div style="font-size:48px; margin-bottom:16px;">🔒</div>
+                            <h2 style="font-size:24px; font-weight:700; margin-bottom:8px;">결제 확인이 필요합니다</h2>
+                            <p style="color:#6B7280; margin-bottom:24px;">보고서 수령을 위해서는 잔금 결제 확인이 완료되어야 합니다.</p>
+                            <a href="./balance-payment.html?projectId=${projectId}&method=${method}"
+                               style="display:inline-block; padding:14px 28px; background:#1D4ED8; color:white; border-radius:10px; text-decoration:none; font-weight:600;">
+                                결제 페이지로 이동
+                            </a>
+                        </div>`;
+                    return;
+                }
+
                 displayProjectInfo(project);
 
                 document.getElementById('loadingState').style.display = 'none';
@@ -610,6 +644,9 @@
             const today = new Date().toLocaleDateString('ko-KR');
             document.getElementById('completionDateDisplay').textContent = today;
             document.getElementById('versionDate').textContent = today;
+
+            // Set reportUrl from project data
+            reportUrl = project.final_report_url || null;
 
             // 파일명 생성
             const companyName = project.company_name || project.company_name_kr || '회사';
