@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>평가보고서 초안 확인 | ValueLink</title>
+
+    <!-- 모바일 최적화 CSS -->
+    <link rel="stylesheet" href="../styles/mobile-optimize.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --light-green: #DCFCE7;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+            --bg-light: #F9FAFB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --cover-blue: #1E3A5F;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+
+        .main-content { flex: 1; min-width: 0; }
+
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .page-description { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* ====== 보고서 문서 영역 ====== */
+        .report-document {
+            background: white;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 워터마크 (초안) */
+        .report-document::before {
+            content: '초안 DRAFT';
+            position: fixed;
+            top: 50%;
+            left: calc(50% - 160px);
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 80px;
+            font-weight: 900;
+            color: rgba(29, 78, 216, 0.06);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 10;
+            letter-spacing: 8px;
+        }
+
+        /* ====== 표지 (Cover) ====== */
+        .report-cover {
+            background: linear-gradient(135deg, var(--cover-blue) 0%, #2C5282 100%);
+            color: white;
+            padding: 80px 60px;
+            text-align: center;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .cover-draft-badge {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .cover-logo {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+
+        .cover-title {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .cover-subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 48px;
+        }
+
+        .cover-company {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 48px;
+            padding: 16px 40px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+        }
+
+        .cover-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 48px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .cover-info-item { display: flex; gap: 8px; }
+        .cover-info-label { opacity: 0.6; min-width: 80px; }
+        .cover-info-value { font-weight: 600; }
+
+        .cover-report-no {
+            margin-top: 40px;
+            font-size: 13px;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        /* ====== 목차 네비게이션 ====== */
+        .report-toc {
+            padding: 40px 60px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .toc-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--cover-blue);
+            display: inline-block;
+        }
+
+        .toc-list {
+            list-style: none;
+            counter-reset: toc-counter;
+        }
+
+        .toc-item {
+            counter-increment: toc-counter;
+            padding: 10px 0;
+            border-bottom: 1px dotted #D1D5DB;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toc-item a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .toc-item a:hover { color: var(--deep-blue); }
+
+        .toc-item .toc-number {
+            color: var(--cover-blue);
+            font-weight: 700;
+            margin-right: 12px;
+        }
+
+        /* ====== 공통 섹션 스타일 ====== */
+        .report-section {
+            padding: 48px 60px;
+            border-bottom: 1px solid var(--border);
+            page-break-inside: avoid;
+        }
+
+        .report-section:last-child { border-bottom: none; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 3px solid var(--cover-blue);
+        }
+
+        .section-number {
+            background: var(--cover-blue);
+            color: white;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .subsection-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--cover-blue);
+            margin: 24px 0 12px;
+            padding-left: 12px;
+            border-left: 3px solid var(--cover-blue);
+        }
+
+        .report-text {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.9;
+            margin-bottom: 16px;
+        }
+
+        /* 테이블 */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13px;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: 10px 14px;
+            border: 1px solid #D1D5DB;
+            text-align: left;
+        }
+
+        .report-table th {
+            background: #F3F4F6;
+            font-weight: 700;
+            color: var(--text-primary);
+            white-space: nowrap;
+        }
+
+        .report-table td {
+            color: #374151;
+        }
+
+        .report-table td.number,
+        .report-table th.number {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .report-table tr:hover td { background: #F9FAFB; }
+
+        .report-table tfoot td {
+            font-weight: 700;
+            background: #EFF6FF;
+            color: var(--cover-blue);
+        }
+
+        /* 핵심 결과 박스 */
+        .result-highlight {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 2px solid var(--deep-blue);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin: 24px 0;
+        }
+
+        .result-highlight .result-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .result-highlight .result-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--deep-blue);
+            margin-bottom: 4px;
+        }
+
+        .result-highlight .result-sub {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* 민감도 분석 매트릭스 */
+        .sensitivity-matrix {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            margin: 16px 0;
+        }
+
+        .sensitivity-matrix th,
+        .sensitivity-matrix td {
+            padding: 8px 10px;
+            border: 1px solid #D1D5DB;
+            text-align: center;
+        }
+
+        .sensitivity-matrix th {
+            background: var(--cover-blue);
+            color: white;
+            font-weight: 600;
+        }
+
+        .sensitivity-matrix .axis-label {
+            background: #E0E7FF;
+            font-weight: 700;
+            color: var(--cover-blue);
+        }
+
+        .sensitivity-matrix .base-case {
+            background: #DBEAFE;
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
+        /* 면책조항 */
+        .disclaimer {
+            background: #F9FAFB;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-top: 16px;
+        }
+
+        /* ====== 액션 영역 ====== */
+        .action-area {
+            max-width: 800px;
+            margin: 32px auto 0;
+        }
+
+        .notice-box {
+            padding: 16px 20px;
+            background: #DBEAFE;
+            border-left: 4px solid var(--deep-blue);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .notice-box strong {
+            display: block;
+            font-size: 15px;
+            color: var(--deep-blue);
+            margin-bottom: 8px;
+        }
+
+        .notice-box ul {
+            margin-left: 20px;
+            font-size: 14px;
+            color: #1E40AF;
+            line-height: 1.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .btn-revision {
+            flex: 1;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--warning);
+            background: #FEF3C7;
+            border: 2px solid var(--warning);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-revision:hover {
+            background: var(--warning);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            background: var(--deep-green);
+            border: 2px solid var(--deep-green);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-confirm:hover {
+            background: #15803D;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
+        }
+
+        /* ====== 로딩 ====== */
+        .loading { text-align: center; padding: 60px 20px; }
+        .loading-spinner {
+            width: 48px; height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { font-size: 15px; color: var(--text-secondary); }
+
+        /* ====== 인쇄 스타일 ====== */
+        @media print {
+            body { background: white; }
+            .container { padding: 0; max-width: 100%; }
+            .page-header { display: none; }
+            .action-area { display: none; }
+            .report-document {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .report-document::before { display: none; }
+            .report-cover { min-height: auto; padding: 60px 40px; page-break-after: always; }
+            .report-toc { page-break-after: always; }
+            .report-section { padding: 32px 40px; page-break-inside: avoid; }
+            .result-highlight { break-inside: avoid; }
+            .report-table { break-inside: avoid; }
+        }
+
+        /* ====== 반응형 ====== */
+        @media (max-width: 1024px) {
+            .container { flex-direction: column; padding: 20px; }
+            .report-document::before { font-size: 50px; left: 50%; }
+        }
+
+        @media (max-width: 768px) {
+            .report-cover { padding: 40px 24px; min-height: 400px; }
+            .cover-title { font-size: 24px; }
+            .cover-company { font-size: 20px; padding: 12px 24px; }
+            .cover-info-grid { grid-template-columns: 1fr; }
+            .report-section { padding: 32px 24px; }
+            .report-toc { padding: 32px 24px; }
+            .section-header { flex-wrap: wrap; }
+            .section-title { font-size: 18px; }
+            .result-highlight .result-value { font-size: 28px; }
+            .action-buttons { flex-direction: column; }
+            .sensitivity-matrix { font-size: 11px; }
+            .sensitivity-matrix th, .sensitivity-matrix td { padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div id="header-container"></div>
+
+    <div class="container">
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">평가보고서 초안</h1>
+                <p class="page-description">평가보고서 초안이 준비되었습니다. 내용을 확인하시고, 수정이 필요하면 수정 요청을 해주세요.</p>
+            </div>
+
+            <!-- 로딩 상태 -->
+            <div id="loadingState" class="loading">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">평가보고서 초안을 불러오는 중...</p>
+            </div>
+
+            <!-- 메인 컨텐츠 (로딩 후 표시) -->
+            <div id="mainContent" style="display: none;">
+
+                <!-- ===== 보고서 문서 ===== -->
+                <div class="report-document">
+
+                    <!-- 1. 표지 (Cover) -->
+                    <div class="report-cover" id="sectionCover">
+                        <div class="cover-draft-badge">DRAFT</div>
+                        <div class="cover-logo">VALUELINK</div>
+                        <div class="cover-title">기업가치 평가보고서</div>
+                        <div class="cover-subtitle" id="coverMethodName">(초안)</div>
+                        <div class="cover-company" id="coverCompanyName">-</div>
+                        <div class="cover-info-grid">
+                            <div class="cover-info-item">
+                                <span class="cover-info-label">평가기준일</span>
+                                <span class="cover-info-value" id="coverBaseDate">-</span>
+                            </div>
+                            <div class="cover-info-item">
+                                <span class="cover-info-label">평가기관</span>
+                                <span class="cover-info-value">ValueLink</span>
+                            </div>
+                            <div class="cover-info-item">
+                                <span class="cover-info-label">작성일</span>
+                                <span class="cover-info-value" id="coverWriteDate">-</span>
+                            </div>
+                            <div class="cover-info-item">
+                                <span class="cover-info-label">평가방법</span>
+                                <span class="cover-info-value" id="coverMethod">-</span>
+                            </div>
+                        </div>
+                        <div class="cover-report-no" id="coverReportNo">-</div>
+                    </div>
+
+                    <!-- 목차 -->
+                    <div class="report-toc">
+                        <div class="toc-title">목 차</div>
+                        <ul class="toc-list">
+                            <li class="toc-item"><a href="#sec1"><span class="toc-number">1.</span> 요약 (Executive Summary)</a></li>
+                            <li class="toc-item"><a href="#sec2"><span class="toc-number">2.</span> 평가 개요</a></li>
+                            <li class="toc-item"><a href="#sec3"><span class="toc-number">3.</span> 회사 개요 및 산업 분석</a></li>
+                            <li class="toc-item"><a href="#sec4"><span class="toc-number">4.</span> 재무 분석</a></li>
+                            <li class="toc-item"><a href="#sec5"><span class="toc-number">5.</span> 평가 방법론 및 가정</a></li>
+                            <li class="toc-item"><a href="#sec6"><span class="toc-number">6.</span> 평가 결과</a></li>
+                            <li class="toc-item"><a href="#sec7"><span class="toc-number">7.</span> 민감도 분석</a></li>
+                            <li class="toc-item"><a href="#sec8"><span class="toc-number">8.</span> 부록</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- 섹션 1: 요약 (Executive Summary) -->
+                    <div class="report-section" id="sec1">
+                        <div class="section-header">
+                            <div class="section-number">1</div>
+                            <div class="section-title">요약 (Executive Summary)</div>
+                        </div>
+                        <p class="report-text" id="execSummaryText">-</p>
+                        <div class="result-highlight">
+                            <div class="result-label">주당 평가가치</div>
+                            <div class="result-value" id="execPerShare">-</div>
+                            <div class="result-sub">기업가치: <span id="execEnterprise">-</span></div>
+                        </div>
+                        <table class="report-table" id="execKeyTable">
+                            <thead>
+                                <tr><th>항목</th><th class="number">값</th></tr>
+                            </thead>
+                            <tbody id="execKeyBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- 섹션 2: 평가 개요 -->
+                    <div class="report-section" id="sec2">
+                        <div class="section-header">
+                            <div class="section-number">2</div>
+                            <div class="section-title">평가 개요</div>
+                        </div>
+                        <h4 class="subsection-title">평가 목적</h4>
+                        <p class="report-text" id="evalPurpose">-</p>
+                        <h4 class="subsection-title">평가 범위</h4>
+                        <p class="report-text" id="evalScope">-</p>
+                        <h4 class="subsection-title">적용 방법론</h4>
+                        <p class="report-text" id="evalMethodology">-</p>
+                        <h4 class="subsection-title">평가 기준일</h4>
+                        <p class="report-text" id="evalBaseDate">-</p>
+                    </div>
+
+                    <!-- 섹션 3: 회사 개요 및 산업 분석 -->
+                    <div class="report-section" id="sec3">
+                        <div class="section-header">
+                            <div class="section-number">3</div>
+                            <div class="section-title">회사 개요 및 산업 분석</div>
+                        </div>
+                        <h4 class="subsection-title">회사 기본정보</h4>
+                        <table class="report-table">
+                            <tbody id="companyInfoBody"></tbody>
+                        </table>
+                        <h4 class="subsection-title">사업 내용</h4>
+                        <p class="report-text" id="businessDesc">-</p>
+                        <h4 class="subsection-title">산업 현황</h4>
+                        <p class="report-text" id="industryDesc">-</p>
+                    </div>
+
+                    <!-- 섹션 4: 재무 분석 -->
+                    <div class="report-section" id="sec4">
+                        <div class="section-header">
+                            <div class="section-number">4</div>
+                            <div class="section-title">재무 분석</div>
+                        </div>
+                        <h4 class="subsection-title">재무제표 요약</h4>
+                        <table class="report-table">
+                            <thead>
+                                <tr><th>항목</th><th class="number">2022년</th><th class="number">2023년</th><th class="number">2024년</th></tr>
+                            </thead>
+                            <tbody id="financialSummaryBody"></tbody>
+                        </table>
+                        <h4 class="subsection-title">주요 재무비율</h4>
+                        <table class="report-table">
+                            <thead>
+                                <tr><th>지표</th><th class="number">2022년</th><th class="number">2023년</th><th class="number">2024년</th></tr>
+                            </thead>
+                            <tbody id="financialRatioBody"></tbody>
+                        </table>
+                        <h4 class="subsection-title">수익성 및 안정성 분석</h4>
+                        <p class="report-text" id="profitabilityText">-</p>
+                    </div>
+
+                    <!-- 섹션 5: 평가 방법론 및 가정 -->
+                    <div class="report-section" id="sec5">
+                        <div class="section-header">
+                            <div class="section-number">5</div>
+                            <div class="section-title">평가 방법론 및 가정</div>
+                        </div>
+                        <h4 class="subsection-title" id="methodologyTitle">평가법 상세</h4>
+                        <p class="report-text" id="methodologyDesc">-</p>
+                        <h4 class="subsection-title">적용 가정 및 파라미터</h4>
+                        <table class="report-table">
+                            <thead>
+                                <tr><th>항목</th><th class="number">적용 값</th><th>비고</th></tr>
+                            </thead>
+                            <tbody id="assumptionsBody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- 섹션 6: 평가 결과 -->
+                    <div class="report-section" id="sec6">
+                        <div class="section-header">
+                            <div class="section-number">6</div>
+                            <div class="section-title">평가 결과</div>
+                        </div>
+                        <h4 class="subsection-title">산출 과정</h4>
+                        <div id="valuationProcess"></div>
+                        <h4 class="subsection-title">최종 결과</h4>
+                        <div class="result-highlight">
+                            <div class="result-label">주당 평가가치</div>
+                            <div class="result-value" id="finalPerShare">-</div>
+                            <div class="result-sub">기업가치: <span id="finalEnterprise">-</span></div>
+                        </div>
+                        <p class="report-text" id="conclusionText">-</p>
+                    </div>
+
+                    <!-- 섹션 7: 민감도 분석 -->
+                    <div class="report-section" id="sec7">
+                        <div class="section-header">
+                            <div class="section-number">7</div>
+                            <div class="section-title">민감도 분석</div>
+                        </div>
+                        <p class="report-text" id="sensitivityIntro">-</p>
+                        <div id="sensitivityContent"></div>
+                    </div>
+
+                    <!-- 섹션 8: 부록 -->
+                    <div class="report-section" id="sec8">
+                        <div class="section-header">
+                            <div class="section-number">8</div>
+                            <div class="section-title">부록</div>
+                        </div>
+                        <h4 class="subsection-title">재무제표 상세</h4>
+                        <p class="report-text">상세 재무제표는 별도 첨부자료를 참조하시기 바랍니다.</p>
+                        <h4 class="subsection-title">추가 참고자료</h4>
+                        <div id="appendixRefs"></div>
+                        <h4 class="subsection-title">면책조항</h4>
+                        <div class="disclaimer" id="disclaimerText">-</div>
+                    </div>
+
+                </div>
+                <!-- /보고서 문서 -->
+
+                <!-- 액션 영역 -->
+                <div class="action-area">
+                    <div class="notice-box">
+                        <strong>안내사항</strong>
+                        <ul>
+                            <li>본 보고서는 <strong>초안</strong>이며, 수정 요청 후 최종안이 작성됩니다.</li>
+                            <li>수정이 필요하시면 '수정 요청하기' 버튼을 눌러주세요.</li>
+                            <li>초안 확인이 완료되면 '확인 완료' 버튼을 눌러주세요.</li>
+                            <li>확인 완료 후 최종 보고서 작성이 진행됩니다.</li>
+                        </ul>
+                    </div>
+                    <div class="action-buttons">
+                        <a href="#" id="btnRevision" class="btn-revision">수정 요청하기</a>
+                        <button id="btnConfirm" class="btn-confirm">확인 완료</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- 헤더 로드 -->
+    <script>
+        fetch('../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) { newScript.src = script.src; }
+                    else { newScript.textContent = script.textContent; }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <!-- 페이지 스크립트 -->
+    <script type="module">
+        const METHOD_NAMES = {
+            dcf: 'DCF평가법',
+            relative: '상대가치평가법',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법',
+            inheritance_tax: '상증세법평가법'
+        };
+
+        const METHOD_FULL_NAMES = {
+            dcf: 'DCF평가법 (현금흐름할인법)',
+            relative: '상대가치평가법 (유사기업비교법)',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법 (순자산가치법)',
+            inheritance_tax: '상증세법평가법 (상속세및증여세법)'
+        };
+
+        // ====== 공통 데이터 (5개 평가법 공유) ======
+        const COMMON = {
+            company: '파인더월드',
+            ceo: '김성민',
+            established: '2018년 3월',
+            industry: 'IT서비스 (AI 기반 데이터 분석 플랫폼)',
+            address: '서울특별시 강남구 테헤란로 152',
+            employees: '85명',
+            shares: '5,000,000주',
+            capital: '2,500',
+            baseDate: '2025년 12월 31일',
+            writeDate: '2026년 1월 27일',
+            businessDesc: '파인더월드는 2018년 설립된 AI 기반 데이터 분석 플랫폼 전문기업으로, 기업 고객을 대상으로 빅데이터 수집, AI 분석, 인사이트 도출 서비스를 제공하고 있습니다. 주요 서비스로는 AI 데이터 분석 플랫폼 "FinderAI", 맞춤형 BI 솔루션, 데이터 컨설팅 서비스가 있으며, 금융, 유통, 제조 등 다양한 산업군에서 약 120개 기업고객을 보유하고 있습니다.',
+            industryDesc: '국내 AI 및 데이터 분석 시장은 2024년 기준 약 3.2조원 규모이며, 연평균 25.3%의 성장률을 보이고 있습니다. 디지털 전환(DX) 가속화와 생성형 AI 확산에 따라 기업의 데이터 활용 수요가 급증하고 있으며, 정부의 디지털 뉴딜 정책이 시장 성장을 뒷받침하고 있습니다. 경쟁 환경은 대기업 SI 업체와 전문 AI 스타트업이 혼재하며, 파인더월드는 중소·중견기업 특화 솔루션으로 차별화된 시장 포지션을 확보하고 있습니다.',
+            financial: {
+                revenue:    [18500, 25200, 32000],
+                cogs:       [9250, 12100, 14720],
+                grossProfit:[9250, 13100, 17280],
+                opex:       [6475, 8820, 11520],
+                opIncome:   [2775, 4280, 5760],
+                netIncome:  [1943, 3210, 4480],
+                totalAsset: [28500, 36800, 45200],
+                totalDebt:  [11400, 13800, 16250],
+                equity:     [17100, 23000, 28950]
+            },
+            ratios: {
+                grossMargin:    ['50.0%', '52.0%', '54.0%'],
+                opMargin:       ['15.0%', '17.0%', '18.0%'],
+                netMargin:      ['10.5%', '12.7%', '14.0%'],
+                roe:            ['11.4%', '14.0%', '15.5%'],
+                debtRatio:      ['66.7%', '60.0%', '56.1%'],
+                currentRatio:   ['185.2%', '192.5%', '210.3%']
+            },
+            profitability: '파인더월드의 매출액은 2022년 18,500백만원에서 2024년 32,000백만원으로 연평균 31.5% 성장하였습니다. 매출총이익률은 50.0%에서 54.0%로 개선되었으며, 영업이익률도 15.0%에서 18.0%로 향상되어 수익성이 꾸준히 개선되고 있습니다. 부채비율은 66.7%에서 56.1%로 낮아져 재무 안정성도 양호한 수준입니다.',
+            disclaimer: '본 보고서는 의뢰인이 제공한 자료와 공개 정보를 기초로 작성되었으며, 제공된 자료의 정확성에 대한 책임은 의뢰인에게 있습니다. 본 평가 결과는 평가기준일 현재의 시장 상황과 가용 정보를 기반으로 한 것이며, 추후 시장 상황 변화에 따라 기업가치가 변동될 수 있습니다. 본 보고서는 특정 거래의 권유 또는 투자 조언을 목적으로 작성된 것이 아니며, 보고서 이용에 따른 결과에 대하여 평가기관은 법적 책임을 부담하지 않습니다. 본 보고서의 내용을 의뢰인의 동의 없이 제3자에게 공개하거나 다른 목적으로 사용할 수 없습니다.'
+        };
+
+        // ====== 평가법별 데이터 ======
+        const MOCK_DATA = {
+            dcf: {
+                projectId: 'FINDE-2601270530-DC',
+                reportNo: 'VL-2025-DRAFT-0530',
+                perShare: '13,300원',
+                enterprise: '66,500백만원',
+                execSummary: 'DCF(현금흐름할인법)에 의한 파인더월드의 기업가치 평가 결과, 주당 평가가치는 13,300원, 기업가치는 66,500백만원으로 산출되었습니다. 본 평가는 향후 5개년 추정 잉여현금흐름(FCFF)을 가중평균자본비용(WACC) 12.5%로 할인하고, 영구성장률 1.0%를 적용한 터미널밸류를 합산하여 산출하였습니다.',
+                execKeyItems: [
+                    { item: '평가방법', value: 'DCF (현금흐름할인법)' },
+                    { item: '주당 평가가치', value: '13,300원' },
+                    { item: '기업가치', value: '66,500백만원' },
+                    { item: 'WACC', value: '12.5%' },
+                    { item: '영구성장률', value: '1.0%' }
+                ],
+                evalPurpose: '본 평가는 비상장기업 파인더월드의 보통주 공정가치를 산정하기 위하여 수행되었습니다. 평가 결과는 투자 의사결정, M&A 거래, 지분 가치 산정 등의 참고 목적으로 활용될 수 있습니다.',
+                evalScope: '파인더월드의 보통주 5,000,000주 전체에 대한 100% 지분가치를 평가 대상으로 하며, 평가기준일 현재의 사업 영위 상태를 기준으로 합니다.',
+                evalMethodology: 'DCF(Discounted Cash Flow)법은 기업이 미래에 창출할 것으로 예상되는 잉여현금흐름(Free Cash Flow to Firm)을 적절한 할인율로 현재가치로 환산하여 기업가치를 산출하는 방법입니다. 본 평가에서는 5개년 추정기간의 FCFF와 터미널밸류(Terminal Value)를 WACC로 할인하여 기업가치를 산출하였습니다.',
+                methodologyTitle: 'DCF (현금흐름할인법) 상세',
+                methodologyDesc: 'DCF법에 의한 기업가치 산출 과정은 다음과 같습니다:\n\n1) 매출액 추정: 과거 성장률과 산업 전망을 반영하여 향후 5개년 매출액을 추정합니다.\n2) FCFF 산출: 영업이익에서 법인세, 감가상각비, 자본적지출, 운전자본변동을 조정하여 잉여현금흐름을 산출합니다.\n3) 할인율(WACC) 산정: 자기자본비용(CAPM)과 타인자본비용의 가중평균으로 WACC를 산정합니다.\n4) 터미널밸류 산출: 추정기간 이후의 영구성장을 가정하여 Gordon Growth Model로 터미널밸류를 산출합니다.\n5) 기업가치 도출: 추정기간 FCFF 현재가치와 터미널밸류 현재가치를 합산하여 기업가치를 도출합니다.',
+                assumptions: [
+                    { item: '가중평균자본비용(WACC)', value: '12.5%', note: 'CAPM 기반 산정' },
+                    { item: '영구성장률', value: '1.0%', note: 'GDP 성장률 참조' },
+                    { item: '추정기간', value: '5년', note: '2025~2029년' },
+                    { item: '매출성장률(1차년도)', value: '15.2%', note: '과거 추세 반영' },
+                    { item: '매출성장률(안정기)', value: '8.0%', note: '산업 평균 수렴' },
+                    { item: '영업이익률(안정기)', value: '18.0%', note: '2024년 실적 유지' },
+                    { item: '법인세율', value: '22.0%', note: '실효세율 적용' },
+                    { item: '감가상각비/매출', value: '3.5%', note: '과거 평균' },
+                    { item: '자본적지출/매출', value: '4.0%', note: '성장투자 반영' }
+                ],
+                valuationProcess: `
+                    <table class="report-table">
+                        <thead><tr><th>연도</th><th class="number">매출액</th><th class="number">FCFF</th><th class="number">할인계수</th><th class="number">현재가치</th></tr></thead>
+                        <tbody>
+                            <tr><td>2025F</td><td class="number">36,864</td><td class="number">4,520</td><td class="number">0.8889</td><td class="number">4,018</td></tr>
+                            <tr><td>2026F</td><td class="number">41,285</td><td class="number">5,280</td><td class="number">0.7901</td><td class="number">4,172</td></tr>
+                            <tr><td>2027F</td><td class="number">45,414</td><td class="number">5,850</td><td class="number">0.7023</td><td class="number">4,109</td></tr>
+                            <tr><td>2028F</td><td class="number">48,597</td><td class="number">6,210</td><td class="number">0.6243</td><td class="number">3,877</td></tr>
+                            <tr><td>2029F</td><td class="number">52,484</td><td class="number">6,750</td><td class="number">0.5549</td><td class="number">3,746</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td colspan="3">추정기간 FCFF 현재가치 합계</td><td></td><td class="number">19,922</td></tr>
+                            <tr><td colspan="3">터미널밸류 현재가치</td><td></td><td class="number">46,578</td></tr>
+                            <tr><td colspan="3"><strong>기업가치 (Enterprise Value)</strong></td><td></td><td class="number"><strong>66,500</strong></td></tr>
+                            <tr><td colspan="3">발행주식수</td><td></td><td class="number">5,000,000주</td></tr>
+                            <tr><td colspan="3"><strong>주당 평가가치</strong></td><td></td><td class="number"><strong>13,300원</strong></td></tr>
+                        </tfoot>
+                    </table>`,
+                conclusion: 'DCF법에 의한 파인더월드의 주당 평가가치는 13,300원으로 산출되었습니다. 이는 향후 5개년 추정 잉여현금흐름을 가중평균자본비용 12.5%로 할인하고, 영구성장률 1.0%를 적용한 터미널밸류의 현재가치를 합산한 결과입니다. 기업가치 중 터미널밸류의 비중이 약 70%를 차지하며, 이는 성장 기업의 특성을 반영하고 있습니다.',
+                sensitivityIntro: '아래 민감도 분석은 WACC와 영구성장률의 변동에 따른 주당 평가가치의 변화를 보여줍니다.',
+                sensitivityMatrix: {
+                    rowLabel: 'WACC',
+                    colLabel: '영구성장률',
+                    rows: ['11.0%', '11.5%', '12.0%', '12.5%', '13.0%', '13.5%', '14.0%'],
+                    cols: ['0.0%', '0.5%', '1.0%', '1.5%', '2.0%'],
+                    data: [
+                        ['16,200', '17,100', '18,200', '19,500', '21,100'],
+                        ['14,900', '15,700', '16,600', '17,700', '19,000'],
+                        ['13,800', '14,500', '15,300', '16,200', '17,300'],
+                        ['12,800', '13,400', '14,100', '14,900', '15,800'],
+                        ['11,900', '12,500', '13,100', '13,800', '14,600'],
+                        ['11,100', '11,600', '12,200', '12,800', '13,500'],
+                        ['10,400', '10,900', '11,400', '11,900', '12,500']
+                    ],
+                    baseRow: 3,
+                    baseCol: 2
+                },
+                appendixRefs: [
+                    '한국은행 경제통계시스템 (ECOS) - 국내 경제성장률 및 이자율 데이터',
+                    'KISVALUE 기업정보 - 유사기업 재무데이터',
+                    'NICE신용평가 - 산업 위험 프리미엄',
+                    '파인더월드 제공 사업계획서 및 재무추정자료'
+                ]
+            },
+            relative: {
+                projectId: 'FINDE-2601270531-RV',
+                reportNo: 'VL-2025-DRAFT-0531',
+                perShare: '13,140원',
+                enterprise: '65,700백만원',
+                execSummary: '상대가치평가법(유사기업비교법)에 의한 파인더월드의 기업가치 평가 결과, 주당 평가가치는 13,140원, 기업가치는 65,700백만원으로 산출되었습니다. 유사 상장기업 5개사의 PER, PBR, EV/EBITDA 배수를 적용하고, 비유동성 할인 20%를 반영하여 산출하였습니다.',
+                execKeyItems: [
+                    { item: '평가방법', value: '상대가치평가법 (유사기업비교법)' },
+                    { item: '주당 평가가치', value: '13,140원' },
+                    { item: '기업가치', value: '65,700백만원' },
+                    { item: '비교기업 수', value: '5개사' },
+                    { item: '비유동성 할인율', value: '20.0%' }
+                ],
+                evalPurpose: '본 평가는 비상장기업 파인더월드의 보통주 공정가치를 산정하기 위하여 수행되었습니다. 유사 상장기업과의 비교를 통해 시장 관점에서의 적정 가치를 도출하고자 합니다.',
+                evalScope: '파인더월드의 보통주 5,000,000주 전체에 대한 100% 지분가치를 평가 대상으로 하며, 비유동성 할인을 반영한 비상장주식의 공정가치를 산출합니다.',
+                evalMethodology: '상대가치평가법은 유사한 사업을 영위하는 상장기업의 시장 가치 배수(PER, PBR, EV/EBITDA)를 평가대상기업에 적용하여 기업가치를 산출하는 방법입니다. 비상장기업의 경우 비유동성 할인(Discount for Lack of Marketability)을 적용합니다.',
+                methodologyTitle: '상대가치평가법 (유사기업비교법) 상세',
+                methodologyDesc: '상대가치평가법에 의한 기업가치 산출 과정은 다음과 같습니다:\n\n1) 비교기업 선정: 동일 산업군 내 사업 유사성, 규모, 성장성 등을 고려하여 5개 유사 상장기업을 선정합니다.\n2) 배수 산출: 비교기업의 PER, PBR, EV/EBITDA 배수를 산출하고 평균값을 도출합니다.\n3) 기업가치 산출: 파인더월드의 재무지표에 비교기업 평균 배수를 적용하여 배수별 기업가치를 산출합니다.\n4) 가중평균: PER(40%), EV/EBITDA(40%), PBR(20%) 가중치를 적용하여 최종 기업가치를 도출합니다.\n5) 비유동성 할인: 비상장 프리미엄을 반영하여 20% 할인을 적용합니다.',
+                assumptions: [
+                    { item: 'PER 배수 (비교기업 평균)', value: '18.2배', note: '5개사 평균' },
+                    { item: 'PBR 배수 (비교기업 평균)', value: '2.8배', note: '5개사 평균' },
+                    { item: 'EV/EBITDA 배수 (비교기업 평균)', value: '12.5배', note: '5개사 평균' },
+                    { item: '비유동성 할인율', value: '20.0%', note: '비상장 할인' },
+                    { item: 'PER 가중치', value: '40%', note: '' },
+                    { item: 'EV/EBITDA 가중치', value: '40%', note: '' },
+                    { item: 'PBR 가중치', value: '20%', note: '' },
+                    { item: '적용 EPS', value: '896원', note: '2024 실적' },
+                    { item: '적용 BPS', value: '5,790원', note: '2024 실적' }
+                ],
+                valuationProcess: `
+                    <p class="report-text"><strong>비교기업 분석</strong></p>
+                    <table class="report-table">
+                        <thead><tr><th>비교기업</th><th class="number">PER</th><th class="number">PBR</th><th class="number">EV/EBITDA</th></tr></thead>
+                        <tbody>
+                            <tr><td>데이터솔루션(주)</td><td class="number">19.5</td><td class="number">3.2</td><td class="number">13.8</td></tr>
+                            <tr><td>AI애널리틱스(주)</td><td class="number">17.8</td><td class="number">2.5</td><td class="number">11.2</td></tr>
+                            <tr><td>(주)빅데이터랩</td><td class="number">16.5</td><td class="number">2.3</td><td class="number">10.8</td></tr>
+                            <tr><td>클라우드인사이트(주)</td><td class="number">20.2</td><td class="number">3.1</td><td class="number">14.2</td></tr>
+                            <tr><td>(주)스마트플랫폼</td><td class="number">17.0</td><td class="number">2.9</td><td class="number">12.5</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td><strong>평균</strong></td><td class="number"><strong>18.2</strong></td><td class="number"><strong>2.8</strong></td><td class="number"><strong>12.5</strong></td></tr>
+                        </tfoot>
+                    </table>
+                    <p class="report-text" style="margin-top:16px"><strong>배수별 기업가치 산출</strong></p>
+                    <table class="report-table">
+                        <thead><tr><th>배수</th><th class="number">적용값</th><th class="number">재무지표</th><th class="number">기업가치(백만원)</th><th class="number">가중치</th></tr></thead>
+                        <tbody>
+                            <tr><td>PER</td><td class="number">18.2배</td><td class="number">EPS 896원</td><td class="number">81,536</td><td class="number">40%</td></tr>
+                            <tr><td>EV/EBITDA</td><td class="number">12.5배</td><td class="number">EBITDA 6,880</td><td class="number">86,000</td><td class="number">40%</td></tr>
+                            <tr><td>PBR</td><td class="number">2.8배</td><td class="number">BPS 5,790원</td><td class="number">81,060</td><td class="number">20%</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td colspan="3">가중평균 기업가치</td><td class="number">83,126</td><td></td></tr>
+                            <tr><td colspan="3">비유동성 할인 (20%)</td><td class="number">-16,625</td><td></td></tr>
+                            <tr><td colspan="3"><strong>최종 기업가치</strong></td><td class="number"><strong>65,700</strong></td><td></td></tr>
+                            <tr><td colspan="3">발행주식수</td><td class="number">5,000,000주</td><td></td></tr>
+                            <tr><td colspan="3"><strong>주당 평가가치</strong></td><td class="number"><strong>13,140원</strong></td><td></td></tr>
+                        </tfoot>
+                    </table>`,
+                conclusion: '상대가치평가법에 의한 파인더월드의 주당 평가가치는 13,140원으로 산출되었습니다. 유사 상장기업 5개사의 PER, PBR, EV/EBITDA 배수를 가중평균 적용하고, 비유동성 할인 20%를 반영한 결과입니다. PER 및 EV/EBITDA 기준 기업가치는 유사한 수준으로, 평가 결과의 신뢰성을 지지합니다.',
+                sensitivityIntro: '아래 민감도 분석은 PER 배수와 비유동성 할인율의 변동에 따른 주당 평가가치의 변화를 보여줍니다.',
+                sensitivityMatrix: {
+                    rowLabel: 'PER 배수',
+                    colLabel: '비유동성 할인율',
+                    rows: ['14.2배', '15.2배', '16.2배', '18.2배', '20.2배', '21.2배', '22.2배'],
+                    cols: ['10%', '15%', '20%', '25%', '30%'],
+                    data: [
+                        ['11,480', '10,810', '10,140', '9,470', '8,800'],
+                        ['12,160', '11,450', '10,740', '10,030', '9,320'],
+                        ['12,840', '12,090', '11,340', '10,590', '9,840'],
+                        ['14,200', '13,370', '13,140', '11,710', '10,880'],
+                        ['15,560', '14,650', '13,740', '12,830', '11,920'],
+                        ['16,240', '15,290', '14,340', '13,390', '12,440'],
+                        ['16,920', '15,930', '14,940', '13,950', '12,960']
+                    ],
+                    baseRow: 3,
+                    baseCol: 2
+                },
+                appendixRefs: [
+                    'KISVALUE 기업정보 - 비교기업 재무데이터',
+                    'KRX 한국거래소 - 시가총액 및 주가 데이터',
+                    'Aswath Damodaran - Marketability Discount 연구자료',
+                    '파인더월드 제공 재무자료'
+                ]
+            },
+            intrinsic: {
+                projectId: 'FINDE-2601270532-IV',
+                reportNo: 'VL-2025-DRAFT-0532',
+                perShare: '4,590원',
+                enterprise: '22,950백만원',
+                execSummary: '본질가치평가법에 의한 파인더월드의 기업가치 평가 결과, 주당 평가가치는 4,590원, 기업가치는 22,950백만원으로 산출되었습니다. 수익가치(가중치 60%)와 자산가치(가중치 40%)를 가중평균하여 산출하였습니다.',
+                execKeyItems: [
+                    { item: '평가방법', value: '본질가치평가법' },
+                    { item: '주당 평가가치', value: '4,590원' },
+                    { item: '기업가치', value: '22,950백만원' },
+                    { item: '수익가치 가중치', value: '60%' },
+                    { item: '자산가치 가중치', value: '40%' }
+                ],
+                evalPurpose: '본 평가는 비상장기업 파인더월드의 보통주 공정가치를 산정하기 위하여 수행되었습니다. 수익가치와 자산가치를 종합하여 본질적 기업가치를 도출하고자 합니다.',
+                evalScope: '파인더월드의 보통주 5,000,000주 전체에 대한 100% 지분가치를 평가 대상으로 합니다.',
+                evalMethodology: '본질가치평가법은 기업의 수익가치와 자산가치를 가중평균하여 기업의 본질적 가치를 산출하는 방법입니다. 수익가치는 정상이익을 자본환원율로 자본환원하여 산출하고, 자산가치는 순자산가치를 기준으로 합니다.',
+                methodologyTitle: '본질가치평가법 상세',
+                methodologyDesc: '본질가치평가법에 의한 기업가치 산출 과정은 다음과 같습니다:\n\n1) 수익가치 산출: 최근 3개년 정상이익의 가중평균을 자본환원율로 나누어 수익가치를 산출합니다.\n2) 자산가치 산출: 장부가 기준 순자산에 자산 재평가 조정액을 반영하여 자산가치를 산출합니다.\n3) 가중평균: 수익가치에 60%, 자산가치에 40%의 가중치를 적용하여 본질가치를 산출합니다.\n4) 주당가치: 본질가치를 발행주식수로 나누어 주당 평가가치를 도출합니다.',
+                assumptions: [
+                    { item: '수익가치 가중치', value: '60%', note: '수익 중심 기업' },
+                    { item: '자산가치 가중치', value: '40%', note: '' },
+                    { item: '정상이익 (3년 가중평균)', value: '3,200백만원', note: '1:2:3 가중' },
+                    { item: '자본환원율', value: '10.0%', note: '국채금리+위험프리미엄' },
+                    { item: '수익가치', value: '32,000백만원', note: '3,200/10%' },
+                    { item: '순자산가치', value: '18,500백만원', note: '재평가 후' },
+                    { item: '발행주식수', value: '5,000,000주', note: '' }
+                ],
+                valuationProcess: `
+                    <table class="report-table">
+                        <thead><tr><th>항목</th><th class="number">금액(백만원)</th><th>비고</th></tr></thead>
+                        <tbody>
+                            <tr><td>정상이익 (가중평균)</td><td class="number">3,200</td><td>최근 3개년 1:2:3 가중평균</td></tr>
+                            <tr><td>자본환원율</td><td class="number">10.0%</td><td>국채금리 + 위험프리미엄</td></tr>
+                            <tr><td><strong>수익가치</strong></td><td class="number"><strong>32,000</strong></td><td>3,200 / 10%</td></tr>
+                            <tr><td>순자산가치</td><td class="number">18,500</td><td>장부가 + 재평가 조정</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>수익가치 x 60%</td><td class="number">19,200</td><td></td></tr>
+                            <tr><td>자산가치 x 40%</td><td class="number">7,400</td><td></td></tr>
+                            <tr><td><strong>본질가치 (합계)</strong></td><td class="number"><strong>22,950</strong></td><td>반올림 적용</td></tr>
+                            <tr><td>발행주식수</td><td class="number">5,000,000주</td><td></td></tr>
+                            <tr><td><strong>주당 평가가치</strong></td><td class="number"><strong>4,590원</strong></td><td></td></tr>
+                        </tfoot>
+                    </table>`,
+                conclusion: '본질가치평가법에 의한 파인더월드의 주당 평가가치는 4,590원으로 산출되었습니다. 수익가치(60%)와 자산가치(40%)를 가중평균한 결과이며, 수익가치가 자산가치 대비 높은 수준으로 기업의 수익창출 능력이 자산 규모 대비 우수함을 보여줍니다.',
+                sensitivityIntro: '아래 민감도 분석은 수익가치/자산가치 가중치 변동에 따른 주당 평가가치의 변화를 보여줍니다.',
+                sensitivityMatrix: {
+                    rowLabel: '수익가치 가중치',
+                    colLabel: '자본환원율',
+                    rows: ['40%', '45%', '50%', '60%', '70%', '75%', '80%'],
+                    cols: ['8.0%', '9.0%', '10.0%', '11.0%', '12.0%'],
+                    data: [
+                        ['4,680', '4,280', '3,960', '3,700', '3,480'],
+                        ['5,100', '4,640', '4,270', '3,970', '3,730'],
+                        ['5,520', '5,000', '4,580', '4,240', '3,980'],
+                        ['6,360', '5,720', '4,590', '4,780', '4,480'],
+                        ['7,200', '6,440', '5,820', '5,320', '4,920'],
+                        ['7,620', '6,800', '6,130', '5,590', '5,170'],
+                        ['8,040', '7,160', '6,440', '5,860', '5,420']
+                    ],
+                    baseRow: 3,
+                    baseCol: 2
+                },
+                appendixRefs: [
+                    '한국은행 기준금리 및 국채수익률 데이터',
+                    '파인더월드 제공 재무자료 (최근 3개년)',
+                    '한국공인회계사회 기업가치평가 기준'
+                ]
+            },
+            asset: {
+                projectId: 'FINDE-2601270533-AV',
+                reportNo: 'VL-2025-DRAFT-0533',
+                perShare: '5,790원',
+                enterprise: '28,950백만원',
+                execSummary: '자산가치평가법(순자산가치법)에 의한 파인더월드의 기업가치 평가 결과, 주당 평가가치는 5,790원, 기업가치는 28,950백만원으로 산출되었습니다. 장부가 기준 순자산에 자산재평가 조정액 +2,100백만원을 반영하여 산출하였습니다.',
+                execKeyItems: [
+                    { item: '평가방법', value: '자산가치평가법 (순자산가치법)' },
+                    { item: '주당 평가가치', value: '5,790원' },
+                    { item: '기업가치', value: '28,950백만원' },
+                    { item: '자산재평가 조정', value: '+2,100백만원' },
+                    { item: '순자산가치', value: '28,950백만원' }
+                ],
+                evalPurpose: '본 평가는 비상장기업 파인더월드의 보통주 공정가치를 산정하기 위하여 수행되었습니다. 자산 기반 접근법을 적용하여 순자산가치를 산출합니다.',
+                evalScope: '파인더월드의 보통주 5,000,000주 전체에 대한 100% 지분가치를 평가 대상으로 합니다.',
+                evalMethodology: '자산가치평가법은 기업이 보유한 자산의 공정가치에서 부채의 공정가치를 차감하여 순자산가치를 산출하는 방법입니다. 장부가 기준 자산·부채에 시가와의 차이(재평가 조정액)를 반영합니다.',
+                methodologyTitle: '자산가치평가법 (순자산가치법) 상세',
+                methodologyDesc: '자산가치평가법에 의한 기업가치 산출 과정은 다음과 같습니다:\n\n1) 장부가 기준 자산·부채 확인: 평가기준일 현재 재무상태표의 자산과 부채를 확인합니다.\n2) 자산 재평가: 주요 자산(유형자산, 투자자산 등)에 대해 시가와 장부가의 차이를 조정합니다.\n3) 순자산가치 산출: 재평가 반영 후 총자산에서 총부채를 차감하여 순자산가치를 산출합니다.\n4) 주당가치: 순자산가치를 발행주식수로 나누어 주당 평가가치를 도출합니다.',
+                assumptions: [
+                    { item: '총자산 (장부가)', value: '45,200백만원', note: '2024년말' },
+                    { item: '총부채 (장부가)', value: '16,250백만원', note: '2024년말' },
+                    { item: '장부가 순자산', value: '28,950백만원', note: '' },
+                    { item: '유형자산 재평가', value: '+1,500백만원', note: '토지·건물 시가반영' },
+                    { item: '투자자산 재평가', value: '+800백만원', note: '지분증권 시가반영' },
+                    { item: '무형자산 감액', value: '-200백만원', note: '영업권 손상' },
+                    { item: '재평가 조정 합계', value: '+2,100백만원', note: '' },
+                    { item: '발행주식수', value: '5,000,000주', note: '' }
+                ],
+                valuationProcess: `
+                    <table class="report-table">
+                        <thead><tr><th>항목</th><th class="number">장부가(백만원)</th><th class="number">재평가조정</th><th class="number">공정가치(백만원)</th></tr></thead>
+                        <tbody>
+                            <tr><td>유동자산</td><td class="number">22,600</td><td class="number">-</td><td class="number">22,600</td></tr>
+                            <tr><td>유형자산</td><td class="number">12,800</td><td class="number">+1,500</td><td class="number">14,300</td></tr>
+                            <tr><td>무형자산</td><td class="number">4,200</td><td class="number">-200</td><td class="number">4,000</td></tr>
+                            <tr><td>투자자산</td><td class="number">3,800</td><td class="number">+800</td><td class="number">4,600</td></tr>
+                            <tr><td>기타비유동자산</td><td class="number">1,800</td><td class="number">-</td><td class="number">1,800</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td><strong>총자산</strong></td><td class="number">45,200</td><td class="number">+2,100</td><td class="number"><strong>47,300</strong></td></tr>
+                            <tr><td>총부채</td><td class="number">16,250</td><td class="number">-</td><td class="number">16,250</td></tr>
+                            <tr><td colspan="2">재평가 차이 반영 전 순자산</td><td></td><td class="number">28,950</td></tr>
+                            <tr><td colspan="2"><strong>순자산가치 (재평가 반영)</strong></td><td></td><td class="number"><strong>28,950</strong></td></tr>
+                            <tr><td colspan="2">발행주식수</td><td></td><td class="number">5,000,000주</td></tr>
+                            <tr><td colspan="2"><strong>주당 평가가치</strong></td><td></td><td class="number"><strong>5,790원</strong></td></tr>
+                        </tfoot>
+                    </table>`,
+                conclusion: '자산가치평가법에 의한 파인더월드의 주당 평가가치는 5,790원으로 산출되었습니다. 장부가 기준 순자산 28,950백만원에 자산재평가 조정액 +2,100백만원을 반영한 결과입니다. 자산가치평가법은 기업의 청산가치에 가까운 보수적 평가 방법이며, 성장 잠재력이 높은 IT 기업의 경우 수익 기반 평가법 대비 낮은 가치가 산출되는 경향이 있습니다.',
+                sensitivityIntro: '아래 민감도 분석은 자산 재평가 조정 비율의 변동에 따른 주당 평가가치의 변화를 보여줍니다.',
+                sensitivityMatrix: {
+                    rowLabel: '재평가 조정비율',
+                    colLabel: '부채 변동',
+                    rows: ['-10%', '-5%', '0%', 'Base', '+5%', '+10%', '+15%'],
+                    cols: ['-5%', '-2.5%', '0%', '+2.5%', '+5%'],
+                    data: [
+                        ['5,280', '5,120', '4,960', '4,800', '4,640'],
+                        ['5,490', '5,330', '5,170', '5,010', '4,850'],
+                        ['5,700', '5,540', '5,380', '5,220', '5,060'],
+                        ['5,950', '5,790', '5,790', '5,470', '5,310'],
+                        ['6,120', '5,960', '5,800', '5,640', '5,480'],
+                        ['6,330', '6,170', '6,010', '5,850', '5,690'],
+                        ['6,540', '6,380', '6,220', '6,060', '5,900']
+                    ],
+                    baseRow: 3,
+                    baseCol: 2
+                },
+                appendixRefs: [
+                    '국토교통부 공시지가 데이터',
+                    '한국감정평가사협회 유형자산 감정평가 기준',
+                    '파인더월드 제공 자산 명세서 및 재무자료'
+                ]
+            },
+            inheritance_tax: {
+                projectId: 'FINDE-2601270534-TX',
+                reportNo: 'VL-2025-DRAFT-0534',
+                perShare: '4,622원',
+                enterprise: '23,110백만원',
+                execSummary: '상증세법평가법에 의한 파인더월드의 기업가치 평가 결과, 주당 평가가치는 4,622원, 기업가치는 23,110백만원으로 산출되었습니다. 상속세및증여세법 시행령 제54조에 따라 1주당 순손익가치(5,120원)와 1주당 순자산가치(3,628원)를 3:2 비율로 가중평균하여 산출하였습니다.',
+                execKeyItems: [
+                    { item: '평가방법', value: '상증세법평가법' },
+                    { item: '주당 평가가치', value: '4,622원' },
+                    { item: '기업가치', value: '23,110백만원' },
+                    { item: '순손익가치 가중치', value: '3 (60%)' },
+                    { item: '순자산가치 가중치', value: '2 (40%)' }
+                ],
+                evalPurpose: '본 평가는 상속세 및 증여세법에 따른 비상장주식의 보충적 평가방법을 적용하여 파인더월드의 주식 가치를 산정하기 위하여 수행되었습니다.',
+                evalScope: '파인더월드의 보통주 5,000,000주 전체에 대한 가치를 평가 대상으로 하며, 상속세및증여세법 시행령 제54조의 보충적 평가방법을 적용합니다.',
+                evalMethodology: '상증세법평가법은 상속세및증여세법 시행령 제54조에 규정된 비상장주식의 보충적 평가방법입니다. 1주당 순손익가치와 1주당 순자산가치를 3:2의 비율로 가중평균하여 주당 가치를 산출합니다. 순손익가치는 최근 3년간 순손익의 가중평균을 환원율(10%)로 나누어 산출하고, 순자산가치는 순자산을 발행주식수로 나누어 산출합니다.',
+                methodologyTitle: '상증세법 보충적 평가방법 상세',
+                methodologyDesc: '상증세법평가법에 의한 주식가치 산출 과정은 다음과 같습니다:\n\n1) 순손익가치 산출: 최근 3개 사업연도의 순손익을 1:2:3 비율로 가중평균한 금액을 순손익환원율(10%)로 나누어 산출합니다.\n2) 순자산가치 산출: 평가기준일 현재 자산총액에서 부채총액을 차감한 순자산가액을 발행주식수로 나누어 산출합니다.\n3) 가중평균: 순손익가치(3)와 순자산가치(2)를 가중평균합니다.\n4) 1주당 가치 = (순손익가치 x 3 + 순자산가치 x 2) / 5',
+                assumptions: [
+                    { item: '1주당 순손익가치', value: '5,120원', note: '순손익/환원율/주식수' },
+                    { item: '1주당 순자산가치', value: '3,628원', note: '순자산/주식수' },
+                    { item: '순손익가치 가중치', value: '3 (60%)', note: '시행령 제54조' },
+                    { item: '순자산가치 가중치', value: '2 (40%)', note: '시행령 제54조' },
+                    { item: '순손익 환원율', value: '10.0%', note: '시행령 규정' },
+                    { item: '최근 3년 가중평균이익', value: '2,560백만원', note: '1:2:3 가중' },
+                    { item: '순자산가액', value: '18,140백만원', note: '평가기준일' },
+                    { item: '발행주식수', value: '5,000,000주', note: '' }
+                ],
+                valuationProcess: `
+                    <p class="report-text"><strong>순손익가치 산출</strong></p>
+                    <table class="report-table">
+                        <thead><tr><th>사업연도</th><th class="number">당기순이익(백만원)</th><th class="number">가중치</th><th class="number">가중금액(백만원)</th></tr></thead>
+                        <tbody>
+                            <tr><td>2022년</td><td class="number">1,943</td><td class="number">1</td><td class="number">1,943</td></tr>
+                            <tr><td>2023년</td><td class="number">3,210</td><td class="number">2</td><td class="number">6,420</td></tr>
+                            <tr><td>2024년</td><td class="number">4,480</td><td class="number">3</td><td class="number">13,440</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>합계</td><td></td><td class="number">6</td><td class="number">21,803</td></tr>
+                            <tr><td colspan="3">가중평균 순손익</td><td class="number">3,634</td></tr>
+                            <tr><td colspan="3">순손익환원율</td><td class="number">10%</td></tr>
+                            <tr><td colspan="3">순손익가치 총액</td><td class="number">36,340</td></tr>
+                            <tr><td colspan="3"><strong>1주당 순손익가치</strong></td><td class="number"><strong>5,120원</strong></td></tr>
+                        </tfoot>
+                    </table>
+                    <p class="report-text" style="margin-top:24px"><strong>순자산가치 산출</strong></p>
+                    <table class="report-table">
+                        <thead><tr><th>항목</th><th class="number">금액(백만원)</th></tr></thead>
+                        <tbody>
+                            <tr><td>자산총액</td><td class="number">34,390</td></tr>
+                            <tr><td>부채총액</td><td class="number">16,250</td></tr>
+                            <tr><td>순자산가액</td><td class="number">18,140</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>발행주식수</td><td class="number">5,000,000주</td></tr>
+                            <tr><td><strong>1주당 순자산가치</strong></td><td class="number"><strong>3,628원</strong></td></tr>
+                        </tfoot>
+                    </table>
+                    <p class="report-text" style="margin-top:24px"><strong>가중평균 (최종 산출)</strong></p>
+                    <table class="report-table">
+                        <thead><tr><th>항목</th><th class="number">1주당 가치</th><th class="number">가중치</th><th class="number">가중금액</th></tr></thead>
+                        <tbody>
+                            <tr><td>순손익가치</td><td class="number">5,120원</td><td class="number">3</td><td class="number">15,360원</td></tr>
+                            <tr><td>순자산가치</td><td class="number">3,628원</td><td class="number">2</td><td class="number">7,256원</td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td>합계</td><td></td><td class="number">5</td><td class="number">22,616원</td></tr>
+                            <tr><td colspan="3"><strong>1주당 평가가치</strong></td><td class="number"><strong>4,622원</strong></td></tr>
+                        </tfoot>
+                    </table>`,
+                conclusion: '상증세법평가법에 의한 파인더월드의 주당 평가가치는 4,622원으로 산출되었습니다. 순손익가치(3)와 순자산가치(2)를 가중평균한 결과이며, 상속세및증여세법 시행령 제54조에 따라 산정하였습니다. 순손익가치(5,120원)가 순자산가치(3,628원)보다 높은 것은 기업의 수익창출력이 자산 규모 대비 양호함을 의미합니다.',
+                sensitivityIntro: '아래 민감도 분석은 순손익가치와 순자산가치의 변동에 따른 주당 평가가치의 변화를 보여줍니다.',
+                sensitivityMatrix: {
+                    rowLabel: '순손익 변동',
+                    colLabel: '순자산 변동',
+                    rows: ['-20%', '-15%', '-10%', 'Base', '+10%', '+15%', '+20%'],
+                    cols: ['-10%', '-5%', '0%', '+5%', '+10%'],
+                    data: [
+                        ['3,486', '3,559', '3,632', '3,705', '3,778'],
+                        ['3,640', '3,713', '3,786', '3,859', '3,932'],
+                        ['3,794', '3,867', '3,940', '4,013', '4,086'],
+                        ['4,260', '4,333', '4,622', '4,479', '4,552'],
+                        ['4,568', '4,641', '4,714', '4,787', '4,860'],
+                        ['4,722', '4,795', '4,868', '4,941', '5,014'],
+                        ['4,876', '4,949', '5,022', '5,095', '5,168']
+                    ],
+                    baseRow: 3,
+                    baseCol: 2
+                },
+                appendixRefs: [
+                    '상속세및증여세법 시행령 제54조 (비상장주식의 보충적 평가방법)',
+                    '국세청 비상장주식 평가 관련 예규 및 해석',
+                    '파인더월드 제공 재무자료 (최근 3개 사업연도)'
+                ]
+            }
+        };
+
+        // ====== 렌더링 함수 ======
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function renderSensitivityMatrix(matrix) {
+            let html = `<table class="sensitivity-matrix">
+                <thead><tr><th>${matrix.rowLabel} \\ ${matrix.colLabel}</th>`;
+            matrix.cols.forEach((c, ci) => {
+                html += `<th${ci === matrix.baseCol ? ' class="base-case"' : ''}>${c}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+            matrix.rows.forEach((r, ri) => {
+                html += `<tr><td class="axis-label">${r}</td>`;
+                matrix.data[ri].forEach((val, ci) => {
+                    const isBase = ri === matrix.baseRow && ci === matrix.baseCol;
+                    html += `<td${isBase ? ' class="base-case"' : ''}>${val}원</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function loadPage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = urlParams.get('projectId');
+            const method = urlParams.get('method');
+
+            if (!method) { alert('평가법 정보가 없습니다.'); return; }
+            const data = MOCK_DATA[method];
+            if (!data) { alert('지원하지 않는 평가법입니다.'); return; }
+
+            const pid = projectId || data.projectId;
+
+            // Cover
+            document.getElementById('coverMethodName').textContent = METHOD_FULL_NAMES[method] + ' (초안)';
+            document.getElementById('coverCompanyName').textContent = COMMON.company;
+            document.getElementById('coverBaseDate').textContent = COMMON.baseDate;
+            document.getElementById('coverWriteDate').textContent = COMMON.writeDate;
+            document.getElementById('coverMethod').textContent = METHOD_NAMES[method];
+            document.getElementById('coverReportNo').textContent = data.reportNo;
+
+            // Section 1: Executive Summary
+            document.getElementById('execSummaryText').textContent = data.execSummary;
+            document.getElementById('execPerShare').textContent = data.perShare;
+            document.getElementById('execEnterprise').textContent = data.enterprise;
+            const ekb = document.getElementById('execKeyBody');
+            ekb.innerHTML = data.execKeyItems.map(i => `<tr><td>${i.item}</td><td class="number">${i.value}</td></tr>`).join('');
+
+            // Section 2: Evaluation Overview
+            document.getElementById('evalPurpose').textContent = data.evalPurpose;
+            document.getElementById('evalScope').textContent = data.evalScope;
+            document.getElementById('evalMethodology').textContent = data.evalMethodology;
+            document.getElementById('evalBaseDate').textContent = `본 평가의 기준일은 ${COMMON.baseDate}이며, 평가기준일 현재의 재무상태 및 시장 상황을 기반으로 합니다.`;
+
+            // Section 3: Company Analysis
+            const companyRows = [
+                ['회사명', COMMON.company],
+                ['대표이사', COMMON.ceo],
+                ['설립일', COMMON.established],
+                ['업종', COMMON.industry],
+                ['본사 소재지', COMMON.address],
+                ['임직원 수', COMMON.employees],
+                ['발행주식수', COMMON.shares],
+                ['자본금', COMMON.capital + '백만원']
+            ];
+            document.getElementById('companyInfoBody').innerHTML = companyRows.map(r =>
+                `<tr><th style="width:140px">${r[0]}</th><td>${r[1]}</td></tr>`
+            ).join('');
+            document.getElementById('businessDesc').textContent = COMMON.businessDesc;
+            document.getElementById('industryDesc').textContent = COMMON.industryDesc;
+
+            // Section 4: Financial Analysis
+            const f = COMMON.financial;
+            const finRows = [
+                ['매출액', f.revenue],
+                ['매출원가', f.cogs],
+                ['매출총이익', f.grossProfit],
+                ['판관비', f.opex],
+                ['영업이익', f.opIncome],
+                ['당기순이익', f.netIncome],
+                ['총자산', f.totalAsset],
+                ['총부채', f.totalDebt],
+                ['자기자본', f.equity]
+            ];
+            document.getElementById('financialSummaryBody').innerHTML = finRows.map(r =>
+                `<tr><td>${r[0]}</td>${r[1].map(v => `<td class="number">${formatNumber(v)}</td>`).join('')}</tr>`
+            ).join('');
+
+            const rt = COMMON.ratios;
+            const ratioRows = [
+                ['매출총이익률', rt.grossMargin],
+                ['영업이익률', rt.opMargin],
+                ['순이익률', rt.netMargin],
+                ['ROE', rt.roe],
+                ['부채비율', rt.debtRatio],
+                ['유동비율', rt.currentRatio]
+            ];
+            document.getElementById('financialRatioBody').innerHTML = ratioRows.map(r =>
+                `<tr><td>${r[0]}</td>${r[1].map(v => `<td class="number">${v}</td>`).join('')}</tr>`
+            ).join('');
+            document.getElementById('profitabilityText').textContent = COMMON.profitability;
+
+            // Section 5: Methodology
+            document.getElementById('methodologyTitle').textContent = data.methodologyTitle;
+            document.getElementById('methodologyDesc').style.whiteSpace = 'pre-line';
+            document.getElementById('methodologyDesc').textContent = data.methodologyDesc;
+            document.getElementById('assumptionsBody').innerHTML = data.assumptions.map(a =>
+                `<tr><td>${a.item}</td><td class="number">${a.value}</td><td>${a.note}</td></tr>`
+            ).join('');
+
+            // Section 6: Valuation Results
+            document.getElementById('valuationProcess').innerHTML = data.valuationProcess;
+            document.getElementById('finalPerShare').textContent = data.perShare;
+            document.getElementById('finalEnterprise').textContent = data.enterprise;
+            document.getElementById('conclusionText').textContent = data.conclusion;
+
+            // Section 7: Sensitivity Analysis
+            document.getElementById('sensitivityIntro').textContent = data.sensitivityIntro;
+            document.getElementById('sensitivityContent').innerHTML = renderSensitivityMatrix(data.sensitivityMatrix);
+
+            // Section 8: Appendix
+            document.getElementById('appendixRefs').innerHTML = '<ul style="margin-left:20px;font-size:14px;color:#374151;line-height:2">' +
+                data.appendixRefs.map(r => `<li>${r}</li>`).join('') + '</ul>';
+            document.getElementById('disclaimerText').textContent = COMMON.disclaimer;
+
+            // Revision link
+            document.getElementById('btnRevision').href = `revision-request.html?projectId=${pid}&method=${method}`;
+
+            // Show content
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        }
+
+        // Confirm button
+        document.getElementById('btnConfirm').addEventListener('click', () => {
+            if (confirm('평가보고서 초안 확인을 완료하시겠습니까?\n\n확인 후 최종 보고서 작성이 진행됩니다.')) {
+                alert('초안 확인이 완료되었습니다.\n\n최종 보고서 작성이 진행됩니다.\n완료되면 알려드리겠습니다.');
+            }
+        });
+
+        // Smooth scroll for TOC
+        document.querySelectorAll('.toc-item a').forEach(a => {
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        loadPage();
+    </script>
+</body>
+</html>

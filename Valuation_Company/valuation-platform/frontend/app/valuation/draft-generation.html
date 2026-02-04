@@ -551,7 +551,7 @@
                 </div>
                 <div class="notice-text">
                     AI가 제출하신 재무제표와 사업계획서를 분석하여 평가보고서 초안을 자동으로 작성합니다.
-                    초안 완료 후 공인회계사의 검토를 거쳐 정확성이 보장됩니다.
+                    공인회계사 검토를 거친 데이터를 바탕으로 정확성이 보장됩니다.
                 </div>
             </div>
 
@@ -713,11 +713,12 @@
             const methodName = METHOD_NAMES[method] || method;
 
             // 임시 데이터 (실제로는 DB에서 가져와야 함)
-            document.getElementById('project-company-name').textContent = '(주)테크이노베이션';
+            document.getElementById('project-company-name').textContent = '(주)파인더월드';
             document.getElementById('project-id').textContent = projectId;
             document.getElementById('method-name').textContent = methodName;
-            document.getElementById('created-date').textContent = '2026.01.15';
-            document.getElementById('evaluation-date').textContent = '2025.12.31';
+            const today = new Date();
+            document.getElementById('created-date').textContent = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+            document.getElementById('evaluation-date').textContent = `${today.getFullYear()-1}.12.31`;
         }
 
         // 보고서 섹션 렌더링

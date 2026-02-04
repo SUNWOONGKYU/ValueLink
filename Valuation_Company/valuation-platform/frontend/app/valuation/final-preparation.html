@@ -598,7 +598,7 @@
     <div class="hero-section">
         <div class="hero-content">
             <h1 class="hero-title">평가보고서 최종안 작성</h1>
-            <p class="hero-subtitle">담당 공인회계사가 수정 사항을 반영하여 최종 보고서를 작성합니다 (약 3-5 영업일 소요)</p>
+            <p class="hero-subtitle">담당 공인회계사가 수정 사항을 반영하여 최종 보고서를 작성합니다 (48시간 이내)</p>
             <div class="hero-badge">
                 <span>프로젝트 ID: </span>
                 <span id="hero-project-id">-</span>
@@ -840,11 +840,12 @@
             const methodName = METHOD_NAMES[method] || method;
 
             // 임시 데이터 (실제로는 DB에서 가져와야 함)
-            document.getElementById('project-company-name').textContent = '(주)테크이노베이션';
+            document.getElementById('project-company-name').textContent = '(주)파인더월드';
             document.getElementById('project-id').textContent = projectId;
             document.getElementById('project-number').textContent = projectId;
             document.getElementById('method-name').textContent = methodName;
-            document.getElementById('evaluation-date').textContent = '2025.12.31';
+            const today = new Date();
+            document.getElementById('evaluation-date').textContent = `${today.getFullYear()-1}.12.31`;
         }
 
         // 수정 요청 사항 로드
@@ -896,7 +897,7 @@
             const today = new Date();
             const startDate = new Date(today);
             const completionDate = new Date(today);
-            completionDate.setDate(completionDate.getDate() + 5); // 5 영업일 후
+            completionDate.setDate(completionDate.getDate() + 2); // 48시간 이내
 
             const formatDate = (date) => {
                 return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;

@@ -445,6 +445,13 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 빈 상태 -->
+            <div id="emptyState" style="display: none; text-align: center; padding: 60px 20px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">📊</div>
+                <p style="font-size: 16px; color: #6B7280; margin-bottom: 12px;">현재 진행 중인 평가가 없습니다.</p>
+                <p style="color: #9CA3AF; font-size: 14px;">프로젝트가 이 단계에 도달하면 자동으로 평가가 시작됩니다.</p>
+            </div>
         </main>
 
     </div>
@@ -529,8 +536,8 @@
                 const method = urlParams.get('method');
 
                 if (!projectId || !method) {
-                    alert('프로젝트 정보가 없습니다.');
-                    window.location.href = '../valuation.html';
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
                     return;
                 }
 
@@ -543,7 +550,8 @@
 
                 if (error || !project) {
                     console.error('프로젝트 조회 실패:', error);
-                    alert('프로젝트를 찾을 수 없습니다.');
+                    document.getElementById('loadingState').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
                     return;
                 }
 

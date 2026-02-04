@@ -197,15 +197,18 @@ function getStepUrl(stepInfo, method, projectId) {
             return null;
 
         case 'data-collection':
+            // 6단계: 데이터 수집
+            return basePath + `valuation/data-collection.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
+
         case 'evaluation-progress':
-            // 5~6단계: 데이터 수집, 평가 진행
-            return basePath + `valuation/evaluation-progress.html${projectId ? '?projectId=' + projectId : ''}`;
+            // 7단계: 평가 진행
+            return basePath + `valuation/evaluation-progress.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'accountant-review':
         case 'draft-generation':
         case 'final-preparation':
-            // 7, 8, 11단계: 공인회계사 검토, 초안 생성, 최종안 작성
-            return basePath + `valuation/${page}.html${projectId ? '?projectId=' + projectId : ''}`;
+            // 8, 9, 12단계: 공인회계사 검토, 초안 생성, 최종안 작성
+            return basePath + `valuation/${page}.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'report-draft':
             // 10단계: 평가보고서 초안 확인
@@ -216,20 +219,20 @@ function getStepUrl(stepInfo, method, projectId) {
             return basePath + `valuation/report-final.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'revision-request':
-            // 10단계: 수정 요청
-            return basePath + `valuation/revision-request.html${projectId ? '?projectId=' + projectId : ''}`;
+            // 11단계: 수정 요청
+            return basePath + `valuation/revision-request.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'deposit-payment':
-            // 13단계: 계약금 결제하기
-            return basePath + `valuation/deposit-payment.html${projectId ? '?projectId=' + projectId : ''}`;
+            // 4단계: 계약금 결제하기
+            return basePath + `valuation/deposit-payment.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'balance-payment':
             // 14단계: 잔금 결제하기
-            return basePath + `valuation/balance-payment.html${projectId ? '?projectId=' + projectId : ''}`;
+            return basePath + `valuation/balance-payment.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         case 'report-download':
             // 15단계: 평가보고서 수령
-            return basePath + `valuation/report-download.html${projectId ? '?projectId=' + projectId : ''}`;
+            return basePath + `valuation/report-download.html${projectId ? '?projectId=' + projectId + (method ? '&method=' + method : '') : (method ? '?method=' + method : '')}`;
 
         default:
             return null;

@@ -242,6 +242,21 @@
             background: #1E40AF;
         }
 
+        /* Approval Banner */
+        .approval-banner {
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #065F46;
+            font-weight: 500;
+        }
+
         /* Loading */
         .loading {
             text-align: center;
@@ -341,8 +356,8 @@
             <!-- 빈 상태 -->
             <div id="emptyState" class="empty-state" style="display: none;">
                 <div class="empty-state-icon">📋</div>
-                <p class="empty-state-text">프로젝트를 찾을 수 없습니다.</p>
-                <a href="./projects/project-create.html" class="btn-primary">새 프로젝트 만들기</a>
+                <p class="empty-state-text">아직 승인 대기 중인 프로젝트가 없습니다.</p>
+                <a href="./service-guide.html" class="btn-primary">평가 신청 페이지로 →</a>
             </div>
         </main>
 
@@ -476,8 +491,12 @@
                 methodItem.className = `method-item ${info.status}`;
 
                 let actionButton = '';
+                let approvalBanner = '';
                 if (info.status === STATUS.APPROVED) {
-                    // 승인됨 → 선금 입금하기 버튼 (Step 3.5)
+                    // 승인됨 → 승인 완료 배너 + 선금 입금하기 버튼 (Step 3.5)
+                    approvalBanner = `
+                        <div class="approval-banner">✅ 관리자 승인이 완료되었습니다</div>
+                    `;
                     actionButton = `
                         <a href="./valuation/deposit-payment.html?projectId=${projectId}&method=${method}"
                            class="btn-proceed">
@@ -496,6 +515,7 @@
                             </div>
                         </div>
                     </div>
+                    ${approvalBanner}
                     ${actionButton}
                 `;
 

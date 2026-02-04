@@ -48,17 +48,9 @@
             flex: 1;
         }
 
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         @media (max-width: 1024px) {
             .page-container {
                 flex-direction: column;
-            }
-            .sidebar-wrapper {
-                width: 100%;
             }
         }
         .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
@@ -130,18 +122,7 @@
         .footer-text { font-size: 13px; opacity: 0.7; }
         .hidden-input { display: none; }
         .calc-section { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .btn-calculate { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-green); border: none; border-radius: 10px; cursor: pointer; }
-        .btn-calculate:hover { background: #15803D; }
-        .result-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .result-modal.show { display: flex; }
-        .result-content { background: var(--white); border-radius: 16px; padding: 40px; max-width: 600px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .result-title { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 24px; text-align: center; }
-        .result-grid { display: grid; gap: 16px; margin-bottom: 24px; }
-        .result-item { padding: 16px; background: var(--bg-light); border-radius: 8px; }
-        .result-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; }
-        .result-value { font-size: 24px; font-weight: 700; color: var(--deep-blue); }
-        .result-value.highlight { font-size: 32px; color: var(--deep-green); }
-        .btn-close-modal { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 10px; cursor: pointer; }
+        /* btn-calculate, result-modal CSS removed - calculation done internally */
         /* MOBILE RESPONSIVE */
         @media (max-width: 768px) {
             /* Header */
@@ -307,8 +288,7 @@
             }
 
             .btn-save-draft,
-            .btn-submit,
-            .btn-calculate {
+            .btn-submit {
                 width: 100%;
                 padding: 14px;
                 text-align: center;
@@ -326,24 +306,6 @@
 
             .notice-text {
                 font-size: 12px;
-            }
-
-            /* Result Modal */
-            .result-content {
-                padding: 24px;
-                width: 95%;
-            }
-
-            .result-title {
-                font-size: 20px;
-            }
-
-            .result-value {
-                font-size: 20px;
-            }
-
-            .result-value.highlight {
-                font-size: 28px;
             }
 
             /* Footer */
@@ -407,7 +369,7 @@
             <div class="project-meta">
                 <div class="meta-item">
                     <div class="meta-label">회사명</div>
-                    <div class="meta-value" id="company-name">FinderWorld</div>
+                    <div class="meta-value" id="company-name">파인더월드</div>
                 </div>
                 <div class="meta-item">
                     <div class="meta-label">평가 방법</div>
@@ -557,28 +519,28 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명 <span class="required">*</span></label>
-                    <input type="text" class="form-input" value="삼성전자(주)" readonly>
+                    <input type="text" class="form-input" value="파인더월드" readonly>
                 </div>
                 <div class="form-group">
                     <label class="form-label">발행주식수 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="shares-outstanding" placeholder="예: 1,000,000">
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="예: 1,000,000" value="5000000">
                 </div>
                 <div class="form-group">
                     <label class="form-label">예상 매출성장률 (연평균)</label>
-                    <input type="text" class="form-input" id="revenue-growth" placeholder="예: 15%">
+                    <input type="text" class="form-input" id="revenue-growth" placeholder="예: 15%" value="40">
                     <span class="form-hint">향후 5년 연평균 성장률</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">목표 영업이익률</label>
-                    <input type="text" class="form-input" id="operating-margin" placeholder="예: 12%">
+                    <input type="text" class="form-input" id="operating-margin" placeholder="예: 12%" value="16">
                 </div>
                 <div class="form-group">
                     <label class="form-label">현재 차입금</label>
-                    <input type="text" class="form-input" id="total-debt" placeholder="백만원">
+                    <input type="text" class="form-input" id="total-debt" placeholder="백만원" value="7000000000">
                 </div>
                 <div class="form-group">
                     <label class="form-label">현재 현금성자산</label>
-                    <input type="text" class="form-input" id="cash" placeholder="백만원">
+                    <input type="text" class="form-input" id="cash" placeholder="백만원" value="8000000000">
                 </div>
                 <div class="form-group full-width">
                     <label class="form-label">추가 요청사항</label>
@@ -604,28 +566,26 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">최근 연도 매출액 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="current-revenue" placeholder="백만원">
+                    <input type="text" class="form-input" id="current-revenue" placeholder="백만원" value="24500000000">
                     <span class="form-hint">가장 최근 회계연도 매출액</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">WACC (가중평균자본비용) <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="wacc" placeholder="예: 10%">
+                    <input type="text" class="form-input" id="wacc" placeholder="예: 10%" value="11.59">
                     <span class="form-hint">할인율로 사용됩니다</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">FCF 마진율 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="fcf-margin" placeholder="예: 8%">
+                    <input type="text" class="form-input" id="fcf-margin" placeholder="예: 8%" value="12">
                     <span class="form-hint">잉여현금흐름 / 매출액</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">영구성장률 <span class="required">*</span></label>
-                    <input type="text" class="form-input" id="terminal-growth" placeholder="예: 2%">
+                    <input type="text" class="form-input" id="terminal-growth" placeholder="예: 2%" value="2.5">
                     <span class="form-hint">Terminal Value 계산에 사용</span>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 32px;">
-                <button class="btn-calculate" onclick="calculateDCF()">💰 기업가치 계산하기</button>
-            </div>
+            <!-- 기업가치 계산은 내부 시스템에서 수행됩니다 -->
         </section>
 
         <section class="submit-section">
@@ -658,10 +618,6 @@
         </section>
         </main>
 
-        <!-- 사이드바 -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트 주입 -->
-        </aside>
     </div>
 
     <footer>
@@ -671,36 +627,7 @@
         </div>
     </footer>
 
-    <!-- Result Modal -->
-    <div class="result-modal" id="resultModal">
-        <div class="result-content">
-            <h2 class="result-title">📊 DCF 평가 결과</h2>
-            <div class="result-grid">
-                <div class="result-item">
-                    <div class="result-label">기업가치 (Enterprise Value)</div>
-                    <div class="result-value" id="enterprise-value">-</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">순차입금 (Net Debt)</div>
-                    <div class="result-value" id="net-debt">-</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">주주가치 (Equity Value)</div>
-                    <div class="result-value highlight" id="equity-value">-</div>
-                </div>
-                <div class="result-item">
-                    <div class="result-label">주당가치 (Per Share)</div>
-                    <div class="result-value highlight" id="value-per-share">-</div>
-                </div>
-            </div>
-            <div class="notice-box info" style="margin-bottom: 24px;">
-                <div class="notice-text" style="font-size: 12px;">
-                    ℹ️ 이 계산은 간편 계산 도구를 통한 예상치입니다. 실제 평가에는 업로드하신 재무제표와 사업계획서를 바탕으로 더욱 정밀한 분석이 진행됩니다.
-                </div>
-            </div>
-            <button class="btn-close-modal" onclick="closeResultModal()">확인</button>
-        </div>
-    </div>
+    <!-- Result Modal (removed - calculation done internally) -->
 
     <!-- 헤더 로드 스크립트 -->
     <script>
@@ -749,134 +676,7 @@
 
         const uploadedFiles = { financial: [], business_plan: [], shareholder: [], capex: [], working_capital: [], others: [] };
 
-        // DCF 계산 함수
-        async function calculateDCF() {
-            // 입력값 가져오기
-            const currentRevenue = parseFloat(document.getElementById('current-revenue').value.replace(/,/g, ''));
-            const revenueGrowth = parseFloat(document.getElementById('revenue-growth').value.replace('%', '')) / 100;
-            const wacc = parseFloat(document.getElementById('wacc').value.replace('%', '')) / 100;
-            const fcfMargin = parseFloat(document.getElementById('fcf-margin').value.replace('%', '')) / 100;
-            const terminalGrowth = parseFloat(document.getElementById('terminal-growth').value.replace('%', '')) / 100;
-            const sharesOutstanding = parseFloat(document.getElementById('shares-outstanding').value.replace(/,/g, ''));
-            const totalDebt = parseFloat(document.getElementById('total-debt').value.replace(/,/g, '')) || 0;
-            const cash = parseFloat(document.getElementById('cash').value.replace(/,/g, '')) || 0;
-
-            // 입력 검증
-            if (isNaN(currentRevenue) || isNaN(revenueGrowth) || isNaN(wacc) || isNaN(fcfMargin) ||
-                isNaN(terminalGrowth) || isNaN(sharesOutstanding)) {
-                alert('필수 입력값을 모두 입력해주세요.');
-                return;
-            }
-
-            // 5년 FCF 계산
-            let totalPV = 0;
-            let revenue = currentRevenue;
-
-            for (let year = 1; year <= 5; year++) {
-                revenue = revenue * (1 + revenueGrowth);
-                const fcf = revenue * fcfMargin;
-                const pv = fcf / Math.pow(1 + wacc, year);
-                totalPV += pv;
-            }
-
-            // Terminal Value 계산
-            const terminalRevenue = revenue * (1 + revenueGrowth);
-            const terminalFCF = terminalRevenue * fcfMargin;
-            const terminalValue = terminalFCF * (1 + terminalGrowth) / (wacc - terminalGrowth);
-            const pvTerminalValue = terminalValue / Math.pow(1 + wacc, 5);
-
-            // 기업가치 (Enterprise Value)
-            const enterpriseValue = totalPV + pvTerminalValue;
-
-            // 순차입금 (Net Debt)
-            const netDebt = totalDebt - cash;
-
-            // 주주가치 (Equity Value)
-            const equityValue = enterpriseValue - netDebt;
-
-            // 주당가치
-            const valuePerShare = equityValue / sharesOutstanding;
-
-            // 결과 표시
-            document.getElementById('enterprise-value').textContent = formatNumber(Math.round(enterpriseValue)) + ' 백만원';
-            document.getElementById('net-debt').textContent = formatNumber(Math.round(netDebt)) + ' 백만원';
-            document.getElementById('equity-value').textContent = formatNumber(Math.round(equityValue)) + ' 백만원';
-            document.getElementById('value-per-share').textContent = formatNumber(Math.round(valuePerShare)) + ' 원';
-
-            // 모달 표시
-            document.getElementById('resultModal').classList.add('show');
-
-            // DB에 저장
-            try {
-                const { data: existingResult, error: checkError } = await supabase
-                    .from('valuation_results')
-                    .select('*')
-                    .eq('project_id', projectId)
-                    .single();
-
-                if (existingResult) {
-                    // 업데이트
-                    const { error: updateError } = await supabase
-                        .from('valuation_results')
-                        .update({
-                            enterprise_value: Math.round(enterpriseValue),
-                            value_per_share: Math.round(valuePerShare),
-                            calculation_params: {
-                                current_revenue: currentRevenue,
-                                revenue_growth: revenueGrowth,
-                                wacc: wacc,
-                                fcf_margin: fcfMargin,
-                                terminal_growth: terminalGrowth,
-                                total_debt: totalDebt,
-                                cash: cash,
-                                net_debt: netDebt,
-                                equity_value: equityValue
-                            },
-                            updated_at: new Date().toISOString()
-                        })
-                        .eq('project_id', projectId);
-
-                    if (updateError) {
-                        console.error('평가 결과 업데이트 실패:', updateError);
-                    } else {
-                        console.log('평가 결과가 업데이트되었습니다.');
-                    }
-                } else {
-                    // 신규 생성
-                    const { error: insertError } = await supabase
-                        .from('valuation_results')
-                        .insert({
-                            project_id: projectId,
-                            method: 'dcf',
-                            enterprise_value: Math.round(enterpriseValue),
-                            value_per_share: Math.round(valuePerShare),
-                            calculation_params: {
-                                current_revenue: currentRevenue,
-                                revenue_growth: revenueGrowth,
-                                wacc: wacc,
-                                fcf_margin: fcfMargin,
-                                terminal_growth: terminalGrowth,
-                                total_debt: totalDebt,
-                                cash: cash,
-                                net_debt: netDebt,
-                                equity_value: equityValue
-                            }
-                        });
-
-                    if (insertError) {
-                        console.error('평가 결과 저장 실패:', insertError);
-                    } else {
-                        console.log('평가 결과가 저장되었습니다.');
-                    }
-                }
-            } catch (error) {
-                console.error('DB 작업 중 오류:', error);
-            }
-        }
-
-        function closeResultModal() {
-            document.getElementById('resultModal').classList.remove('show');
-        }
+        // calculateDCF 및 resultModal 제거됨 - 기업가치 계산은 내부 시스템에서 수행
 
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -962,15 +762,10 @@
             if (confirm('자료를 제출하시겠습니까?')) {
                 alert('자료가 성공적으로 제출되었습니다.');
                 // customer-portal.html로 리다이렉트
-                window.location.href = 'customer-portal.html';
+                window.location.href = '../../customer/customer-portal.html';
             }
         });
     </script>
 
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
-        injectSidebar('sidebar-container', 5, 'in_progress', 'dcf', null);
-    </script>
 </body>
 </html>
