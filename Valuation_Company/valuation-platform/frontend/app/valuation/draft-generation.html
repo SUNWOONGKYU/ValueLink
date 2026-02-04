@@ -596,13 +596,12 @@
                 console.warn('프로젝트 DB 조회 실패, 기본값 사용:', e);
             }
 
-            // Fallback
-            document.getElementById('infoCompany').textContent = '(주)파인더월드';
+            // Fallback (DB 조회 실패 시 기본값)
+            document.getElementById('infoCompany').textContent = '-';
             document.getElementById('infoProjectId').textContent = projectId;
             document.getElementById('infoMethod').textContent = METHOD_NAMES[method] || method;
-            const today = new Date();
-            document.getElementById('infoBaseDate').textContent = `${today.getFullYear()-1}.12.31`;
-            document.getElementById('infoAccountant').textContent = '선웅규 회계사';
+            document.getElementById('infoBaseDate').textContent = '-';
+            document.getElementById('infoAccountant').textContent = '-';
         }
 
         // ====== 섹션 데이터 로드 ======
