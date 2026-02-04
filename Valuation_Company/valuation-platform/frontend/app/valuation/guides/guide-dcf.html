@@ -238,20 +238,10 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
         }
 
@@ -313,10 +303,6 @@
 
             .result-value {
                 font-size: 24px;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
         }
     </style>
@@ -685,31 +671,31 @@
 
                 <div class="input-group">
                     <label class="input-label">추정기간 FCFF 합계 (억원)</label>
-                    <input type="number" id="fcfSum" class="input-field" placeholder="예: 534" step="1">
+                    <input type="number" id="fcfSum" class="input-field" placeholder="예: 534" step="1" value="199">
                     <div class="input-hint">추정기간(예: 5년) 동안의 FCFF 현재가치 합계</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">Terminal Value 현재가치 (억원)</label>
-                    <input type="number" id="tvPv" class="input-field" placeholder="예: 1162" step="1">
+                    <input type="number" id="tvPv" class="input-field" placeholder="예: 1162" step="1" value="463">
                     <div class="input-hint">Terminal Value를 현재가치로 할인한 값</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">순부채 (억원)</label>
-                    <input type="number" id="netDebt" class="input-field" placeholder="예: 650" step="1">
+                    <input type="number" id="netDebt" class="input-field" placeholder="예: 650" step="1" value="-10">
                     <div class="input-hint">총차입금 - 현금및현금성자산 - 단기금융상품</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">비영업자산 (억원)</label>
-                    <input type="number" id="nonOperatingAssets" class="input-field" placeholder="예: 120" step="1">
+                    <input type="number" id="nonOperatingAssets" class="input-field" placeholder="예: 120" step="1" value="0">
                     <div class="input-hint">투자부동산, 상장주식 투자 등 영업과 무관한 자산</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">발행주식수 (만주)</label>
-                    <input type="number" id="sharesOutstanding" class="input-field" placeholder="예: 200" step="1">
+                    <input type="number" id="sharesOutstanding" class="input-field" placeholder="예: 200" step="1" value="500">
                     <div class="input-hint">총 발행주식수 (단위: 만주)</div>
                 </div>
 
@@ -725,10 +711,6 @@
             </div>
         </div>
 
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <script>
@@ -748,22 +730,6 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
-    </script>
-
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
-
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar(
-            'sidebar-container',
-            5,                  // 5단계 (평가 기초자료 제출)
-            'in_progress',      // 상태: 진행 중
-            'dcf',              // DCF 평가법
-            'FINDE-2601270530-DC',  // 프로젝트 ID (FinderWorld - DCF)
-            5,                  // startStep: 5단계부터 (기초자료 제출부터)
-            15                  // endStep: 15단계까지
-        );
     </script>
 
     <script>
@@ -809,6 +775,9 @@
                 });
             });
         });
+    </script>
+    <script>
+    window.addEventListener('load', function() { calculateDcfValuation(); });
     </script>
 </body>
 </html>

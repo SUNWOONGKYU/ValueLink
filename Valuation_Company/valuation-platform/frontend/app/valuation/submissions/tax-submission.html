@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상증법 평가 - 자료 제출 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>상증세법 평가 - 자료 제출 | ValueLink</title>
     
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../../styles/mobile-optimize.css">
@@ -306,13 +307,13 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) 상증법 평가</h1>
-                    <span class="project-id">SAMSU-2501191430-TX</span>
+                    <h1 class="project-title">파인더월드 상증세법 평가</h1>
+                    <span class="project-id">FINDE-2601270534-TX</span>
                 </div>
                 <div class="project-status"><span>&#128196;</span><span>자료 수집중</span></div>
             </div>
             <div class="project-meta">
-                <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">상증법 (보충적 평가)</div></div>
+                <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">상증세법 (보충적 평가)</div></div>
                 <div class="meta-item"><div class="meta-label">신청일</div><div class="meta-value">2025.01.19</div></div>
                 <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">박회계 회계사</div></div>
                 <div class="meta-item"><div class="meta-label">자료 제출 기한</div><div class="meta-value" style="color: var(--error);">2025.01.26</div></div>
@@ -320,7 +321,7 @@
         </section>
 
         <div class="notice-box">
-            <div class="notice-title"><span>&#9888;&#65039;</span>상증법 평가를 위한 자료 안내</div>
+            <div class="notice-title"><span>&#9888;&#65039;</span>상증세법 평가를 위한 자료 안내</div>
             <div class="notice-text">상속세 및 증여세법에 따른 비상장주식 평가를 위해 <strong>최근 3개년 재무제표</strong>와 <strong>세무조정계산서</strong>가 필수입니다. 순손익가치와 순자산가치를 산정하기 위한 정확한 자료를 제출해 주세요.</div>
         </div>
 
@@ -402,19 +403,19 @@
         </div>
 
         <section class="input-section">
-            <h2 class="section-title"><span>&#128221;</span>상증법 평가 추가 정보</h2>
+            <h2 class="section-title"><span>&#128221;</span>상증세법 평가 추가 정보</h2>
             <div class="form-grid">
-                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="삼성전자(주)" readonly></div>
-                <div class="form-group"><label class="form-label">평가기준일 <span class="required">*</span></label><input type="date" class="form-input"></div>
-                <div class="form-group"><label class="form-label">발행주식총수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000"></div>
+                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="파인더월드" readonly></div>
+                <div class="form-group"><label class="form-label">평가기준일 <span class="required">*</span></label><input type="date" class="form-input" value="2025-01-31"></div>
+                <div class="form-group"><label class="form-label">발행주식총수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000" value="5000000"></div>
                 <div class="form-group"><label class="form-label">법인 유형 <span class="required">*</span></label>
-                    <select class="form-input"><option value="">선택</option><option value="general">일반법인</option><option value="realestate">부동산과다보유법인</option></select>
+                    <select class="form-input"><option value="">선택</option><option value="general" selected>일반법인</option><option value="realestate">부동산과다보유법인</option></select>
                     <span class="form-hint">자산 중 부동산 비율 50% 이상 시 부동산과다보유법인</span>
                 </div>
                 <div class="form-group"><label class="form-label">평가 목적</label>
-                    <select class="form-input"><option value="">선택</option><option value="inheritance">상속</option><option value="gift">증여</option><option value="stock_transfer">주식양도</option></select>
+                    <select class="form-input"><option value="">선택</option><option value="inheritance">상속</option><option value="gift">증여</option><option value="stock_transfer" selected>주식양도</option></select>
                 </div>
-                <div class="form-group"><label class="form-label">평가 대상 주식수</label><input type="text" class="form-input" placeholder="평가 대상 주식수"></div>
+                <div class="form-group"><label class="form-label">평가 대상 주식수</label><input type="text" class="form-input" placeholder="평가 대상 주식수" value="500000"></div>
                 <div class="form-group full-width"><label class="form-label">추가 요청사항</label><textarea class="form-input" placeholder="특수관계인 거래, 비경상적 손익 등 참고 사항을 입력해 주세요."></textarea></div>
             </div>
         </section>
@@ -458,9 +459,30 @@
 
     <!-- 페이지 스크립트 -->
     <script>
+        // Supabase 설정
+        let supabase = null;
+        try {
+            const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
+
+        const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.csv', '.json', '.xml', '.md', '.html', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.gif', '.webp', '.bmp'];
+        const CONVERT_REQUIRED = ['.hwp'];
+        const MAX_FILE_SIZE = 20 * 1024 * 1024;
+        const MAX_TOTAL_SIZE = 100 * 1024 * 1024;
+
+        function validateFile(file, category) {
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (CONVERT_REQUIRED.includes(ext)) return { valid: false, message: 'HWP 파일은 PDF로 변환하여 업로드해 주세요.' };
+            if (!ALLOWED_EXTENSIONS.includes(ext)) return { valid: false, message: '지원하지 않는 파일 형식입니다.' };
+            if (file.size > MAX_FILE_SIZE) return { valid: false, message: '파일 용량은 20MB를 초과할 수 없습니다.' };
+            return { valid: true };
+        }
+
         // URL에서 프로젝트 ID 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('projectId') || '-';
+        const projectId = urlParams.get('projectId') || 'FINDE-2601270534-TX';
 
         // Hero section에 프로젝트 ID 표시
         const heroProjectId = document.getElementById('hero-project-id');
@@ -513,7 +535,7 @@
             if (confirm('자료를 제출하시겠습니까?')) {
                 alert('제출 완료!');
                 // customer-portal.html로 리다이렉트
-                window.location.href = 'customer-portal.html';
+                window.location.href = '../../customer/customer-portal.html';
             }
         });
     </script>

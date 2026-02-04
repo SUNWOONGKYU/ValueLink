@@ -557,12 +557,6 @@
                 margin-top: 20px;
             }
         }
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -705,15 +699,15 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명</label>
-                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력" value="파인더월드">
                 </div>
                 <div class="form-group">
                     <label class="form-label">평가기준일</label>
-                    <input type="date" class="form-input" id="valuation-date">
+                    <input type="date" class="form-input" id="valuation-date" value="2025-01-31">
                 </div>
                 <div class="form-group">
                     <label class="form-label">발행주식수</label>
-                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000" value="5000000">
                     <span class="form-hint">주</span>
                 </div>
             </div>
@@ -741,26 +735,26 @@
                     </tr>
                     <tr>
                         <td class="indent">현금및현금성자산</td>
-                        <td><input type="text" id="cash-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="cash-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="cash-book" placeholder="0" data-type="asset" value="8000"></td>
+                        <td><input type="text" id="cash-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="cash-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">매출채권</td>
-                        <td><input type="text" id="ar-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="ar-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="ar-book" placeholder="0" data-type="asset" value="4500"></td>
+                        <td><input type="text" id="ar-adj" placeholder="0" data-type="adjustment" value="-90"></td>
                         <td class="calc-value" id="ar-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">재고자산</td>
-                        <td><input type="text" id="inventory-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="inventory-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="inventory-book" placeholder="0" data-type="asset" value="1200"></td>
+                        <td><input type="text" id="inventory-adj" placeholder="0" data-type="adjustment" value="-60"></td>
                         <td class="calc-value" id="inventory-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">기타유동자산</td>
-                        <td><input type="text" id="other-current-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="other-current-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="other-current-book" placeholder="0" data-type="asset" value="2300"></td>
+                        <td><input type="text" id="other-current-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="other-current-market">0</td>
                     </tr>
                     <tr class="subtotal-row">
@@ -776,38 +770,38 @@
                     </tr>
                     <tr>
                         <td class="indent">투자자산</td>
-                        <td><input type="text" id="investment-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="investment-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="investment-book" placeholder="0" data-type="asset" value="5000"></td>
+                        <td><input type="text" id="investment-adj" placeholder="0" data-type="adjustment" value="500"></td>
                         <td class="calc-value" id="investment-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">토지</td>
-                        <td><input type="text" id="land-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="land-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="land-book" placeholder="0" data-type="asset" value="8000"></td>
+                        <td><input type="text" id="land-adj" placeholder="0" data-type="adjustment" value="4000"></td>
                         <td class="calc-value" id="land-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">건물</td>
-                        <td><input type="text" id="building-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="building-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="building-book" placeholder="0" data-type="asset" value="12000"></td>
+                        <td><input type="text" id="building-adj" placeholder="0" data-type="adjustment" value="-1200"></td>
                         <td class="calc-value" id="building-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">기계장치</td>
-                        <td><input type="text" id="equipment-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="equipment-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="equipment-book" placeholder="0" data-type="asset" value="6000"></td>
+                        <td><input type="text" id="equipment-adj" placeholder="0" data-type="adjustment" value="-1200"></td>
                         <td class="calc-value" id="equipment-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">무형자산</td>
-                        <td><input type="text" id="intangible-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="intangible-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="intangible-book" placeholder="0" data-type="asset" value="5000"></td>
+                        <td><input type="text" id="intangible-adj" placeholder="0" data-type="adjustment" value="-1000"></td>
                         <td class="calc-value" id="intangible-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">기타비유동자산</td>
-                        <td><input type="text" id="other-noncurrent-book" placeholder="0" data-type="asset"></td>
-                        <td><input type="text" id="other-noncurrent-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="other-noncurrent-book" placeholder="0" data-type="asset" value="3000"></td>
+                        <td><input type="text" id="other-noncurrent-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="other-noncurrent-market">0</td>
                     </tr>
                     <tr class="subtotal-row">
@@ -850,20 +844,20 @@
                     </tr>
                     <tr>
                         <td class="indent">매입채무</td>
-                        <td><input type="text" id="ap-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="ap-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="ap-book" placeholder="0" data-type="liability" value="3500"></td>
+                        <td><input type="text" id="ap-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="ap-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">단기차입금</td>
-                        <td><input type="text" id="short-debt-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="short-debt-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="short-debt-book" placeholder="0" data-type="liability" value="4000"></td>
+                        <td><input type="text" id="short-debt-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="short-debt-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">기타유동부채</td>
-                        <td><input type="text" id="other-current-liability-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="other-current-liability-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="other-current-liability-book" placeholder="0" data-type="liability" value="5500"></td>
+                        <td><input type="text" id="other-current-liability-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="other-current-liability-market">0</td>
                     </tr>
                     <tr class="subtotal-row">
@@ -879,20 +873,20 @@
                     </tr>
                     <tr>
                         <td class="indent">장기차입금</td>
-                        <td><input type="text" id="long-debt-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="long-debt-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="long-debt-book" placeholder="0" data-type="liability" value="8000"></td>
+                        <td><input type="text" id="long-debt-adj" placeholder="0" data-type="adjustment" value="-500"></td>
                         <td class="calc-value" id="long-debt-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">퇴직급여충당부채</td>
-                        <td><input type="text" id="pension-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="pension-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="pension-book" placeholder="0" data-type="liability" value="3000"></td>
+                        <td><input type="text" id="pension-adj" placeholder="0" data-type="adjustment" value="500"></td>
                         <td class="calc-value" id="pension-market">0</td>
                     </tr>
                     <tr>
                         <td class="indent">기타비유동부채</td>
-                        <td><input type="text" id="other-noncurrent-liability-book" placeholder="0" data-type="liability"></td>
-                        <td><input type="text" id="other-noncurrent-liability-adj" placeholder="0" data-type="adjustment"></td>
+                        <td><input type="text" id="other-noncurrent-liability-book" placeholder="0" data-type="liability" value="3000"></td>
+                        <td><input type="text" id="other-noncurrent-liability-adj" placeholder="0" data-type="adjustment" value="0"></td>
                         <td class="calc-value" id="other-noncurrent-liability-market">0</td>
                     </tr>
                     <tr class="subtotal-row">
@@ -991,10 +985,6 @@
             </div>
         </section>
     </div >
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <!-- FOOTER -->
@@ -1153,8 +1143,7 @@
             input.addEventListener('input', calculateAll);
         });
 
-        // Set today's date
-        document.getElementById('valuation-date').valueAsDate = new Date();
+        // valuation-date is pre-filled via value attribute
     </script>
 
     <!-- Header Load Script -->
@@ -1183,12 +1172,13 @@
         if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
+    <!-- 사이드바 제거됨: 이 페이지는 회계사 내부 계산 도구 -->
 
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar('sidebar-container', 6, 'in_progress', 'asset', null);
+    <script>
+    window.addEventListener('load', function() {
+        var calcBtn = document.querySelector('.btn-calculate, [onclick*="calculate"]');
+        if (calcBtn) calcBtn.click();
+    });
     </script>
 </body>
 </html>

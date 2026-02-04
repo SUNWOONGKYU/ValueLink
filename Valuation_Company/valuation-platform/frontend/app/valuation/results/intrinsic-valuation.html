@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPO 공모가 평가 | ValueLink</title>
-    
+    <title>본질가치 평가 | ValueLink</title>
+
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../../styles/mobile-optimize.css">
     <style>
@@ -31,8 +31,6 @@
             background-color: var(--bg-light);
             color: var(--text-primary);
         }
-
-        /* Header styles moved to header.html component */
 
         /* HERO SECTION */
         .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
@@ -172,28 +170,50 @@
             line-height: 1.6;
         }
 
-        /* COMPARABLE TABLE */
-        .comparable-table {
+        /* FORMULA BOX */
+        .formula-box {
+            background: #F0FDF4;
+            border: 2px solid #86EFAC;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .formula-box .formula {
+            font-size: 20px;
+            font-weight: 700;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        .formula-box .formula-desc {
+            font-size: 13px;
+            color: #15803D;
+        }
+
+        /* INCOME TABLE */
+        .income-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 14px;
             margin-top: 16px;
         }
 
-        .comparable-table th,
-        .comparable-table td {
+        .income-table th,
+        .income-table td {
             padding: 12px 16px;
             text-align: center;
             border-bottom: 1px solid #E5E7EB;
         }
 
-        .comparable-table th {
+        .income-table th {
             background: var(--bg-light);
             font-weight: 600;
             color: var(--text-secondary);
         }
 
-        .comparable-table input {
+        .income-table input {
             width: 100%;
             padding: 8px;
             font-size: 13px;
@@ -202,172 +222,15 @@
             text-align: right;
         }
 
-        .comparable-table input:focus {
+        .income-table input:focus {
             outline: none;
             border-color: var(--deep-blue);
         }
 
-        .btn-add {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            font-size: 14px;
+        .income-table .auto-calc {
+            background: #F9FAFB;
             font-weight: 600;
             color: var(--deep-blue);
-            background: var(--deep-blue-pale);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 16px;
-        }
-
-        .btn-add:hover {
-            background: var(--deep-blue);
-            color: var(--white);
-        }
-
-        .btn-remove {
-            padding: 6px 12px;
-            font-size: 12px;
-            color: var(--error);
-            background: #FEE2E2;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* DISCOUNT SECTION */
-        .discount-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-
-        .discount-card {
-            background: var(--bg-light);
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .discount-label {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-        }
-
-        .discount-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .discount-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        /* SLIDER */
-        .slider-container {
-            margin-top: 24px;
-        }
-
-        .slider-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .slider-label span {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .slider-value {
-            color: var(--deep-blue);
-        }
-
-        input[type="range"] {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: #E5E7EB;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--deep-blue);
-            cursor: pointer;
-            border: 4px solid var(--white);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .slider-marks {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* PRICE RANGE */
-        .price-range-section {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-            border-radius: 16px;
-            padding: 32px;
-            color: var(--white);
-            margin-bottom: 24px;
-        }
-
-        .price-range-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .price-range-grid {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            gap: 24px;
-            align-items: center;
-        }
-
-        .price-box {
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .price-box-label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-
-        .price-box-value {
-            font-size: 36px;
-            font-weight: 700;
-        }
-
-        .price-box-unit {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .price-separator {
-            font-size: 32px;
-            font-weight: 700;
         }
 
         /* RESULT SECTION */
@@ -389,7 +252,7 @@
 
         .result-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 24px;
             margin-bottom: 32px;
         }
@@ -450,6 +313,48 @@
             background: #1E40AF;
         }
 
+        /* BREAKDOWN */
+        .breakdown-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .breakdown-table th,
+        .breakdown-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .breakdown-table th {
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-light);
+        }
+
+        .breakdown-table td {
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .breakdown-table tr.highlight {
+            background: #EFF6FF;
+        }
+
+        .breakdown-table tr.highlight td {
+            font-weight: 700;
+            color: var(--deep-blue);
+        }
+
         /* FOOTER */
         footer {
             background: #1E3A5F;
@@ -473,16 +378,12 @@
             .form-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .discount-grid {
-                grid-template-columns: 1fr;
-            }
             .result-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 768px) {
-            /* Header */
             header {
                 padding: 0 20px;
                 height: auto;
@@ -509,7 +410,6 @@
                 font-size: 13px;
             }
 
-            /* Breadcrumb */
             .breadcrumb-container {
                 padding: 10px 20px;
             }
@@ -519,25 +419,22 @@
                 flex-wrap: wrap;
             }
 
-            /* Hero */
-            .hero {
+            .hero-section {
                 padding: 32px 20px;
             }
 
-            .hero h1 {
+            .hero-title {
                 font-size: 28px;
             }
 
-            .hero p {
+            .hero-subtitle {
                 font-size: 14px;
             }
 
-            /* Main Content */
             .main-content {
                 padding: 20px;
             }
 
-            /* Section Card */
             .section-card {
                 padding: 20px;
                 margin-bottom: 20px;
@@ -548,63 +445,30 @@
                 margin-bottom: 16px;
             }
 
-            /* Form Grid */
             .form-grid {
                 grid-template-columns: 1fr;
                 gap: 16px;
             }
 
             .form-input {
-                font-size: 16px; /* iOS 자동 확대 방지 */
+                font-size: 16px;
                 padding: 10px 14px;
             }
 
-            /* Comparable Table */
-            .comparable-table {
+            .income-table {
                 font-size: 12px;
             }
 
-            .comparable-table th,
-            .comparable-table td {
+            .income-table th,
+            .income-table td {
                 padding: 8px 6px;
             }
 
-            .comparable-table input {
+            .income-table input {
                 font-size: 12px;
                 padding: 6px;
             }
 
-            /* Discount Grid */
-            .discount-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .discount-card {
-                padding: 16px;
-            }
-
-            /* Slider Container */
-            .slider-container {
-                margin-top: 20px;
-            }
-
-            /* Price Range */
-            .price-range-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .price-separator {
-                transform: rotate(90deg);
-                font-size: 24px;
-            }
-
-            .price-box-value {
-                font-size: 28px;
-            }
-
-            /* Result Section */
             .result-section {
                 padding: 24px 20px;
             }
@@ -626,15 +490,12 @@
                 font-size: 36px;
             }
 
-            /* Buttons */
-            .btn-calculate,
-            .btn-add {
+            .btn-calculate {
                 width: 100%;
                 padding: 14px;
                 font-size: 15px;
             }
 
-            /* Footer */
             footer {
                 padding: 24px 20px;
             }
@@ -645,19 +506,12 @@
                 gap: 16px;
             }
 
-            /* Sidebar */
             .sidebar {
                 width: 100%;
                 position: static;
                 margin-top: 20px;
             }
         }
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -768,8 +622,8 @@
     <!-- Hero Section -->
     <div class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">자본시장법 평가 (IPO)</h1>
-            <p class="hero-subtitle">유사기업 비교법과 IPO 할인율을 적용한 희망공모가 산정</p>
+            <h1 class="hero-title">본질가치(자본시장법) 평가</h1>
+            <p class="hero-subtitle">자본시장법에 따른 자산가치와 수익가치의 가중평균으로 본질가치를 산정합니다</p>
             <div class="hero-badge">
                 <span>프로젝트 ID: </span>
                 <span id="hero-project-id">-</span>
@@ -778,35 +632,41 @@
     </div>
 
     <!-- MAIN -->
-    <!-- MAIN -->
     <div class="container">
         <div class="main-area">
         <!-- INFO BOX -->
         <div class="info-box">
-            <h4>&#128161; IPO 공모가 산정이란?</h4>
+            <h4>&#128161; 본질가치(자본시장법) 평가란?</h4>
             <p>
-                IPO(기업공개) 시 공모가는 유사 상장기업의 주가수익비율(PER), 주가순자산비율(PBR) 등을 기준으로 산정한 후,
-                주식의 유동성 부족, 기업규모 차이, 상장 후 주가 변동성 등을 고려하여 IPO 할인율을 적용합니다.
-                일반적으로 10%~30%의 할인율이 적용되며, 희망공모가 범위(밴드)를 설정하여 수요예측을 진행합니다.
+                자본시장과 금융투자업에 관한 법률(자본시장법)에 따라 비상장주식의 본질가치를 산정하는 방법입니다.
+                자산가치와 수익가치를 각각 1과 1.5의 가중치로 가중평균하여 본질가치를 산출합니다.
+                수익가치는 최근 3년간 순이익의 단순평균을 자본환원율로 나누어 산정하며,
+                자산가치는 순자산가치(NAV)를 기초로 합니다.
             </p>
+        </div>
+
+        <!-- FORMULA -->
+        <div class="formula-box">
+            <div class="formula">본질가치 = (자산가치 × 1 + 수익가치 × 1.5) ÷ 2.5</div>
+            <div class="formula-desc">자본시장법 시행령 제176조의5에 따른 비상장주식 평가 공식</div>
         </div>
 
         <!-- TARGET COMPANY -->
         <section class="section-card">
             <h2 class="section-title">
                 <span class="icon">&#127970;</span>
-                공모 기업 정보
+                기업 기본 정보
             </h2>
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명</label>
-                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력" value="파인더월드">
                 </div>
                 <div class="form-group">
                     <label class="form-label">업종</label>
                     <select class="form-input" id="industry">
                         <option value="">업종 선택</option>
-                        <option value="it">정보기술(IT)</option>
+                        <option value="it" selected>정보기술(IT)</option>
                         <option value="bio">바이오/헬스케어</option>
                         <option value="manufacturing">제조업</option>
                         <option value="retail">유통/소비재</option>
@@ -814,310 +674,156 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">상장 예정 시장</label>
-                    <select class="form-input" id="market">
-                        <option value="kospi">KOSPI</option>
-                        <option value="kosdaq">KOSDAQ</option>
-                        <option value="konex">KONEX</option>
-                    </select>
+                    <label class="form-label">평가기준일</label>
+                    <input type="date" class="form-input" id="valuation-date" value="2025-01-31">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">총 발행주식수 (공모 후)</label>
-                    <input type="text" class="form-input" id="total-shares" placeholder="10,000,000">
+                    <label class="form-label">발행주식수</label>
+                    <input type="text" class="form-input" id="total-shares" placeholder="5,000,000" value="5000000">
                     <span class="form-hint">주</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">공모주식수 (신주)</label>
-                    <input type="text" class="form-input" id="new-shares" placeholder="2,000,000">
-                    <span class="form-hint">주</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">구주매출 주식수</label>
-                    <input type="text" class="form-input" id="old-shares" placeholder="0">
-                    <span class="form-hint">주 (선택사항)</span>
+                    <label class="form-label">자본환원율</label>
+                    <input type="number" class="form-input" id="capitalization-rate" placeholder="10" value="10" min="1" max="30" step="0.1">
+                    <span class="form-hint">% (통상 10%)</span>
                 </div>
             </div>
         </section>
 
-        <!-- FINANCIALS -->
+        <!-- 3-YEAR NET INCOME -->
         <section class="section-card">
             <h2 class="section-title">
                 <span class="icon">&#128200;</span>
-                공모 기업 재무지표
+                최근 3개년 순이익
             </h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">당기순이익</label>
-                    <input type="text" class="form-input" id="net-income" placeholder="5,000">
-                    <span class="form-hint">백만원</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">자기자본</label>
-                    <input type="text" class="form-input" id="equity" placeholder="30,000">
-                    <span class="form-hint">백만원</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">매출액</label>
-                    <input type="text" class="form-input" id="revenue" placeholder="50,000">
-                    <span class="form-hint">백만원</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">주당순이익 (EPS)</label>
-                    <input type="text" class="form-input" id="eps" placeholder="500" readonly>
-                    <span class="form-hint">원 (자동 계산)</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">주당순자산 (BPS)</label>
-                    <input type="text" class="form-input" id="bps" placeholder="3,000" readonly>
-                    <span class="form-hint">원 (자동 계산)</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">주당매출액 (SPS)</label>
-                    <input type="text" class="form-input" id="sps" placeholder="5,000" readonly>
-                    <span class="form-hint">원 (자동 계산)</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- COMPARABLE COMPANIES -->
-        <section class="section-card">
-            <h2 class="section-title">
-                <span class="icon">&#128101;</span>
-                유사 상장기업
-            </h2>
-            <table class="comparable-table" id="peer-table">
+            <table class="income-table">
                 <thead>
                     <tr>
-                        <th style="width: 180px;">기업명</th>
-                        <th>주가 (원)</th>
-                        <th>PER (배)</th>
-                        <th>PBR (배)</th>
-                        <th>PSR (배)</th>
-                        <th style="width: 60px;"></th>
+                        <th style="width:120px;">구분</th>
+                        <th>3년 전 (2022)</th>
+                        <th>2년 전 (2023)</th>
+                        <th>직전 연도 (2024)</th>
+                        <th>단순평균</th>
                     </tr>
                 </thead>
-                <tbody id="peer-tbody">
+                <tbody>
                     <tr>
-                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                        <td><input type="text" placeholder="0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                        <td><input type="text" placeholder="0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
-                    </tr>
-                    <tr>
-                        <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                        <td><input type="text" placeholder="0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><input type="text" placeholder="0.0"></td>
-                        <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
+                        <td style="font-weight:600; text-align:left; padding-left:16px;">당기순이익</td>
+                        <td><input type="text" id="income-year1" placeholder="0" value="600"></td>
+                        <td><input type="text" id="income-year2" placeholder="0" value="1300"></td>
+                        <td><input type="text" id="income-year3" placeholder="0" value="2575"></td>
+                        <td class="auto-calc" id="avg-income">-</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr style="background: var(--deep-blue-pale); font-weight: 600;">
-                        <td>평균</td>
-                        <td id="avg-price">-</td>
-                        <td id="avg-per">-</td>
-                        <td id="avg-pbr">-</td>
-                        <td id="avg-psr">-</td>
-                        <td></td>
-                    </tr>
-                </tfoot>
             </table>
-            <button class="btn-add" onclick="addRow()">
-                <span>+</span> 유사기업 추가
-            </button>
+            <span class="form-hint" style="display:block; margin-top:8px;">단위: 백만원</span>
         </section>
 
-        <!-- MULTIPLE WEIGHT -->
+        <!-- ASSET VALUE -->
         <section class="section-card">
             <h2 class="section-title">
-                <span class="icon">&#9878;&#65039;</span>
-                멀티플 가중치 설정
-            </h2>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">PER 가중치</label>
-                    <input type="number" class="form-input" id="weight-per" value="50" min="0" max="100">
-                    <span class="form-hint">% (0~100)</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">PBR 가중치</label>
-                    <input type="number" class="form-input" id="weight-pbr" value="30" min="0" max="100">
-                    <span class="form-hint">% (0~100)</span>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">PSR 가중치</label>
-                    <input type="number" class="form-input" id="weight-psr" value="20" min="0" max="100">
-                    <span class="form-hint">% (0~100)</span>
-                </div>
-            </div>
-            <div style="text-align: right; margin-top: 16px; font-size: 14px;">
-                가중치 합계: <span id="weight-total" style="font-weight: 700; color: var(--deep-blue);">100</span>%
-            </div>
-        </section>
-
-        <!-- IPO DISCOUNT -->
-        <section class="section-card">
-            <h2 class="section-title">
-                <span class="icon">&#128181;</span>
-                IPO 할인율 설정
-            </h2>
-            <div class="discount-grid">
-                <div class="discount-card">
-                    <div class="discount-label">유동성 할인</div>
-                    <div class="discount-value" id="display-liquidity">10%</div>
-                    <div class="discount-hint">비상장 → 상장 유동성 부족</div>
-                </div>
-                <div class="discount-card">
-                    <div class="discount-label">규모 할인</div>
-                    <div class="discount-value" id="display-size">5%</div>
-                    <div class="discount-hint">대기업 대비 중소기업 리스크</div>
-                </div>
-                <div class="discount-card">
-                    <div class="discount-label">총 IPO 할인율</div>
-                    <div class="discount-value" id="display-total">15%</div>
-                    <div class="discount-hint">최종 적용 할인율</div>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-label">
-                    <span>유동성 할인율</span>
-                    <span class="slider-value" id="liquidity-value">10%</span>
-                </div>
-                <input type="range" id="liquidity-slider" min="0" max="30" value="10" step="1">
-                <div class="slider-marks">
-                    <span>0%</span>
-                    <span>10%</span>
-                    <span>20%</span>
-                    <span>30%</span>
-                </div>
-            </div>
-            <div class="slider-container">
-                <div class="slider-label">
-                    <span>규모 할인율</span>
-                    <span class="slider-value" id="size-value">5%</span>
-                </div>
-                <input type="range" id="size-slider" min="0" max="20" value="5" step="1">
-                <div class="slider-marks">
-                    <span>0%</span>
-                    <span>5%</span>
-                    <span>10%</span>
-                    <span>15%</span>
-                    <span>20%</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- BAND WIDTH -->
-        <section class="section-card">
-            <h2 class="section-title">
-                <span class="icon">&#128200;</span>
-                희망공모가 밴드 설정
+                <span class="icon">&#127974;</span>
+                순자산가치 (자산가치)
             </h2>
             <div class="form-grid" style="grid-template-columns: repeat(2, 1fr);">
                 <div class="form-group">
-                    <label class="form-label">밴드 하단 (-)</label>
-                    <input type="number" class="form-input" id="band-low" value="10" min="0" max="30">
-                    <span class="form-hint">% (기준가 대비 하한)</span>
+                    <label class="form-label">순자산가치 (NAV)</label>
+                    <input type="text" class="form-input" id="nav-value" placeholder="35,000" value="35000">
+                    <span class="form-hint">백만원 (자산총액 - 부채총액, 시가 기준)</span>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">밴드 상단 (+)</label>
-                    <input type="number" class="form-input" id="band-high" value="10" min="0" max="30">
-                    <span class="form-hint">% (기준가 대비 상한)</span>
+                    <label class="form-label">1주당 순자산가치</label>
+                    <input type="text" class="form-input" id="per-share-nav" placeholder="자동계산" readonly>
+                    <span class="form-hint">원 (자동 계산)</span>
                 </div>
             </div>
         </section>
 
         <!-- CALCULATE -->
-        <button class="btn-calculate" onclick="calculateIPO()">공모가 산정하기</button>
+        <button class="btn-calculate" onclick="calculateIntrinsic()">본질가치 산정하기</button>
 
-        <!-- PRICE RANGE -->
-        <section class="price-range-section" id="price-range-section" style="display: none;">
-            <h2 class="price-range-title">
-                <span>&#128178;</span>
-                희망공모가 범위 (밴드)
+        <!-- BREAKDOWN -->
+        <section class="breakdown-section" id="breakdown-section" style="display: none;">
+            <h2 class="section-title">
+                <span class="icon">&#128203;</span>
+                본질가치 산출 내역
             </h2>
-            <div class="price-range-grid">
-                <div class="price-box">
-                    <div class="price-box-label">밴드 하단</div>
-                    <div class="price-box-value" id="band-low-price">-</div>
-                    <div class="price-box-unit">원</div>
-                </div>
-                <div class="price-separator">~</div>
-                <div class="price-box">
-                    <div class="price-box-label">밴드 상단</div>
-                    <div class="price-box-value" id="band-high-price">-</div>
-                    <div class="price-box-unit">원</div>
-                </div>
-            </div>
+            <table class="breakdown-table">
+                <tbody>
+                    <tr>
+                        <th>3년 평균 순이익</th>
+                        <td id="bd-avg-income">-</td>
+                        <td>백만원</td>
+                    </tr>
+                    <tr>
+                        <th>자본환원율</th>
+                        <td id="bd-cap-rate">-</td>
+                        <td>%</td>
+                    </tr>
+                    <tr>
+                        <th>수익가치 (평균순이익 ÷ 자본환원율)</th>
+                        <td id="bd-income-value">-</td>
+                        <td>백만원</td>
+                    </tr>
+                    <tr>
+                        <th>순자산가치 (자산가치)</th>
+                        <td id="bd-asset-value">-</td>
+                        <td>백만원</td>
+                    </tr>
+                    <tr>
+                        <th>발행주식수</th>
+                        <td id="bd-shares">-</td>
+                        <td>주</td>
+                    </tr>
+                    <tr class="highlight">
+                        <th>1주당 수익가치</th>
+                        <td id="bd-per-share-income">-</td>
+                        <td>원</td>
+                    </tr>
+                    <tr class="highlight">
+                        <th>1주당 자산가치</th>
+                        <td id="bd-per-share-asset">-</td>
+                        <td>원</td>
+                    </tr>
+                    <tr>
+                        <th>가중치 (자산 : 수익)</th>
+                        <td id="bd-weights">1 : 1.5</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
 
         <!-- RESULT -->
         <section class="result-section" id="result-section" style="display: none;">
             <h2 class="result-title">
                 <span>&#127919;</span>
-                IPO 공모가 평가 결과
+                본질가치(자본시장법) 평가 결과
             </h2>
             <div class="result-grid">
                 <div class="result-card">
-                    <div class="result-label">PER 기준 주가</div>
-                    <div class="result-value" id="result-per">-</div>
-                    <div class="result-unit">원</div>
+                    <div class="result-label">1주당 수익가치</div>
+                    <div class="result-value" id="result-income">-</div>
+                    <div class="result-unit">원 (가중치 1.5)</div>
                 </div>
                 <div class="result-card">
-                    <div class="result-label">PBR 기준 주가</div>
-                    <div class="result-value" id="result-pbr">-</div>
-                    <div class="result-unit">원</div>
+                    <div class="result-label">1주당 자산가치</div>
+                    <div class="result-value" id="result-asset">-</div>
+                    <div class="result-unit">원 (가중치 1)</div>
                 </div>
                 <div class="result-card">
-                    <div class="result-label">PSR 기준 주가</div>
-                    <div class="result-value" id="result-psr">-</div>
-                    <div class="result-unit">원</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">가중평균 주가</div>
-                    <div class="result-value" id="result-weighted">-</div>
-                    <div class="result-unit">원</div>
-                </div>
-            </div>
-            <div class="result-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="result-card">
-                    <div class="result-label">IPO 할인율</div>
-                    <div class="result-value" id="result-discount">-</div>
-                    <div class="result-unit">%</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">공모 예정 금액</div>
-                    <div class="result-value" id="result-proceeds">-</div>
-                    <div class="result-unit">억원</div>
-                </div>
-                <div class="result-card">
-                    <div class="result-label">공모 후 시가총액</div>
-                    <div class="result-value" id="result-marketcap">-</div>
-                    <div class="result-unit">억원</div>
+                    <div class="result-label">수익가치 총액</div>
+                    <div class="result-value" id="result-income-total">-</div>
+                    <div class="result-unit">백만원</div>
                 </div>
             </div>
             <div class="result-final">
-                <div class="result-label">할인 후 기준공모가</div>
+                <div class="result-label">1주당 본질가치</div>
                 <div class="result-value" id="result-final">-</div>
-                <div class="result-unit">원</div>
+                <div class="result-unit">원 = (자산가치 × 1 + 수익가치 × 1.5) ÷ 2.5</div>
             </div>
         </section>
     </div >
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <!-- FOOTER -->
@@ -1136,193 +842,112 @@
 
         // Parse number
         function parseNumber(str) {
-            return parseFloat(str.replace(/,/g, '')) || 0;
+            if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/,/g, '')) || 0;
         }
 
-        // Add row
-        function addRow() {
-            const tbody = document.getElementById('peer-tbody');
-            const newRow = document.createElement('tr');
-            newRow.innerHTML = `
-                <td><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                <td><input type="text" placeholder="0"></td>
-                <td><input type="text" placeholder="0.0"></td>
-                <td><input type="text" placeholder="0.0"></td>
-                <td><input type="text" placeholder="0.0"></td>
-                <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
-            `;
-            tbody.appendChild(newRow);
-            addInputListeners();
-        }
+        // Calculate per-share NAV (auto)
+        function calculatePerShareNav() {
+            var totalShares = parseNumber(document.getElementById('total-shares').value);
+            var nav = parseNumber(document.getElementById('nav-value').value) * 1000000; // 백만원 → 원
 
-        // Remove row
-        function removeRow(btn) {
-            const tbody = document.getElementById('peer-tbody');
-            if (tbody.rows.length > 1) {
-                btn.closest('tr').remove();
-                calculateAverages();
+            if (totalShares > 0 && nav > 0) {
+                document.getElementById('per-share-nav').value = formatNumber(nav / totalShares);
+            } else {
+                document.getElementById('per-share-nav').value = '';
             }
         }
 
-        // Calculate averages
-        function calculateAverages() {
-            const tbody = document.getElementById('peer-tbody');
-            const rows = tbody.rows;
+        // Calculate average income (auto)
+        function calculateAvgIncome() {
+            var y1 = parseNumber(document.getElementById('income-year1').value);
+            var y2 = parseNumber(document.getElementById('income-year2').value);
+            var y3 = parseNumber(document.getElementById('income-year3').value);
 
-            let totals = { price: 0, per: 0, pbr: 0, psr: 0 };
-            let counts = { price: 0, per: 0, pbr: 0, psr: 0 };
+            var count = 0;
+            var sum = 0;
+            if (y1 !== 0 || document.getElementById('income-year1').value.trim() !== '') { sum += y1; count++; }
+            if (y2 !== 0 || document.getElementById('income-year2').value.trim() !== '') { sum += y2; count++; }
+            if (y3 !== 0 || document.getElementById('income-year3').value.trim() !== '') { sum += y3; count++; }
 
-            for (let row of rows) {
-                const inputs = row.querySelectorAll('input');
-                const values = Array.from(inputs).slice(1, 5).map(input => parseFloat(input.value.replace(/,/g, '')) || 0);
-
-                if (values[0] > 0) { totals.price += values[0]; counts.price++; }
-                if (values[1] > 0) { totals.per += values[1]; counts.per++; }
-                if (values[2] > 0) { totals.pbr += values[2]; counts.pbr++; }
-                if (values[3] > 0) { totals.psr += values[3]; counts.psr++; }
-            }
-
-            document.getElementById('avg-price').textContent = counts.price > 0 ? formatNumber(totals.price / counts.price) : '-';
-            document.getElementById('avg-per').textContent = counts.per > 0 ? (totals.per / counts.per).toFixed(1) : '-';
-            document.getElementById('avg-pbr').textContent = counts.pbr > 0 ? (totals.pbr / counts.pbr).toFixed(1) : '-';
-            document.getElementById('avg-psr').textContent = counts.psr > 0 ? (totals.psr / counts.psr).toFixed(1) : '-';
-        }
-
-        // Calculate per-share metrics
-        function calculatePerShare() {
-            const totalShares = parseNumber(document.getElementById('total-shares').value);
-            const netIncome = parseNumber(document.getElementById('net-income').value) * 1000000; // 백만원 → 원
-            const equity = parseNumber(document.getElementById('equity').value) * 1000000;
-            const revenue = parseNumber(document.getElementById('revenue').value) * 1000000;
-
-            if (totalShares > 0) {
-                document.getElementById('eps').value = formatNumber(netIncome / totalShares);
-                document.getElementById('bps').value = formatNumber(equity / totalShares);
-                document.getElementById('sps').value = formatNumber(revenue / totalShares);
+            if (count > 0) {
+                var avg = sum / count;
+                document.getElementById('avg-income').textContent = formatNumber(avg);
+            } else {
+                document.getElementById('avg-income').textContent = '-';
             }
         }
 
-        // Update discount display
-        function updateDiscount() {
-            const liquidity = parseInt(document.getElementById('liquidity-slider').value);
-            const size = parseInt(document.getElementById('size-slider').value);
-            const total = liquidity + size;
+        // Calculate Intrinsic Value (본질가치)
+        function calculateIntrinsic() {
+            // Get inputs
+            var totalShares = parseNumber(document.getElementById('total-shares').value);
+            var capRate = parseFloat(document.getElementById('capitalization-rate').value) / 100;
+            var navMillions = parseNumber(document.getElementById('nav-value').value); // 백만원
 
-            document.getElementById('liquidity-value').textContent = liquidity + '%';
-            document.getElementById('size-value').textContent = size + '%';
-            document.getElementById('display-liquidity').textContent = liquidity + '%';
-            document.getElementById('display-size').textContent = size + '%';
-            document.getElementById('display-total').textContent = total + '%';
-        }
-
-        // Update weight total
-        function updateWeightTotal() {
-            const per = parseFloat(document.getElementById('weight-per').value) || 0;
-            const pbr = parseFloat(document.getElementById('weight-pbr').value) || 0;
-            const psr = parseFloat(document.getElementById('weight-psr').value) || 0;
-            const total = per + pbr + psr;
-            document.getElementById('weight-total').textContent = total;
-            document.getElementById('weight-total').style.color = total === 100 ? '#10B981' : '#EF4444';
-        }
-
-        // Calculate IPO
-        function calculateIPO() {
-            // Get data
-            const totalShares = parseNumber(document.getElementById('total-shares').value);
-            const newShares = parseNumber(document.getElementById('new-shares').value);
-            const eps = parseNumber(document.getElementById('eps').value);
-            const bps = parseNumber(document.getElementById('bps').value);
-            const sps = parseNumber(document.getElementById('sps').value);
-
-            const avgPer = parseFloat(document.getElementById('avg-per').textContent) || 0;
-            const avgPbr = parseFloat(document.getElementById('avg-pbr').textContent) || 0;
-            const avgPsr = parseFloat(document.getElementById('avg-psr').textContent) || 0;
-
-            const weightPer = parseFloat(document.getElementById('weight-per').value) / 100 || 0;
-            const weightPbr = parseFloat(document.getElementById('weight-pbr').value) / 100 || 0;
-            const weightPsr = parseFloat(document.getElementById('weight-psr').value) / 100 || 0;
-
-            const discountLiquidity = parseInt(document.getElementById('liquidity-slider').value) / 100;
-            const discountSize = parseInt(document.getElementById('size-slider').value) / 100;
-            const totalDiscount = discountLiquidity + discountSize;
-
-            const bandLow = parseFloat(document.getElementById('band-low').value) / 100;
-            const bandHigh = parseFloat(document.getElementById('band-high').value) / 100;
+            var y1 = parseNumber(document.getElementById('income-year1').value);
+            var y2 = parseNumber(document.getElementById('income-year2').value);
+            var y3 = parseNumber(document.getElementById('income-year3').value);
 
             // Validate
             if (totalShares <= 0) {
-                alert('총 발행주식수를 입력해 주세요.');
+                alert('발행주식수를 입력해 주세요.');
+                return;
+            }
+            if (capRate <= 0) {
+                alert('자본환원율을 입력해 주세요.');
+                return;
+            }
+            if (navMillions <= 0) {
+                alert('순자산가치(NAV)를 입력해 주세요.');
                 return;
             }
 
-            const weightTotal = weightPer + weightPbr + weightPsr;
-            if (Math.abs(weightTotal - 1) > 0.01) {
-                alert('가중치 합계가 100%가 되어야 합니다.');
-                return;
-            }
+            // Average net income (3-year simple average)
+            var avgIncome = (y1 + y2 + y3) / 3; // 백만원
 
-            // Calculate stock prices
-            const pricePer = eps * avgPer;
-            const pricePbr = bps * avgPbr;
-            const pricePsr = sps * avgPsr;
+            // Income value (수익가치) = 평균순이익 / 자본환원율
+            var incomeValue = avgIncome / capRate; // 백만원
 
-            // Weighted average
-            const weightedPrice = pricePer * weightPer + pricePbr * weightPbr + pricePsr * weightPsr;
+            // Per-share values (원)
+            var perShareIncome = (incomeValue * 1000000) / totalShares;
+            var perShareAsset = (navMillions * 1000000) / totalShares;
 
-            // Apply discount
-            const discountedPrice = weightedPrice * (1 - totalDiscount);
+            // 본질가치 = (자산가치 × 1 + 수익가치 × 1.5) ÷ 2.5
+            var intrinsicValue = (perShareAsset * 1 + perShareIncome * 1.5) / 2.5;
 
-            // Round to nearest 100
-            const roundedPrice = Math.round(discountedPrice / 100) * 100;
+            // Round to nearest 원
+            intrinsicValue = Math.round(intrinsicValue);
 
-            // Calculate band
-            const lowPrice = Math.round(roundedPrice * (1 - bandLow) / 100) * 100;
-            const highPrice = Math.round(roundedPrice * (1 + bandHigh) / 100) * 100;
+            // Update breakdown
+            document.getElementById('bd-avg-income').textContent = formatNumber(avgIncome);
+            document.getElementById('bd-cap-rate').textContent = (capRate * 100).toFixed(1);
+            document.getElementById('bd-income-value').textContent = formatNumber(incomeValue);
+            document.getElementById('bd-asset-value').textContent = formatNumber(navMillions);
+            document.getElementById('bd-shares').textContent = formatNumber(totalShares);
+            document.getElementById('bd-per-share-income').textContent = formatNumber(perShareIncome);
+            document.getElementById('bd-per-share-asset').textContent = formatNumber(perShareAsset);
 
-            // Calculate proceeds
-            const proceeds = (newShares * roundedPrice) / 100000000; // 억원
-            const marketCap = (totalShares * roundedPrice) / 100000000; // 억원
+            // Update results
+            document.getElementById('result-income').textContent = formatNumber(perShareIncome);
+            document.getElementById('result-asset').textContent = formatNumber(perShareAsset);
+            document.getElementById('result-income-total').textContent = formatNumber(incomeValue);
+            document.getElementById('result-final').textContent = formatNumber(intrinsicValue);
 
-            // Display results
-            document.getElementById('result-per').textContent = avgPer > 0 ? formatNumber(pricePer) : '-';
-            document.getElementById('result-pbr').textContent = avgPbr > 0 ? formatNumber(pricePbr) : '-';
-            document.getElementById('result-psr').textContent = avgPsr > 0 ? formatNumber(pricePsr) : '-';
-            document.getElementById('result-weighted').textContent = formatNumber(weightedPrice);
-            document.getElementById('result-discount').textContent = (totalDiscount * 100).toFixed(0);
-            document.getElementById('result-proceeds').textContent = formatNumber(proceeds);
-            document.getElementById('result-marketcap').textContent = formatNumber(marketCap);
-            document.getElementById('result-final').textContent = formatNumber(roundedPrice);
-
-            document.getElementById('band-low-price').textContent = formatNumber(lowPrice);
-            document.getElementById('band-high-price').textContent = formatNumber(highPrice);
-
-            document.getElementById('price-range-section').style.display = 'block';
+            // Show sections
+            document.getElementById('breakdown-section').style.display = 'block';
             document.getElementById('result-section').style.display = 'block';
-            document.getElementById('price-range-section').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('breakdown-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Add input listeners
-        function addInputListeners() {
-            document.querySelectorAll('#peer-tbody input').forEach(input => {
-                input.addEventListener('input', calculateAverages);
-            });
-        }
-
-        // Event listeners
-        document.getElementById('liquidity-slider').addEventListener('input', updateDiscount);
-        document.getElementById('size-slider').addEventListener('input', updateDiscount);
-
-        ['weight-per', 'weight-pbr', 'weight-psr'].forEach(id => {
-            document.getElementById(id).addEventListener('input', updateWeightTotal);
+        // Event listeners for auto-calculation
+        ['total-shares', 'nav-value'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', calculatePerShareNav);
         });
 
-        ['total-shares', 'net-income', 'equity', 'revenue'].forEach(id => {
-            document.getElementById(id).addEventListener('input', calculatePerShare);
+        ['income-year1', 'income-year2', 'income-year3'].forEach(function(id) {
+            document.getElementById(id).addEventListener('input', calculateAvgIncome);
         });
-
-        // Initialize
-        addInputListeners();
-        updateDiscount();
     </script>
 
     <!-- Header Load Script -->
@@ -1351,12 +976,21 @@
         if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
+    <!-- 사이드바 제거됨: 이 페이지는 회계사 내부 계산 도구 -->
 
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar('sidebar-container', 6, 'in_progress', 'intrinsic', null);
+    <!-- 목업 데이터 자동 계산 -->
+    <script>
+    window.addEventListener('load', function() {
+        // 1주당 순자산가치 자동 계산
+        calculatePerShareNav();
+        // 평균 순이익 자동 계산
+        calculateAvgIncome();
+        // 본질가치 자동 산정
+        setTimeout(function() {
+            var calcBtn = document.querySelector('.btn-calculate');
+            if (calcBtn) calcBtn.click();
+        }, 300);
+    });
     </script>
 </body>
 </html>

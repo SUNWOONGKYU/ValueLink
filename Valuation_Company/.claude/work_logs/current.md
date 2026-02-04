@@ -2482,3 +2482,102 @@ await notification_service.send_email(
 **작업 완료일**: 2026-01-27
 **Phase 4 상태**: ✅ 완료
 **다음 단계**: Production 배포 준비 (환경변수, 도메인 설정 등)
+
+---
+
+## 2026-01-31: Deal 페이지 페이지네이션 + 뉴스 자동수집 워크플로우 수정
+
+### 작업 상태: ✅ 완료
+
+---
+
+### 1. Deal 테이블 페이지네이션 추가 (20건씩)
+
+**파일**: `valuation-platform/frontend/app/deal.html`
+
+**구현 내용**:
+- 클라이언트 사이드 페이지네이션 (PAGE_SIZE=20)
+- 전역 변수: `currentPage`, `PAGE_SIZE`, `currentDeals`
+- `renderDealsTable()` 수정: 전체 배열에서 현재 페이지만 슬라이스하여 렌더링
+- `renderPagination()` 신규: 이전/다음 버튼 + 페이지 번호 (ellipsis 지원)
+- `goToPage()` 신규: 페이지 이동 + 테이블 상단 스크롤
+- `getPaginationRange()` 신규: 앞뒤 2개 + ... + 처음/마지막 페이지 계산
+- 필터 변경 시 `currentPage = 1` 자동 리셋
+- 행 번호 페이지 기반 표시 (2페이지면 21번부터)
+
+**커밋**: `e45acbf`
+
+### 2. 투자단계 가이드 모달 + 아이콘
+
+**파일**: `valuation-platform/frontend/app/deal.html`
+
+**구현 내용**:
+- 투자단계 필터 옆 보라색 원형 `i` 아이콘 추가
+- 클릭 시 모달: 프리시드~M&A 전 단계 설명 + 투자금액 범위
+- 브릿지 투자 설명 포함
+
+**커밋**: `b49c406`
+
+### 3. 컬럼 너비 데이터 기반 최적화
+
+**파일**: `valuation-platform/frontend/app/deal.html`
+
+**분석**: Supabase DB에서 134건 데이터 분석
+- 주요사업 80%ile = 18자
+- 기업명 80%ile = 6자
+- 투자자 80%ile = 9자 (다만 여러 명 나열 시 넓은 공간 필요)
+
+**최종 배분**:
+| 컬럼 | 너비 |
+|------|------|
+| No. | 4% |
+| 기업명 | 13% |
+| 주요사업 | 20% |
+| 투자단계 | 10% |
+| 투자자 | 27% |
+| 투자금액 | 8% |
+| 뉴스 | 7% |
+
+**커밋**: `be42a7c`, `c45f599`
+
+### 4. 페이지네이션 색상 주황색 통일
+
+**파일**: `valuation-platform/frontend/app/deal.html`
+
+- 활성 페이지 버튼: 보라색(`#7C3AED`) → 주황색(`var(--amber)`)
+- Deal 페이지 전체 톤(주황)과 통일
+
+**커밋**: `3d59db2`
+
+### 5. 데일리 뉴스 자동수집 워크플로우 수정
+
+**파일**: `.github/workflows/investment-news-daily.yml` (Valuation_Company 하위)
+
+**문제 원인**:
+1. 존재하지 않는 스크립트 호출 (`collect_and_enrich.py` → 실제는 `daily_auto_collect.py`)
+2. 환경변수 불일치 (`SUPABASE_KEY` → 스크립트는 `SUPABASE_SERVICE_KEY` 사용)
+
+**수정 내용**:
+- `python collect_and_enrich.py` → `python daily_auto_collect.py`
+- `SUPABASE_KEY` → `SUPABASE_SERVICE_KEY` (2곳)
+
+**검증**: GitHub Actions 수동 실행 테스트 통과 (run #21537850707)
+
+**참고**: 실제 실행되는 워크플로우는 루트 `.github/workflows/daily-news-scraper.yml`이며, 이 파일은 이미 올바르게 설정되어 있었음. 어제 실패 원인은 `step3_register_to_deals()`에서 `number` 필드가 null인 레코드에 의한 `TypeError`였으나, 스크립트 업데이트로 이미 해결됨.
+
+**커밋**: `4cec25d`
+
+---
+
+### 전체 커밋 이력
+
+| 커밋 | 내용 |
+|------|------|
+| `e45acbf` | feat(deal): Deal 테이블 페이지네이션 추가 (20건씩) + 투자단계 가이드 모달 |
+| `b49c406` | style(deal): 투자단계 가이드 아이콘 가시성 개선 |
+| `c45f599` | style(deal): 데이터 분석 기반 컬럼 너비 최적화 |
+| `be42a7c` | style(deal): 컬럼 너비 재조정 - 기업명/투자단계 확대 |
+| `3d59db2` | style(deal): 페이지네이션 활성 버튼 색상 주황색으로 통일 |
+| `4cec25d` | fix: 데일리 뉴스 수집 워크플로우 스크립트명/환경변수 수정 |
+
+**작업 완료일**: 2026-01-31

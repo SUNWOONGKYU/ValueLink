@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPO 평가 - 자료 제출 | ValueLink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>본질가치 평가 - 자료 제출 | ValueLink</title>
     
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../../styles/mobile-optimize.css">
@@ -293,7 +294,7 @@
     <!-- HERO SECTION -->
     <div class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">자본시장법 평가</h1>
+            <h1 class="hero-title">본질가치(자본시장법) 평가</h1>
             <p class="hero-subtitle">자료 제출 및 추가 정보 입력</p>
             <div class="hero-badge">
                 <span>프로젝트 ID: </span>
@@ -306,13 +307,13 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) IPO 공모가 평가</h1>
-                    <span class="project-id">SAMSU-2501191430-IP</span>
+                    <h1 class="project-title">파인더월드 본질가치(자본시장법) 평가</h1>
+                    <span class="project-id">FINDE-2601270532-IV</span>
                 </div>
                 <div class="project-status"><span>&#128196;</span><span>자료 수집중</span></div>
             </div>
             <div class="project-meta">
-                <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">IPO (공모가 산정)</div></div>
+                <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">본질가치 (자본시장법)</div></div>
                 <div class="meta-item"><div class="meta-label">신청일</div><div class="meta-value">2025.01.19</div></div>
                 <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">박회계 회계사</div></div>
                 <div class="meta-item"><div class="meta-label">자료 제출 기한</div><div class="meta-value" style="color: var(--error);">2025.01.26</div></div>
@@ -320,8 +321,8 @@
         </section>
 
         <div class="notice-box">
-            <div class="notice-title"><span>&#9888;&#65039;</span>IPO 공모가 산정을 위한 자료 안내</div>
-            <div class="notice-text">IPO 공모가 산정을 위해 <strong>재무제표(3개년)</strong>, <strong>사업계획서</strong>, <strong>정관</strong>, <strong>주주명부</strong>가 필수입니다. 증권신고서 작성에 필요한 자료도 함께 준비해 주세요.</div>
+            <div class="notice-title"><span>&#9888;&#65039;</span>본질가치 평가를 위한 자료 안내</div>
+            <div class="notice-text">본질가치(자본시장법) 평가를 위해 <strong>재무제표(3개년)</strong>, <strong>사업계획서</strong>, <strong>정관</strong>, <strong>주주명부</strong>가 필수입니다. 자산 감정평가 자료가 있으면 함께 제출해 주세요.</div>
         </div>
 
         <div class="upload-grid">
@@ -417,17 +418,19 @@
         </div>
 
         <section class="input-section">
-            <h2 class="section-title"><span>&#128221;</span>IPO 평가 추가 정보</h2>
+            <h2 class="section-title"><span>&#128221;</span>본질가치 평가 추가 정보</h2>
             <div class="form-grid">
-                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="삼성전자(주)" readonly></div>
-                <div class="form-group"><label class="form-label">상장 예정 시장 <span class="required">*</span></label>
-                    <select class="form-input"><option value="">선택</option><option value="kospi">KOSPI</option><option value="kosdaq">KOSDAQ</option><option value="konex">KONEX</option></select>
+                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="파인더월드" readonly></div>
+                <div class="form-group"><label class="form-label">평가 목적 <span class="required">*</span></label>
+                    <select class="form-input"><option value="">선택</option><option value="merger" selected>합병/주식교환</option><option value="buyback">주식매수청구</option><option value="preipo">Pre-IPO 가치산정</option><option value="other">기타</option></select>
                 </div>
-                <div class="form-group"><label class="form-label">총 발행주식수 (공모 후)</label><input type="text" class="form-input" placeholder="예: 10,000,000"></div>
-                <div class="form-group"><label class="form-label">공모 예정 주식수 (신주)</label><input type="text" class="form-input" placeholder="예: 2,000,000"></div>
-                <div class="form-group"><label class="form-label">구주매출 예정 주식수</label><input type="text" class="form-input" placeholder="예: 500,000"><span class="form-hint">없으면 0 입력</span></div>
-                <div class="form-group"><label class="form-label">희망 공모가 범위</label><input type="text" class="form-input" placeholder="예: 20,000 ~ 25,000원"></div>
-                <div class="form-group full-width"><label class="form-label">추가 요청사항</label><textarea class="form-input" placeholder="IPO 일정, 주관사 선정 현황 등 참고 사항을 입력해 주세요."></textarea></div>
+                <div class="form-group"><label class="form-label">발행주식수</label><input type="text" class="form-input" placeholder="예: 5,000,000" value="5000000"><span class="form-hint">주</span></div>
+                <div class="form-group"><label class="form-label">평가기준일</label><input type="date" class="form-input" value="2025-01-31"></div>
+                <div class="form-group"><label class="form-label">자본환원율</label><input type="text" class="form-input" placeholder="예: 10" value="10"><span class="form-hint">% (통상 10%)</span></div>
+                <div class="form-group"><label class="form-label">자산 감정평가 보유 여부</label>
+                    <select class="form-input"><option value="yes">있음</option><option value="no" selected>없음</option></select>
+                </div>
+                <div class="form-group full-width"><label class="form-label">추가 요청사항</label><textarea class="form-input" placeholder="평가 배경, 특이사항, 주요 자산 내역 등 참고 사항을 입력해 주세요."></textarea></div>
             </div>
         </section>
 
@@ -470,9 +473,30 @@
 
     <!-- 페이지 스크립트 -->
     <script>
+        // Supabase 설정
+        let supabase = null;
+        try {
+            const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
+
+        const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.csv', '.json', '.xml', '.md', '.html', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.gif', '.webp', '.bmp'];
+        const CONVERT_REQUIRED = ['.hwp'];
+        const MAX_FILE_SIZE = 20 * 1024 * 1024;
+        const MAX_TOTAL_SIZE = 100 * 1024 * 1024;
+
+        function validateFile(file, category) {
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (CONVERT_REQUIRED.includes(ext)) return { valid: false, message: 'HWP 파일은 PDF로 변환하여 업로드해 주세요.' };
+            if (!ALLOWED_EXTENSIONS.includes(ext)) return { valid: false, message: '지원하지 않는 파일 형식입니다.' };
+            if (file.size > MAX_FILE_SIZE) return { valid: false, message: '파일 용량은 20MB를 초과할 수 없습니다.' };
+            return { valid: true };
+        }
+
         // URL에서 프로젝트 ID 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('projectId') || '-';
+        const projectId = urlParams.get('projectId') || 'FINDE-2601270532-IV';
 
         // Hero section에 프로젝트 ID 표시
         const heroProjectId = document.getElementById('hero-project-id');
@@ -525,7 +549,7 @@
             if (confirm('자료를 제출하시겠습니까?')) {
                 alert('제출 완료!');
                 // customer-portal.html로 리다이렉트
-                window.location.href = 'customer-portal.html';
+                window.location.href = '../../customer/customer-portal.html';
             }
         });
     </script>

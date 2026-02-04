@@ -6,7 +6,15 @@
       "Bash(done)",
       "Bash(psql:*)",
       "Bash(supabase --version:*)",
-      "Bash(supabase db pull:*)"
+      "Bash(supabase db pull:*)",
+      "Bash(xargs basename:*)",
+      "Bash(node -e \"\nconst https = require\\(''https''\\);\nconst SUPABASE_URL = ''https://arxrfetgaitkgiiqabap.supabase.co'';\nconst SUPABASE_KEY = ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'';\n\n// Get one row to see actual columns\nconst url = new URL\\(SUPABASE_URL + ''/rest/v1/projects?limit=1''\\);\nconst options = {\n  hostname: url.hostname,\n  path: url.pathname + url.search,\n  method: ''GET'',\n  headers: {\n    ''apikey'': SUPABASE_KEY,\n    ''Authorization'': ''Bearer '' + SUPABASE_KEY\n  }\n};\n\nconst req = https.request\\(options, \\(res\\) => {\n  let body = '''';\n  res.on\\(''data'', \\(chunk\\) => body += chunk\\);\n  res.on\\(''end'', \\(\\) => {\n    console.log\\(''Status:'', res.statusCode\\);\n    const data = JSON.parse\\(body\\);\n    if \\(data.length > 0\\) {\n      console.log\\(''Columns:'', Object.keys\\(data[0]\\).join\\('', ''\\)\\);\n      console.log\\(''Sample:'', JSON.stringify\\(data[0], null, 2\\)\\);\n    } else {\n      console.log\\(''No rows, trying HEAD...''\\);\n    }\n  }\\);\n}\\);\nreq.end\\(\\);\n\")",
+      "Bash(where:*)",
+      "Bash(node -e:*)",
+      "Bash(npm install:*)",
+      "Bash(npm init:*)",
+      "Bash(node insert-projects.js:*)",
+      "Bash(npm root:*)"
     ]
   }
 }

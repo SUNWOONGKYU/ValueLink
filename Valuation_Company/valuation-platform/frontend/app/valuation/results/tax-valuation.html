@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>상증법 평가 (비상장주식 보충적 평가) | ValueLink</title>
+    <title>상증세법 평가 (비상장주식 보충적 평가) | ValueLink</title>
     
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../../styles/mobile-optimize.css">
@@ -670,12 +670,6 @@
                 margin-top: 20px;
             }
         }
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -801,7 +795,7 @@
         <div class="main-area">
         <!-- INFO BOX -->
         <div class="info-box">
-            <h4>&#128161; 상증법 보충적 평가방법이란?</h4>
+            <h4>&#128161; 상증세법 보충적 평가방법이란?</h4>
             <p>
                 상속세 및 증여세법 제63조에 따른 비상장주식의 보충적 평가방법입니다.
                 순손익가치와 순자산가치를 가중평균하여 1주당 가액을 산정합니다.
@@ -827,15 +821,15 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명</label>
-                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력" value="파인더월드">
                 </div>
                 <div class="form-group">
                     <label class="form-label">평가기준일</label>
-                    <input type="date" class="form-input" id="valuation-date">
+                    <input type="date" class="form-input" id="valuation-date" value="2025-01-31">
                 </div>
                 <div class="form-group">
                     <label class="form-label">발행주식총수</label>
-                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000" value="5000000">
                     <span class="form-hint">주</span>
                 </div>
             </div>
@@ -891,23 +885,23 @@
                 <tbody>
                     <tr>
                         <td>각 사업연도 소득금액</td>
-                        <td><input type="text" id="income-3" placeholder="0"></td>
-                        <td><input type="text" id="income-2" placeholder="0"></td>
-                        <td><input type="text" id="income-1" placeholder="0"></td>
+                        <td><input type="text" id="income-3" placeholder="0" value="850"></td>
+                        <td><input type="text" id="income-2" placeholder="0" value="1740"></td>
+                        <td><input type="text" id="income-1" placeholder="0" value="3430"></td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>( + ) 비과세소득 등</td>
-                        <td><input type="text" id="nontax-3" placeholder="0"></td>
-                        <td><input type="text" id="nontax-2" placeholder="0"></td>
-                        <td><input type="text" id="nontax-1" placeholder="0"></td>
+                        <td><input type="text" id="nontax-3" placeholder="0" value="50"></td>
+                        <td><input type="text" id="nontax-2" placeholder="0" value="80"></td>
+                        <td><input type="text" id="nontax-1" placeholder="0" value="120"></td>
                         <td>-</td>
                     </tr>
                     <tr>
                         <td>( - ) 법인세 등</td>
-                        <td><input type="text" id="tax-3" placeholder="0"></td>
-                        <td><input type="text" id="tax-2" placeholder="0"></td>
-                        <td><input type="text" id="tax-1" placeholder="0"></td>
+                        <td><input type="text" id="tax-3" placeholder="0" value="213"></td>
+                        <td><input type="text" id="tax-2" placeholder="0" value="435"></td>
+                        <td><input type="text" id="tax-1" placeholder="0" value="858"></td>
                         <td>-</td>
                     </tr>
                     <tr class="subtotal-row">
@@ -953,12 +947,12 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">자산총액 (상증세법 평가액)</label>
-                    <input type="text" class="form-input" id="total-assets" placeholder="100,000">
+                    <input type="text" class="form-input" id="total-assets" placeholder="100,000" value="55950">
                     <span class="form-hint">백만원</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">부채총액</label>
-                    <input type="text" class="form-input" id="total-liabilities" placeholder="30,000">
+                    <input type="text" class="form-input" id="total-liabilities" placeholder="30,000" value="27000">
                     <span class="form-hint">백만원</span>
                 </div>
                 <div class="form-group">
@@ -984,7 +978,7 @@
         <section class="result-section" id="result-section" style="display: none;">
             <h2 class="result-title">
                 <span>&#127919;</span>
-                상증법 평가 결과
+                상증세법 평가 결과
             </h2>
             <div class="result-grid">
                 <div class="result-card">
@@ -1017,10 +1011,6 @@
             </div>
         </section>
     </div >
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <!-- FOOTER -->
@@ -1188,8 +1178,7 @@
         document.getElementById('total-assets').addEventListener('input', calculateAssetValues);
         document.getElementById('total-liabilities').addEventListener('input', calculateAssetValues);
 
-        // Set today's date
-        document.getElementById('valuation-date').valueAsDate = new Date();
+        // valuation-date is pre-filled via HTML value attribute
     </script>
 
     <!-- Header Load Script -->
@@ -1218,12 +1207,14 @@
         if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
+    <!-- 사이드바 제거됨: 이 페이지는 회계사 내부 계산 도구 -->
 
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar('sidebar-container', 6, 'in_progress', 'inheritance_tax', null);
+    <!-- 페이지 로드 시 자동 계산 -->
+    <script>
+    window.addEventListener('load', function() {
+        var calcBtn = document.querySelector('.btn-calculate, [onclick*="calculate"]');
+        if (calcBtn) calcBtn.click();
+    });
     </script>
 </body>
 </html>

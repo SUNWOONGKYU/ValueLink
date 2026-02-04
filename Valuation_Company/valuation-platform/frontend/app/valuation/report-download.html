@@ -587,20 +587,10 @@
             color: var(--text-secondary);
         }
 
-        /* Sidebar */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
 
             .info-grid {
@@ -812,10 +802,6 @@
             </div>
         </main>
 
-        <!-- 사이드바 -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트 주입 -->
-        </aside>
     </div>
 
     <!-- 헤더 로드 -->
@@ -841,7 +827,6 @@
     <!-- 페이지 스크립트 -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { injectSidebar } from '../../components/common-sidebar.js';
         import { checkMethodStatus, METHOD_NAMES, STATUS } from '../../components/project-status-checker.js';
 
         // Supabase 클라이언트
@@ -955,15 +940,6 @@
 
                 // API로부터 평가 결과 로드
                 await loadValuationResult();
-
-                // 사이드바 렌더링 (14단계 - 완료)
-                injectSidebar(
-                    'sidebar-container',
-                    14,                    // 14단계: 평가보고서 수령
-                    STATUS.COMPLETED,      // 완료 상태
-                    method,
-                    projectId
-                );
 
                 // 로딩 숨김, 메인 컨텐츠 표시
                 document.getElementById('loadingState').style.display = 'none';

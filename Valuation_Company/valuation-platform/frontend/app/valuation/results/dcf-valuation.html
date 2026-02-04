@@ -353,12 +353,6 @@
         .footer-logo { font-size: 18px; font-weight: 700; }
         .footer-text { font-size: 13px; opacity: 0.7; }
 
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -654,15 +648,15 @@
                         <h2>기본 정보</h2>
                         <div class="form-group">
                             <label>회사명</label>
-                            <input type="text" id="companyName" placeholder="평가 대상 회사명">
+                            <input type="text" id="companyName" placeholder="평가 대상 회사명" value="파인더월드">
                         </div>
                         <div class="form-group">
                             <label>평가 기준일</label>
-                            <input type="date" id="valuationDate" value="2025-01-01">
+                            <input type="date" id="valuationDate" value="2025-01-31">
                         </div>
                         <div class="form-group">
                             <label>발행주식수</label>
-                            <input type="number" id="sharesOutstanding" placeholder="1,000,000" value="1000000">
+                            <input type="number" id="sharesOutstanding" placeholder="1,000,000" value="5000000">
                             <div class="unit">주</div>
                         </div>
                     </div>
@@ -678,14 +672,14 @@
                             </div>
                             <div class="form-group">
                                 <label>시장위험프리미엄 (MRP)</label>
-                                <input type="number" id="marketRiskPremium" step="0.01" value="6.0" placeholder="6.0">
+                                <input type="number" id="marketRiskPremium" step="0.01" value="7.0" placeholder="7.0">
                                 <div class="unit">%</div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>레버리지 베타 (β)</label>
-                                <input type="number" id="leveredBeta" step="0.01" value="1.2" placeholder="1.2">
+                                <input type="number" id="leveredBeta" step="0.01" value="1.25" placeholder="1.25">
                             </div>
                             <div class="form-group">
                                 <label>규모 프리미엄</label>
@@ -696,24 +690,24 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label>세전 타인자본비용</label>
-                                <input type="number" id="costOfDebt" step="0.01" value="5.0" placeholder="5.0">
+                                <input type="number" id="costOfDebt" step="0.01" value="4.8" placeholder="4.8">
                                 <div class="unit">%</div>
                             </div>
                             <div class="form-group">
                                 <label>법인세율</label>
-                                <input type="number" id="taxRate" step="0.01" value="22.0" placeholder="22.0">
+                                <input type="number" id="taxRate" step="0.01" value="25.0" placeholder="25.0">
                                 <div class="unit">%</div>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>자기자본 비중</label>
-                                <input type="number" id="equityRatio" step="0.01" value="70.0" placeholder="70.0">
+                                <input type="number" id="equityRatio" step="0.01" value="75.0" placeholder="75.0">
                                 <div class="unit">%</div>
                             </div>
                             <div class="form-group">
                                 <label>타인자본 비중</label>
-                                <input type="number" id="debtRatio" step="0.01" value="30.0" placeholder="30.0">
+                                <input type="number" id="debtRatio" step="0.01" value="25.0" placeholder="25.0">
                                 <div class="unit">%</div>
                             </div>
                         </div>
@@ -740,43 +734,43 @@
                             <tbody>
                                 <tr>
                                     <td>매출액</td>
-                                    <td><input type="number" id="revenue1" value="10000000000"></td>
-                                    <td><input type="number" id="revenue2" value="12000000000"></td>
-                                    <td><input type="number" id="revenue3" value="14400000000"></td>
-                                    <td><input type="number" id="revenue4" value="17280000000"></td>
-                                    <td><input type="number" id="revenue5" value="20736000000"></td>
+                                    <td><input type="number" id="revenue1" value="34300000000"></td>
+                                    <td><input type="number" id="revenue2" value="44590000000"></td>
+                                    <td><input type="number" id="revenue3" value="54400000000"></td>
+                                    <td><input type="number" id="revenue4" value="62560000000"></td>
+                                    <td><input type="number" id="revenue5" value="68816000000"></td>
                                 </tr>
                                 <tr>
                                     <td>EBIT</td>
-                                    <td><input type="number" id="ebit1" value="1500000000"></td>
-                                    <td><input type="number" id="ebit2" value="1800000000"></td>
-                                    <td><input type="number" id="ebit3" value="2160000000"></td>
-                                    <td><input type="number" id="ebit4" value="2592000000"></td>
-                                    <td><input type="number" id="ebit5" value="3110400000"></td>
+                                    <td><input type="number" id="ebit1" value="5488000000"></td>
+                                    <td><input type="number" id="ebit2" value="7134000000"></td>
+                                    <td><input type="number" id="ebit3" value="8704000000"></td>
+                                    <td><input type="number" id="ebit4" value="10010000000"></td>
+                                    <td><input type="number" id="ebit5" value="11011000000"></td>
                                 </tr>
                                 <tr>
                                     <td>감가상각비</td>
-                                    <td><input type="number" id="dep1" value="500000000"></td>
-                                    <td><input type="number" id="dep2" value="550000000"></td>
-                                    <td><input type="number" id="dep3" value="600000000"></td>
-                                    <td><input type="number" id="dep4" value="650000000"></td>
-                                    <td><input type="number" id="dep5" value="700000000"></td>
+                                    <td><input type="number" id="dep1" value="515000000"></td>
+                                    <td><input type="number" id="dep2" value="669000000"></td>
+                                    <td><input type="number" id="dep3" value="816000000"></td>
+                                    <td><input type="number" id="dep4" value="938000000"></td>
+                                    <td><input type="number" id="dep5" value="1032000000"></td>
                                 </tr>
                                 <tr>
                                     <td>CAPEX</td>
-                                    <td><input type="number" id="capex1" value="600000000"></td>
-                                    <td><input type="number" id="capex2" value="700000000"></td>
-                                    <td><input type="number" id="capex3" value="800000000"></td>
-                                    <td><input type="number" id="capex4" value="900000000"></td>
-                                    <td><input type="number" id="capex5" value="1000000000"></td>
+                                    <td><input type="number" id="capex1" value="858000000"></td>
+                                    <td><input type="number" id="capex2" value="1115000000"></td>
+                                    <td><input type="number" id="capex3" value="1360000000"></td>
+                                    <td><input type="number" id="capex4" value="1564000000"></td>
+                                    <td><input type="number" id="capex5" value="1720000000"></td>
                                 </tr>
                                 <tr>
                                     <td>운전자본 증감</td>
-                                    <td><input type="number" id="wc1" value="200000000"></td>
-                                    <td><input type="number" id="wc2" value="240000000"></td>
-                                    <td><input type="number" id="wc3" value="288000000"></td>
-                                    <td><input type="number" id="wc4" value="345600000"></td>
-                                    <td><input type="number" id="wc5" value="414720000"></td>
+                                    <td><input type="number" id="wc1" value="784000000"></td>
+                                    <td><input type="number" id="wc2" value="823000000"></td>
+                                    <td><input type="number" id="wc3" value="785000000"></td>
+                                    <td><input type="number" id="wc4" value="653000000"></td>
+                                    <td><input type="number" id="wc5" value="500000000"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -787,7 +781,7 @@
                         <h2>Terminal Value</h2>
                         <div class="form-group">
                             <label>영구성장률</label>
-                            <input type="number" id="terminalGrowth" step="0.01" value="1.0" placeholder="1.0">
+                            <input type="number" id="terminalGrowth" step="0.01" value="2.5" placeholder="2.5">
                             <div class="unit">%</div>
                         </div>
                     </div>
@@ -796,12 +790,12 @@
                         <h2>비영업 항목</h2>
                         <div class="form-group">
                             <label>비영업자산</label>
-                            <input type="number" id="nonOperatingAssets" value="500000000" placeholder="0">
+                            <input type="number" id="nonOperatingAssets" value="8000000000" placeholder="0">
                             <div class="unit">원</div>
                         </div>
                         <div class="form-group">
                             <label>이자부부채</label>
-                            <input type="number" id="interestBearingDebt" value="2000000000" placeholder="0">
+                            <input type="number" id="interestBearingDebt" value="7000000000" placeholder="0">
                             <div class="unit">원</div>
                         </div>
                     </div>
@@ -876,10 +870,6 @@
                 </div>
             </div>
     
-            <!-- 우측 사이드바 (14단계 프로세스) -->
-            <aside id="sidebar-container" class="sidebar-wrapper">
-                <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-            </aside>
         </div>
     <footer>
         <div class="footer-content">
@@ -1095,18 +1085,12 @@
         if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
+    <!-- 사이드바 제거됨: 이 페이지는 회계사 내부 계산 도구 -->
 
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        // TODO: 나중에 로그인 기능 구현 시 getCurrentProject() 연동
-        injectSidebar(
-            'sidebar-container',
-            6,           // 6단계 (평가 진행 중)
-            'in_progress',  // 평가 진행 중
-            'dcf',       // DCF 평가법
-            null         // 프로젝트 ID 없음
-        );
+    <script>
+    window.addEventListener('load', function() {
+        if (typeof calculateDCF === 'function') calculateDCF();
+    });
     </script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>자산가치 평가 - 자료 제출 | ValueLink</title>
     
     <!-- 모바일 최적화 CSS -->
@@ -306,8 +307,8 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) 자산가치 평가</h1>
-                    <span class="project-id">SAMSU-2501191430-AV</span>
+                    <h1 class="project-title">파인더월드 자산가치 평가</h1>
+                    <span class="project-id">FINDE-2601270533-AV</span>
                 </div>
                 <div class="project-status"><span>&#128196;</span><span>자료 수집중</span></div>
             </div>
@@ -419,14 +420,14 @@
         <section class="input-section">
             <h2 class="section-title"><span>&#128221;</span>자산가치 평가 추가 정보</h2>
             <div class="form-grid">
-                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="삼성전자(주)" readonly></div>
-                <div class="form-group"><label class="form-label">발행주식수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000"></div>
-                <div class="form-group"><label class="form-label">보유 부동산 수</label><input type="number" class="form-input" placeholder="0"></div>
-                <div class="form-group"><label class="form-label">부동산 장부가액 합계</label><input type="text" class="form-input" placeholder="백만원"></div>
+                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="파인더월드" readonly></div>
+                <div class="form-group"><label class="form-label">발행주식수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000" value="5000000"></div>
+                <div class="form-group"><label class="form-label">보유 부동산 수</label><input type="number" class="form-input" placeholder="0" value="3"></div>
+                <div class="form-group"><label class="form-label">부동산 장부가액 합계</label><input type="text" class="form-input" placeholder="백만원" value="20000000000"></div>
                 <div class="form-group"><label class="form-label">주요 자산 종류</label>
-                    <select class="form-input"><option value="">선택</option><option value="realestate">부동산 위주</option><option value="equipment">기계장치 위주</option><option value="intangible">무형자산 위주</option><option value="investment">투자자산 위주</option><option value="mixed">복합</option></select>
+                    <select class="form-input"><option value="">선택</option><option value="realestate">부동산 위주</option><option value="equipment">기계장치 위주</option><option value="intangible">무형자산 위주</option><option value="investment">투자자산 위주</option><option value="mixed" selected>복합</option></select>
                 </div>
-                <div class="form-group"><label class="form-label">평가기준일</label><input type="date" class="form-input"></div>
+                <div class="form-group"><label class="form-label">평가기준일</label><input type="date" class="form-input" value="2025-01-31"></div>
                 <div class="form-group full-width"><label class="form-label">추가 요청사항</label><textarea class="form-input" placeholder="자산 재평가, 특수 자산 등에 대한 의견이 있으시면 입력해 주세요."></textarea></div>
             </div>
         </section>
@@ -469,9 +470,30 @@
 
     <!-- 페이지 스크립트 -->
     <script>
+        // Supabase 설정
+        let supabase = null;
+        try {
+            const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+            const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
+
+        const ALLOWED_EXTENSIONS = ['.pdf', '.jpg', '.jpeg', '.png', '.txt', '.csv', '.json', '.xml', '.md', '.html', '.zip', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.gif', '.webp', '.bmp'];
+        const CONVERT_REQUIRED = ['.hwp'];
+        const MAX_FILE_SIZE = 20 * 1024 * 1024;
+        const MAX_TOTAL_SIZE = 100 * 1024 * 1024;
+
+        function validateFile(file, category) {
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (CONVERT_REQUIRED.includes(ext)) return { valid: false, message: 'HWP 파일은 PDF로 변환하여 업로드해 주세요.' };
+            if (!ALLOWED_EXTENSIONS.includes(ext)) return { valid: false, message: '지원하지 않는 파일 형식입니다.' };
+            if (file.size > MAX_FILE_SIZE) return { valid: false, message: '파일 용량은 20MB를 초과할 수 없습니다.' };
+            return { valid: true };
+        }
+
         // URL에서 프로젝트 ID 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('projectId') || '-';
+        const projectId = urlParams.get('projectId') || 'FINDE-2601270533-AV';
 
         // Hero section에 프로젝트 ID 표시
         const heroProjectId = document.getElementById('hero-project-id');
@@ -524,7 +546,7 @@
             if (confirm('자료를 제출하시겠습니까?')) {
                 alert('제출 완료!');
                 // customer-portal.html로 리다이렉트
-                window.location.href = 'customer-portal.html';
+                window.location.href = '../../customer/customer-portal.html';
             }
         });
     </script>

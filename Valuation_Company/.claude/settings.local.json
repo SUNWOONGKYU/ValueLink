@@ -10,7 +10,9 @@
       "Bash(git push:*)",
       "Bash(pip install:*)",
       "Bash(tee:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(gh run list:*)",
+      "Bash(python3:*)"
     ]
   }
 }

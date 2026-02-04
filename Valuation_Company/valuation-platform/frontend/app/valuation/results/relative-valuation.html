@@ -646,12 +646,6 @@
                 margin-top: 20px;
             }
         }
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -793,13 +787,13 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명</label>
-                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력">
+                    <input type="text" class="form-input" id="company-name" placeholder="회사명 입력" value="파인더월드">
                 </div>
                 <div class="form-group">
                     <label class="form-label">업종</label>
                     <select class="form-input" id="industry">
                         <option value="">업종 선택</option>
-                        <option value="it">정보기술(IT)</option>
+                        <option value="it" selected>정보기술(IT)</option>
                         <option value="bio">바이오/헬스케어</option>
                         <option value="manufacturing">제조업</option>
                         <option value="retail">유통/소비재</option>
@@ -810,7 +804,7 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">발행주식수</label>
-                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000">
+                    <input type="text" class="form-input" id="shares-outstanding" placeholder="1,000,000" value="5,000,000">
                     <span class="form-hint">주</span>
                 </div>
             </div>
@@ -825,27 +819,27 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">순이익 (당기순이익)</label>
-                    <input type="text" class="form-input" id="net-income" placeholder="10,000">
+                    <input type="text" class="form-input" id="net-income" placeholder="10,000" value="2,575">
                     <span class="form-hint">백만원</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">자기자본 (순자산)</label>
-                    <input type="text" class="form-input" id="equity" placeholder="50,000">
+                    <input type="text" class="form-input" id="equity" placeholder="50,000" value="28,000">
                     <span class="form-hint">백만원</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">매출액</label>
-                    <input type="text" class="form-input" id="revenue" placeholder="100,000">
+                    <input type="text" class="form-input" id="revenue" placeholder="100,000" value="24,500">
                     <span class="form-hint">백만원</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">EBITDA</label>
-                    <input type="text" class="form-input" id="ebitda" placeholder="20,000">
+                    <input type="text" class="form-input" id="ebitda" placeholder="20,000" value="3,730">
                     <span class="form-hint">백만원 (영업이익 + 감가상각비)</span>
                 </div>
                 <div class="form-group">
                     <label class="form-label">순차입금</label>
-                    <input type="text" class="form-input" id="net-debt" placeholder="15,000">
+                    <input type="text" class="form-input" id="net-debt" placeholder="15,000" value="-1,000">
                     <span class="form-hint">백만원 (총차입금 - 현금성자산)</span>
                 </div>
             </div>
@@ -873,33 +867,33 @@
                     </thead>
                     <tbody id="peer-tbody">
                         <tr>
-                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                            <td><input type="text" placeholder="0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;" value="핀크코리아"></td>
+                            <td><input type="text" placeholder="0" value="85,000"></td>
+                            <td><input type="text" placeholder="0.0" value="24.3"></td>
+                            <td><input type="text" placeholder="0.0" value="2.7"></td>
+                            <td><input type="text" placeholder="0.0" value="3.0"></td>
+                            <td><input type="text" placeholder="0.0" value="16.7"></td>
+                            <td><input type="text" placeholder="0.0" value="3.1"></td>
                             <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
                         </tr>
                         <tr>
-                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                            <td><input type="text" placeholder="0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;" value="데이터블"></td>
+                            <td><input type="text" placeholder="0" value="72,000"></td>
+                            <td><input type="text" placeholder="0.0" value="25.7"></td>
+                            <td><input type="text" placeholder="0.0" value="2.9"></td>
+                            <td><input type="text" placeholder="0.0" value="3.3"></td>
+                            <td><input type="text" placeholder="0.0" value="17.9"></td>
+                            <td><input type="text" placeholder="0.0" value="3.3"></td>
                             <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
                         </tr>
                         <tr>
-                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;"></td>
-                            <td><input type="text" placeholder="0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
-                            <td><input type="text" placeholder="0.0"></td>
+                            <td class="company-name"><input type="text" placeholder="기업명" style="text-align:left;" value="와이즈핀"></td>
+                            <td><input type="text" placeholder="0" value="95,000"></td>
+                            <td><input type="text" placeholder="0.0" value="22.6"></td>
+                            <td><input type="text" placeholder="0.0" value="2.4"></td>
+                            <td><input type="text" placeholder="0.0" value="2.7"></td>
+                            <td><input type="text" placeholder="0.0" value="15.1"></td>
+                            <td><input type="text" placeholder="0.0" value="2.8"></td>
                             <td><button class="btn-remove" onclick="removeRow(this)">삭제</button></td>
                         </tr>
                     </tbody>
@@ -1044,10 +1038,6 @@
             </div>
         </section>
     </div >
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <!-- FOOTER -->
@@ -1312,12 +1302,17 @@
         if (heroProjectId) heroProjectId.textContent = projectId;
     </script>
 
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
+    <!-- 사이드바 제거됨: 이 페이지는 회계사 내부 계산 도구 -->
 
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar('sidebar-container', 6, 'in_progress', 'relative', null);
+    <!-- 파인더월드 목데이터 자동 계산 -->
+    <script>
+    window.addEventListener('load', function() {
+        // 먼저 평균 계산 실행
+        if (typeof calculateAverages === 'function') calculateAverages();
+        // 그 후 기업가치 산정 버튼 클릭
+        var calcBtn = document.querySelector('.btn-calculate, [onclick*="calculate"]');
+        if (calcBtn) calcBtn.click();
+    });
     </script>
 </body>
 </html>

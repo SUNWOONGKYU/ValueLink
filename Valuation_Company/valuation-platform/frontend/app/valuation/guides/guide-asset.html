@@ -238,20 +238,10 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
-        /* 우측 사이드바 래퍼 */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
         }
 
@@ -772,19 +762,19 @@
 
                 <div class="input-group">
                     <label class="input-label">총 자산 시장가치 (억원)</label>
-                    <input type="number" id="assetMarketValue" class="input-field" placeholder="예: 500" step="1">
+                    <input type="number" id="assetMarketValue" class="input-field" placeholder="예: 500" step="1" value="560">
                     <div class="input-hint">기업이 보유한 모든 자산의 시장가치 합계</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">총 부채 시장가치 (억원)</label>
-                    <input type="number" id="debtMarketValue" class="input-field" placeholder="예: 200" step="1">
+                    <input type="number" id="debtMarketValue" class="input-field" placeholder="예: 200" step="1" value="270">
                     <div class="input-hint">기업이 보유한 모든 부채의 시장가치 합계</div>
                 </div>
 
                 <div class="input-group">
                     <label class="input-label">발행주식수 (만주)</label>
-                    <input type="number" id="sharesOutstanding" class="input-field" placeholder="예: 100" step="1">
+                    <input type="number" id="sharesOutstanding" class="input-field" placeholder="예: 100" step="1" value="500">
                     <div class="input-hint">단위: 만주</div>
                 </div>
 
@@ -800,10 +790,6 @@
             </div>
         </div>
 
-        <!-- 우측 사이드바 (14단계 프로세스) -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
-        </aside>
     </div>
 
     <script>
@@ -823,22 +809,6 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
-    </script>
-
-    <!-- 사이드바 초기화 -->
-    <script type="module">
-        import { injectSidebar } from '../../../components/common-sidebar.js';
-
-        // 페이지 로드 시 사이드바 초기화 (로그인 체크 없이 바로 표시)
-        injectSidebar(
-            'sidebar-container',
-            5,                  // 5단계 (평가 기초자료 제출)
-            'in_progress',      // 상태: 진행 중
-            'asset',            // Asset
-            'FINDE-2601270533-AV',  // 프로젝트 ID (FinderWorld - 자산가치)
-            5,                  // startStep: 5단계부터 (기초자료 제출부터)
-            15                  // endStep: 15단계까지
-        );
     </script>
 
     <script>
@@ -881,6 +851,9 @@
                 });
             });
         });
+    </script>
+    <script>
+    window.addEventListener('load', function() { calculateAssetValuation(); });
     </script>
 </body>
 </html>

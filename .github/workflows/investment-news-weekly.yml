@@ -2,8 +2,8 @@ name: Investment News Weekly Report
 
 on:
   schedule:
-    # 매주 일요일 오전 10시 (KST) = 01:00 (UTC)
-    - cron: '0 1 * * 0'
+    # 매주 월요일 오전 8시 (KST) = 일요일 23:00 (UTC)
+    - cron: '0 23 * * 0'
   workflow_dispatch:  # 수동 실행 가능
 
 jobs:

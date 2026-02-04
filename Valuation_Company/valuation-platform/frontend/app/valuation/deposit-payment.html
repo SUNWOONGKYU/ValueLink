@@ -397,20 +397,10 @@
             color: var(--text-secondary);
         }
 
-        /* Sidebar */
-        .sidebar-wrapper {
-            width: 320px;
-            flex-shrink: 0;
-        }
-
         /* Responsive */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-            }
-
-            .sidebar-wrapper {
-                width: 100%;
             }
 
             .info-grid {
@@ -580,10 +570,6 @@
             </div>
         </main>
 
-        <!-- 사이드바 -->
-        <aside id="sidebar-container" class="sidebar-wrapper">
-            <!-- 공통 사이드바 컴포넌트 주입 -->
-        </aside>
     </div>
 
     <!-- 헤더 로드 -->
@@ -609,7 +595,6 @@
     <!-- 페이지 스크립트 -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-        import { injectSidebar } from '../../components/common-sidebar.js';
         import { checkMethodStatus, METHOD_NAMES, STATUS } from '../../components/project-status-checker.js';
 
         // Supabase 클라이언트
@@ -667,15 +652,6 @@
 
                 // 결제 금액 계산 및 표시
                 calculateAndDisplayPayment();
-
-                // 사이드바 렌더링 (Step 3.5 - 계약금 입금)
-                injectSidebar(
-                    'sidebar-container',
-                    3.5,                        // 현재 단계
-                    STATUS.IN_PROGRESS,         // 진행 중
-                    method,                     // 평가법
-                    projectId                   // 프로젝트 ID
-                );
 
                 // 로딩 숨김
                 document.getElementById('loadingState').style.display = 'none';
