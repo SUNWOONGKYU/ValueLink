@@ -105,8 +105,8 @@ const AuthCheck = (function() {
         try {
             const { user, userData } = await getCurrentUser();
 
-            // 역할 체크
-            if (!roles.includes(userData.role)) {
+            // 역할 체크 (admin은 모든 페이지 접근 가능)
+            if (userData.role !== 'admin' && !roles.includes(userData.role)) {
                 throw new Error(`접근 권한이 없습니다. (필요한 역할: ${roles.join(', ')})`);
             }
 
@@ -164,7 +164,7 @@ const AuthCheck = (function() {
      * @returns {Promise<Object>} { user, userData, customerData }
      */
     async function getCustomerData() {
-        const { user, userData } = await requireRole('customer');
+        const { user, userData } = await requireRole(['customer', 'admin']);
 
         const supabase = initSupabase();
 
@@ -189,7 +189,7 @@ const AuthCheck = (function() {
      * @returns {Promise<Object>} { user, userData, accountantData }
      */
     async function getAccountantData() {
-        const { user, userData } = await requireRole('accountant');
+        const { user, userData } = await requireRole(['accountant', 'admin']);
 
         const supabase = initSupabase();
 

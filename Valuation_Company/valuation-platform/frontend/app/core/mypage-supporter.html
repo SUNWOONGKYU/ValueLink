@@ -329,7 +329,7 @@
                 }
 
                 // 역할 확인
-                if (userData.role !== 'supporter') {
+                if (userData.role !== 'supporter' && userData.role !== 'admin') {
                     alert('서포터 전용 페이지입니다');
                     window.location.href = 'mypage.html';
                     return;

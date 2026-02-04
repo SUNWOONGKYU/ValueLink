@@ -420,7 +420,7 @@
                 }
 
                 // 역할 확인
-                if (userData.role !== 'investor') {
+                if (userData.role !== 'investor' && userData.role !== 'admin') {
                     alert('투자자 전용 페이지입니다');
                     window.location.href = 'mypage.html';
                     return;

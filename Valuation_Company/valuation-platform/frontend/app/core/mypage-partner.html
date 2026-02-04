@@ -355,7 +355,7 @@
                 }
 
                 // 역할 확인
-                if (userData.role !== 'partner') {
+                if (userData.role !== 'partner' && userData.role !== 'admin') {
                     alert('제휴자 전용 페이지입니다');
                     window.location.href = 'mypage.html';
                     return;
