@@ -238,10 +238,19 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
+        /* 우측 사이드바 래퍼 */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
+            }
+            .sidebar-wrapper {
+                width: 100%;
             }
         }
 
@@ -711,6 +720,10 @@
             </div>
         </div>
 
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
+        </aside>
     </div>
 
     <script>
@@ -730,6 +743,18 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
+
+    <script type="module">
+        import { injectSidebar } from '../../../components/common-sidebar.js';
+        injectSidebar(
+            'sidebar-container',
+            5,                  // 5단계 (평가 기초자료 제출)
+            'in_progress',      // 상태: 진행 중
+            'dcf',              // DCF 평가법
+            'FINDE-2601270530-DC',
+            5, 15
+        );
     </script>
 
     <script>

@@ -238,10 +238,19 @@
             box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
         }
 
+        /* 우측 사이드바 래퍼 */
+        .sidebar-wrapper {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
+            }
+            .sidebar-wrapper {
+                width: 100%;
             }
         }
 
@@ -712,6 +721,10 @@
             </div>
         </div>
 
+        <!-- 우측 사이드바 (14단계 프로세스) -->
+        <aside id="sidebar-container" class="sidebar-wrapper">
+            <!-- 공통 사이드바 컴포넌트가 여기에 주입됨 -->
+        </aside>
     </div>
 
     <script>
@@ -731,7 +744,21 @@
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
+    </script>
 
+    <script type="module">
+        import { injectSidebar } from '../../../components/common-sidebar.js';
+        injectSidebar(
+            'sidebar-container',
+            5,
+            'in_progress',
+            'inheritance_tax',
+            'FINDE-2601270530-TX',
+            5, 15
+        );
+    </script>
+
+    <script>
         // 상증세법 평가 시뮬레이션 함수
         function calculateTaxValuation() {
             const avgNetIncome = parseFloat(document.getElementById('avgNetIncome').value) * 100000000; // 억원 단위를 원 단위로

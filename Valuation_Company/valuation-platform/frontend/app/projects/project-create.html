@@ -901,12 +901,6 @@
                     // 성공 후 approval-waiting.html로 이동
                     alert(`평가 요청이 접수되었습니다.\n선택한 평가법: ${selectedMethods.length}개\n\n담당자 배정 후 안내 메일이 발송됩니다.`);
                     location.href = `../approval-waiting.html?projectId=${projectId}`;
-                    const portalBtn = document.getElementById('goToPortalBtn');
-                    portalBtn.onclick = () => {
-                        location.href = portalUrls[method.value] || 'customer-portal.html';
-                    };
-
-                    document.getElementById('successModal').classList.add('show');
                 }
 
             } catch (error) {

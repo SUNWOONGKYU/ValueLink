@@ -21,24 +21,7 @@
         .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
         .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
         .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
-        /* Layout Container */
-        .page-container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px;
-            gap: 40px;
-        }
-
-        .main-content {
-            flex: 1;
-        }
-
-        @media (max-width: 1024px) {
-            .page-container {
-                flex-direction: column;
-            }
-        }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 40px; }
         .project-info-card { background: var(--white); border-radius: 16px; padding: 32px; margin-bottom: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .project-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
         .project-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
@@ -320,7 +303,6 @@
         </div>
     </div>
 
-    <div class="page-container">
         <main class="main-content">
         <section class="project-info-card">
             <div class="project-header">
@@ -435,8 +417,6 @@
         </section>
         </main>
 
-    </div>
-
     <footer><div class="footer-content"><div class="footer-logo">ValueLink</div><div class="footer-text">© 2026 ValueLink. All rights reserved.</div></div></footer>
 
     <!-- 헤더 로드 스크립트 -->
@@ -540,6 +520,7 @@
             }
         });
     </script>
+
 
 </body>
 </html>
