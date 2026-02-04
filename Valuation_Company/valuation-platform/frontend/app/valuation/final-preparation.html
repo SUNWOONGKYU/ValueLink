@@ -519,10 +519,7 @@
             ['loadingState', 'finalizedState', 'mainContent'].forEach(s => {
                 document.getElementById(s).style.display = 'none';
             });
-            document.getElementById(id).style.display = id === 'mainContent' ? '' : '';
-            if (id !== 'loadingState') {
-                document.getElementById(id).style.display = '';
-            }
+            document.getElementById(id).style.display = 'block';
         }
 
         // ====== Initialize ======

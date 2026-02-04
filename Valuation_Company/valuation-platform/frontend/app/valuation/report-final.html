@@ -624,7 +624,7 @@
             ['loadingState', 'notReadyState', 'mainContent'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
-            document.getElementById(stateId).style.display = stateId === 'loadingState' ? 'block' : (stateId === 'mainContent' ? 'block' : 'block');
+            document.getElementById(stateId).style.display = 'block';
         }
 
         // ====== 페이지 초기화 ======
