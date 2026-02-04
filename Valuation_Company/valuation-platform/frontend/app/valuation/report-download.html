@@ -561,7 +561,7 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const METHOD_NAMES = {
-            dcf: 'DCF (현금흐름할인법)',
+            dcf: 'DCF평가법',
             relative: '상대가치평가법',
             intrinsic: '본질가치평가법',
             asset: '자산가치평가법',
@@ -603,7 +603,7 @@
                     .select('status')
                     .eq('project_id', projectId)
                     .eq('method', method)
-                    .single();
+                    .maybeSingle();
 
                 if (!payment || payment.status !== 'confirmed') {
                     // Show payment required message instead of main content
