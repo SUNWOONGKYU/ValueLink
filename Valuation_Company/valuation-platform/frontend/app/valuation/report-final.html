@@ -640,7 +640,7 @@
                 // 1. 프로젝트 상태 확인
                 const { data: project, error: projError } = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status, final_report_url')
+                    .select('project_id, company_name, draft_status, final_report_url, valuation_date')
                     .eq('project_id', projectId)
                     .single();
 

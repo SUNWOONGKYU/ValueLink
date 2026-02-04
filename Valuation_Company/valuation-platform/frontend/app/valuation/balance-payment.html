@@ -711,7 +711,7 @@
                 // 1. 프로젝트 정보 조회
                 var result = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status')
+                    .select('project_id, company_name, draft_status, agreed_price, deposit_amount')
                     .eq('project_id', projectId)
                     .single();
 

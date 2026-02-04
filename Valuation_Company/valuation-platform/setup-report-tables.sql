@@ -98,7 +98,39 @@ CREATE POLICY "balance_payments_update" ON balance_payments
 --   confirmed : 입금 확인 완료 (관리자가 확인)
 
 -- =============================================
--- 5. report_delivery_requests: 보고서 수령 요청 (이메일/하드카피)
+-- 5. revision_requests: 고객 수정 요청
+-- =============================================
+CREATE TABLE IF NOT EXISTS revision_requests (
+    id SERIAL PRIMARY KEY,
+    project_id VARCHAR(50) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    section VARCHAR(100) NOT NULL,
+    request_type VARCHAR(50) NOT NULL,
+    request_detail TEXT NOT NULL,
+    attachment_urls TEXT[] DEFAULT '{}',
+    status VARCHAR(20) DEFAULT '접수됨',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 인덱스
+CREATE INDEX IF NOT EXISTS idx_revision_requests_project ON revision_requests(project_id, method);
+
+-- RLS 정책
+ALTER TABLE revision_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "revision_requests_select" ON revision_requests
+    FOR SELECT USING (true);
+
+CREATE POLICY "revision_requests_insert" ON revision_requests
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "revision_requests_update" ON revision_requests
+    FOR UPDATE USING (true);
+
+-- revision_requests.status 값: 접수됨, 처리중, 완료
+
+-- =============================================
+-- 6. report_delivery_requests: 보고서 수령 요청 (이메일/하드카피)
 -- =============================================
 CREATE TABLE IF NOT EXISTS report_delivery_requests (
     id SERIAL PRIMARY KEY,

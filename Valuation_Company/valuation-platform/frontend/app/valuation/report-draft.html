@@ -707,7 +707,7 @@
                 // 1. 프로젝트 draft_status 확인
                 const { data: project, error: projError } = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status, draft_submitted_at')
+                    .select('project_id, company_name, draft_status, draft_submitted_at, valuation_date')
                     .eq('project_id', projectId)
                     .single();
 
