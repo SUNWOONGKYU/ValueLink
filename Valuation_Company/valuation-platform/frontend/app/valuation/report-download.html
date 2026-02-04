@@ -648,6 +648,12 @@
             // Set reportUrl from project data
             reportUrl = project.final_report_url || null;
 
+            // 평가 금액 표시
+            if (project.agreed_price) {
+                document.getElementById('valuationAmountDisplay').textContent =
+                    new Intl.NumberFormat('ko-KR').format(project.agreed_price) + '원';
+            }
+
             // 파일명 생성
             const companyName = project.company_name || project.company_name_kr || '회사';
             const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');

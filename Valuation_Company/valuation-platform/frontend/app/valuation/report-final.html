@@ -709,10 +709,11 @@
             var companyName = project.company_name || '-';
             var today = new Date();
             var writeDate = today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일';
+            var baseDate = project.valuation_date || writeDate;
 
             document.getElementById('coverMethodName').textContent = methodFullName + ' (최종)';
             document.getElementById('coverCompanyName').textContent = companyName;
-            document.getElementById('coverBaseDate').textContent = writeDate;
+            document.getElementById('coverBaseDate').textContent = baseDate;
             document.getElementById('coverWriteDate').textContent = writeDate;
             document.getElementById('coverMethod').textContent = methodName;
             document.getElementById('coverReportNo').textContent = 'FINAL-' + projectId;

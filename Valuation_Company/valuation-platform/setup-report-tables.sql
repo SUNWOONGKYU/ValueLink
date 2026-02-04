@@ -96,3 +96,42 @@ CREATE POLICY "balance_payments_update" ON balance_payments
 -- balance_payments.status 값:
 --   pending   : 입금 대기 (고객이 입금 요청함)
 --   confirmed : 입금 확인 완료 (관리자가 확인)
+
+-- =============================================
+-- 5. report_delivery_requests: 보고서 수령 요청 (이메일/하드카피)
+-- =============================================
+CREATE TABLE IF NOT EXISTS report_delivery_requests (
+    id SERIAL PRIMARY KEY,
+    project_id VARCHAR(50) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    delivery_type VARCHAR(20) NOT NULL,
+    email VARCHAR(200),
+    recipient_name VARCHAR(100),
+    recipient_phone VARCHAR(30),
+    zip_code VARCHAR(10),
+    address VARCHAR(500),
+    address_detail VARCHAR(200),
+    copy_count INTEGER DEFAULT 1,
+    status VARCHAR(20) DEFAULT 'pending',
+    requested_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    completed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 인덱스
+CREATE INDEX IF NOT EXISTS idx_delivery_requests_project ON report_delivery_requests(project_id, method);
+
+-- RLS 정책
+ALTER TABLE report_delivery_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "delivery_requests_select" ON report_delivery_requests
+    FOR SELECT USING (true);
+
+CREATE POLICY "delivery_requests_insert" ON report_delivery_requests
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "delivery_requests_update" ON report_delivery_requests
+    FOR UPDATE USING (true);
+
+-- delivery_type 값: email, hardcopy
+-- status 값: pending (접수), processing (처리중), completed (완료)
