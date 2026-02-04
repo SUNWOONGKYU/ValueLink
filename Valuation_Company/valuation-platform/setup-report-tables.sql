@@ -36,6 +36,14 @@ CREATE POLICY "report_draft_sections_update" ON report_draft_sections
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS draft_status VARCHAR(50) DEFAULT 'not_started';
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS draft_submitted_at TIMESTAMP WITH TIME ZONE;
 ALTER TABLE projects ADD COLUMN IF NOT EXISTS final_report_url VARCHAR(1000);
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS agreed_price INTEGER;
+ALTER TABLE projects ADD COLUMN IF NOT EXISTS deposit_amount INTEGER DEFAULT 0;
+
+-- agreed_price: 관리자가 승인한 총 서비스 금액 (원)
+--   고객이 가격을 제안 → 관리자가 승인하면 이 컬럼에 저장
+--   NULL이면 아직 가격 미확정
+-- deposit_amount: 선금 납부액 (원)
+--   잔금 = agreed_price - deposit_amount
 
 -- 3. Supabase Storage 버킷 생성 (Supabase 대시보드에서 수동 생성 필요)
 -- 버킷명: valuation-reports
