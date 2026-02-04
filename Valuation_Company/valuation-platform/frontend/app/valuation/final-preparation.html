@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>평가보고서 최종안 작성 | ValueLink</title>
-    
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../styles/mobile-optimize.css">
     <style>
@@ -23,6 +25,7 @@
             --light-blue: #EFF6FF;
             --accent-blue: #3B82F6;
             --success: #10B981;
+            --error: #EF4444;
         }
 
         body {
@@ -32,122 +35,23 @@
             min-height: 100vh;
         }
 
-        /* Header styles moved to header.html component */
-
-        /* HERO SECTION */
-        .hero-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 40px; color: white; text-align: center; }
-        .hero-content { max-width: 1200px; margin: 0 auto; }
-        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
-        .hero-subtitle { font-size: 18px; opacity: 0.9; margin-bottom: 20px; }
-        .hero-badge { display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 8px 16px; border-radius: 20px; font-size: 14px; }
-        }
-
         /* Main Layout */
         .page-wrapper {
-            display: flex;
-            gap: 32px;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 40px;
         }
 
-        .main-content {
-            flex: 1;
-        }
+        .page-header { margin-bottom: 32px; }
+        .page-title { font-size: 32px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .page-description { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
 
-        /* Page Header */
-        .page-header {
-            margin-bottom: 32px;
-        }
-
-        .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 12px;
-        }
-
-        .page-description {
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Project Info Card */
-        .project-info-card {
+        /* Card */
+        .card {
             background: var(--white);
             border-radius: 16px;
             padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
             margin-bottom: 24px;
-        }
-
-        .project-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .project-id {
-            font-size: 14px;
-            color: var(--text-muted);
-            font-family: monospace;
-            background: var(--bg-light);
-            padding: 4px 12px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .project-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            background: #FEF3C7;
-            color: #92400E;
-        }
-
-        .project-meta {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .meta-item {
-            text-align: center;
-        }
-
-        .meta-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 4px;
-        }
-
-        .meta-value {
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Accountant Profile Card */
-        .accountant-profile-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
@@ -155,112 +59,44 @@
             font-size: 18px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .profile-content {
-            display: flex;
-            gap: 24px;
-            align-items: start;
-        }
-
-        .profile-photo {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 48px;
-            color: white;
-            flex-shrink: 0;
-            border: 4px solid var(--light-blue);
-        }
-
-        .profile-details {
-            flex: 1;
-        }
-
-        .accountant-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .accountant-certification {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-        }
-
-        .profile-info-grid {
+        /* Project Info */
+        .project-meta {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-top: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
         }
 
-        .profile-info-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .meta-item { text-align: center; }
+        .meta-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .meta-value { font-size: 16px; font-weight: 600; color: var(--text-primary); }
 
-        .profile-info-item .icon {
-            font-size: 18px;
-        }
-
-        .profile-info-item .text {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .profile-info-item .value {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        /* Revision Summary Card */
-        .revision-summary-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
+        /* Revision Requests */
         .revision-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .revision-count {
             background: #FEF3C7;
             color: #92400E;
-            padding: 8px 16px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
         }
 
-        .revision-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
+        .revision-list { display: flex; flex-direction: column; gap: 12px; }
 
         .revision-item {
             display: flex;
-            align-items: flex-start;
             gap: 12px;
             padding: 16px;
             background: var(--bg-light);
@@ -269,8 +105,7 @@
         }
 
         .revision-number {
-            width: 32px;
-            height: 32px;
+            width: 28px; height: 28px;
             background: var(--amber);
             color: white;
             border-radius: 50%;
@@ -278,259 +113,230 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             flex-shrink: 0;
         }
 
-        .revision-content {
-            flex: 1;
-        }
+        .revision-content { flex: 1; }
+        .revision-section-label { font-size: 11px; color: var(--accent-blue); font-weight: 600; margin-bottom: 2px; }
+        .revision-type { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+        .revision-detail { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+        .revision-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 14px; }
 
-        .revision-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
+        /* Section Editor */
+        .editor-section { margin-top: 8px; }
 
-        .revision-description {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .view-details-link {
-            display: inline-flex;
-            align-items: center;
+        .editor-tabs {
+            display: flex;
             gap: 4px;
-            color: var(--deep-blue);
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid var(--deep-blue);
-            border-radius: 8px;
-            transition: all 0.2s ease;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 20px;
         }
 
-        .view-details-link:hover {
-            background: var(--light-blue);
-        }
-
-        /* Status Section */
-        .status-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 32px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            border: 2px solid var(--accent-blue);
-        }
-
-        .status-indicator {
-            text-align: center;
-            padding: 40px 20px;
-        }
-
-        .status-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            animation: writing 2s ease-in-out infinite;
-        }
-
-        @keyframes writing {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-        }
-
-        .status-text {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--accent-blue);
-            margin-bottom: 8px;
-        }
-
-        .status-description {
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Progress Steps */
-        .progress-steps {
-            margin-top: 32px;
-            padding: 24px;
-            background: var(--bg-light);
-            border-radius: 12px;
-        }
-
-        .step-item {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .step-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .step-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .step-icon.completed {
-            background: var(--success);
-        }
-
-        .step-icon.in-progress {
-            background: var(--accent-blue);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        .step-icon.pending {
-            background: #D1D5DB;
-        }
-
-        .step-content {
-            flex: 1;
-            padding-top: 4px;
-        }
-
-        .step-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 4px;
-        }
-
-        .step-time {
+        .editor-tab {
+            padding: 10px 16px;
             font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* Notice Box */
-        .notice-box {
-            background: #DBEAFE;
-            border: 1px solid #BFDBFE;
-            border-radius: 12px;
-            padding: 16px 20px;
-            margin-bottom: 24px;
-        }
-
-        .notice-title {
-            font-size: 14px;
             font-weight: 600;
-            color: var(--deep-blue);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .notice-text {
-            font-size: 13px;
-            color: #1E40AF;
-            line-height: 1.6;
-        }
-
-        .notice-actions {
-            margin-top: 12px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn-notification {
-            padding: 8px 20px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--deep-blue);
-            background: white;
-            border: 1px solid var(--deep-blue);
-            border-radius: 8px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
             cursor: pointer;
-            transition: all 0.2s ease;
+            white-space: nowrap;
+            transition: all 0.2s;
+            position: relative;
         }
 
-        .btn-notification:hover {
-            background: var(--deep-blue);
-            color: white;
+        .editor-tab:hover { color: var(--text-primary); }
+        .editor-tab.active {
+            color: var(--deep-blue);
+            border-bottom-color: var(--deep-blue);
         }
 
-        /* Footer */
-        footer {
-            background: #1E3A5F;
-            color: var(--white);
-            padding: 32px 40px;
-            margin-top: 60px;
+        .editor-tab .tab-check {
+            display: inline-block;
+            margin-left: 4px;
+            color: var(--success);
+            font-size: 12px;
         }
 
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
+        .editor-content { display: none; }
+        .editor-content.active { display: block; }
+
+        .editor-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            min-height: 250px;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .editor-textarea:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+
+        .editor-status {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
 
-        .footer-logo {
+        .save-indicator { display: flex; align-items: center; gap: 4px; }
+        .save-indicator.saved { color: var(--success); }
+        .save-indicator.saving { color: var(--amber); }
+
+        /* PDF Upload */
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            padding: 48px 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--bg-light);
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: var(--deep-blue);
+            background: var(--light-blue);
+        }
+
+        .upload-icon { font-size: 48px; margin-bottom: 16px; }
+        .upload-title { font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; }
+        .upload-subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+
+        .upload-btn {
+            display: inline-block;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: var(--deep-blue);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .upload-btn:hover { background: #1E40AF; }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: #F0FDF4;
+            border: 2px solid var(--success);
+            border-radius: 12px;
+            margin-top: 16px;
+        }
+
+        .uploaded-file-icon { font-size: 32px; }
+        .uploaded-file-info { flex: 1; }
+        .uploaded-file-name { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+        .uploaded-file-size { font-size: 13px; color: var(--text-muted); }
+
+        .uploaded-file-remove {
+            padding: 8px 16px;
+            font-size: 13px;
+            color: var(--error);
+            background: white;
+            border: 1px solid var(--error);
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Submit Button */
+        .submit-area {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .btn-submit {
+            padding: 16px 48px;
             font-size: 18px;
             font-weight: 700;
+            color: white;
+            background: var(--deep-green);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .footer-text {
-            font-size: 13px;
-            opacity: 0.7;
+        .btn-submit:hover {
+            background: #15803D;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(22, 101, 52, 0.3);
         }
+
+        .btn-submit:disabled {
+            background: #9CA3AF;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-help {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+
+        /* Status Messages */
+        .status-message {
+            text-align: center;
+            padding: 60px 40px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        }
+
+        .status-message .icon { font-size: 64px; margin-bottom: 24px; }
+        .status-message h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
+        .status-message p { font-size: 16px; color: var(--text-secondary); line-height: 1.6; }
+
+        /* Loading */
+        .loading { text-align: center; padding: 60px 20px; }
+        .loading-spinner {
+            width: 48px; height: 48px;
+            border: 4px solid #E5E7EB;
+            border-top-color: var(--deep-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* Responsive */
         @media (max-width: 1024px) {
-            .page-wrapper {
-                flex-direction: column;
-            }
-
-            .project-meta {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .project-meta { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (max-width: 768px) {
-            .page-wrapper {
-                padding: 20px;
-            }
-
-            .page-title {
-                font-size: 24px;
-            }
-
-            .project-info-card,
-            .accountant-profile-card,
-            .revision-summary-card,
-            .status-section {
-                padding: 20px;
-            }
-
-            .project-meta {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-content {
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
+            .page-wrapper { padding: 20px; }
+            .page-title { font-size: 24px; }
+            .card { padding: 20px; }
+            .project-meta { grid-template-columns: 1fr; }
+            .editor-tabs { flex-wrap: wrap; }
         }
     </style>
 </head>
@@ -538,55 +344,21 @@
     <!-- 접근 권한 확인 -->
     <div id="access-denied" style="display:none;">
         <div style="text-align:center; padding:80px 20px; max-width:500px; margin:0 auto;">
-            <div style="font-size:48px; margin-bottom:20px;">🔒</div>
+            <div style="font-size:48px; margin-bottom:20px;">&#128274;</div>
             <h2 style="color:#1F2937; margin-bottom:12px;">접근 권한이 없습니다</h2>
-            <p style="color:#6B7280; margin-bottom:24px;">이 페이지는 담당 회계사 및 관리자만 접근할 수 있습니다.<br>현재 진행 상태는 사이드바에서 확인하실 수 있습니다.</p>
+            <p style="color:#6B7280; margin-bottom:24px;">이 페이지는 담당 회계사 및 관리자만 접근할 수 있습니다.</p>
             <a href="../valuation.html" style="display:inline-block; padding:12px 24px; background:#166534; color:white; border-radius:8px; text-decoration:none; font-weight:600;">메인으로 돌아가기</a>
         </div>
     </div>
 
     <script>
-        // Supabase 세션 기반 역할 체크
         (function() {
             var role = localStorage.getItem('userRole') || 'customer';
             if (role === 'accountant' || role === 'admin') return;
-
             document.getElementById('access-denied').style.display = 'block';
             document.addEventListener('DOMContentLoaded', function() {
-                var header = document.getElementById('header-container');
-                if (header) header.style.display = 'none';
-                var hero = document.querySelector('.hero-section');
-                if (hero) hero.style.display = 'none';
-                var pageWrapper = document.querySelector('.page-wrapper');
-                if (pageWrapper) pageWrapper.style.display = 'none';
-                var footer = document.querySelector('footer');
-                if (footer) footer.style.display = 'none';
-
-                var script = document.createElement('script');
-                script.type = 'module';
-                script.textContent = `
-                    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-                    try {
-                        const supabase = createClient(
-                            'https://arxrfetgaitkgiiqabap.supabase.co',
-                            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
-                        );
-                        const { data: { session } } = await supabase.auth.getSession();
-                        if (session && session.user) {
-                            const email = session.user.email.toLowerCase();
-                            const { data: userData } = await supabase
-                                .from('users').select('role').eq('user_id', session.user.id).single();
-                            const detectedRole = (userData && userData.role) ? userData.role
-                                : (['wksun999@gmail.com'].includes(email) ? 'admin' : 'customer');
-                            if (detectedRole === 'admin' || detectedRole === 'accountant') {
-                                localStorage.setItem('userRole', detectedRole);
-                                localStorage.setItem('userEmail', email);
-                                location.reload();
-                            }
-                        }
-                    } catch(e) { console.warn('Supabase 세션 확인 실패:', e); }
-                `;
-                document.body.appendChild(script);
+                var els = document.querySelectorAll('#header-container, .page-wrapper, footer');
+                els.forEach(function(el) { if (el) el.style.display = 'none'; });
             });
         })();
     </script>
@@ -594,193 +366,101 @@
     <!-- Header -->
     <div id="header-container"></div>
 
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">평가보고서 최종안 작성</h1>
-            <p class="hero-subtitle">담당 공인회계사가 수정 사항을 반영하여 최종 보고서를 작성합니다 (48시간 이내)</p>
-            <div class="hero-badge">
-                <span>프로젝트 ID: </span>
-                <span id="hero-project-id">-</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Content -->
     <div class="page-wrapper">
-        <main class="main-content">
+        <!-- Loading -->
+        <div id="loadingState" class="loading">
+            <div class="loading-spinner"></div>
+            <p style="color: var(--text-muted);">페이지를 불러오는 중...</p>
+        </div>
 
-            <!-- Project Info Card -->
-            <section class="project-info-card">
-                <div class="project-header">
-                    <div>
-                        <h2 class="project-title" id="project-company-name">로딩 중...</h2>
-                        <span class="project-id" id="project-id">-</span>
-                    </div>
-                    <div class="project-status">
-                        <span>✍️</span>
-                        <span>최종안 작성 중</span>
-                    </div>
-                </div>
+        <!-- Already Finalized -->
+        <div id="finalizedState" style="display: none;">
+            <div class="status-message">
+                <div class="icon">&#9989;</div>
+                <h2>최종 보고서가 이미 완료되었습니다</h2>
+                <p>최종 보고서가 업로드되었습니다. 고객에게 전달되었습니다.</p>
+            </div>
+        </div>
+
+        <!-- Main Editor Area -->
+        <div id="mainContent" style="display: none;">
+            <div class="page-header">
+                <h1 class="page-title">평가보고서 최종안 작성</h1>
+                <p class="page-description">고객의 수정 요청을 반영하여 최종 보고서를 완성하고, PDF를 업로드하세요.</p>
+            </div>
+
+            <!-- Project Info -->
+            <div class="card">
                 <div class="project-meta">
                     <div class="meta-item">
-                        <div class="meta-label">프로젝트 번호</div>
-                        <div class="meta-value" id="project-number">-</div>
+                        <div class="meta-label">프로젝트 ID</div>
+                        <div class="meta-value" id="display-project-id">-</div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">평가 방법</div>
-                        <div class="meta-value" id="method-name">-</div>
+                        <div class="meta-label">기업명</div>
+                        <div class="meta-value" id="display-company">-</div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">평가 기준일</div>
-                        <div class="meta-value" id="evaluation-date">-</div>
+                        <div class="meta-label">평가방법</div>
+                        <div class="meta-value" id="display-method">-</div>
                     </div>
                     <div class="meta-item">
-                        <div class="meta-label">담당 회계사</div>
-                        <div class="meta-value">선웅규 회계사</div>
+                        <div class="meta-label">초안 상태</div>
+                        <div class="meta-value" id="display-status">-</div>
                     </div>
-                </div>
-            </section>
-
-            <!-- Accountant Profile Card -->
-            <section class="accountant-profile-card">
-                <h3 class="card-title">
-                    <span>👨‍💼</span>
-                    담당 공인회계사
-                </h3>
-                <div class="profile-content">
-                    <div class="profile-photo">선</div>
-                    <div class="profile-details">
-                        <h4 class="accountant-name">선웅규 공인회계사</h4>
-                        <p class="accountant-certification">공인회계사 자격증 번호: 12345</p>
-
-                        <div class="profile-info-grid">
-                            <div class="profile-info-item">
-                                <span class="icon">📅</span>
-                                <div>
-                                    <span class="text">작업 시작:</span>
-                                    <span class="value" id="work-start-date">-</span>
-                                </div>
-                            </div>
-                            <div class="profile-info-item">
-                                <span class="icon">⏰</span>
-                                <div>
-                                    <span class="text">예상 완료:</span>
-                                    <span class="value" id="expected-completion">-</span>
-                                </div>
-                            </div>
-                            <div class="profile-info-item">
-                                <span class="icon">📊</span>
-                                <div>
-                                    <span class="text">전문 분야:</span>
-                                    <span class="value">스타트업 밸류에이션</span>
-                                </div>
-                            </div>
-                            <div class="profile-info-item">
-                                <span class="icon">✅</span>
-                                <div>
-                                    <span class="text">완료 프로젝트:</span>
-                                    <span class="value">247건</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Revision Summary Card -->
-            <section class="revision-summary-card">
-                <div class="revision-header">
-                    <h3 class="card-title">
-                        <span>📝</span>
-                        수정 요청 사항
-                    </h3>
-                    <span class="revision-count" id="revision-count">0개 접수</span>
-                </div>
-
-                <div class="revision-list" id="revision-list">
-                    <!-- Revision items will be dynamically inserted -->
-                </div>
-
-                <a href="#" class="view-details-link" onclick="viewRevisionDetails(event)">
-                    <span>수정 요청 상세보기</span>
-                    <span>→</span>
-                </a>
-            </section>
-
-            <!-- Status Section -->
-            <section class="status-section">
-                <h3 class="card-title">
-                    <span>⚙️</span>
-                    작업 진행 상황
-                </h3>
-
-                <div class="status-indicator">
-                    <div class="status-icon">✍️</div>
-                    <div class="status-text">최종안 작성 중</div>
-                    <div class="status-description">
-                        공인회계사가 고객님의 수정 요청을 꼼꼼히 검토하여<br>
-                        최종 보고서를 작성하고 있습니다.
-                    </div>
-                </div>
-
-                <div class="progress-steps">
-                    <div class="step-item">
-                        <div class="step-icon completed">✅</div>
-                        <div class="step-content">
-                            <div class="step-title">수정 요청 확인</div>
-                            <div class="step-time" id="step1-time">-</div>
-                        </div>
-                    </div>
-
-                    <div class="step-item">
-                        <div class="step-icon in-progress">⚙️</div>
-                        <div class="step-content">
-                            <div class="step-title">수정 사항 반영 중</div>
-                            <div class="step-time">진행 중</div>
-                        </div>
-                    </div>
-
-                    <div class="step-item">
-                        <div class="step-icon pending">⏳</div>
-                        <div class="step-content">
-                            <div class="step-title">최종 검토 예정</div>
-                            <div class="step-time">대기 중</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Notice Box -->
-            <div class="notice-box">
-                <div class="notice-title">
-                    <span>🔔</span>
-                    알림 설정
-                </div>
-                <div class="notice-text">
-                    최종 보고서가 완료되면 등록하신 이메일과 SMS로 알림을 보내드립니다.
-                    알림 수신 설정을 변경하시려면 아래 버튼을 클릭해주세요.
-                </div>
-                <div class="notice-actions">
-                    <button class="btn-notification" onclick="updateNotificationSettings('email')">
-                        📧 이메일 알림 설정
-                    </button>
-                    <button class="btn-notification" onclick="updateNotificationSettings('sms')">
-                        📱 SMS 알림 설정
-                    </button>
                 </div>
             </div>
-        </main>
 
-    </div>
+            <!-- Revision Requests from DB -->
+            <div class="card">
+                <div class="revision-header">
+                    <h3 class="card-title">&#128221; 고객 수정 요청 사항</h3>
+                    <span class="revision-count" id="revision-count">0개</span>
+                </div>
+                <div class="revision-list" id="revision-list">
+                    <div class="revision-empty">수정 요청이 없습니다. 초안을 바로 최종안으로 완성하세요.</div>
+                </div>
+            </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-logo">ValueLink</div>
-            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+            <!-- Section Editor -->
+            <div class="card">
+                <h3 class="card-title">&#9999;&#65039; 보고서 섹션 편집</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                    수정 요청 사항을 반영하여 각 섹션을 편집하세요. 변경 사항은 자동 저장됩니다.
+                </p>
+
+                <div class="editor-section">
+                    <div class="editor-tabs" id="editorTabs"></div>
+                    <div id="editorPanels"></div>
+                </div>
+            </div>
+
+            <!-- PDF Upload -->
+            <div class="card">
+                <h3 class="card-title">&#128196; 최종 보고서 PDF 업로드</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                    최종 완성된 평가보고서 PDF 파일을 업로드하세요. 이 파일이 고객에게 전달됩니다.
+                </p>
+
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">&#128206;</div>
+                    <div class="upload-title">PDF 파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="upload-subtitle">PDF 형식, 최대 50MB</div>
+                    <button class="upload-btn" type="button">파일 선택</button>
+                    <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+                </div>
+
+                <div id="uploadedFileInfo" style="display: none;"></div>
+            </div>
+
+            <!-- Submit -->
+            <div class="submit-area">
+                <button class="btn-submit" id="btnFinalize" disabled>최종안 완료 및 제출</button>
+                <p class="submit-help">PDF를 업로드하면 제출 버튼이 활성화됩니다.</p>
+            </div>
         </div>
-    </footer>
+    </div>
 
     <!-- Header Load Script -->
     <script>
@@ -791,146 +471,399 @@
                 const scripts = document.getElementById('header-container').querySelectorAll('script');
                 scripts.forEach(script => {
                     const newScript = document.createElement('script');
-                    if (script.src) {
-                        newScript.src = script.src;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
+                    if (script.src) { newScript.src = script.src; }
+                    else { newScript.textContent = script.textContent; }
                     document.body.appendChild(newScript);
                 });
             })
             .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 
-    <!-- Module Script -->
-    <script type="module">
-        import { checkMethodStatus, METHOD_NAMES } from '../../components/project-status-checker.js';
+    <!-- Page Script -->
+    <script>
+        // ====== Supabase ======
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // URL 파라미터에서 프로젝트 정보 가져오기
+        const METHOD_NAMES = {
+            dcf: 'DCF평가법',
+            relative: '상대가치평가법',
+            intrinsic: '본질가치평가법',
+            asset: '자산가치평가법',
+            inheritance_tax: '상증세법평가법'
+        };
+
+        const SECTIONS = [
+            { key: 'summary', title: 'I. 요약', hint: '평가 결과의 핵심 요약을 작성하세요.' },
+            { key: 'overview', title: 'II. 평가 개요', hint: '평가 목적, 범위, 기준일 등을 기술하세요.' },
+            { key: 'company', title: 'III. 회사 개요', hint: '대상 기업 소개 및 산업 분석을 작성하세요.' },
+            { key: 'financial', title: 'IV. 재무 분석', hint: '재무제표 분석 내용을 작성하세요.' },
+            { key: 'methodology', title: 'V. 평가 방법론', hint: '적용 방법론과 가정을 설명하세요.' },
+            { key: 'results', title: 'VI. 평가 결과', hint: '산출된 기업가치와 과정을 기술하세요.' },
+            { key: 'sensitivity', title: 'VII. 민감도', hint: '주요 변수 변동 영향을 분석하세요.' },
+            { key: 'conclusion', title: 'VIII. 결론', hint: '최종 의견 및 결론을 작성하세요.' },
+            { key: 'appendix', title: 'IX. 부록', hint: '참고자료, 전제사항 등을 기재하세요.' }
+        ];
+
+        // ====== State ======
         const urlParams = new URLSearchParams(window.location.search);
-        const projectId = urlParams.get('id') || 'DEMO-2026-DCF';
-        const method = urlParams.get('method') || 'dcf';
+        const projectId = urlParams.get('id') || urlParams.get('projectId');
+        const method = urlParams.get('method');
+        let sectionData = {};
+        let saveTimers = {};
+        let uploadedFilePath = null;
 
-        // Hero section에 프로젝트 ID 표시
-        const heroProjectId = document.getElementById('hero-project-id');
-        if (heroProjectId) heroProjectId.textContent = projectId;
+        // ====== Show State ======
+        function showState(id) {
+            ['loadingState', 'finalizedState', 'mainContent'].forEach(s => {
+                document.getElementById(s).style.display = 'none';
+            });
+            document.getElementById(id).style.display = id === 'mainContent' ? '' : '';
+            if (id !== 'loadingState') {
+                document.getElementById(id).style.display = '';
+            }
+        }
 
-        // 페이지 로드 시 실행
+        // ====== Initialize ======
         async function initializePage() {
+            if (!projectId || !method) {
+                showState('finalizedState');
+                document.querySelector('#finalizedState h2').textContent = '잘못된 접근';
+                document.querySelector('#finalizedState p').textContent = '프로젝트 ID 또는 평가법 정보가 없습니다.';
+                return;
+            }
+
             try {
-                // 평가법 상태 확인
-                const { status, step } = await checkMethodStatus(projectId, method);
+                // 1. Load project info
+                const { data: project, error: projErr } = await supabase
+                    .from('projects')
+                    .select('project_id, company_name, draft_status')
+                    .eq('project_id', projectId)
+                    .single();
 
-                // 프로젝트 정보 표시
-                displayProjectInfo();
+                if (projErr) {
+                    console.error('프로젝트 조회 오류:', projErr);
+                    showState('finalizedState');
+                    document.querySelector('#finalizedState h2').textContent = '프로젝트를 찾을 수 없습니다';
+                    return;
+                }
 
-                // 수정 요청 사항 로드
-                loadRevisionRequests();
+                // Already finalized
+                if (project.draft_status === 'finalized') {
+                    showState('finalizedState');
+                    return;
+                }
 
-                // 작업 시작 일시 설정
-                setWorkTimeline();
+                // Display project info
+                document.getElementById('display-project-id').textContent = projectId;
+                document.getElementById('display-company').textContent = project.company_name || '-';
+                document.getElementById('display-method').textContent = METHOD_NAMES[method] || method;
+                document.getElementById('display-status').textContent = project.draft_status || '-';
 
-            } catch (error) {
-                console.error('페이지 초기화 실패:', error);
+                // 2. Load revision requests
+                await loadRevisionRequests();
+
+                // 3. Load sections for editing
+                await loadSections();
+
+                // 4. Setup editor
+                renderEditor();
+
+                // 5. Setup upload
+                setupUpload();
+
+                // 6. Setup submit
+                setupSubmit();
+
+                showState('mainContent');
+
+            } catch (err) {
+                console.error('초기화 오류:', err);
+                showState('finalizedState');
+                document.querySelector('#finalizedState h2').textContent = '오류 발생';
+                document.querySelector('#finalizedState p').textContent = err.message;
             }
         }
 
-        // 프로젝트 정보 표시
-        function displayProjectInfo() {
-            const methodName = METHOD_NAMES[method] || method;
-
-            // 임시 데이터 (실제로는 DB에서 가져와야 함)
-            document.getElementById('project-company-name').textContent = '(주)파인더월드';
-            document.getElementById('project-id').textContent = projectId;
-            document.getElementById('project-number').textContent = projectId;
-            document.getElementById('method-name').textContent = methodName;
-            const today = new Date();
-            document.getElementById('evaluation-date').textContent = `${today.getFullYear()-1}.12.31`;
-        }
-
-        // 수정 요청 사항 로드
+        // ====== Load Revision Requests ======
         async function loadRevisionRequests() {
-            try {
-                // 실제로는 DB에서 가져와야 함
-                // 임시 데이터
-                const revisionRequests = [
-                    {
-                        id: 1,
-                        title: '재무 가정 업데이트',
-                        description: '2026년 매출 성장률을 35%에서 40%로 조정 요청'
-                    },
-                    {
-                        id: 2,
-                        title: '할인율 근거 보완',
-                        description: 'WACC 산정 과정에 대한 상세 설명 추가 필요'
-                    },
-                    {
-                        id: 3,
-                        title: '유사 기업 비교 추가',
-                        description: '국내 유사 기업 2개 추가 분석 요청'
-                    }
-                ];
+            const { data: revisions, error } = await supabase
+                .from('revision_requests')
+                .select('*')
+                .eq('project_id', projectId)
+                .eq('method', method)
+                .order('created_at', { ascending: false });
 
-                // 수정 요청 개수 표시
-                document.getElementById('revision-count').textContent = `${revisionRequests.length}개 접수`;
+            const listEl = document.getElementById('revision-list');
+            const countEl = document.getElementById('revision-count');
 
-                // 수정 요청 목록 렌더링
-                const revisionList = document.getElementById('revision-list');
-                revisionList.innerHTML = revisionRequests.map(request => `
-                    <div class="revision-item">
-                        <div class="revision-number">${request.id}</div>
-                        <div class="revision-content">
-                            <div class="revision-title">${request.title}</div>
-                            <div class="revision-description">${request.description}</div>
-                        </div>
+            if (error || !revisions || revisions.length === 0) {
+                countEl.textContent = '0개';
+                listEl.innerHTML = '<div class="revision-empty">수정 요청이 없습니다.</div>';
+                return;
+            }
+
+            countEl.textContent = `${revisions.length}개`;
+            listEl.innerHTML = revisions.map((r, i) => `
+                <div class="revision-item">
+                    <div class="revision-number">${i + 1}</div>
+                    <div class="revision-content">
+                        ${r.section ? `<div class="revision-section-label">${r.section}</div>` : ''}
+                        <div class="revision-type">${r.request_type || '수정 요청'}</div>
+                        <div class="revision-detail">${r.request_detail || ''}</div>
                     </div>
-                `).join('');
+                </div>
+            `).join('');
+        }
 
-            } catch (error) {
-                console.error('수정 요청 로드 실패:', error);
-                document.getElementById('revision-count').textContent = '0개 접수';
+        // ====== Load Sections ======
+        async function loadSections() {
+            const { data: sections, error } = await supabase
+                .from('report_draft_sections')
+                .select('*')
+                .eq('project_id', projectId)
+                .eq('method', method);
+
+            sectionData = {};
+            (sections || []).forEach(s => {
+                sectionData[s.section_key] = s;
+            });
+        }
+
+        // ====== Render Editor ======
+        function renderEditor() {
+            const tabsEl = document.getElementById('editorTabs');
+            const panelsEl = document.getElementById('editorPanels');
+
+            // Tabs
+            tabsEl.innerHTML = SECTIONS.map((sec, i) => {
+                const data = sectionData[sec.key];
+                const completed = data && data.is_completed;
+                return `<button class="editor-tab${i === 0 ? ' active' : ''}" data-index="${i}">
+                    ${sec.title}${completed ? '<span class="tab-check">&#10003;</span>' : ''}
+                </button>`;
+            }).join('');
+
+            // Panels
+            panelsEl.innerHTML = SECTIONS.map((sec, i) => {
+                const data = sectionData[sec.key];
+                const content = data ? data.content || '' : '';
+                return `<div class="editor-content${i === 0 ? ' active' : ''}" data-index="${i}">
+                    <div class="editor-hint">${sec.hint}</div>
+                    <textarea class="editor-textarea" data-key="${sec.key}" placeholder="${sec.hint}">${content}</textarea>
+                    <div class="editor-status">
+                        <span class="save-indicator" id="save-${sec.key}">&#8212;</span>
+                        <span>${content.length}자</span>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // Tab click
+            tabsEl.querySelectorAll('.editor-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const idx = tab.dataset.index;
+                    tabsEl.querySelectorAll('.editor-tab').forEach(t => t.classList.remove('active'));
+                    panelsEl.querySelectorAll('.editor-content').forEach(p => p.classList.remove('active'));
+                    tab.classList.add('active');
+                    panelsEl.querySelector(`.editor-content[data-index="${idx}"]`).classList.add('active');
+                });
+            });
+
+            // Auto-save on input
+            panelsEl.querySelectorAll('.editor-textarea').forEach(textarea => {
+                textarea.addEventListener('input', () => {
+                    const key = textarea.dataset.key;
+                    const indicator = document.getElementById('save-' + key);
+                    indicator.textContent = '저장 중...';
+                    indicator.className = 'save-indicator saving';
+
+                    // Update char count
+                    const statusEl = textarea.parentElement.querySelector('.editor-status span:last-child');
+                    statusEl.textContent = textarea.value.length + '자';
+
+                    clearTimeout(saveTimers[key]);
+                    saveTimers[key] = setTimeout(() => saveSectionToDb(key, textarea.value), 2000);
+                });
+            });
+        }
+
+        // ====== Save Section ======
+        async function saveSectionToDb(sectionKey, content) {
+            const indicator = document.getElementById('save-' + sectionKey);
+            try {
+                const sec = SECTIONS.find(s => s.key === sectionKey);
+                const { error } = await supabase
+                    .from('report_draft_sections')
+                    .upsert({
+                        project_id: projectId,
+                        method: method,
+                        section_key: sectionKey,
+                        section_title: sec ? sec.title : sectionKey,
+                        content: content,
+                        updated_by: localStorage.getItem('userEmail') || 'accountant',
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'project_id,method,section_key' });
+
+                if (error) throw error;
+
+                indicator.innerHTML = '&#10003; 저장됨';
+                indicator.className = 'save-indicator saved';
+            } catch (err) {
+                console.error('저장 오류:', err);
+                indicator.textContent = '저장 실패';
+                indicator.className = 'save-indicator';
+                indicator.style.color = 'var(--error)';
             }
         }
 
-        // 작업 시작 일시 설정
-        function setWorkTimeline() {
-            const today = new Date();
-            const startDate = new Date(today);
-            const completionDate = new Date(today);
-            completionDate.setDate(completionDate.getDate() + 2); // 48시간 이내
+        // ====== Setup Upload ======
+        function setupUpload() {
+            const area = document.getElementById('uploadArea');
+            const input = document.getElementById('fileInput');
 
-            const formatDate = (date) => {
-                return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
-            };
+            area.addEventListener('click', () => input.click());
 
-            document.getElementById('work-start-date').textContent = formatDate(startDate);
-            document.getElementById('expected-completion').textContent = formatDate(completionDate);
-            document.getElementById('step1-time').textContent = `${formatDate(startDate)} 완료`;
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile(file);
+            });
+
+            input.addEventListener('change', () => {
+                if (input.files[0]) handleFile(input.files[0]);
+            });
         }
 
-        // 수정 요청 상세보기
-        window.viewRevisionDetails = function(event) {
-            event.preventDefault();
-            // 실제로는 수정 요청 상세 페이지로 이동
-            alert('수정 요청 상세 내역을 확인하실 수 있습니다.');
-        };
-
-        // 알림 설정 업데이트
-        window.updateNotificationSettings = function(type) {
-            const typeText = type === 'email' ? '이메일' : 'SMS';
-            alert(`${typeText} 알림 설정 페이지로 이동합니다.`);
-            // 실제로는 알림 설정 페이지로 이동
-        };
-
-        // 로그아웃 처리
-        window.handleLogout = async function() {
-            if (confirm('로그아웃 하시겠습니까?')) {
-                // 실제로는 Supabase 로그아웃 처리
-                window.location.href = '../valuation.html';
+        async function handleFile(file) {
+            if (!file.name.endsWith('.pdf')) {
+                alert('PDF 파일만 업로드할 수 있습니다.');
+                return;
             }
+
+            if (file.size > 50 * 1024 * 1024) {
+                alert('파일 크기는 50MB를 초과할 수 없습니다.');
+                return;
+            }
+
+            const area = document.getElementById('uploadArea');
+            const infoEl = document.getElementById('uploadedFileInfo');
+
+            // Show uploading state
+            area.innerHTML = `
+                <div class="upload-icon">&#8987;</div>
+                <div class="upload-title">업로드 중...</div>
+                <div class="upload-subtitle">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</div>
+            `;
+
+            try {
+                const storagePath = `reports/${method}/${projectId}.pdf`;
+                const { data, error } = await supabase.storage
+                    .from('valuation-reports')
+                    .upload(storagePath, file, { upsert: true });
+
+                if (error) throw error;
+
+                uploadedFilePath = storagePath;
+
+                // Show uploaded state
+                area.style.display = 'none';
+                infoEl.style.display = 'block';
+                infoEl.innerHTML = `
+                    <div class="uploaded-file">
+                        <div class="uploaded-file-icon">&#128196;</div>
+                        <div class="uploaded-file-info">
+                            <div class="uploaded-file-name">${file.name}</div>
+                            <div class="uploaded-file-size">${(file.size / 1024 / 1024).toFixed(2)} MB - 업로드 완료</div>
+                        </div>
+                        <button class="uploaded-file-remove" onclick="removeUploadedFile()">제거</button>
+                    </div>
+                `;
+
+                // Enable submit button
+                document.getElementById('btnFinalize').disabled = false;
+
+            } catch (err) {
+                console.error('업로드 오류:', err);
+                alert('파일 업로드에 실패했습니다: ' + err.message);
+                // Restore upload area
+                area.innerHTML = `
+                    <div class="upload-icon">&#128206;</div>
+                    <div class="upload-title">PDF 파일을 드래그하거나 클릭하여 업로드</div>
+                    <div class="upload-subtitle">PDF 형식, 최대 50MB</div>
+                    <button class="upload-btn" type="button">파일 선택</button>
+                `;
+            }
+        }
+
+        window.removeUploadedFile = function() {
+            uploadedFilePath = null;
+            const area = document.getElementById('uploadArea');
+            const infoEl = document.getElementById('uploadedFileInfo');
+            area.style.display = '';
+            area.innerHTML = `
+                <div class="upload-icon">&#128206;</div>
+                <div class="upload-title">PDF 파일을 드래그하거나 클릭하여 업로드</div>
+                <div class="upload-subtitle">PDF 형식, 최대 50MB</div>
+                <button class="upload-btn" type="button">파일 선택</button>
+                <input type="file" id="fileInput" accept=".pdf" style="display: none;">
+            `;
+            infoEl.style.display = 'none';
+            document.getElementById('btnFinalize').disabled = true;
+            // Re-setup events
+            setupUpload();
         };
 
-        // 페이지 로드 시 초기화
+        // ====== Setup Submit ======
+        function setupSubmit() {
+            document.getElementById('btnFinalize').addEventListener('click', async () => {
+                if (!uploadedFilePath) {
+                    alert('PDF 파일을 먼저 업로드하세요.');
+                    return;
+                }
+
+                if (!confirm('최종 보고서를 제출하시겠습니까?\n\n제출 후 고객에게 최종 보고서가 전달됩니다.')) {
+                    return;
+                }
+
+                const btn = document.getElementById('btnFinalize');
+                btn.disabled = true;
+                btn.textContent = '처리 중...';
+
+                try {
+                    const { error } = await supabase
+                        .from('projects')
+                        .update({
+                            draft_status: 'finalized',
+                            final_report_url: uploadedFilePath
+                        })
+                        .eq('project_id', projectId);
+
+                    if (error) throw error;
+
+                    alert('최종 보고서가 제출되었습니다.\n고객에게 전달됩니다.');
+                    showState('finalizedState');
+                    document.querySelector('#finalizedState h2').textContent = '최종 보고서 제출 완료';
+                    document.querySelector('#finalizedState p').textContent = '고객이 최종 보고서를 확인한 후 잔금 결제가 진행됩니다.';
+
+                } catch (err) {
+                    console.error('제출 오류:', err);
+                    alert('제출 중 오류가 발생했습니다: ' + err.message);
+                    btn.disabled = false;
+                    btn.textContent = '최종안 완료 및 제출';
+                }
+            });
+        }
+
+        // ====== Start ======
         initializePage();
     </script>
 </body>
