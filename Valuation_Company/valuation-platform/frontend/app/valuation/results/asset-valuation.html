@@ -711,6 +711,13 @@
                     <span class="form-hint">주</span>
                 </div>
             </div>
+            <div class="param-group" style="margin-top: 16px;">
+                <label class="param-label">할인/할증율 (%)</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <input type="number" class="form-input" id="nav-discount" value="0" min="-50" max="50" step="5" style="width: 100px;">
+                    <span style="font-size: 13px; color: #6B7280;">비상장 할인 시 음수 입력 (예: -20)</span>
+                </div>
+            </div>
         </section>
 
         <!-- ASSETS -->
@@ -978,9 +985,14 @@
                     <div class="result-unit">주</div>
                 </div>
             </div>
+            <div class="result-final" style="background: rgba(255,255,255,0.1); padding: 24px; margin-bottom: 16px;">
+                <div class="result-label">조정 전 NAVPS</div>
+                <div class="result-value" id="result-navps-original" style="font-size: 32px;">-</div>
+                <div class="result-unit">원</div>
+            </div>
             <div class="result-final">
-                <div class="result-label">주당순자산가치 (NAVPS)</div>
-                <div class="result-value" id="result-navps">-</div>
+                <div class="result-label">조정 후 NAVPS (최종)</div>
+                <div class="result-value" id="result-navps-adjusted">-</div>
                 <div class="result-unit">원</div>
             </div>
         </section>
@@ -1129,11 +1141,16 @@
             const totalAdj = values.totalAssetsAdj - values.totalLiabilitiesAdj;
             const navps = (values.navMarket * 1000000) / shares; // 백만원 → 원
 
+            // 할인/할증율 적용
+            const navDiscount = parseNumber(document.getElementById('nav-discount').value) / 100;
+            const adjustedNavps = Math.round(navps * (1 + navDiscount));
+
             document.getElementById('result-book-nav').textContent = formatNumber(values.navBook);
             document.getElementById('result-adjustment').textContent = formatNumber(totalAdj);
             document.getElementById('result-market-nav').textContent = formatNumber(values.navMarket);
             document.getElementById('result-shares').textContent = formatNumber(shares);
-            document.getElementById('result-navps').textContent = formatNumber(navps);
+            document.getElementById('result-navps-original').textContent = formatNumber(navps);
+            document.getElementById('result-navps-adjusted').textContent = formatNumber(adjustedNavps);
 
             document.getElementById('result-section').style.display = 'block';
             document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });

@@ -907,6 +907,11 @@
             // Average net income (3-year simple average)
             var avgIncome = (y1 + y2 + y3) / 3; // 백만원
 
+            // 음수 평균순이익 검증
+            if (avgIncome <= 0) {
+                alert('⚠️ 주의: 평균순이익이 0 이하(' + formatNumber(avgIncome) + '백만원)입니다.\n수익가치가 0 또는 음수로 산출됩니다.\n\n적자 기업의 경우 자산가치 위주로 평가하시기 바랍니다.');
+            }
+
             // Income value (수익가치) = 평균순이익 / 자본환원율
             var incomeValue = avgIncome / capRate; // 백만원
 

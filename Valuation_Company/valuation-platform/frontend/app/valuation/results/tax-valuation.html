@@ -1059,10 +1059,24 @@
             const tax2 = parseNumber(document.getElementById('tax-2').value);
             const tax1 = parseNumber(document.getElementById('tax-1').value);
 
-            // Calculate net profit for each year
-            const profit3 = income3 + nontax3 - tax3;
-            const profit2 = income2 + nontax2 - tax2;
-            const profit1 = income1 + nontax1 - tax1;
+            // Calculate net profit for each year (raw values)
+            const rawProfit3 = income3 + nontax3 - tax3;
+            const rawProfit2 = income2 + nontax2 - tax2;
+            const rawProfit1 = income1 + nontax1 - tax1;
+
+            // Apply 0 floor per 상증법 시행령 제54조 제1항 단서
+            const profit3 = Math.max(0, rawProfit3);
+            const profit2 = Math.max(0, rawProfit2);
+            const profit1 = Math.max(0, rawProfit1);
+
+            // Check if any profits were negative and warn user
+            if (rawProfit3 < 0 || rawProfit2 < 0 || rawProfit1 < 0) {
+                const years = [];
+                if (rawProfit3 < 0) years.push('3년 전');
+                if (rawProfit2 < 0) years.push('2년 전');
+                if (rawProfit1 < 0) years.push('1년 전');
+                console.log('ℹ️ ' + years.join(', ') + ' 순손익이 음수로 0 처리되었습니다 (상증법 시행령 제54조 제1항 단서).');
+            }
 
             // Display profit
             document.getElementById('profit-3').textContent = formatNumber(profit3);
@@ -1087,7 +1101,10 @@
             document.getElementById('calc-shares-2').textContent = formatNumber(shares);
 
             if (shares > 0 && discountRate > 0) {
-                const profitValue = (weightedProfit * 1000000) / discountRate / shares;
+                // Step 1: 순손익가치 (법인 전체)
+                const totalProfitValue = (weightedProfit * 1000000) / discountRate;
+                // Step 2: 1주당 순손익가치
+                const profitValue = totalProfitValue / shares;
                 document.getElementById('profit-value-per-share').textContent = formatNumber(profitValue);
                 return profitValue;
             }

@@ -851,6 +851,13 @@
                 <span class="icon">&#128101;</span>
                 유사기업 (Peer Group)
             </h2>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <label style="font-size: 14px; font-weight: 600;">멀티플 산출 방식:</label>
+                <select id="calc-method" class="form-input" style="width: 140px;" onchange="calculateAverages()">
+                    <option value="average">산술평균</option>
+                    <option value="median">중앙값</option>
+                </select>
+            </div>
             <div class="comparable-table-container">
                 <table class="comparable-table" id="peer-table">
                     <thead>
@@ -987,6 +994,14 @@
                 <div class="weight-total">
                     가중치 합계: <span id="weight-total">100</span>% (100%가 되어야 합니다)
                 </div>
+
+                <div class="param-group" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
+                    <label class="param-label" style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;">비상장 할인율 (%)</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" class="form-input" id="liquidity-discount" value="0" min="0" max="50" step="5" style="width: 100px;">
+                        <span style="font-size: 13px; color: #6B7280;">비상장기업은 통상 20~30% 적용</span>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -1032,9 +1047,17 @@
                 </div>
             </div>
             <div class="result-final">
-                <div class="result-label">가중평균 주당가치</div>
+                <div class="result-label">가중평균 주당가치 (할인 전)</div>
                 <div class="result-value" id="result-final-value">-</div>
                 <div class="result-unit">원</div>
+            </div>
+            <div class="result-final" id="result-discounted-section" style="margin-top: 16px; display: none;">
+                <div class="result-label">비상장 할인 적용 후 주당가치</div>
+                <div class="result-value" id="result-discounted-value">-</div>
+                <div class="result-unit">원</div>
+                <div style="margin-top: 12px; font-size: 14px; opacity: 0.8;">
+                    할인율: <span id="discount-rate-display">-</span>% 적용 | 시가총액: <span id="discounted-marketcap">-</span>백만원
+                </div>
             </div>
         </section>
     </div >
@@ -1125,28 +1148,41 @@
         function calculateAverages() {
             const tbody = document.getElementById('peer-tbody');
             const rows = tbody.rows;
+            const calcMethod = document.getElementById('calc-method').value;
 
             let totals = { marketcap: 0, per: 0, pbr: 0, psr: 0, evEbitda: 0, evSales: 0 };
             let counts = { marketcap: 0, per: 0, pbr: 0, psr: 0, evEbitda: 0, evSales: 0 };
+            let arrays = { marketcap: [], per: [], pbr: [], psr: [], evEbitda: [], evSales: [] };
 
             for (let row of rows) {
                 const inputs = row.querySelectorAll('input');
                 const values = Array.from(inputs).slice(1, 7).map(input => parseFloat(input.value.replace(/,/g, '')) || 0);
 
-                if (values[0] > 0) { totals.marketcap += values[0]; counts.marketcap++; }
-                if (values[1] > 0) { totals.per += values[1]; counts.per++; }
-                if (values[2] > 0) { totals.pbr += values[2]; counts.pbr++; }
-                if (values[3] > 0) { totals.psr += values[3]; counts.psr++; }
-                if (values[4] > 0) { totals.evEbitda += values[4]; counts.evEbitda++; }
-                if (values[5] > 0) { totals.evSales += values[5]; counts.evSales++; }
+                if (values[0] > 0) { totals.marketcap += values[0]; counts.marketcap++; arrays.marketcap.push(values[0]); }
+                if (values[1] > 0) { totals.per += values[1]; counts.per++; arrays.per.push(values[1]); }
+                if (values[2] > 0) { totals.pbr += values[2]; counts.pbr++; arrays.pbr.push(values[2]); }
+                if (values[3] > 0) { totals.psr += values[3]; counts.psr++; arrays.psr.push(values[3]); }
+                if (values[4] > 0) { totals.evEbitda += values[4]; counts.evEbitda++; arrays.evEbitda.push(values[4]); }
+                if (values[5] > 0) { totals.evSales += values[5]; counts.evSales++; arrays.evSales.push(values[5]); }
             }
 
-            const avgPer = counts.per > 0 ? (totals.per / counts.per).toFixed(1) : '-';
-            const avgPbr = counts.pbr > 0 ? (totals.pbr / counts.pbr).toFixed(1) : '-';
-            const avgPsr = counts.psr > 0 ? (totals.psr / counts.psr).toFixed(1) : '-';
-            const avgEvEbitda = counts.evEbitda > 0 ? (totals.evEbitda / counts.evEbitda).toFixed(1) : '-';
-            const avgEvSales = counts.evSales > 0 ? (totals.evSales / counts.evSales).toFixed(1) : '-';
-            const avgMarketcap = counts.marketcap > 0 ? formatNumber(Math.round(totals.marketcap / counts.marketcap)) : '-';
+            let avgPer, avgPbr, avgPsr, avgEvEbitda, avgEvSales, avgMarketcap;
+
+            if (calcMethod === 'median') {
+                avgPer = counts.per > 0 ? calculateMedian(arrays.per).toFixed(1) : '-';
+                avgPbr = counts.pbr > 0 ? calculateMedian(arrays.pbr).toFixed(1) : '-';
+                avgPsr = counts.psr > 0 ? calculateMedian(arrays.psr).toFixed(1) : '-';
+                avgEvEbitda = counts.evEbitda > 0 ? calculateMedian(arrays.evEbitda).toFixed(1) : '-';
+                avgEvSales = counts.evSales > 0 ? calculateMedian(arrays.evSales).toFixed(1) : '-';
+                avgMarketcap = counts.marketcap > 0 ? formatNumber(Math.round(calculateMedian(arrays.marketcap))) : '-';
+            } else {
+                avgPer = counts.per > 0 ? (totals.per / counts.per).toFixed(1) : '-';
+                avgPbr = counts.pbr > 0 ? (totals.pbr / counts.pbr).toFixed(1) : '-';
+                avgPsr = counts.psr > 0 ? (totals.psr / counts.psr).toFixed(1) : '-';
+                avgEvEbitda = counts.evEbitda > 0 ? (totals.evEbitda / counts.evEbitda).toFixed(1) : '-';
+                avgEvSales = counts.evSales > 0 ? (totals.evSales / counts.evSales).toFixed(1) : '-';
+                avgMarketcap = counts.marketcap > 0 ? formatNumber(Math.round(totals.marketcap / counts.marketcap)) : '-';
+            }
 
             document.getElementById('avg-marketcap').textContent = avgMarketcap;
             document.getElementById('avg-per').textContent = avgPer;
@@ -1171,6 +1207,17 @@
         // Parse number (remove commas)
         function parseNumber(str) {
             return parseFloat(str.replace(/,/g, '')) || 0;
+        }
+
+        // Calculate median
+        function calculateMedian(values) {
+            const filtered = values.filter(v => v > 0);
+            if (filtered.length === 0) return 0;
+            const sorted = filtered.sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 === 0
+                ? (sorted[mid - 1] + sorted[mid]) / 2
+                : sorted[mid];
         }
 
         // Calculate valuation
@@ -1247,6 +1294,11 @@
                 mcEvEbitda * weightEvEbitda +
                 mcEvSales * weightEvSales;
 
+            // Apply liquidity discount
+            const liquidityDiscount = parseNumber(document.getElementById('liquidity-discount').value) / 100;
+            const discountedPerShare = Math.round(weightedPerShare * (1 - liquidityDiscount));
+            const discountedMarketCap = weightedMarketCap * (1 - liquidityDiscount);
+
             // Display results
             document.getElementById('result-per-value').textContent = avgPer > 0 ? formatNumber(perPerShare) : '-';
             document.getElementById('result-pbr-value').textContent = avgPbr > 0 ? formatNumber(pbrPerShare) : '-';
@@ -1255,6 +1307,17 @@
             document.getElementById('result-ev-sales-value').textContent = avgEvSales > 0 ? formatNumber(evSalesPerShare) : '-';
             document.getElementById('result-market-cap').textContent = formatNumber(Math.round(weightedMarketCap));
             document.getElementById('result-final-value').textContent = formatNumber(Math.round(weightedPerShare));
+
+            // Display discounted values if discount > 0
+            const discountPercentage = parseNumber(document.getElementById('liquidity-discount').value);
+            if (discountPercentage > 0) {
+                document.getElementById('result-discounted-section').style.display = 'block';
+                document.getElementById('result-discounted-value').textContent = formatNumber(discountedPerShare);
+                document.getElementById('discount-rate-display').textContent = discountPercentage;
+                document.getElementById('discounted-marketcap').textContent = formatNumber(Math.round(discountedMarketCap));
+            } else {
+                document.getElementById('result-discounted-section').style.display = 'none';
+            }
 
             document.getElementById('result-section').style.display = 'block';
             document.getElementById('result-section').scrollIntoView({ behavior: 'smooth' });

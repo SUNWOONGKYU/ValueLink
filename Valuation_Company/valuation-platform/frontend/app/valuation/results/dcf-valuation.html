@@ -914,7 +914,7 @@
             if (num >= 1000000000000) {
                 return (num / 1000000000000).toFixed(2) + '조';
             } else if (num >= 100000000) {
-                return (num / 100000000).toFixed(0) + '억';
+                return (num / 100000000).toFixed(1) + '억';
             } else if (num >= 10000) {
                 return (num / 10000).toFixed(0) + '만';
             }
@@ -959,6 +959,12 @@
                 });
             }
 
+            // 영구성장률 검증
+            if (terminalGrowth >= wacc) {
+                alert('⚠️ 오류: 영구성장률(' + (terminalGrowth * 100).toFixed(2) + '%)이 WACC(' + (wacc * 100).toFixed(2) + '%) 이상입니다.\n영구성장률은 WACC보다 작아야 합니다.');
+                return;
+            }
+
             // Terminal Value
             const lastFcff = fcffData[4].fcff;
             const terminalFcff = lastFcff * (1 + terminalGrowth);
@@ -969,6 +975,12 @@
             const operatingValue = pvCumulative + pvTerminal;
             const enterpriseValue = operatingValue + nonOperatingAssets;
             const equityValue = enterpriseValue - interestBearingDebt;
+
+            if (sharesOutstanding <= 0) {
+                alert('⚠️ 오류: 발행주식수를 확인해 주세요.');
+                return;
+            }
+
             const valuePerShare = equityValue / sharesOutstanding;
 
             // 결과 표시
