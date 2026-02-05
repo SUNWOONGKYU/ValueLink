@@ -551,8 +551,13 @@
         // ====== 초기화 ======
         async function initializePage() {
             const urlParams = new URLSearchParams(window.location.search);
-            projectId = urlParams.get('id') || urlParams.get('projectId') || 'DEMO-2026-DCF';
-            method = urlParams.get('method') || 'dcf';
+            projectId = urlParams.get('id') || urlParams.get('projectId');
+            method = urlParams.get('method');
+
+            if (!projectId || !method) {
+                alert('프로젝트 ID와 평가 방법이 필요합니다. URL 파라미터를 확인해주세요.');
+                return;
+            }
 
             document.getElementById('hero-project-id').textContent = projectId;
 
@@ -631,12 +636,15 @@
                     });
                 }
 
-                // draft_status를 in_progress로 업데이트
+                // draft_method_status를 in_progress로 업데이트
                 await supabaseClient
-                    .from('projects')
-                    .update({ draft_status: 'in_progress' })
-                    .eq('project_id', projectId)
-                    .eq('draft_status', 'not_started');
+                    .from('draft_method_status')
+                    .upsert({
+                        project_id: projectId,
+                        method: method,
+                        draft_status: 'in_progress',
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'project_id,method' });
 
             } catch(e) {
                 console.warn('섹션 데이터 로드 실패:', e);
@@ -821,12 +829,14 @@
 
                 if (supabaseClient) {
                     const { error } = await supabaseClient
-                        .from('projects')
-                        .update({
+                        .from('draft_method_status')
+                        .upsert({
+                            project_id: projectId,
+                            method: method,
                             draft_status: 'submitted',
-                            draft_submitted_at: new Date().toISOString()
-                        })
-                        .eq('project_id', projectId);
+                            draft_submitted_at: new Date().toISOString(),
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'project_id,method' });
 
                     if (error) throw error;
                 }

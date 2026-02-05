@@ -380,6 +380,9 @@
                 <div class="icon">&#9989;</div>
                 <h2>최종 보고서가 이미 완료되었습니다</h2>
                 <p>최종 보고서가 업로드되었습니다. 고객에게 전달되었습니다.</p>
+                <div style="margin-top: 24px;">
+                    <a href="../dashboard.html" style="display: inline-block; padding: 12px 28px; background: #1D4ED8; color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px;">대시보드로 이동</a>
+                </div>
             </div>
         </div>
 
@@ -535,7 +538,7 @@
                 // 1. Load project info
                 const { data: project, error: projErr } = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status')
+                    .select('project_id, company_name')
                     .eq('project_id', projectId)
                     .single();
 
@@ -546,8 +549,17 @@
                     return;
                 }
 
+                // draft_method_status에서 방법별 상태 확인
+                const { data: methodStatus } = await supabase
+                    .from('draft_method_status')
+                    .select('draft_status, draft_submitted_at, final_report_url')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .maybeSingle();
+                const draftStatus = methodStatus ? methodStatus.draft_status : 'not_started';
+
                 // Already finalized
-                if (project.draft_status === 'finalized') {
+                if (draftStatus === 'finalized') {
                     showState('finalizedState');
                     return;
                 }
@@ -556,7 +568,7 @@
                 document.getElementById('display-project-id').textContent = projectId;
                 document.getElementById('display-company').textContent = project.company_name || '-';
                 document.getElementById('display-method').textContent = METHOD_NAMES[method] || method;
-                document.getElementById('display-status').textContent = project.draft_status || '-';
+                document.getElementById('display-status').textContent = draftStatus || '-';
 
                 // 2. Load revision requests
                 await loadRevisionRequests();
@@ -837,12 +849,14 @@
 
                 try {
                     const { error } = await supabase
-                        .from('projects')
-                        .update({
+                        .from('draft_method_status')
+                        .upsert({
+                            project_id: projectId,
+                            method: method,
                             draft_status: 'finalized',
-                            final_report_url: uploadedFilePath
-                        })
-                        .eq('project_id', projectId);
+                            final_report_url: uploadedFilePath,
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'project_id,method' });
 
                     if (error) throw error;
 

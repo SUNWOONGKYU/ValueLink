@@ -637,10 +637,10 @@
             }
 
             try {
-                // 1. 프로젝트 상태 확인
+                // 1. 프로젝트 정보 조회
                 const { data: project, error: projError } = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status, final_report_url, valuation_date')
+                    .select('project_id, company_name, valuation_date')
                     .eq('project_id', projectId)
                     .single();
 
@@ -652,7 +652,14 @@
                     return;
                 }
 
-                const status = project.draft_status || 'not_started';
+                // draft_method_status에서 방법별 상태 확인
+                const { data: methodStatus } = await supabase
+                    .from('draft_method_status')
+                    .select('draft_status, draft_submitted_at, final_report_url')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .maybeSingle();
+                const status = methodStatus ? methodStatus.draft_status : 'not_started';
 
                 // 최종안이 완료되지 않은 경우 (finalized가 아닌 경우)
                 if (status !== 'finalized') {

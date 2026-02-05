@@ -872,6 +872,43 @@
                 // 프로젝트 정보 표시
                 displayProjectInfo(project);
 
+                // draft_method_status에서 방법별 상태 확인
+                const { data: methodStatus } = await supabase
+                    .from('draft_method_status')
+                    .select('draft_status')
+                    .eq('project_id', currentProjectId)
+                    .eq('method', currentMethod)
+                    .maybeSingle();
+
+                const draftStatus = methodStatus ? methodStatus.draft_status : 'not_started';
+
+                // submitted 상태가 아니면 수정 요청 불가
+                if (draftStatus !== 'submitted') {
+                    document.getElementById('loadingState').style.display = 'none';
+                    let guardMsg = '';
+                    if (draftStatus === 'not_started' || draftStatus === 'in_progress') {
+                        guardMsg = '초안이 아직 제출되지 않았습니다. 초안 제출 후 수정 요청이 가능합니다.';
+                    } else if (draftStatus === 'confirmed') {
+                        guardMsg = '이미 초안 확인이 완료되었습니다. 수정 요청이 더 이상 불가합니다.';
+                    } else if (draftStatus === 'revision_requested') {
+                        guardMsg = '이미 수정 요청이 접수되어 처리 중입니다.';
+                    } else if (draftStatus === 'finalized') {
+                        guardMsg = '최종 보고서가 완료되었습니다. 수정 요청이 불가합니다.';
+                    } else {
+                        guardMsg = '현재 상태에서는 수정 요청이 불가합니다.';
+                    }
+                    // Show a status message instead of the form
+                    const mainEl = document.querySelector('.main-content');
+                    mainEl.innerHTML = '<div class="page-header"><h1 class="page-title">수정 요청</h1></div>' +
+                        '<div style="text-align:center; padding:60px 20px;">' +
+                        '<div style="font-size:48px; margin-bottom:16px;">&#9888;&#65039;</div>' +
+                        '<h2 style="font-size:20px; font-weight:700; margin-bottom:12px;">수정 요청 불가</h2>' +
+                        '<p style="font-size:15px; color:#6B7280; line-height:1.6; margin-bottom:24px;">' + guardMsg + '</p>' +
+                        '<a href="report-draft.html?projectId=' + encodeURIComponent(currentProjectId) + '&method=' + encodeURIComponent(currentMethod) + '" style="display:inline-block; padding:12px 28px; background:#1D4ED8; color:white; text-decoration:none; border-radius:10px; font-weight:600;">초안 보기로 돌아가기</a>' +
+                        '</div>';
+                    return;
+                }
+
                 // 초안 링크 설정
                 setupDraftLink();
 
@@ -1140,8 +1177,13 @@
                     return;
                 }
 
-                // projects 테이블 draft_status 업데이트
-                await supabase.from('projects').update({ draft_status: 'revision_requested' }).eq('project_id', currentProjectId);
+                // draft_method_status 테이블 draft_status 업데이트
+                await supabase.from('draft_method_status').upsert({
+                    project_id: currentProjectId,
+                    method: currentMethod,
+                    draft_status: 'revision_requested',
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'project_id,method' });
 
                 alert('수정 요청이 제출되었습니다.\n담당 공인회계사가 검토 후 반영하겠습니다.');
 

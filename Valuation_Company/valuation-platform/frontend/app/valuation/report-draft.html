@@ -471,7 +471,11 @@
                     <div class="status-title">초안 확인이 완료되었습니다</div>
                     <div class="status-desc">
                         최종 보고서 작성이 진행 중입니다.<br>
-                        완료되면 최종 보고서 확인 단계로 이동합니다.
+                        담당 공인회계사가 최종 보고서를 준비하고 있으며, 완료 시 알림을 보내드립니다.
+                    </div>
+                    <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <a id="confirmedGoFinal" href="#" style="display: inline-block; padding: 12px 28px; background: #1D4ED8; color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px;">최종 보고서 확인</a>
+                        <a href="../dashboard.html" style="display: inline-block; padding: 12px 28px; background: #F3F4F6; color: #374151; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 15px;">대시보드로 이동</a>
                     </div>
                 </div>
             </div>
@@ -704,10 +708,10 @@
             }
 
             try {
-                // 1. 프로젝트 draft_status 확인
+                // 1. 프로젝트 정보 조회
                 const { data: project, error: projError } = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status, draft_submitted_at, valuation_date')
+                    .select('project_id, company_name, valuation_date')
                     .eq('project_id', projectId)
                     .single();
 
@@ -719,7 +723,14 @@
                     return;
                 }
 
-                const status = project.draft_status || 'not_started';
+                // draft_method_status에서 방법별 상태 확인
+                const { data: methodStatus } = await supabase
+                    .from('draft_method_status')
+                    .select('draft_status, draft_submitted_at, final_report_url')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .maybeSingle();
+                const status = methodStatus ? methodStatus.draft_status : 'not_started';
 
                 // 아직 초안이 제출되지 않은 경우
                 if (status === 'not_started' || status === 'in_progress') {
@@ -730,6 +741,7 @@
                 // 이미 확인 완료된 경우
                 if (status === 'confirmed' || status === 'finalized') {
                     showState('confirmedState');
+                    document.getElementById('confirmedGoFinal').href = 'report-final.html?projectId=' + encodeURIComponent(projectId) + '&method=' + encodeURIComponent(method);
                     return;
                 }
 
@@ -833,14 +845,19 @@
 
                 try {
                     const { error } = await supabase
-                        .from('projects')
-                        .update({ draft_status: 'confirmed' })
-                        .eq('project_id', pid);
+                        .from('draft_method_status')
+                        .upsert({
+                            project_id: pid,
+                            method: method,
+                            draft_status: 'confirmed',
+                            updated_at: new Date().toISOString()
+                        }, { onConflict: 'project_id,method' });
 
                     if (error) throw error;
 
                     alert('초안 확인이 완료되었습니다.\n최종 보고서 작성이 진행됩니다.');
                     showState('confirmedState');
+                    document.getElementById('confirmedGoFinal').href = 'report-final.html?projectId=' + encodeURIComponent(projectId) + '&method=' + encodeURIComponent(method);
 
                 } catch (err) {
                     console.error('확인 완료 처리 오류:', err);

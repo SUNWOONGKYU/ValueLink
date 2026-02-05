@@ -58,6 +58,37 @@ ALTER TABLE projects ADD COLUMN IF NOT EXISTS deposit_amount INTEGER DEFAULT 0;
 --   finalized       : 최종 보고서 완료
 
 -- =============================================
+-- 7. draft_method_status: 평가 방법별 draft 상태 관리
+-- =============================================
+-- projects.draft_status는 단일 값이므로 다중 평가법 동시 진행 시 충돌 가능
+-- 이 테이블로 방법별 독립적 상태 관리
+CREATE TABLE IF NOT EXISTS draft_method_status (
+    id SERIAL PRIMARY KEY,
+    project_id VARCHAR(50) NOT NULL,
+    method VARCHAR(50) NOT NULL,
+    draft_status VARCHAR(50) DEFAULT 'not_started',
+    draft_submitted_at TIMESTAMP WITH TIME ZONE,
+    final_report_url VARCHAR(1000),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(project_id, method)
+);
+
+CREATE INDEX IF NOT EXISTS idx_draft_method_status_project ON draft_method_status(project_id, method);
+
+ALTER TABLE draft_method_status ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "draft_method_status_select" ON draft_method_status
+    FOR SELECT USING (true);
+
+CREATE POLICY "draft_method_status_insert" ON draft_method_status
+    FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "draft_method_status_update" ON draft_method_status
+    FOR UPDATE USING (true);
+
+-- draft_method_status.draft_status 값: not_started, in_progress, submitted, confirmed, revision_requested, finalized
+
+-- =============================================
 -- 4. balance_payments: 잔금 무통장 입금 관리
 -- =============================================
 CREATE TABLE IF NOT EXISTS balance_payments (

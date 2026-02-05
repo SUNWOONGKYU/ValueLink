@@ -610,14 +610,6 @@
 
         // ====== 상수 ======
         var METHOD_NAMES = {
-            dcf: 'DCF평가법 (현금흐름할인법)',
-            relative: '상대가치평가법 (유사기업비교법)',
-            intrinsic: '본질가치평가법',
-            asset: '자산가치평가법 (순자산가치법)',
-            inheritance_tax: '상증세법평가법'
-        };
-
-        var METHOD_SHORT = {
             dcf: 'DCF평가법',
             relative: '상대가치평가법',
             intrinsic: '본질가치평가법',
@@ -711,7 +703,7 @@
                 // 1. 프로젝트 정보 조회
                 var result = await supabase
                     .from('projects')
-                    .select('project_id, company_name, draft_status, agreed_price, deposit_amount')
+                    .select('project_id, company_name, agreed_price, deposit_amount')
                     .eq('project_id', projectId)
                     .single();
 
@@ -721,7 +713,15 @@
                 }
 
                 var project = result.data;
-                var status = project.draft_status || 'not_started';
+
+                // draft_method_status에서 방법별 상태 확인
+                var msResult = await supabase
+                    .from('draft_method_status')
+                    .select('draft_status, draft_submitted_at, final_report_url')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .maybeSingle();
+                var status = (msResult.data ? msResult.data.draft_status : null) || 'not_started';
 
                 // finalized가 아니면 아직 이 단계가 아님
                 if (status !== 'finalized') {
@@ -763,7 +763,7 @@
             // 프로젝트 정보
             document.getElementById('dispProjectId').textContent = projectId;
             document.getElementById('dispCompany').textContent = project.company_name || '-';
-            document.getElementById('dispMethod').textContent = METHOD_SHORT[method] || method;
+            document.getElementById('dispMethod').textContent = METHOD_NAMES[method] || method;
 
             // 가격 미확정 시 안내
             if (!project.agreed_price) {

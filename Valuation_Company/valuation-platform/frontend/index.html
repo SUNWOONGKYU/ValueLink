@@ -157,6 +157,17 @@
 
         .footer-logo { font-size: 18px; font-weight: 700; }
         .footer-text { font-size: 13px; opacity: 0.7; }
+        .footer-admin-link {
+            font-size: 10px;
+            opacity: 0.3;
+            margin-left: 16px;
+            color: var(--white);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .footer-admin-link:hover {
+            opacity: 0.8;
+        }
 
         /* Responsive */
         @media (max-width: 1024px) {
@@ -236,6 +247,12 @@
             .footer-text {
                 font-size: 12px;
             }
+
+            .footer-admin-link {
+                display: block;
+                margin-left: 0;
+                margin-top: 8px;
+            }
         }
     </style>
 </head>
@@ -295,7 +312,10 @@
     <footer>
         <div class="footer-content">
             <div class="footer-logo">ValueLink</div>
-            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+            <div class="footer-text">
+                © 2026 ValueLink. All rights reserved.
+                <a href="app/core/mypage-admin.html" class="footer-admin-link">Admin</a>
+            </div>
         </div>
     </footer>
 

@@ -623,7 +623,15 @@
                     return;
                 }
 
-                displayProjectInfo(project);
+                // draft_method_status에서 final_report_url 조회 (방법별)
+                const { data: methodStatus } = await supabase
+                    .from('draft_method_status')
+                    .select('final_report_url')
+                    .eq('project_id', projectId)
+                    .eq('method', method)
+                    .maybeSingle();
+
+                displayProjectInfo(project, methodStatus);
 
                 document.getElementById('loadingState').style.display = 'none';
                 document.getElementById('mainContent').style.display = 'block';
@@ -634,7 +642,7 @@
             }
         }
 
-        function displayProjectInfo(project) {
+        function displayProjectInfo(project, methodStatus) {
             document.getElementById('projectIdDisplay').textContent = project.project_id;
             document.getElementById('companyNameDisplay').textContent =
                 project.company_name || project.company_name_kr || '-';
@@ -645,8 +653,8 @@
             document.getElementById('completionDateDisplay').textContent = today;
             document.getElementById('versionDate').textContent = today;
 
-            // Set reportUrl from project data
-            reportUrl = project.final_report_url || null;
+            // Set reportUrl from draft_method_status (방법별 독립 저장)
+            reportUrl = (methodStatus && methodStatus.final_report_url) || project.final_report_url || null;
 
             // 평가 금액 표시
             if (project.agreed_price) {
