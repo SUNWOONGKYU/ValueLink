@@ -1,15 +1,17 @@
 /**
  * sync-to-root.js
  *
- * Stage 폴더 → Root 폴더 자동 동기화 스크립트
- * Pre-commit Hook에서 실행됨
+ * Stage folder to Root folder auto-sync script
+ * Executed by Pre-commit Hook
  *
- * 매핑:
- *   S?_*/Frontend/     → pages/
- *   S?_*/Backend_APIs/ → api/Backend_APIs/
- *   S?_*/Security/     → api/Security/
- *   S?_*/Backend_Infra/→ api/Backend_Infra/
- *   S?_*/External/     → api/External/
+ * Mapping:
+ *   Frontend to pages
+ *   Backend_APIs to api/Backend_APIs
+ *   Security to api/Security
+ *   Backend_Infra to api/Backend_Infra
+ *   External to api/External
+ *   S0 viewer to viewer
+ *   S0 method/json/data to method/json/data
  */
 
 const fs = require('fs');
@@ -108,6 +110,7 @@ function syncToRoot() {
     let totalCopied = 0;
     let totalSkipped = 0;
 
+    // S1~S5 Stage 폴더 동기화
     for (const stageFolder of STAGE_FOLDERS) {
         const stagePath = path.join(PROJECT_ROOT, stageFolder);
 
@@ -127,6 +130,34 @@ function syncToRoot() {
             totalCopied += stats.copied;
             totalSkipped += stats.skipped;
         }
+    }
+
+    // S0 SAL Grid 동기화 (viewer + JSON)
+    log.info('\n🔍 S0 SAL Grid 동기화 중...');
+    const s0Path = path.join(PROJECT_ROOT, 'Process', 'S0_Project-SAL-Grid_생성');
+
+    if (fs.existsSync(s0Path)) {
+        // viewer 폴더 복사
+        const viewerSrc = path.join(s0Path, 'viewer');
+        const viewerDest = path.join(PROJECT_ROOT, 'viewer');
+        if (fs.existsSync(viewerSrc)) {
+            const viewerStats = copyRecursive(viewerSrc, viewerDest);
+            totalCopied += viewerStats.copied;
+            totalSkipped += viewerStats.skipped;
+            log.success(`Viewer 복사: ${viewerStats.copied}개 파일`);
+        }
+
+        // method/json/data 폴더 복사
+        const jsonSrc = path.join(s0Path, 'method', 'json', 'data');
+        const jsonDest = path.join(PROJECT_ROOT, 'method', 'json', 'data');
+        if (fs.existsSync(jsonSrc)) {
+            const jsonStats = copyRecursive(jsonSrc, jsonDest);
+            totalCopied += jsonStats.copied;
+            totalSkipped += jsonStats.skipped;
+            log.success(`JSON 복사: ${jsonStats.copied}개 파일`);
+        }
+    } else {
+        log.warn('S0 폴더를 찾을 수 없습니다.');
     }
 
     // 결과 출력

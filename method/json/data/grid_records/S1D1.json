@@ -1,0 +1,33 @@
+{
+  "task_id": "S1D1",
+  "task_name": "데이터베이스 스키마 및 RLS 정책 정의",
+  "stage": 1,
+  "area": "D",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "",
+  "task_instruction": "task-instructions/S1D1_instruction.md",
+  "task_agent": "database-specialist",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S1D1_verification.md",
+  "verification_agent": "database-specialist",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "12개 테이블, RLS 정책, 트리거",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

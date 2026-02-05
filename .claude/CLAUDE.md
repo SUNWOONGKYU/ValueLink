@@ -277,6 +277,8 @@ JSON 파일 (method/json/data/in_progress/project_sal_grid.json)
 | S (Security) | `S?_*/Security/` | `api/Security/` |
 | BI (Backend_Infra) | `S?_*/Backend_Infra/` | `api/Backend_Infra/` |
 | E (External) | `S?_*/External/` | `api/External/` |
+| **S0 Viewer** | `S0_*/viewer/` | `viewer/` |
+| **S0 JSON** | `S0_*/method/json/data/` | `method/json/data/` |
 
 **완료 보고 양식:**
 ```

@@ -1,0 +1,33 @@
+{
+  "task_id": "S2M1",
+  "task_name": "사용자 매뉴얼 및 FAQ",
+  "stage": 2,
+  "area": "M",
+  "level": 1,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S2F1, S2F2, S2BA1",
+  "task_instruction": "task-instructions/S2M1_instruction.md",
+  "task_agent": "documentation-specialist",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S2M1_verification.md",
+  "verification_agent": "qa-specialist",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "사용자 가이드 + FAQ + 역할별 매뉴얼",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

@@ -1,0 +1,33 @@
+{
+  "task_id": "S2BA2",
+  "task_name": "프로젝트 및 견적 관리 API",
+  "stage": 2,
+  "area": "BA",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S1BI1, S1D1",
+  "task_instruction": "task-instructions/S2BA2_instruction.md",
+  "task_agent": "backend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S2BA2_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "프로젝트 CRUD + 견적 생성 + 협상",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

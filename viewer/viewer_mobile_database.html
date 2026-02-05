@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project SAL Grid Viewer - Mobile</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #10B981;
+            --secondary: #003f8a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, 'Malgun Gothic', sans-serif;
+            background: #f5f5f5;
+            font-size: 14px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--secondary), #002451);
+            color: white;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { font-size: 16px; font-weight: 600; }
+        .close-btn {
+            padding: 10px 14px;
+            min-height: 44px;
+            background: rgba(255,255,255,0.15);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Connection Status */
+        .status-bar {
+            background: white;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+        }
+        .status-dot {
+            width: 8px; height: 8px;
+            background: #ffc107;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .status-dot.connected { background: #28a745; }
+
+        /* Stage Tabs */
+        .stage-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 12px;
+            gap: 8px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            -webkit-overflow-scrolling: touch;
+        }
+        .stage-tab {
+            padding: 8px 14px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+        .stage-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Stats */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 12px;
+            background: white;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 8px 4px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat-value { font-size: 18px; font-weight: 700; }
+        .stat-label { font-size: 10px; color: #666; }
+        .stat-item.pending .stat-value { color: #6c757d; }
+        .stat-item.progress .stat-value { color: #ffc107; }
+        .stat-item.executed .stat-value { color: #3B82F6; }
+        .stat-item.completed .stat-value { color: #28a745; }
+
+        /* Task List */
+        .task-list { padding: 12px; }
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 4px solid #6c757d;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .task-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        }
+        .task-card.Completed { border-left-color: #28a745; }
+        .task-card.Executed { border-left-color: #3B82F6; }
+        .task-card.In-Progress { border-left-color: #ffc107; }
+        .task-card.Pending { border-left-color: #6c757d; }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .task-id { font-weight: 700; color: var(--secondary); font-size: 14px; }
+        .task-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .status-Completed { background: #d4edda; color: #155724; }
+        .status-Executed { background: #dbeafe; color: #1e40af; }
+        .status-In-Progress { background: #fff3cd; color: #856404; }
+        .status-Pending { background: #e2e3e5; color: #383d41; }
+
+        .task-name { font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+        .task-meta { font-size: 11px; color: #666; }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Empty */
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        /* Task Detail Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: none;
+        }
+        .modal-overlay.active { display: block; }
+
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 201;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .modal.active { transform: translateY(0); }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .modal-content { padding: 16px; }
+
+        .detail-section {
+            margin-bottom: 16px;
+        }
+        .detail-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .detail-value {
+            font-size: 14px;
+            background: #f8f9fa;
+            padding: 10px 12px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .detail-value.instruction {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .detail-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .detail-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-stage { background: #e0e7ff; color: #3730a3; }
+        .badge-area { background: #dcfce7; color: #166534; }
+        .badge-progress { background: #fef3c7; color: #92400e; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>Project SAL Grid Viewer</h1>
+        <button class="close-btn" onclick="window.close(); return false;">← 돌아가기</button>
+    </header>
+
+    <div class="status-bar">
+        <span><span class="status-dot" id="statusDot"></span><span id="statusText">연결 중...</span></span>
+        <span id="taskCount">0개 Task</span>
+    </div>
+
+    <div class="stage-tabs" id="stageTabs">
+        <button class="stage-tab active" data-stage="all">전체</button>
+        <button class="stage-tab" data-stage="1">S1</button>
+        <button class="stage-tab" data-stage="2">S2</button>
+        <button class="stage-tab" data-stage="3">S3</button>
+        <button class="stage-tab" data-stage="4">S4</button>
+        <button class="stage-tab" data-stage="5">S5</button>
+    </div>
+
+    <div class="stats">
+        <div class="stat-item pending">
+            <div class="stat-value" id="pendingCount">0</div>
+            <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-item progress">
+            <div class="stat-value" id="progressCount">0</div>
+            <div class="stat-label">Progress</div>
+        </div>
+        <div class="stat-item executed">
+            <div class="stat-value" id="executedCount">0</div>
+            <div class="stat-label">Executed</div>
+        </div>
+        <div class="stat-item completed">
+            <div class="stat-value" id="completedCount">0</div>
+            <div class="stat-label">Completed</div>
+        </div>
+    </div>
+
+    <div class="task-list" id="taskList">
+        <div class="loading">데이터 로딩 중...</div>
+    </div>
+
+    <!-- Task Detail Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"></div>
+    <div class="modal" id="taskModal">
+        <div class="modal-header">
+            <span class="modal-title" id="modalTitle">Task 상세</span>
+            <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-content" id="modalContent">
+            <!-- Dynamic content -->
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://zwjmfewyshhwpgwdtrus.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3am1mZXd5c2hod3Bnd2R0cnVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM1NzE1NTEsImV4cCI6MjA3OTE0NzU1MX0.AJy34h5VR8QS6WFEcUcBeJJu8I3bBQ6UCk1I84Wb7y4';
+
+        let supabaseClient = null;
+        let allTasks = [];
+        let currentStage = 'all';
+
+        try {
+            const { createClient } = supabase;
+            supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error('Supabase init error:', e);
+        }
+
+        async function loadTasks() {
+            if (!supabaseClient) {
+                document.getElementById('statusText').textContent = '연결 실패';
+                return;
+            }
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('project_sal_grid')
+                    .select('task_id, task_name, stage, area, task_status, task_progress')
+                    .order('stage')
+                    .order('task_id');
+
+                if (error) throw error;
+
+                allTasks = data || [];
+                document.getElementById('statusDot').classList.add('connected');
+                document.getElementById('statusText').textContent = '연결됨';
+                document.getElementById('taskCount').textContent = allTasks.length + '개 Task';
+
+                renderTasks();
+                updateStats();
+            } catch (err) {
+                document.getElementById('statusText').textContent = '오류: ' + err.message;
+            }
+        }
+
+        function renderTasks() {
+            const list = document.getElementById('taskList');
+            const filtered = currentStage === 'all'
+                ? allTasks
+                : allTasks.filter(t => t.stage == currentStage);
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="empty">Task가 없습니다</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(task => {
+                const statusClass = task.task_status.replace(' ', '-');
+                return `
+                    <div class="task-card ${statusClass}" onclick="openModal('${task.task_id}')">
+                        <div class="task-header">
+                            <span class="task-id">${task.task_id}</span>
+                            <span class="task-status status-${statusClass}">${task.task_status}</span>
+                        </div>
+                        <div class="task-name">${task.task_name}</div>
+                        <div class="task-meta">Stage ${task.stage} · ${task.area} · ${task.task_progress || 0}%</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Modal Functions
+        async function openModal(taskId) {
+            document.getElementById('modalTitle').textContent = taskId + ' 상세';
+            document.getElementById('modalContent').innerHTML = '<div class="loading">로딩 중...</div>';
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('taskModal').classList.add('active');
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('project_sal_grid')
+                    .select('*')
+                    .eq('task_id', taskId)
+                    .single();
+
+                if (error) throw error;
+
+                const statusClass = data.task_status.replace(' ', '-');
+                const verificationClass = (data.verification_status || 'Not Verified').replace(' ', '-');
+
+                const formatJson = (val) => {
+                    if (!val) return '-';
+                    if (typeof val === 'object') return JSON.stringify(val, null, 2);
+                    return val;
+                };
+
+                const AREA_NAMES = {
+                    'M': 'Documentation (문서화)',
+                    'U': 'Design (UI/UX 디자인)',
+                    'F': 'Frontend (프론트엔드)',
+                    'BI': 'Backend Infrastructure (백엔드 기반)',
+                    'BA': 'Backend APIs (백엔드 API)',
+                    'D': 'Database (데이터베이스)',
+                    'S': 'Security (보안/인증/인가)',
+                    'T': 'Testing (테스트)',
+                    'O': 'DevOps (운영/배포)',
+                    'E': 'External (외부 연동)',
+                    'C': 'Content System (콘텐츠 시스템)'
+                };
+
+                const STAGE_NAMES = {
+                    1: '개발 준비 (Development Setup)',
+                    2: '개발 1차 (Core Development)',
+                    3: '개발 2차 (Advanced Features)',
+                    4: '개발 3차 (QA & Optimization)',
+                    5: '운영 (Operations)'
+                };
+
+                document.getElementById('modalContent').innerHTML = `
+                    <!-- [1-4] Basic Info -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[1-4] Basic Info</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">1. Stage</div>
+                        <div class="detail-value">S${data.stage}: ${STAGE_NAMES[data.stage] || ''}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">2. Area</div>
+                        <div class="detail-value">${data.area}: ${AREA_NAMES[data.area] || ''}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">3. Task ID</div>
+                        <div class="detail-value">${data.task_id}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">4. Task Name</div>
+                        <div class="detail-value">${data.task_name}</div>
+                    </div>
+
+                    <!-- [5-9] Task Definition -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[5-9] Task Definition</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">5. Task Instruction</div>
+                        <div class="detail-value instruction">${data.task_instruction || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">6. Task Agent</div>
+                        <div class="detail-value">${data.task_agent || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">7. Tools</div>
+                        <div class="detail-value">${data.tools || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">8. Execution Type</div>
+                        <div class="detail-value">${data.execution_type || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">9. Dependencies</div>
+                        <div class="detail-value">${data.dependencies || '없음'}</div>
+                    </div>
+
+                    <!-- [10-13] Task Execution -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[10-13] Task Execution</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">10. Task Progress</div>
+                        <div class="detail-value">${data.task_progress || 0}%</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">11. Task Status</div>
+                        <div class="detail-value"><span class="task-status status-${statusClass}">${data.task_status}</span></div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">12. Generated Files</div>
+                        <div class="detail-value instruction">${data.generated_files || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">13. Modification History</div>
+                        <div class="detail-value instruction">${formatJson(data.modification_history)}</div>
+                    </div>
+
+                    <!-- [14-15] Verification Definition -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[14-15] Verification Definition</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">14. Verification Instruction</div>
+                        <div class="detail-value instruction">${data.verification_instruction || '-'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">15. Verification Agent</div>
+                        <div class="detail-value">${data.verification_agent || '-'}</div>
+                    </div>
+
+                    <!-- [16-19] Verification Execution -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[16-19] Verification Execution</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">16. Test</div>
+                        <div class="detail-value instruction">${formatJson(data.test_result || data.test)}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">17. Build</div>
+                        <div class="detail-value instruction">${formatJson(data.build_verification || data.build)}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">18. Integration Verification</div>
+                        <div class="detail-value instruction">${formatJson(data.integration_verification)}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">19. Blockers</div>
+                        <div class="detail-value instruction">${formatJson(data.blockers)}</div>
+                    </div>
+
+                    <!-- [20-22] Verification Completion -->
+                    <div class="detail-section">
+                        <div class="detail-label" style="color:#667eea;font-weight:700;">[20-22] Verification Completion</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">20. Comprehensive Verification</div>
+                        <div class="detail-value instruction">${formatJson(data.comprehensive_verification)}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">21. Verification Status</div>
+                        <div class="detail-value">${data.verification_status || 'Not Verified'}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-label">22. Remarks</div>
+                        <div class="detail-value instruction">${data.remarks || '-'}</div>
+                    </div>
+                `;
+            } catch (err) {
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="empty">오류: ${err.message}</div>
+                `;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('taskModal').classList.remove('active');
+        }
+
+        function updateStats() {
+            const filtered = currentStage === 'all'
+                ? allTasks
+                : allTasks.filter(t => t.stage == currentStage);
+
+            document.getElementById('pendingCount').textContent = filtered.filter(t => t.task_status === 'Pending').length;
+            document.getElementById('progressCount').textContent = filtered.filter(t => t.task_status === 'In Progress').length;
+            document.getElementById('executedCount').textContent = filtered.filter(t => t.task_status === 'Executed').length;
+            document.getElementById('completedCount').textContent = filtered.filter(t => t.task_status === 'Completed').length;
+        }
+
+        // Stage Tab Click
+        document.querySelectorAll('.stage-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.stage-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentStage = tab.dataset.stage;
+                renderTasks();
+                updateStats();
+            });
+        });
+
+        // Init
+        loadTasks();
+    </script>
+</body>
+</html>

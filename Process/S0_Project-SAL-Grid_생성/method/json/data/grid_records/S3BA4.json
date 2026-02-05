@@ -1,0 +1,33 @@
+{
+  "task_id": "S3BA4",
+  "task_name": "기타 평가 엔진 (4종)",
+  "stage": 3,
+  "area": "BA",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S3BA1, S3BA2",
+  "task_instruction": "task-instructions/S3BA4_instruction.md",
+  "task_agent": "backend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S3BA4_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "Relative, Asset, Intrinsic, Tax 평가 엔진",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

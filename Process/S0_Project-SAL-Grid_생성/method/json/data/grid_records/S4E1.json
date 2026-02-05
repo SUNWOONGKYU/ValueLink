@@ -1,0 +1,33 @@
+{
+  "task_id": "S4E1",
+  "task_name": "뉴스 크롤러 인프라",
+  "stage": 4,
+  "area": "E",
+  "level": 3,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S1BI1",
+  "task_instruction": "task-instructions/S4E1_instruction.md",
+  "task_agent": "backend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S4E1_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "BaseCrawler 추상 클래스 + CrawlerManager",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

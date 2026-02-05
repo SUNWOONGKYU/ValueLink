@@ -1,0 +1,33 @@
+{
+  "task_id": "S3BA2",
+  "task_name": "재무 수학 라이브러리",
+  "stage": 3,
+  "area": "BA",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S3BA1",
+  "task_instruction": "task-instructions/S3BA2_instruction.md",
+  "task_agent": "backend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S3BA2_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "WACC, NPV, IRR, Terminal Value, FCF 계산 함수",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

@@ -1,0 +1,33 @@
+{
+  "task_id": "S4F1",
+  "task_name": "Deal 뉴스 트래커 및 투자 모니터",
+  "stage": 4,
+  "area": "F",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S2F1, S2BA1",
+  "task_instruction": "task-instructions/S4F1_instruction.md",
+  "task_agent": "frontend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S4F1_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "Deal 뉴스 목록 + 링크 페이지",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}
