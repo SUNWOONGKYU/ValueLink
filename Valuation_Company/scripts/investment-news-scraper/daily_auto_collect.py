@@ -264,10 +264,14 @@ JSON 형식으로만 답변:
         if response and hasattr(response, 'text'):
             text = response.text.strip()
             result = json.loads(text)
+            # Gemini가 배열로 응답하는 경우 첫 번째 요소 사용
+            if isinstance(result, list):
+                result = result[0] if result else {}
             return result
 
         return None
     except Exception as e:
+        log(f"    ⚠️ Gemini 추출 오류: {str(e)[:50]}", "WARN")
         return None
 
 
