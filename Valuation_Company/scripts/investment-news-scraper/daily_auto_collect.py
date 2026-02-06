@@ -142,9 +142,9 @@ MEDIA_SITES = [
         'id': 1,
         'name': 'WOWTALE',
         'url': 'https://wowtale.net/',
-        'article_selector': 'article',
-        'title_selector': 'h2 a',
-        'link_selector': 'h2 a',
+        'article_selector': 'a.kb-advanced-heading-link',
+        'title_selector': 'h2',
+        'link_selector': 'self',  # 특수: article 요소 자체가 링크
     },
 ]
 
@@ -340,7 +340,12 @@ def step1_crawl_media_sites(target_date):
             for article in article_elements:
                 try:
                     title_elem = article.select_one(site['title_selector'])
-                    link_elem = article.select_one(site['link_selector'])
+
+                    # link_selector가 'self'면 article 요소 자체가 링크
+                    if site['link_selector'] == 'self':
+                        link_elem = article
+                    else:
+                        link_elem = article.select_one(site['link_selector'])
 
                     if not title_elem or not link_elem:
                         continue
