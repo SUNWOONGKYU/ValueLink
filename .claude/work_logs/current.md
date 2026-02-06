@@ -2996,3 +2996,95 @@ Phase 1 SQL 파일들을 Supabase Dashboard에서 수동으로 실행해야 합�
 - [ ] Mypage 접근 테스트 (6개 페이지)
 - [ ] TODO 기능 구현 (딜 목록, 관심 기업, 제휴 목록 등)
 
+
+---
+
+## S1BI1: Next.js 프로젝트 초기화 + Supabase 설정 (2026-02-06)
+
+### 작업 상태: ✅ Executed
+
+### 주요 작업
+
+1. **Vanilla → Next.js 전환**
+   - 삭제: `api/`, `pages/`, `assets/`, `index.html`
+   - 생성: `app/`, `components/`, `lib/`, `public/`
+
+2. **Next.js 기본 설정 (6개 파일)**
+   - `package.json` (Next.js 14, TypeScript, Tailwind)
+   - `next.config.js`
+   - `tsconfig.json`
+   - `tailwind.config.ts`
+   - `postcss.config.mjs`
+   - `.gitignore` (기존 유지)
+
+3. **Supabase Client (3개 파일)**
+   - `lib/supabase/client.ts` (브라우저용)
+   - `lib/supabase/server.ts` (서버용)
+   - `lib/supabase/middleware.ts` (미들웨어 헬퍼)
+
+4. **환경 설정 (2개 파일)**
+   - `.env.local` (Supabase URL/KEY 저장)
+   - `lib/config.ts` (타입 안전 환경변수)
+
+5. **Middleware (1개 파일)**
+   - `middleware.ts` (세션 관리)
+
+6. **TypeScript 타입 (1개 파일)**
+   - `types/database.types.ts` (Supabase 스키마)
+
+7. **앱 기본 파일 (3개 파일)**
+   - `app/globals.css`
+   - `app/layout.tsx`
+   - `app/page.tsx`
+
+8. **패키지 설치**
+   - `npm install` 완료
+   - 주요 패키지: next@14.2.16, react@18.3.1, @supabase/supabase-js@2.38.0, @supabase/ssr@0.1.0
+
+### 생성된 파일 (17개)
+
+**설정 파일:**
+- package.json
+- next.config.js
+- tsconfig.json
+- tailwind.config.ts
+- postcss.config.mjs
+
+**Supabase:**
+- lib/supabase/client.ts
+- lib/supabase/server.ts
+- lib/supabase/middleware.ts
+- .env.local
+- lib/config.ts
+
+**Middleware:**
+- middleware.ts
+
+**타입:**
+- types/database.types.ts
+
+**앱:**
+- app/globals.css
+- app/layout.tsx
+- app/page.tsx
+
+**패키지:**
+- node_modules/ (333개 패키지)
+
+### 삭제된 파일 (Vanilla)
+
+- api/ (백엔드)
+- pages/ (페이지)
+- assets/ (정적 자원)
+- index.html
+
+### 서버 상태
+
+- ✅ Next.js 개발 서버 실행: http://localhost:3000
+- ✅ Supabase 연결 설정 완료
+
+### 다음 Task
+
+- S1D1: 데이터베이스 스키마 설계
+
+---
