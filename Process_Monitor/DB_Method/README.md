@@ -59,6 +59,41 @@ DB_Method/
 
 ---
 
+## ⚠️ 경로 수정 필수 (Claude Code 필독)
+
+> **upload-progress.js를 복사한 후 반드시 경로를 프로젝트에 맞게 수정!**
+
+### upload-progress.js 수정 위치 (18-20행)
+
+```javascript
+// 수정 전 (예시 경로)
+const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Development_Process_Monitor', 'data', 'phase_progress.json');
+const ENV_PATH = path.join(PROJECT_ROOT, 'P3_프로토타입_제작', 'Database', '.env');
+
+// 수정 후 (프로젝트에 맞게)
+const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, '{실제 폴더명}', 'data', 'phase_progress.json');
+const ENV_PATH = path.join(PROJECT_ROOT, '.env');  // 루트 권장
+```
+
+### pre-commit hook 수정
+
+```bash
+# 수정 전 (예시 경로)
+node "$PROJECT_ROOT/Development_Process_Monitor/build-progress.js"
+
+# 수정 후 (프로젝트에 맞게)
+node "$PROJECT_ROOT/{실제 폴더명}/build-progress-json.js"
+```
+
+### 경로 확인 방법
+
+```bash
+# phase_progress.json 위치 확인
+find . -name "phase_progress.json" -o -name "build-progress*.js"
+```
+
+---
+
 ## 설정 방법
 
 ### 1. 테이블 생성

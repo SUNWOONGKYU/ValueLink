@@ -12,12 +12,17 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // ============================================
-// 설정
+// 설정 (⚠️ 프로젝트에 맞게 경로 수정 필수!)
 // ============================================
 
 const PROJECT_ROOT = path.join(__dirname, '..');
+
+// ⚠️ 아래 경로를 프로젝트 구조에 맞게 수정하세요!
+// 예시: 'Process_Monitor', 'Development_Process_Monitor' 등
 const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Development_Process_Monitor', 'data', 'phase_progress.json');
-const ENV_PATH = path.join(PROJECT_ROOT, 'P3_프로토타입_제작', 'Database', '.env');
+
+// ⚠️ .env 파일 위치 (루트 권장)
+const ENV_PATH = path.join(PROJECT_ROOT, '.env');
 
 // ============================================
 // 환경변수 로드
