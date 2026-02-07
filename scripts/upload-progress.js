@@ -5,9 +5,6 @@
  * Pre-commit Hook에서 자동 호출됨
  *
  * 사용법: node scripts/upload-progress.js
- *
- * 주의: ANON_KEY를 사용하므로 RLS 정책이 설정되어 있어야 함
- *       (자기 project_id만 INSERT/UPDATE 가능)
  */
 
 const fs = require('fs');
@@ -19,9 +16,8 @@ const { execSync } = require('child_process');
 // ============================================
 
 const PROJECT_ROOT = path.join(__dirname, '..');
-const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Development_Process_Monitor', 'data', 'phase_progress.json');
-const ENV_PATH = path.join(PROJECT_ROOT, '.env');  // 루트의 .env 사용
-const PROJECT_CONFIG_PATH = path.join(PROJECT_ROOT, '.ssal-project.json');
+const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Process_Monitor', 'data', 'phase_progress.json');
+const ENV_PATH = path.join(PROJECT_ROOT, '.env');
 
 // ============================================
 // 환경변수 로드
@@ -29,12 +25,6 @@ const PROJECT_CONFIG_PATH = path.join(PROJECT_ROOT, '.ssal-project.json');
 
 function loadEnv() {
     try {
-        if (!fs.existsSync(ENV_PATH)) {
-            console.error('❌ .env 파일이 없습니다.');
-            console.log('💡 프로젝트 등록 시 자동 생성되는 .env 파일이 필요합니다.');
-            process.exit(1);
-        }
-
         const envContent = fs.readFileSync(ENV_PATH, 'utf-8');
         const env = {};
 
@@ -56,25 +46,30 @@ function loadEnv() {
 }
 
 // ============================================
-// 프로젝트 설정 파일에서 Project ID 읽기
+// Git 사용자 이메일 가져오기
 // ============================================
 
-function getProjectIdFromConfig() {
+function getGitUserEmail() {
     try {
-        if (fs.existsSync(PROJECT_CONFIG_PATH)) {
-            const config = JSON.parse(fs.readFileSync(PROJECT_CONFIG_PATH, 'utf-8'));
-            if (config.project_id) {
-                console.log('✅ .ssal-project.json에서 Project ID 로드');
-                return config.project_id;
-            }
-        }
+        const email = execSync('git config user.email', { encoding: 'utf-8' }).trim();
+        return email || 'unknown@localhost';
     } catch (e) {
-        console.warn('⚠️ .ssal-project.json 읽기 실패:', e.message);
+        console.warn('⚠️ Git user.email 가져오기 실패, 기본값 사용');
+        return 'unknown@localhost';
     }
+}
 
-    console.error('❌ .ssal-project.json에 project_id가 없습니다.');
-    console.log('💡 프로젝트 등록 시 자동 생성되는 파일입니다.');
-    process.exit(1);
+// ============================================
+// Project ID 생성 (이메일 기반)
+// ============================================
+
+function generateProjectId(email) {
+    // 이메일에서 @ 앞 부분 추출
+    const username = email.split('@')[0] || 'user';
+    // 날짜 (YYMMDD 형식)
+    const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
+    // Project ID: {email_prefix}_{date}
+    return `${username}_PROJECT`;
 }
 
 // ============================================
@@ -97,22 +92,14 @@ function readProgressJson() {
 }
 
 // ============================================
-// Supabase UPSERT (REST API - ANON_KEY 사용)
+// Supabase UPSERT (REST API)
 // ============================================
 
 async function upsertToSupabase(env, projectId, phases) {
-    // ANON_KEY 사용 (RLS 정책으로 자기 project_id만 수정 가능)
-    const apiKey = env.SUPABASE_ANON_KEY;
-
-    if (!apiKey) {
-        console.error('❌ SUPABASE_ANON_KEY가 .env에 없습니다.');
-        process.exit(1);
-    }
-
     const url = `${env.SUPABASE_URL}/rest/v1/project_phase_progress?on_conflict=project_id,phase_code`;
     const headers = {
-        'apikey': apiKey,
-        'Authorization': `Bearer ${apiKey}`,
+        'apikey': env.SUPABASE_SERVICE_ROLE_KEY,
+        'Authorization': `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=minimal,resolution=merge-duplicates'
     };
@@ -164,15 +151,16 @@ async function main() {
 
     // 1. 환경변수 로드
     const env = loadEnv();
-    if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-        console.error('❌ SUPABASE_URL 또는 SUPABASE_ANON_KEY 없음');
-        console.log('💡 .env 파일을 확인해주세요.');
+    if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
+        console.error('❌ SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 없음');
         process.exit(1);
     }
     console.log('✅ 환경변수 로드 완료');
 
-    // 2. Project ID 가져오기
-    const projectId = getProjectIdFromConfig();
+    // 2. Git 사용자 이메일 가져오기
+    const email = getGitUserEmail();
+    const projectId = generateProjectId(email);
+    console.log(`📧 사용자: ${email}`);
     console.log(`🆔 Project ID: ${projectId}`);
 
     // 3. phase_progress.json 읽기
@@ -198,7 +186,6 @@ async function main() {
         results.filter(r => !r.success).forEach(r => {
             console.log(`   - ${r.phase}: ${r.error}`);
         });
-        console.log('\n💡 RLS 정책이 설정되어 있는지 확인해주세요.');
     }
 
     console.log('\n✅ Progress 업로드 완료');
