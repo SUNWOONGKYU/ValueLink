@@ -28,7 +28,6 @@ Process_Monitor/
 ├── README.md                      ← 이 문서
 ├── build-progress.js              ← 진행률 계산 스크립트
 ├── upload-progress.js             ← DB 업로드 스크립트 (scripts/에 복사)
-├── create_table.sql               ← 테이블 생성 SQL (SSAL Works 전용)
 ├── pre-commit-hook-example.sh     ← pre-commit hook 예시
 ├── loadProjectProgress-snippet.js ← 웹 조회 함수 (SSAL Works 전용)
 └── data/
