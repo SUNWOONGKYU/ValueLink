@@ -25,13 +25,12 @@ SSAL Works 플랫폼에서 진행률 표시
 
 ```
 Process_Monitor/
-├── README.md                      ← 이 문서
-├── build-progress.js              ← 진행률 계산 스크립트
-├── upload-progress.js             ← DB 업로드 스크립트 (scripts/에 복사)
-├── pre-commit-hook-example.sh     ← pre-commit hook 예시
-├── loadProjectProgress-snippet.js ← 웹 조회 함수 (SSAL Works 전용)
+├── README.md                  ← 이 문서
+├── build-progress.js          ← 진행률 계산 스크립트
+├── upload-progress.js         ← DB 업로드 스크립트 (scripts/에 복사)
+├── pre-commit-hook-example.sh ← pre-commit hook 예시
 └── data/
-    └── phase_progress.json        ← 출력 파일
+    └── phase_progress.json    ← 출력 파일 (자동 생성)
 ```
 
 ---
