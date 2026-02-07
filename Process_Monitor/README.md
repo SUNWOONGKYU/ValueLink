@@ -25,12 +25,16 @@ SSAL Works 플랫폼에서 진행률 표시
 
 ```
 Process_Monitor/
-├── README.md                  ← 이 문서
+├── CLAUDE.md                  ← Claude Code 구현 가이드 (필독)
+├── README.md                  ← 이 문서 (사용자용)
 ├── build-progress.js          ← 진행률 계산 스크립트
-├── upload-progress.js         ← DB 업로드 스크립트 (scripts/에 복사)
+├── upload-progress.js         ← DB 업로드 스크립트 (템플릿)
 ├── pre-commit-hook-example.sh ← pre-commit hook 예시
 └── data/
     └── phase_progress.json    ← 출력 파일 (자동 생성)
+
+scripts/
+└── upload-progress.js         ← 실제 실행되는 업로드 스크립트
 ```
 
 ---
@@ -41,22 +45,9 @@ Process_Monitor/
 
 1. ssalworks.com 접속 및 로그인
 2. 프로젝트 등록
-3. `.ssal-project.json` 파일이 자동 생성됨:
-   ```json
-   {
-       "project_id": "2512000006TH-P001",
-       "project_name": "프로젝트명",
-       "owner_email": "user@example.com"
-   }
-   ```
+3. `.ssal-project.json` 파일이 프로젝트 루트에 자동 생성됨
 
-### 2. 스크립트 복사
-
-```bash
-cp Process_Monitor/upload-progress.js scripts/
-```
-
-### 3. Pre-commit Hook 설정
+### 2. Pre-commit Hook 설정
 
 `.git/hooks/pre-commit` 파일 생성:
 ```bash
@@ -75,7 +66,7 @@ echo "✅ 진행률 처리 완료!"
 exit 0
 ```
 
-### 4. SSAL Works 플랫폼에서 확인
+### 3. SSAL Works 플랫폼에서 확인
 
 1. ssalworks.com 로그인
 2. 사이드바에서 진행률 확인
@@ -88,21 +79,6 @@ exit 0
 |------|----------|
 | P0~S0 | 폴더 내 파일 존재 여부 |
 | S1~S5 | grid_records/*.json에서 Completed Task 비율 |
-
----
-
-## Project ID
-
-`.ssal-project.json`에서 자동으로 읽어옵니다.
-
-```json
-{
-    "project_id": "2512000006TH-P001"
-}
-```
-
-- SSAL Works 프로젝트 등록 시 자동 생성
-- 별도 설정 불필요
 
 ---
 
