@@ -6,62 +6,45 @@
  * Pre-commit Hook에서 자동 호출됨
  *
  * 사용법: node scripts/upload-progress.js
- *
- * ⚠️ SSAL Works에서 제공한 키를 .env에 설정해야 함
  */
 
 const fs = require('fs');
 const path = require('path');
 
 // ============================================
-// 설정 (⚠️ 프로젝트에 맞게 경로 수정 필수!)
+// 설정
 // ============================================
 
 const PROJECT_ROOT = path.join(__dirname, '..');
+const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Process_Monitor', 'data', 'phase_progress.json');
+const SSAL_PROJECT_PATH = path.join(PROJECT_ROOT, '.ssal-project.json');
 
-// ⚠️ 아래 경로를 프로젝트 구조에 맞게 수정하세요!
-// 예시: 'Process_Monitor', 'Development_Process_Monitor' 등
-const PROGRESS_JSON_PATH = path.join(PROJECT_ROOT, 'Development_Process_Monitor', 'data', 'phase_progress.json');
-
-// ⚠️ .env 파일 위치 (루트 권장)
-const ENV_PATH = path.join(PROJECT_ROOT, '.env');
+// SSAL Works Supabase 설정 (고정)
+const SUPABASE_URL = 'https://zwjmfewyshhwpgwdtrus.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3am1mZXd5c2hod3Bnd2R0cnVzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzU3MTU1MSwiZXhwIjoyMDc5MTQ3NTUxfQ.ZMNl9_lCJQMG8lC0MEQjHrLEuYbCFJYsVsBIzvwnj1s';
 
 // ============================================
-// 환경변수 로드
+// .ssal-project.json에서 Project ID 읽기
 // ============================================
 
-function loadEnv() {
+function getProjectId() {
     try {
-        const envContent = fs.readFileSync(ENV_PATH, 'utf-8');
-        const env = {};
+        if (!fs.existsSync(SSAL_PROJECT_PATH)) {
+            console.error('❌ .ssal-project.json 없음');
+            process.exit(1);
+        }
+        const content = fs.readFileSync(SSAL_PROJECT_PATH, 'utf-8');
+        const config = JSON.parse(content);
 
-        envContent.split('\n').forEach(line => {
-            const trimmed = line.trim();
-            if (trimmed && !trimmed.startsWith('#')) {
-                const [key, ...valueParts] = trimmed.split('=');
-                if (key && valueParts.length > 0) {
-                    env[key.trim()] = valueParts.join('=').trim();
-                }
-            }
-        });
-
-        return env;
+        if (!config.project_id) {
+            console.error('❌ .ssal-project.json에 project_id 없음');
+            process.exit(1);
+        }
+        return config.project_id;
     } catch (e) {
-        console.error('❌ .env 파일 로드 실패:', e.message);
+        console.error('❌ .ssal-project.json 읽기 실패:', e.message);
         process.exit(1);
     }
-}
-
-// ============================================
-// Project ID 가져오기 (.env에서)
-// ============================================
-
-function getProjectId(env) {
-    if (!env.PROJECT_ID) {
-        console.error('❌ PROJECT_ID 없음 - .env에 SSAL Works 프로젝트 ID 설정 필요');
-        process.exit(1);
-    }
-    return env.PROJECT_ID;
 }
 
 // ============================================
@@ -84,50 +67,36 @@ function readProgressJson() {
 }
 
 // ============================================
-// Supabase UPSERT (REST API)
+// SSAL Works DB 업로드
 // ============================================
 
-async function upsertToSupabase(env, projectId, phases) {
-    const url = `${env.SUPABASE_URL}/rest/v1/project_phase_progress?on_conflict=project_id,phase_code`;
-    const headers = {
-        'apikey': env.SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal,resolution=merge-duplicates'
-    };
-
-    // 각 Phase별로 UPSERT
+async function uploadToSSALWorks(projectId, phases) {
     const results = [];
 
     for (const [phaseCode, phaseData] of Object.entries(phases)) {
-        const record = {
-            project_id: projectId,
-            phase_code: phaseCode,
-            phase_name: phaseData.name,
-            progress: phaseData.progress,
-            completed_items: phaseData.completed,
-            total_items: phaseData.total,
-            status: phaseData.progress === 100 ? 'completed' : phaseData.progress > 0 ? 'in_progress' : 'pending',
-            updated_at: new Date().toISOString()
-        };
+        const url = `${SUPABASE_URL}/rest/v1/project_phase_progress?project_id=eq.${projectId}&phase_code=eq.${phaseCode}`;
 
         try {
             const response = await fetch(url, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(record)
+                method: 'PATCH',
+                headers: {
+                    'apikey': SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ progress: phaseData.progress })
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`❌ ${phaseCode} UPSERT 실패:`, errorText);
-                results.push({ phase: phaseCode, success: false, error: errorText });
+                console.error(`❌ ${phaseCode} 업로드 실패:`, errorText);
+                results.push({ phase: phaseCode, success: false });
             } else {
                 results.push({ phase: phaseCode, success: true });
             }
         } catch (e) {
             console.error(`❌ ${phaseCode} 요청 실패:`, e.message);
-            results.push({ phase: phaseCode, success: false, error: e.message });
+            results.push({ phase: phaseCode, success: false });
         }
     }
 
@@ -139,46 +108,31 @@ async function upsertToSupabase(env, projectId, phases) {
 // ============================================
 
 async function main() {
-    console.log('📤 Progress Uploader - DB 업로드 시작\n');
+    console.log('📤 SSAL Works 진행률 업로드\n');
 
-    // 1. 환경변수 로드
-    const env = loadEnv();
-    if (!env.SUPABASE_URL || !env.SUPABASE_SERVICE_ROLE_KEY) {
-        console.error('❌ SUPABASE_URL 또는 SUPABASE_SERVICE_ROLE_KEY 없음');
-        process.exit(1);
-    }
-    console.log('✅ 환경변수 로드 완료');
-
-    // 2. Project ID 가져오기
-    const projectId = getProjectId(env);
+    // 1. Project ID 가져오기
+    const projectId = getProjectId();
     console.log(`🆔 Project ID: ${projectId}`);
 
-    // 3. phase_progress.json 읽기
+    // 2. phase_progress.json 읽기
     const progressData = readProgressJson();
     if (!progressData || !progressData.phases) {
-        console.log('⚠️ 업로드할 데이터 없음 - 종료');
+        console.log('⚠️ 업로드할 데이터 없음');
         process.exit(0);
     }
-    console.log(`📊 Phase 데이터: ${Object.keys(progressData.phases).length}개`);
+    console.log(`📊 Phase 데이터: ${Object.keys(progressData.phases).length}개\n`);
 
-    // 4. SSAL Works DB에 업로드
-    console.log('\n🔄 SSAL Works DB에 업로드 중...');
-    const results = await upsertToSupabase(env, projectId, progressData.phases);
+    // 3. SSAL Works DB에 업로드
+    const results = await uploadToSSALWorks(projectId, progressData.phases);
 
-    // 5. 결과 출력
+    // 4. 결과 출력
     const successCount = results.filter(r => r.success).length;
-    const failCount = results.filter(r => !r.success).length;
+    results.forEach(r => {
+        const status = r.success ? '✅' : '❌';
+        console.log(`${status} ${r.phase}`);
+    });
 
-    console.log(`\n📊 업로드 결과: ${successCount}/${results.length} 성공`);
-
-    if (failCount > 0) {
-        console.log(`⚠️ 실패: ${failCount}개`);
-        results.filter(r => !r.success).forEach(r => {
-            console.log(`   - ${r.phase}: ${r.error}`);
-        });
-    }
-
-    console.log('\n✅ Progress 업로드 완료');
+    console.log(`\n📊 업로드 완료: ${successCount}/${results.length}`);
 }
 
 // 실행
