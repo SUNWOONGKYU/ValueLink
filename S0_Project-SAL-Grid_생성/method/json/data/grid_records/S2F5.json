@@ -1,0 +1,33 @@
+{
+  "task_id": "S2F5",
+  "task_name": "프로세스 단계 템플릿 및 12개 워크플로우 페이지",
+  "stage": 2,
+  "area": "F",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S1BI1, S2BA1",
+  "task_instruction": "task-instructions/S2F5_instruction.md",
+  "task_agent": "frontend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S2F5_verification.md",
+  "verification_agent": "qa-specialist",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "진행 상태 템플릿 + 12개 워크플로우 단계 페이지",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}

@@ -1,0 +1,33 @@
+{
+  "task_id": "S4E2",
+  "task_name": "뉴스 파서 및 데이터 추출",
+  "stage": 4,
+  "area": "E",
+  "level": 2,
+  "task_status": "Pending",
+  "task_progress": 0,
+  "dependencies": "S4E1",
+  "task_instruction": "task-instructions/S4E2_instruction.md",
+  "task_agent": "backend-developer",
+  "generated_files": "",
+  "duration": "",
+  "build_result": "",
+  "verification_instruction": "verification-instructions/S4E2_verification.md",
+  "verification_agent": "code-reviewer",
+  "verification_status": "Not Verified",
+  "test_result": "",
+  "build_verification": "",
+  "integration_verification": "",
+  "blockers": "",
+  "comprehensive_verification": "",
+  "ai_verification_note": "",
+  "stage_gate_status": "",
+  "remarks": "정규식 기반 Deal 정보 추출 (기업, 투자자, 금액, 단계)",
+  "created_at": "2026-02-06",
+  "updated_at": "2026-02-06",
+  "tools": [
+    "Read",
+    "Write"
+  ],
+  "execution_type": "AI-Only"
+}
