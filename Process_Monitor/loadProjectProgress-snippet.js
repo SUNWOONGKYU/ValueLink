@@ -1,8 +1,8 @@
 /**
- * loadProjectProgress - DB에서 사용자별 진행률 조회
+ * loadProjectProgress - SSAL Works DB에서 사용자별 진행률 조회
  *
- * index.html에 추가할 함수 스니펫
- * 기존 loadProjectProgress 함수를 이 코드로 교체
+ * SSAL Works 플랫폼(ssalworks.com)에서 사용하는 함수
+ * 일반 사용자는 이 파일 수정 불필요 (참고용)
  */
 
 // 프로젝트 진행률 로드

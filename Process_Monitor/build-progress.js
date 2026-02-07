@@ -1,9 +1,10 @@
 /**
- * build-progress-json.js
+ * build-progress.js
  *
- * JSON 기반 진행률 계산 (sal_grid.csv 대신 grid_records/*.json 사용)
+ * P0~S5 진행률 계산 → phase_progress.json 생성
+ * upload-progress.js가 이 파일을 SSAL Works DB에 업로드
  *
- * 사용법: node build-progress-json.js
+ * 사용법: node Process_Monitor/build-progress.js
  */
 
 const fs = require('fs');

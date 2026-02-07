@@ -1,12 +1,14 @@
 #!/bin/sh
 # ================================================
-# Pre-commit Hook - 진행률 자동 업로드 예시
+# Pre-commit Hook - SSAL Works 진행률 자동 업로드
 # ================================================
 # 위치: .git/hooks/pre-commit
 #
 # 이 hook은 git commit 시 자동으로:
 # 1. build-progress.js 실행 (진행률 계산)
-# 2. upload-progress.js 실행 (DB 업로드)
+# 2. upload-progress.js 실행 (SSAL Works DB 업로드)
+#
+# ⚠️ .env에 SSAL Works 키 설정 필요
 # ================================================
 
 PROJECT_ROOT="$(git rev-parse --show-toplevel)"

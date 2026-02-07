@@ -1,10 +1,13 @@
 /**
  * upload-progress.js
  *
- * phase_progress.json을 읽어서 Supabase project_phase_progress 테이블에 업로드
+ * phase_progress.json을 읽어서 SSAL Works Supabase에 업로드
+ * SSAL Works 플랫폼(ssalworks.com)에서 진행률 표시용
  * Pre-commit Hook에서 자동 호출됨
  *
  * 사용법: node scripts/upload-progress.js
+ *
+ * ⚠️ SSAL Works에서 제공한 키를 .env에 설정해야 함
  */
 
 const fs = require('fs');
@@ -176,8 +179,8 @@ async function main() {
     }
     console.log(`📊 Phase 데이터: ${Object.keys(progressData.phases).length}개`);
 
-    // 4. Supabase에 업로드
-    console.log('\n🔄 Supabase에 업로드 중...');
+    // 4. SSAL Works DB에 업로드
+    console.log('\n🔄 SSAL Works DB에 업로드 중...');
     const results = await upsertToSupabase(env, projectId, progressData.phases);
 
     // 5. 결과 출력
