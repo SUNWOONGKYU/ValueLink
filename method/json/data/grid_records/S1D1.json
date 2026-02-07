@@ -9,14 +9,14 @@
   "dependencies": "",
   "task_instruction": "task-instructions/S1D1_instruction.md",
   "task_agent": "database-specialist",
-  "generated_files": "database/schema-v2.sql, database/triggers-v2.sql, database/rls-policies-v2.sql",
+  "generated_files": "database/schema-v4-final.sql, database/triggers-v4.sql, database/rls-policies-v2.sql",
   "duration": "2h",
   "build_result": "SUCCESS",
   "verification_instruction": "verification-instructions/S1D1_verification.md",
   "verification_agent": "database-specialist",
   "verification_status": "Verified",
   "test_result": {
-    "table_count": "PASS - 33/33 tables defined",
+    "table_count": "PASS - 41/41 tables defined (11 base + 30 method-specific)",
     "foreign_keys": "PASS - All FK relationships correctly defined",
     "approval_points_count": "PASS - 22 approval points (8+4+2+6+2)"
   },
@@ -29,7 +29,7 @@
   "integration_verification": {
     "dependency_propagation": "PASS - All tables reference correct parent tables",
     "cross_task_connection": "PASS - Schema supports all 5 valuation methods",
-    "data_flow": "PASS - projects -> documents -> approval_points -> results -> drafts -> revisions -> reports"
+    "data_flow": "PASS - evaluation_requests -> projects -> documents -> approval_points -> results -> drafts -> revisions -> reports -> project_history"
   },
   "blockers": {
     "status": "No Blockers",
@@ -43,9 +43,9 @@
     "blockers": "None",
     "final": "Passed"
   },
-  "ai_verification_note": "S1D1 검증 완료. 33개 테이블 (기본 3개 + 평가법별 30개), 22개 AI 승인 포인트, 23개 트리거, 33개 RLS 정책 모두 정상. Supabase 배포 대기 중.",
+  "ai_verification_note": "S1D1 v4 검증 완료. 41개 테이블 (기본 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 3단계 프로젝트 라이프사이클(evaluation_requests→projects→project_history) 적용. 불필요 테이블(quotes, negotiations, report_draft_sections, draft_method_status) 삭제 및 필드 통합 완료. Supabase 배포 대기 중.",
   "stage_gate_status": "",
-  "remarks": "33개 테이블 (기본 3개 + 평가법별 30개), 22개 AI 승인 포인트 반영, PO 승인 완료",
+  "remarks": "v4 최종: 41개 테이블 (기존 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 삭제된 테이블: quotes, negotiations, report_draft_sections, draft_method_status",
   "created_at": "2026-02-06",
   "updated_at": "2026-02-07",
   "tools": [
