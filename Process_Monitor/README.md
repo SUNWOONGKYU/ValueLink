@@ -52,6 +52,9 @@ SSAL Works 팀에서 제공하는 키를 받습니다:
 # SSAL Works에서 제공받은 키
 SUPABASE_URL=https://zwjmfewyshhwpgwdtrus.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=제공받은_키
+
+# SSAL Works 프로젝트 ID (프로젝트 등록 시 부여받은 ID)
+PROJECT_ID=2512000006TH-P001
 ```
 
 ### 3. 스크립트 복사 + 경로 수정
@@ -102,16 +105,16 @@ exit 0
 
 ---
 
-## Project ID 규칙
+## Project ID
+
+SSAL Works에서 프로젝트 등록 시 부여받은 ID를 사용합니다.
 
 ```
-git config user.email = dev@example.com
-                          ↓
-project_id = dev_PROJECT
+예: 2512000006TH-P001
 ```
 
-- 이메일 @ 앞 부분 + "_PROJECT"
-- SSAL Works에 같은 이메일로 로그인해야 진행률 표시됨
+- `.env`에 `PROJECT_ID` 설정 필수
+- SSAL Works 플랫폼에서 이 ID로 진행률 조회
 
 ---
 

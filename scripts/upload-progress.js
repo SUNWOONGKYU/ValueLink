@@ -12,7 +12,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 // ============================================
 // 설정
@@ -49,30 +48,15 @@ function loadEnv() {
 }
 
 // ============================================
-// Git 사용자 이메일 가져오기
+// Project ID 가져오기 (.env에서)
 // ============================================
 
-function getGitUserEmail() {
-    try {
-        const email = execSync('git config user.email', { encoding: 'utf-8' }).trim();
-        return email || 'unknown@localhost';
-    } catch (e) {
-        console.warn('⚠️ Git user.email 가져오기 실패, 기본값 사용');
-        return 'unknown@localhost';
+function getProjectId(env) {
+    if (!env.PROJECT_ID) {
+        console.error('❌ PROJECT_ID 없음 - .env에 SSAL Works 프로젝트 ID 설정 필요');
+        process.exit(1);
     }
-}
-
-// ============================================
-// Project ID 생성 (이메일 기반)
-// ============================================
-
-function generateProjectId(email) {
-    // 이메일에서 @ 앞 부분 추출
-    const username = email.split('@')[0] || 'user';
-    // 날짜 (YYMMDD 형식)
-    const date = new Date().toISOString().slice(2, 10).replace(/-/g, '');
-    // Project ID: {email_prefix}_{date}
-    return `${username}_PROJECT`;
+    return env.PROJECT_ID;
 }
 
 // ============================================
@@ -160,10 +144,8 @@ async function main() {
     }
     console.log('✅ 환경변수 로드 완료');
 
-    // 2. Git 사용자 이메일 가져오기
-    const email = getGitUserEmail();
-    const projectId = generateProjectId(email);
-    console.log(`📧 사용자: ${email}`);
+    // 2. Project ID 가져오기
+    const projectId = getProjectId(env);
     console.log(`🆔 Project ID: ${projectId}`);
 
     // 3. phase_progress.json 읽기
