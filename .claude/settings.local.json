@@ -18,7 +18,8 @@
       "Bash(gh api:*)",
       "Bash(npm --version:*)",
       "Bash(tee:*)",
-      "Bash(node \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" install --verbose)"
+      "Bash(node \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" install --verbose)",
+      "Bash(git push:*)"
     ]
   }
 }

@@ -3,10 +3,10 @@
 ## 프로젝트 개요
 
 - **프로젝트명**: ValueLink 기업가치평가 플랫폼 재구축
-- **총 Task 수**: 28개
+- **총 Task 수**: 29개
 - **적용 방법론**: SAL Grid (Stage-Area-Level)
-- **버전**: v1.0
-- **최종 수정일**: 2026-02-05
+- **버전**: v1.1
+- **최종 수정일**: 2026-02-07
 
 ---
 
@@ -34,9 +34,9 @@
 | **S1** | Development Setup | 개발 준비 | 4 | 환경설정, DB스키마, 문서화 |
 | **S2** | Core Platform | 개발 1차 | 12 | 핵심 워크플로우, 페이지, API |
 | **S3** | Valuation Engines | 개발 2차 | 4 | 5개 평가 엔진 통합 |
-| **S4** | External Integration | 개발 3차 | 5 | 뉴스 크롤링, 외부 연동 |
+| **S4** | External Integration | 개발 3차 | 6 | 뉴스 크롤링, 외부 연동, 스케줄러 |
 | **S5** | Finalization | 개발 마무리 | 3 | 배포, QA, 문서화 |
-| **합계** | | | **28** | |
+| **합계** | | | **29** | |
 
 ---
 
@@ -47,9 +47,9 @@
 | **S1** | 개발 준비 | - | - | 1 | - | 1 | - | - | 2 | 4 |
 | **S2** | 개발 1차 | 7 | 4 | - | - | - | - | - | 1 | 12 |
 | **S3** | 개발 2차 | - | 4 | - | - | - | - | - | - | 4 |
-| **S4** | 개발 3차 | 1 | - | - | 4 | - | - | - | - | 5 |
+| **S4** | 개발 3차 | 1 | - | - | 4 | - | - | 1 | - | 6 |
 | **S5** | 마무리 | - | - | - | - | - | 1 | 1 | 1 | 3 |
-| **합계** | | 8 | 8 | 1 | 4 | 1 | 1 | 1 | 4 | **28** |
+| **합계** | | 8 | 8 | 1 | 4 | 1 | 1 | 2 | 4 | **29** |
 
 ---
 
@@ -77,12 +77,17 @@
 - **Area**: D (Database)
 - **Dependencies**: 없음
 - **생성 파일**:
-  - `database/schema.sql` (12개 테이블 정의)
+  - `database/schema-v4-final.sql` (41개 테이블 정의: 기본 11개 + 평가법별 30개)
   - `database/rls-policies.sql` (Row Level Security 정책)
-  - `database/triggers.sql` (updated_at 트리거)
+  - `database/triggers-v4.sql` (29개 updated_at 트리거)
 - **Task Agent**: database-specialist
 - **Verification Agent**: database-specialist
 - **참조**: `Process/P3_프로토타입_제작/Database/complete-schema.sql`
+- **완료 상태**: ✅ 완료 (2026-02-07)
+- **변경사항**:
+  - 3단계 프로젝트 라이프사이클 (evaluation_requests → projects → project_history)
+  - quotes, negotiations 테이블 삭제 (불필요)
+  - 회계사 계좌 정보 (bank_name, bank_account, account_holder) 추가
 
 #### S1M1: API Specification & Documentation
 - **Task Name**: API 명세서 및 기술 문서 작성
@@ -247,15 +252,15 @@
 - **Verification Agent**: code-reviewer
 - **참조**: `backend/app/api/v1/endpoints/valuation.py` (기존 FastAPI)
 
-#### S2BA2: Projects & Quotes API
-- **Task Name**: 프로젝트 및 견적 API
+#### S2BA2: Projects & Evaluation Requests API
+- **Task Name**: 프로젝트 및 평가 요청 API
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (3개):
   - `app/api/projects/route.ts` (프로젝트 CRUD)
-  - `app/api/quotes/route.ts` (견적 생성/수정)
-  - `app/api/negotiations/route.ts` (협상 처리)
-- **그룹핑 근거**: 프로젝트 생성부터 견적/협상까지 하나의 흐름
+  - `app/api/evaluation-requests/route.ts` (평가 요청 생성, 관리자 승인/거절)
+  - `app/api/project-history/route.ts` (완료된 프로젝트 조회)
+- **그룹핑 근거**: 3단계 프로젝트 라이프사이클 (평가요청 → 프로젝트 → 히스토리)
 - **Task Agent**: backend-developer
 - **Verification Agent**: code-reviewer
 
@@ -674,23 +679,46 @@ S2BA1 완료 후:
 - **Supabase 통합 코드**: `assets/js/supabase.js` 재사용 가능
 - **공통 컴포넌트**: Header, Sidebar, Footer 추출
 
-### 6. 데이터베이스 스키마 (12개 테이블)
-1. `users` (프로필, 역할)
-2. `projects` (프로젝트 마스터)
-3. `quotes` (견적)
-4. `negotiations` (협상)
-5. `documents` (파일 업로드)
-6. `approval_points` (22개 승인 포인트)
-7. `valuation_results` (5개 방법 결과)
-8. `drafts` (초안, Markdown)
-9. `revisions` (수정 요청)
-10. `reports` (최종 보고서 PDF)
-11. `investment_tracker` (Deal 뉴스)
-12. `feedbacks` (평가)
+### 6. 데이터베이스 스키마 (41개 테이블)
+
+#### 기본 테이블 (11개)
+1. `users` (프로필, 역할: customer/accountant/admin/investor)
+2. `accountants` (회계사 정보, 계좌 포함)
+3. `customers` (고객사 정보)
+4. `evaluation_requests` (평가 요청, 관리자 승인 대기) ⭐신규
+5. `projects` (진행 중 프로젝트)
+6. `project_history` (완료된 프로젝트) ⭐신규
+7. `valuation_reports` (DART/KIND 샘플 보고서)
+8. `deals` (투자 딜 정보)
+9. `investment_news_articles` (투자 뉴스 기사)
+10. `balance_payments` (잔금 결제)
+11. `report_delivery_requests` (보고서 수령 요청)
+
+#### 평가법별 테이블 (30개 = 6종 × 5개 평가법)
+- `{method}_documents` (파일 업로드)
+- `{method}_approval_points` (AI 승인 포인트)
+- `{method}_results` (평가 결과)
+- `{method}_drafts` (초안, 9개 섹션)
+- `{method}_revisions` (수정 요청)
+- `{method}_reports` (최종 보고서)
+
+*{method} = dcf, relative, intrinsic, asset, tax*
+
+#### 삭제된 테이블 (v4에서 제거)
+- ~~quotes~~ (견적) - 불필요
+- ~~negotiations~~ (협상) - 불필요
+- ~~report_draft_sections~~ (drafts에 통합)
+- ~~draft_method_status~~ (drafts에 통합)
 
 ---
 
 ## 변경 이력
+
+### v1.1 (2026-02-07)
+- Task 수 정정: 28개 → 29개 (S4O1 누락 수정)
+- S1D1 완료 상태 반영 (41개 테이블, v4 스키마)
+- S2BA2 변경: quotes/negotiations → evaluation-requests/project-history
+- 데이터베이스 스키마 섹션 업데이트 (41개 테이블 구조)
 
 ### v1.0 (2026-02-05)
 - 초안 작성

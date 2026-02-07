@@ -12,7 +12,10 @@
       "Bash(tee:*)",
       "Bash(ls:*)",
       "Bash(gh run list:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
+      "Bash(gh run view:*)"
     ]
   }
 }

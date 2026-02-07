@@ -1,6 +1,6 @@
 {
   "task_id": "S2BA2",
-  "task_name": "프로젝트 및 견적 관리 API",
+  "task_name": "프로젝트 및 평가 요청 API",
   "stage": 2,
   "area": "BA",
   "level": 2,
@@ -22,9 +22,9 @@
   "comprehensive_verification": "",
   "ai_verification_note": "",
   "stage_gate_status": "",
-  "remarks": "프로젝트 CRUD + 견적 생성 + 협상",
+  "remarks": "프로젝트 CRUD + 평가요청 관리 + 프로젝트 히스토리",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-07",
   "tools": [
     "Read",
     "Write"
