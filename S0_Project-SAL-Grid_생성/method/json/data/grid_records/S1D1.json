@@ -44,7 +44,7 @@
     "final": "Passed"
   },
   "ai_verification_note": "S1D1 v4 검증 완료. 41개 테이블 (기본 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 3단계 프로젝트 라이프사이클(evaluation_requests→projects→project_history) 적용. 불필요 테이블(quotes, negotiations, report_draft_sections, draft_method_status) 삭제 및 필드 통합 완료. Supabase 배포 대기 중.",
-  "stage_gate_status": "Conditional Pass",
+  "stage_gate_status": "Full Pass",
   "remarks": "v4 최종: 41개 테이블 (기존 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 삭제된 테이블: quotes, negotiations, report_draft_sections, draft_method_status",
   "created_at": "2026-02-06",
   "updated_at": "2026-02-07",

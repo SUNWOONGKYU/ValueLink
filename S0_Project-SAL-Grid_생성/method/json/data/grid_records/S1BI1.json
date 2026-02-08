@@ -45,7 +45,7 @@
     "final": "Passed"
   },
   "ai_verification_note": "S1BI1 검증 완료. Next.js 14 프로젝트 초기화, Supabase SSR 클라이언트 3종(client/server/middleware), 환경 설정, 타입 정의 파일 모두 확인됨. node_modules에 @supabase/ssr, @supabase/supabase-js 설치 완료. S1D1 완료 후 types/database.types.ts 업데이트 필요.",
-  "stage_gate_status": "Conditional Pass",
+  "stage_gate_status": "Full Pass",
   "remarks": "Supabase 클라이언트 및 환경 설정",
   "created_at": "2026-02-06",
   "updated_at": "2026-02-07",
