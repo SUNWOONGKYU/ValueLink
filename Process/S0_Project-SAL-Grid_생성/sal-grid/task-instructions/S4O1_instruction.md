@@ -1,434 +1,162 @@
-# S4O1: Background Task Scheduler
+# S4E3, S4E4, S4O1: 통합 Instruction (신규 구현)
 
-## Task 정보
-
-- **Task ID**: S4O1
-- **Task Name**: 백그라운드 작업 스케줄러
-- **Stage**: S4 (External Integration - 개발 3차)
-- **Area**: O (DevOps)
-- **Dependencies**: S4E1, S4E2
-- **Task Agent**: devops-troubleshooter
-- **Verification Agent**: code-reviewer
+> **주의**: 이 파일은 나머지 3개 Task를 통합한 간소화 버전입니다.
 
 ---
 
-## Task 목표
+## S4E3: Site-Specific Crawlers (6개 사이트)
 
+### Task 정보
+- **Task ID**: S4E3
+- **Dependencies**: S4E1 (Base Crawler), S4E2 (News Parser)
+- **파일 수**: 6개
+- **총 라인 수**: ~430줄
+
+### Task 목표
+6개 투자 뉴스 사이트별 크롤러 구현 (네이버, 아웃스탠딩, 플래텀, 스타트업투데이, 벤처스퀘어, 와우테일)
+
+### 공통 구조
+```typescript
+import { BaseCrawler, CrawlResult } from '../base-crawler'
+import { newsParser } from '../news-parser'
+import * as cheerio from 'cheerio'
+
+export class [Site]Crawler extends BaseCrawler {
+  constructor() {
+    super({
+      site_name: '[사이트명]',
+      base_url: '[URL]',
+      rate_limit_ms: 1000,
+      max_retries: 3,
+      timeout_ms: 10000,
+    })
+  }
+
+  async crawl(): Promise<CrawlResult[]> {
+    // 1. 목록 페이지 가져오기
+    // 2. 기사 URL 추출
+    // 3. 각 기사 크롤링 (최대 10개)
+    // 4. 파싱
+    // 5. CrawlResult 배열 반환
+  }
+}
+```
+
+### 생성 파일
+1. `lib/crawler/sites/naver-crawler.ts` (~80줄)
+2. `lib/crawler/sites/outstanding-crawler.ts` (~70줄)
+3. `lib/crawler/sites/platum-crawler.ts` (~70줄)
+4. `lib/crawler/sites/startuptoday-crawler.ts` (~70줄)
+5. `lib/crawler/sites/venturesquare-crawler.ts` (~70줄)
+6. `lib/crawler/sites/wowtale-crawler.ts` (~70줄)
+
+### 핵심 개선 사항
+- ✅ BaseCrawler 상속
+- ✅ 사이트별 CSS 선택자
+- ✅ NewsParser 사용
+- ✅ 최대 10개 기사 제한
+- ✅ 에러 처리 (개별 기사 실패 시 계속 진행)
+
+---
+
+## S4E4: Enkino AI Verification
+
+### Task 정보
+- **Task ID**: S4E4
+- **Dependencies**: S3BA3 (DCF Engine)
+- **파일 수**: 1개
+- **총 라인 수**: ~350줄
+
+### Task 목표
+DCF 평가 엔진을 실제 회계법인 평가보고서 데이터로 검증하는 서비스 구현
+
+### 검증 데이터
+**실제 데이터**: 태일회계법인 FY25 엔키노에이아이 기업가치 평가보고서 (2025.06.30)
+
+**주요 수치:**
+- Operating Value: 16,216,378,227원
+- PV Cumulative: 5,605,401,153원
+- PV Terminal: 10,610,977,073원
+- Enterprise Value: 16,346,048,693원
+- Equity Value: 15,729,119,359원
+- Value Per Share: 2,140원
+
+### 생성 파일
+`lib/integrations/enkino-verification.ts`
+
+**포함 클래스/메서드:**
+1. **EnkinoVerificationService 클래스**
+2. **runVerification()**: 검증 실행
+3. **formatVerificationResult()**: 결과 포맷팅
+
+### 핵심 개선 사항
+- ✅ 실제 평가 데이터 정확히 입력
+- ✅ DCF 엔진 호출
+- ✅ 오차 계산 (±5% 이내 PASS)
+- ✅ FCFF 검증
+- ✅ PV 검증
+- ✅ 포맷팅된 출력
+
+### 검증 기준
+```typescript
+const passed = maxError <= 5.0  // ±5% 이내
+```
+
+**오차 계산:**
+```typescript
+const errorPct = actualValue !== 0
+  ? ((engineValue - actualValue) / actualValue * 100)
+  : 0
+```
+
+---
+
+## S4O1: Background Task Scheduler
+
+### Task 정보
+- **Task ID**: S4O1
+- **Dependencies**: S4E1 (Crawler Manager), S4E2 (News Parser)
+- **파일 수**: 6개
+- **총 라인 수**: ~450줄
+
+### Task 목표
 주간 뉴스 수집 작업을 자동으로 실행하는 스케줄러 인프라 구현
 
----
+### 생성 파일
+1. `lib/scheduler/task-scheduler.ts` (~200줄) - 스케줄러 인프라
+2. `lib/scheduler/tasks/weekly-collection.ts` (~120줄) - 주간 수집 작업
+3. `lib/scheduler/init.ts` (~30줄) - 스케줄러 초기화
+4. `app/api/scheduler/route.ts` (~60줄) - 스케줄러 API
+5. `app/api/cron/weekly-collection/route.ts` (~30줄) - Vercel Cron 엔드포인트
+6. `vercel.json` (~10줄) - Vercel Cron 설정
 
-## 상세 지시사항
+### 핵심 개선 사항
 
-### 1. Task Scheduler Infrastructure
-
-**파일**: `lib/scheduler/task-scheduler.ts`
-
+#### 1. TaskScheduler 클래스
 ```typescript
-import { CronJob } from 'cron'
-
-export interface ScheduledTask {
-  id: string
-  name: string
-  schedule: string // Cron 표현식
-  handler: () => Promise<void>
-  enabled: boolean
-  lastRun?: Date
-  nextRun?: Date
-  status: 'idle' | 'running' | 'error'
-}
-
 export class TaskScheduler {
-  private tasks: Map<string, { task: ScheduledTask; job: CronJob }> = new Map()
-  private running: boolean = false
+  private tasks: Map<string, { task: ScheduledTask; job: CronJob }>
 
-  /**
-   * 작업 등록
-   */
-  registerTask(task: ScheduledTask): void {
-    const cronJob = new CronJob(
-      task.schedule,
-      async () => {
-        await this.runTask(task.id)
-      },
-      null,
-      task.enabled,
-      'Asia/Seoul'
-    )
-
-    this.tasks.set(task.id, { task, job: cronJob })
-    console.log(`Task registered: ${task.name} (${task.schedule})`)
-  }
-
-  /**
-   * 작업 실행
-   */
-  private async runTask(taskId: string): Promise<void> {
-    const entry = this.tasks.get(taskId)
-    if (!entry) return
-
-    const { task, job } = entry
-
-    // 이미 실행 중이면 스킵
-    if (task.status === 'running') {
-      console.log(`Task ${task.name} is already running, skipping...`)
-      return
-    }
-
-    try {
-      task.status = 'running'
-      task.lastRun = new Date()
-      console.log(`[${new Date().toISOString()}] Running task: ${task.name}`)
-
-      await task.handler()
-
-      task.status = 'idle'
-      task.nextRun = job.nextDate().toDate()
-      console.log(`[${new Date().toISOString()}] Task completed: ${task.name}`)
-      console.log(`Next run: ${task.nextRun}`)
-    } catch (error) {
-      task.status = 'error'
-      console.error(`[${new Date().toISOString()}] Task failed: ${task.name}`, error)
-      throw error
-    }
-  }
-
-  /**
-   * 작업 수동 실행
-   */
-  async triggerTask(taskId: string): Promise<void> {
-    const entry = this.tasks.get(taskId)
-    if (!entry) {
-      throw new Error(`Task not found: ${taskId}`)
-    }
-
-    console.log(`Manually triggering task: ${entry.task.name}`)
-    await this.runTask(taskId)
-  }
-
-  /**
-   * 스케줄러 시작
-   */
-  start(): void {
-    if (this.running) {
-      console.log('Scheduler is already running')
-      return
-    }
-
-    for (const [taskId, { task, job }] of this.tasks) {
-      if (task.enabled) {
-        job.start()
-        task.nextRun = job.nextDate().toDate()
-        console.log(`Task started: ${task.name} - Next run: ${task.nextRun}`)
-      }
-    }
-
-    this.running = true
-    console.log('Scheduler started')
-  }
-
-  /**
-   * 스케줄러 종료
-   */
-  stop(): void {
-    if (!this.running) {
-      console.log('Scheduler is not running')
-      return
-    }
-
-    for (const { job } of this.tasks.values()) {
-      job.stop()
-    }
-
-    this.running = false
-    console.log('Scheduler stopped')
-  }
-
-  /**
-   * 작업 활성화/비활성화
-   */
-  setTaskEnabled(taskId: string, enabled: boolean): void {
-    const entry = this.tasks.get(taskId)
-    if (!entry) return
-
-    entry.task.enabled = enabled
-
-    if (enabled) {
-      entry.job.start()
-      entry.task.nextRun = entry.job.nextDate().toDate()
-    } else {
-      entry.job.stop()
-      entry.task.nextRun = undefined
-    }
-
-    console.log(`Task ${entry.task.name} ${enabled ? 'enabled' : 'disabled'}`)
-  }
-
-  /**
-   * 상태 조회
-   */
-  getStatus(): {
-    running: boolean
-    tasks: Array<{
-      id: string
-      name: string
-      schedule: string
-      enabled: boolean
-      status: string
-      lastRun?: string
-      nextRun?: string
-    }>
-  } {
-    const tasks = Array.from(this.tasks.values()).map(({ task }) => ({
-      id: task.id,
-      name: task.name,
-      schedule: task.schedule,
-      enabled: task.enabled,
-      status: task.status,
-      lastRun: task.lastRun?.toISOString(),
-      nextRun: task.nextRun?.toISOString()
-    }))
-
-    return {
-      running: this.running,
-      tasks
-    }
-  }
-
-  /**
-   * 특정 작업 조회
-   */
-  getTask(taskId: string): ScheduledTask | undefined {
-    return this.tasks.get(taskId)?.task
-  }
-
-  /**
-   * 등록된 모든 작업 ID 목록
-   */
-  getTaskIds(): string[] {
-    return Array.from(this.tasks.keys())
-  }
+  registerTask(task: ScheduledTask): void
+  start(): void
+  stop(): void
+  triggerTask(taskId: string): Promise<void>
+  getStatus(): { running: boolean; tasks: [...] }
 }
-
-// 싱글톤 인스턴스
-export const taskScheduler = new TaskScheduler()
 ```
 
----
-
-### 2. Weekly Collection Task
-
-**파일**: `lib/scheduler/tasks/weekly-collection.ts`
-
+#### 2. Weekly Collection Task
 ```typescript
-import { crawlerManager } from '@/lib/crawler/crawler-manager'
-import { taskScheduler, ScheduledTask } from '../task-scheduler'
+// Cron 표현식: 매주 일요일 오전 6시 (KST)
+schedule: '0 6 * * 0'
 
-/**
- * 주간 투자 뉴스 수집 작업
- *
- * 매주 일요일 오전 6시 (KST) 자동 실행
- */
-export async function weeklyCollectionHandler(): Promise<void> {
-  console.log('Starting weekly investment news collection...')
-
-  try {
-    // 모든 등록된 크롤러 실행
-    const results = await crawlerManager.executeAll()
-
-    let totalCount = 0
-    for (const [name, crawlResults] of results) {
-      totalCount += crawlResults.length
-      console.log(`${name}: ${crawlResults.length} articles collected`)
-    }
-
-    console.log(`Weekly collection completed: ${totalCount} articles total`)
-  } catch (error) {
-    console.error('Weekly collection failed:', error)
-    throw error
-  }
-}
-
-/**
- * 수동 수집 실행 (테스트/관리자 트리거)
- */
-export async function triggerManualCollection(): Promise<{
-  success: boolean
-  totalArticles: number
-  results: Map<string, number>
-}> {
-  console.log('Manual collection triggered')
-
-  try {
-    const results = await crawlerManager.executeAll()
-
-    const summary = new Map<string, number>()
-    let totalArticles = 0
-
-    for (const [name, crawlResults] of results) {
-      summary.set(name, crawlResults.length)
-      totalArticles += crawlResults.length
-    }
-
-    return {
-      success: true,
-      totalArticles,
-      results: summary
-    }
-  } catch (error) {
-    console.error('Manual collection failed:', error)
-    return {
-      success: false,
-      totalArticles: 0,
-      results: new Map()
-    }
-  }
-}
-
-/**
- * 특정 사이트만 수집
- */
-export async function collectFromSites(sites: string[]): Promise<{
-  success: boolean
-  results: Map<string, number>
-}> {
-  console.log(`Collecting from sites: ${sites.join(', ')}`)
-
-  const results = new Map<string, number>()
-
-  try {
-    for (const site of sites) {
-      const crawlResults = await crawlerManager.executeCrawler(site)
-      results.set(site, crawlResults.length)
-      console.log(`${site}: ${crawlResults.length} articles`)
-    }
-
-    return {
-      success: true,
-      results
-    }
-  } catch (error) {
-    console.error('Site collection failed:', error)
-    return {
-      success: false,
-      results
-    }
-  }
-}
-
-// 주간 수집 작업 등록
-export function registerWeeklyCollectionTask(): void {
-  const task: ScheduledTask = {
-    id: 'weekly_investment_collection',
-    name: 'Weekly Investment News Collection',
-    schedule: '0 6 * * 0', // 매주 일요일 오전 6시 (Cron: 분 시 일 월 요일)
-    handler: weeklyCollectionHandler,
-    enabled: true,
-    status: 'idle'
-  }
-
-  taskScheduler.registerTask(task)
-  console.log('Weekly collection task registered')
+async function weeklyCollectionHandler(): Promise<void> {
+  const results = await crawlerManager.executeAll()
+  // 모든 크롤러 실행
 }
 ```
 
----
-
-### 3. API Endpoint (수동 실행 및 상태 조회)
-
-**파일**: `app/api/scheduler/route.ts`
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { taskScheduler } from '@/lib/scheduler/task-scheduler'
-import { triggerManualCollection } from '@/lib/scheduler/tasks/weekly-collection'
-
-/**
- * GET /api/scheduler
- * 스케줄러 상태 조회
- */
-export async function GET(request: NextRequest) {
-  try {
-    const status = taskScheduler.getStatus()
-    return NextResponse.json(status)
-  } catch (error) {
-    console.error('Scheduler status error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get scheduler status' },
-      { status: 500 }
-    )
-  }
-}
-
-/**
- * POST /api/scheduler/trigger
- * 수동 수집 실행
- */
-export async function POST(request: NextRequest) {
-  try {
-    const { taskId } = await request.json()
-
-    if (taskId === 'weekly_investment_collection') {
-      const result = await triggerManualCollection()
-      return NextResponse.json(result)
-    }
-
-    // 일반 작업 트리거
-    await taskScheduler.triggerTask(taskId)
-    return NextResponse.json({ success: true, message: 'Task triggered' })
-  } catch (error) {
-    console.error('Task trigger error:', error)
-    return NextResponse.json(
-      { error: 'Failed to trigger task' },
-      { status: 500 }
-    )
-  }
-}
-```
-
----
-
-### 4. 스케줄러 초기화 (서버 시작 시)
-
-**파일**: `lib/scheduler/init.ts`
-
-```typescript
-import { taskScheduler } from './task-scheduler'
-import { registerWeeklyCollectionTask } from './tasks/weekly-collection'
-
-/**
- * 스케줄러 초기화 (서버 시작 시 실행)
- */
-export function initializeScheduler(): void {
-  console.log('Initializing scheduler...')
-
-  // 주간 수집 작업 등록
-  registerWeeklyCollectionTask()
-
-  // 스케줄러 시작
-  taskScheduler.start()
-
-  console.log('Scheduler initialized')
-}
-
-/**
- * 스케줄러 종료 (서버 종료 시 실행)
- */
-export function shutdownScheduler(): void {
-  console.log('Shutting down scheduler...')
-  taskScheduler.stop()
-  console.log('Scheduler shut down')
-}
-```
-
-**Next.js 서버 시작 시 호출 (필요 시 `middleware.ts` 또는 `instrumentation.ts` 활용)**
-
----
-
-### 5. Vercel Cron Jobs 통합 (프로덕션)
-
-**파일**: `vercel.json`
-
+#### 3. Vercel Cron Jobs 통합
 ```json
 {
   "crons": [
@@ -440,132 +168,74 @@ export function shutdownScheduler(): void {
 }
 ```
 
-**파일**: `app/api/cron/weekly-collection/route.ts`
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { weeklyCollectionHandler } from '@/lib/scheduler/tasks/weekly-collection'
-
-/**
- * Vercel Cron Job 엔드포인트
- * 매주 일요일 오전 6시 실행
- */
-export async function GET(request: NextRequest) {
-  // Vercel Cron 요청 검증
-  const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  try {
-    await weeklyCollectionHandler()
-    return NextResponse.json({ success: true, message: 'Weekly collection completed' })
-  } catch (error) {
-    console.error('Cron job error:', error)
-    return NextResponse.json(
-      { error: 'Weekly collection failed' },
-      { status: 500 }
-    )
-  }
-}
-```
-
----
-
-## 생성/수정 파일
-
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|-----------------|
-| `lib/scheduler/task-scheduler.ts` | 스케줄러 인프라 | ~200줄 |
-| `lib/scheduler/tasks/weekly-collection.ts` | 주간 수집 작업 | ~120줄 |
-| `lib/scheduler/init.ts` | 스케줄러 초기화 | ~30줄 |
-| `app/api/scheduler/route.ts` | 스케줄러 API | ~60줄 |
-| `app/api/cron/weekly-collection/route.ts` | Vercel Cron 엔드포인트 | ~30줄 |
-| `vercel.json` | Vercel Cron 설정 | ~10줄 |
-
-**총 파일 수**: 6개
-**총 라인 수**: ~450줄
-
----
-
-## 기술 스택
-
-- **node-cron**: Cron 표현식 기반 스케줄링 (개발 환경)
-- **Vercel Cron Jobs**: 프로덕션 스케줄링
-- **Next.js API Routes**: 수동 실행 엔드포인트
-- **Crawler Manager**: S4E1에서 구현한 크롤러 관리자
-
----
-
-## 완료 기준
-
-### 필수 (Must Have)
-
-- [ ] TaskScheduler 클래스 구현
-- [ ] 작업 등록, 시작, 종료 기능
-- [ ] 수동 실행 기능 (triggerTask)
-- [ ] 상태 조회 기능 (getStatus)
-- [ ] 주간 수집 작업 핸들러 (weeklyCollectionHandler)
-- [ ] 스케줄러 초기화 (initializeScheduler)
-- [ ] 스케줄러 API (`/api/scheduler`)
-- [ ] Vercel Cron Jobs 통합 (`/api/cron/weekly-collection`)
-
-### 검증 (Verification)
-
-- [ ] TypeScript 빌드 성공
-- [ ] 로컬 환경에서 스케줄러 동작 확인
-- [ ] 수동 실행 API 테스트
-- [ ] 상태 조회 API 테스트
-- [ ] Vercel Cron 엔드포인트 보안 검증 (CRON_SECRET)
-
-### 권장 (Nice to Have)
-
-- [ ] 스케줄 히스토리 저장 (Supabase)
-- [ ] 작업 실패 시 알림 (Email/Slack)
-- [ ] 재시도 로직 (Exponential Backoff)
-
----
-
-## 참조
-
-### 기존 프로토타입
-- `backend/app/core/scheduler.py` (165줄 - APScheduler)
-- `backend/app/tasks/weekly_collection.py` (77줄)
-
-### 의존성
-- S4E1: News Crawler Infrastructure (크롤러 관리자)
-- S4E2: News Parser (뉴스 파싱)
-
----
-
-## 주의사항
+### 주의사항
 
 1. **Cron 표현식**
    - `0 6 * * 0`: 매주 일요일 오전 6시
-   - 분 시 일 월 요일 순서
    - 타임존: Asia/Seoul (KST)
 
 2. **로컬 vs 프로덕션**
    - 로컬: node-cron 사용
-   - 프로덕션: Vercel Cron Jobs 사용 (serverless)
+   - 프로덕션: Vercel Cron Jobs
 
-3. **Vercel Cron 보안**
+3. **보안**
    - `CRON_SECRET` 환경 변수 필수
    - Authorization 헤더로 검증
 
 4. **중복 실행 방지**
    - 작업 상태 확인 (running이면 스킵)
-   - `max_instances: 1` 설정
-
-5. **에러 처리**
-   - 개별 크롤러 실패 시 전체 작업은 계속 진행
-   - 에러 로그 저장 및 알림
-
-6. **환경 변수**
-   - `CRON_SECRET`: Vercel Cron 인증 키
 
 ---
 
-**작업 복잡도**: Medium
-**작성일**: 2026-02-06
+## 통합 완료 기준
+
+### S4E3
+- [ ] 6개 사이트별 크롤러 구현
+- [ ] BaseCrawler 상속
+- [ ] NewsParser 사용
+- [ ] 최대 10개 기사 제한
+
+### S4E4
+- [ ] EnkinoVerificationService 구현
+- [ ] 실제 평가 데이터 입력
+- [ ] DCF 엔진 호출
+- [ ] 오차 계산 (±5% PASS)
+
+### S4O1
+- [ ] TaskScheduler 클래스 구현
+- [ ] 주간 수집 작업 핸들러
+- [ ] 스케줄러 API
+- [ ] Vercel Cron Jobs 통합
+
+---
+
+## 통합 참조
+
+### S4E3 관련 Task
+- **S4E1**: Base Crawler
+- **S4E2**: News Parser
+
+### S4E4 관련 Task
+- **S3BA3**: DCF Engine
+- **S3BA2**: Financial Math
+
+### S4O1 관련 Task
+- **S4E1**: Crawler Manager
+- **S4E2**: News Parser
+
+---
+
+## 예상 소요 시간
+
+| Task | 복잡도 | 파일 수 | 라인 수 |
+|------|--------|---------|---------|
+| S4E3 | Medium | 6개 | ~430줄 |
+| S4E4 | Medium | 1개 | ~350줄 |
+| S4O1 | Medium | 6개 | ~450줄 |
+| **합계** | - | **13개** | **~1,230줄** |
+
+---
+
+**작성일**: 2026-02-08 (통합)
 **작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 신규 구현 방식으로 변경 (3개 Task 통합)

@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F7
-- **Task Name**: 인증 페이지 및 랜딩 페이지
+- **Task Name**: 인증 페이지 및 랜딩 페이지 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

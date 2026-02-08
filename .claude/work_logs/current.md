@@ -2,6 +2,67 @@
 
 ---
 
+## 2026-02-08 Task Instruction REVISED 반영 작업
+
+### 세션 개요
+
+| 항목 | 내용 |
+|------|------|
+| 날짜 | 2026-02-08 |
+| 목표 | S2~S5 REVISED Task Instruction 전체 반영 |
+| 결과 | 5개 위치 모두 업데이트 완료 |
+
+---
+
+### 작업 내용
+
+#### 1. Task Instruction REVISED 작성 및 복사 (25개)
+- S2: 12개 (S2F1~F7, S2BA1~BA4, S2M1)
+- S3: 4개 (S3BA1~BA4)
+- S4: 4개 (S4F1, S4E1, S4E2, S4E3_E4_O1 → 3개로 분리 복사)
+- S5: 3개 (S5O1, S5T1, S5M1)
+- 저장 위치: `sal-grid/task-instructions/`
+
+#### 2. Project SAL Grid JSON 업데이트 (25개)
+- 스크립트 방식: `scripts/update-grid-json.js`
+- 변경 필드: `task_name`, `dependencies`, `updated_at`
+- 25개 전부 성공, 0개 실패
+
+#### 3. TASK_PLAN.md 업데이트 (v1.1 → v1.2)
+- 24개 Task의 task_name 수정
+- 11개 Task의 dependencies 수정
+- 의존성 관계 섹션 수정 (S3, S4)
+- 변경 이력 v1.2 추가
+
+#### 4. Verification Instruction 업데이트 (25개)
+- S2~S5 전체 verification instruction 파일의 Task Name, Dependencies 수정
+
+#### 5. work_logs 기록 (이 파일)
+
+### 주요 변경 사항
+
+| 구분 | 변경 내용 |
+|------|----------|
+| S2 Task Name | "마이그레이션" 접미사 추가 |
+| S3 Task Name | "구현" 접미사 추가 |
+| S4E4 | "외부 연동 (Enkino AI 검증)" → "DCF 평가 엔진 검증" |
+| S4O1 | "백그라운드 Task 스케줄러" → "주간 뉴스 수집 스케줄러" |
+| S3BA1 dep | S2BA1 → S2BA2 |
+| S3BA4 dep | +S3BA3 추가 |
+| S4F1 dep | S2F1,S2BA1 → S1BI1,S4E2 |
+| S4E4 dep | S2BA1 → S3BA3 |
+| S5M1 dep | S2-S4 → S1-S4로 확장 |
+
+### Rule 07 체크리스트
+- [x] TASK_PLAN.md 업데이트
+- [x] Task Instruction 파일 수정
+- [x] Verification Instruction 파일 수정
+- [x] grid_records/*.json 파일 수정
+- [x] work_logs/current.md 작업 로그 기록
+- [ ] Git 커밋 & 푸시
+
+---
+
 ## 2026-02-07 세션 상세 작업 기록 ⭐⭐⭐
 
 ### 세션 개요

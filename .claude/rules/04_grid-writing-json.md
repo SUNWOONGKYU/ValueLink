@@ -6,30 +6,32 @@
 
 ## 1. Grid 22개 속성
 
-| # | 필드명 | 설명 | 작성자 |
-|---|--------|------|--------|
-| 1 | task_id | Task 고유 ID | 설계 시 |
-| 2 | task_name | Task 이름 | 설계 시 |
-| 3 | stage | Stage 코드 (S1~S5) | 설계 시 |
-| 4 | area | Area 코드 (11개) | 설계 시 |
-| 5 | level | Level (1~3) | 설계 시 |
-| 6 | status | 상태 (대기/진행/완료) | Main Agent |
-| 7 | progress | 진행률 (0~100) | Main Agent |
-| 8 | dependencies | 선행 Task | 설계 시 |
-| 9 | task_instruction | Task 수행 지침 | 설계 시 |
-| 10 | task_agent | Task 수행 Agent | 설계 시 |
-| 11 | generated_files | 생성된 파일 | Main Agent |
-| 12 | duration | 소요 시간 | Main Agent |
-| 13 | build_result | 빌드 결과 | Main Agent |
-| 14 | verification_instruction | 검증 지침 | 설계 시 |
-| 15 | verification_agent | 검증 Agent | 설계 시 |
-| 16 | test_result | 테스트 결과 | Main Agent |
-| 17 | build_verification | 빌드 검증 | Main Agent |
-| 18 | integration_verification | 통합 검증 | Main Agent |
-| 19 | blockers | 차단 요소 | Main Agent |
-| 20 | comprehensive_verification | 종합 검증 | Main Agent |
-| 21 | ai_verification_note | AI 검증 의견 | Main Agent |
-| 22 | stage_gate_status | Stage Gate 상태 | PO |
+> **출처**: PROJECT_SAL_GRID_MANUAL.md v4.0
+
+| # | 필드명 (매뉴얼 기준) | JSON 필드명 | 설명 | 작성자 |
+|---|---------------------|------------|------|--------|
+| 1 | Stage | stage | Stage 코드 (1~5) | 설계 시 |
+| 2 | Area | area | Area 코드 (11개) | 설계 시 |
+| 3 | Task ID | task_id | Task 고유 ID | 설계 시 |
+| 4 | Task Name | task_name | Task 이름 | 설계 시 |
+| 5 | Task Instruction | task_instruction | Task 수행 지침 | 설계 시 |
+| 6 | Task Agent | task_agent | Task 수행 Agent | 설계 시 |
+| 7 | Tools | tools | 사용 도구 목록 | 설계 시 |
+| 8 | Execution Type | execution_type | AI-Only/Human-AI/Human-Only | 설계 시 |
+| 9 | Dependencies | dependencies | 선행 Task | 설계 시 |
+| 10 | Task Progress | task_progress | 진행률 (0~100) | Main Agent |
+| 11 | Task Status | task_status | Pending/In Progress/Completed/Fixing | Main Agent |
+| 12 | Generated Files | generated_files | 생성된 파일 | Main Agent |
+| 13 | Modification History | modification_history | 수정 이력 | Main Agent |
+| 14 | Verification Instruction | verification_instruction | 검증 지침 | 설계 시 |
+| 15 | Verification Agent | verification_agent | 검증 Agent | 설계 시 |
+| 16 | Test | test_result | 테스트 결과 | Main Agent |
+| 17 | Build | build_verification | 빌드 검증 | Main Agent |
+| 18 | Integration Verification | integration_verification | 통합 검증 | Main Agent |
+| 19 | Blockers | blockers | 차단 요소 | Main Agent |
+| 20 | Comprehensive Verification | comprehensive_verification | 종합 검증 | Main Agent |
+| 21 | Verification Status | verification_status | Not Verified/Passed/Failed | Main Agent |
+| 22 | Remarks | remarks | 참고사항 | Main Agent |
 
 ---
 

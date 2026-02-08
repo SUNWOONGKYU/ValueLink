@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4E4
-- **Task Name**: 외부 서비스 연동 (Enkino AI 검증)
+- **Task Name**: DCF 평가 엔진 검증
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: E (External)
 
@@ -109,12 +109,12 @@
 
 #### 4.1 선행 Task 연동
 
-- [ ] **S3BA3 (DCF Engine)**
+- [ ] **S3BA3 (DCF 평가 엔진 및 민감도 분석) 의존성 충족**
   - DCFEngine 인스턴스 생성 가능
   - runValuation() 메서드 호출 가능
   - ValuationResult 반환 확인
 
-- [ ] **S3BA2 (Financial Math)**
+- [ ] **S3BA2 (재무 수학 라이브러리)**
   - WACC, NPV, 할인율 계산 확인
 
 #### 4.2 검증 실행 테스트

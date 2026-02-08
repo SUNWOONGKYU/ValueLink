@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S5T1
-- **Task Name**: 테스팅 & QA
+- **Task Name**: 통합 테스트 및 품질 보증
 - **Stage**: S5 (개발 마무리)
 - **Area**: T (Testing)
 
@@ -332,7 +332,7 @@ open coverage/lcov-report/index.html
 ### 5. Blocker 확인
 
 - [ ] **의존성 차단**
-  - 모든 S1-S4 Task 완료 확인
+  - 모든 S2-S4 Task 완료 확인 (의존성: 모든 S2-S4 Task 완료)
 
 - [ ] **환경 차단**
   - Supabase 테스트 프로젝트 설정 확인

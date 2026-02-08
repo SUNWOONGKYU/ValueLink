@@ -1,9 +1,9 @@
-# S2BA2: Projects & Evaluation Requests API
+# S2BA2: Projects & Evaluation Requests API (마이그레이션)
 
 ## Task 정보
 
 - **Task ID**: S2BA2
-- **Task Name**: 프로젝트 및 평가 요청 API
+- **Task Name**: 프로젝트 및 평가 요청 API 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1 (Supabase 설정), S1D1 (DB 스키마)
@@ -14,502 +14,355 @@
 
 ## Task 목표
 
-3단계 프로젝트 라이프사이클 API 구현:
-1. **evaluation_requests**: 고객 평가 요청 → 관리자 승인/거절
-2. **projects**: 승인된 프로젝트 진행
-3. **project_history**: 완료된 프로젝트 아카이브
+**Valuation_Company의 Python/FastAPI 프로젝트 관리 API를 Next.js TypeScript로 마이그레이션하고 개선**
+
+- 기존 Python 로직을 참고하여 TypeScript로 변환
+- 3단계 프로젝트 라이프사이클 API 관리 (evaluation_requests → projects → project_history)
+- **4가지 측면에서 개선** (보안, 성능, 코드 품질, API 설계)
 
 ---
 
-## 상세 지시사항
+## 🎯 개선 필수 영역 (4가지)
 
-### 1. 평가 요청 API
+### 1️⃣ 보안 강화 (Security)
+- ✅ 입력 검증 및 sanitization (request_id, project_id 등)
+- ✅ SQL Injection 방지 (Supabase 파라미터화 쿼리 사용)
+- ✅ 인증/인가 체크 강화 (본인 프로젝트만 접근, 관리자 권한 확인)
+- ✅ Rate limiting 고려 (API 남용 방지)
 
-**파일**: `app/api/evaluation-requests/route.ts`
+### 2️⃣ 성능 최적화 (Performance)
+- ✅ 불필요한 데이터베이스 쿼리 최소화
+- ✅ 필요한 필드만 select (*)
+- ✅ 인덱스 활용 (project_id, user_id)
+- ✅ 트랜잭션 처리 (승인 시 evaluation_requests + projects 원자성)
+
+### 3️⃣ 코드 품질 향상 (Code Quality)
+- ✅ TypeScript strict mode 준수
+- ✅ ESLint/Prettier 규칙 준수
+- ✅ 에러 핸들링 강화 (try-catch, 명확한 에러 메시지)
+- ✅ JSDoc 주석으로 함수 문서화
+- ✅ 테스트 가능한 구조
+
+### 4️⃣ API 설계 개선 (API Design)
+- ✅ RESTful 원칙 준수
+- ✅ 일관된 응답 형식 (success, error, data 구조)
+- ✅ 상세한 에러 코드 및 메시지
+- ✅ API 버전 관리 준비
+
+---
+
+## 작업 방식
+
+### Step 1: 기존 Python 코드 분석
+
+**읽어야 할 파일:**
+```
+Valuation_Company/valuation-platform/backend/
+├── routers/projects.py (프로젝트 API)
+├── routers/evaluation_requests.py (평가 요청 API)
+├── models/project.py (프로젝트 모델)
+└── services/lifecycle_manager.py (라이프사이클 관리)
+```
+
+**분석 항목:**
+1. evaluation_requests 생성/승인/거절 로직
+2. projects 조회/업데이트 로직
+3. project_history 이동 로직
+4. 에러 처리 방식
+5. 권한 체크 방식
+
+### Step 2: Python → TypeScript 변환
+
+**변환 가이드:**
+
+| Python | TypeScript |
+|--------|------------|
+| `@router.post("/evaluation-requests")` | `export async function POST(request: NextRequest)` |
+| `async def create_request(data: dict):` | `const body = await request.json()` |
+| `if not project_id:` | `if (!project_id) { return NextResponse.json(...) }` |
+| `return {"data": result}` | `return NextResponse.json({ data: result })` |
+
+**주의사항:**
+- Python의 `None` → TypeScript `null`
+- Python의 딕셔너리 → TypeScript 객체
+- Python의 에러 처리 → TypeScript try-catch
+
+### Step 3: 개선 사항 적용
+
+**목업의 문제점 식별 및 개선:**
 
 ```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+// ❌ 목업: 승인 시 트랜잭션 없음 (중간 실패 시 데이터 불일치)
+const { data: project } = await supabase.from('projects').insert(...)
+const { error } = await supabase.from('evaluation_requests').update(...)
 
-// GET: 평가 요청 목록 조회
-export async function GET(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+// ✅ 개선: 트랜잭션 처리 또는 롤백 로직
+try {
+  const { data: project, error: projectError } = await supabase
+    .from('projects')
+    .insert({ ...requestData, status: 'in_progress' })
+    .select()
+    .single()
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
-
-    let query = supabase
-      .from('evaluation_requests')
-      .select('*')
-      .order('created_at', { ascending: false })
-
-    // 고객: 본인 요청만
-    // 관리자: 전체 요청
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userData?.role !== 'admin') {
-      query = query.eq('user_id', user.id)
-    }
-
-    if (status) {
-      query = query.eq('status', status)
-    }
-
-    const { data, error } = await query
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ evaluation_requests: data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  if (projectError) {
+    throw new Error(`프로젝트 생성 실패: ${projectError.message}`)
   }
+
+  const { error: updateError } = await supabase
+    .from('evaluation_requests')
+    .update({ status: 'approved', approved_at: new Date().toISOString() })
+    .eq('request_id', request_id)
+
+  if (updateError) {
+    // 롤백 필요: project 삭제
+    await supabase.from('projects').delete().eq('project_id', project.project_id)
+    throw new Error(`요청 승인 업데이트 실패: ${updateError.message}`)
+  }
+
+  return NextResponse.json({ success: true, project })
+} catch (error) {
+  console.error('승인 처리 실패:', error)
+  return NextResponse.json(
+    { error: '승인 처리에 실패했습니다.', details: error.message },
+    { status: 500 }
+  )
+}
+```
+
+```typescript
+// ❌ 목업: 관리자 권한 체크 누락
+const { data } = await supabase.from('evaluation_requests').update(...)
+
+// ✅ 개선: 역할 기반 권한 체크
+const { data: { user } } = await supabase.auth.getUser()
+if (!user) {
+  return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 }
 
-// POST: 평가 요청 생성 (고객)
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+const { data: userData } = await supabase
+  .from('users')
+  .select('role')
+  .eq('id', user.id)
+  .single()
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+if (userData?.role !== 'admin') {
+  return NextResponse.json(
+    { error: 'Admin access required' },
+    { status: 403 }
+  )
+}
+```
 
-    const body = await request.json()
-    const {
-      company_name,
-      company_name_en,
-      valuation_method,
-      company_website,
-      address,
-      phone,
-      fax,
-      requirements,
-      budget_min,
-      budget_max
-    } = body
+### Step 4: Best Practice 적용
 
-    if (!company_name || !valuation_method) {
-      return NextResponse.json(
-        { error: 'company_name and valuation_method are required' },
-        { status: 400 }
-      )
-    }
+**Next.js 14 App Router 패턴:**
+- Route Handlers (GET, POST, PUT)
+- 파라미터 검증
+- 일관된 응답 형식
 
-    const { data, error } = await supabase
-      .from('evaluation_requests')
-      .insert({
-        user_id: user.id,
-        company_name,
-        company_name_en,
-        valuation_method,
-        company_website,
-        address,
-        phone,
-        fax,
-        requirements,
-        budget_min,
-        budget_max,
-        status: 'pending', // 관리자 승인 대기
-      })
-      .select()
-      .single()
+**TypeScript 타입 안전성:**
+```typescript
+// ✅ 강력한 타입 정의
+export type EvaluationRequestStatus = 'pending' | 'approved' | 'rejected'
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ evaluation_request: data }, { status: 201 })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+export interface EvaluationRequest {
+  request_id: string
+  user_id: string
+  company_name: string
+  valuation_method: 'dcf' | 'relative' | 'asset' | 'intrinsic' | 'tax'
+  status: EvaluationRequestStatus
+  created_at: string
+  approved_at?: string
+  approved_by?: string
+  rejection_reason?: string
 }
 
-// PUT: 평가 요청 승인/거절 (관리자)
-export async function PUT(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // 관리자 권한 확인
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userData?.role !== 'admin') {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 })
-    }
-
-    const body = await request.json()
-    const { request_id, action, accountant_id, rejection_reason } = body
-
-    if (!request_id || !action) {
-      return NextResponse.json(
-        { error: 'request_id and action are required' },
-        { status: 400 }
-      )
-    }
-
-    if (action === 'approve') {
-      // 승인: evaluation_requests 상태 변경 + projects 테이블에 복사
-      const { data: requestData, error: fetchError } = await supabase
-        .from('evaluation_requests')
-        .select('*')
-        .eq('request_id', request_id)
-        .single()
-
-      if (fetchError) {
-        return NextResponse.json({ error: fetchError.message }, { status: 500 })
-      }
-
-      // projects 테이블에 생성
-      const { data: projectData, error: projectError } = await supabase
-        .from('projects')
-        .insert({
-          user_id: requestData.user_id,
-          company_name: requestData.company_name,
-          company_name_en: requestData.company_name_en,
-          valuation_method: requestData.valuation_method,
-          company_website: requestData.company_website,
-          address: requestData.address,
-          phone: requestData.phone,
-          fax: requestData.fax,
-          requirements: requestData.requirements,
-          budget_min: requestData.budget_min,
-          budget_max: requestData.budget_max,
-          accountant_id: accountant_id,
-          status: 'in_progress',
-          current_step: 1,
-        })
-        .select()
-        .single()
-
-      if (projectError) {
-        return NextResponse.json({ error: projectError.message }, { status: 500 })
-      }
-
-      // evaluation_requests 상태 업데이트
-      await supabase
-        .from('evaluation_requests')
-        .update({
-          status: 'approved',
-          approved_at: new Date().toISOString(),
-          approved_by: user.id,
-        })
-        .eq('request_id', request_id)
-
-      return NextResponse.json({ project: projectData })
-    } else if (action === 'reject') {
-      const { error } = await supabase
-        .from('evaluation_requests')
-        .update({
-          status: 'rejected',
-          rejection_reason: rejection_reason || 'No reason provided',
-        })
-        .eq('request_id', request_id)
-
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
-      }
-
-      return NextResponse.json({ message: 'Request rejected' })
-    }
-
-    return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
+// ✅ 제네릭 사용
+async function updateRequest<T extends Partial<EvaluationRequest>>(
+  requestId: string,
+  updates: T
+): Promise<{ data: EvaluationRequest | null; error: Error | null }> {
+  // ...
 }
 ```
 
 ---
 
-### 2. 프로젝트 API
+## 전제조건 확인
 
-**파일**: `app/api/projects/route.ts`
+**S1BI1 완료 확인:**
+- Supabase 클라이언트 설정 완료
+- `lib/supabase/client.ts`, `lib/supabase/server.ts` 존재
 
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-
-// GET: 프로젝트 목록 조회
-export async function GET(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status')
-
-    let query = supabase
-      .from('projects')
-      .select('*, accountants(name, email)')
-      .order('created_at', { ascending: false })
-
-    // 역할별 필터링
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (userData?.role === 'customer') {
-      query = query.eq('user_id', user.id)
-    } else if (userData?.role === 'accountant') {
-      query = query.eq('accountant_id', user.id)
-    }
-    // admin: 전체 조회
-
-    if (status) {
-      query = query.eq('status', status)
-    }
-
-    const { data, error } = await query
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ projects: data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}
-
-// PUT: 프로젝트 상태/단계 업데이트
-export async function PUT(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const { project_id, ...updates } = body
-
-    if (!project_id) {
-      return NextResponse.json({ error: 'project_id is required' }, { status: 400 })
-    }
-
-    const { data, error } = await supabase
-      .from('projects')
-      .update({ ...updates, updated_at: new Date().toISOString() })
-      .eq('project_id', project_id)
-      .select()
-      .single()
-
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ project: data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}
-```
+**S1D1 완료 확인:**
+- `evaluation_requests`, `projects`, `project_history` 테이블 존재
+- RLS 정책 설정 완료
 
 ---
 
-### 3. 프로젝트 히스토리 API
+## 생성 파일 (3개)
 
-**파일**: `app/api/project-history/route.ts`
+### 1. app/api/evaluation-requests/route.ts
 
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+**목표:** 평가 요청 CRUD + 승인/거절 API
 
-// GET: 완료된 프로젝트 조회
-export async function GET(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+**참고 파일:** `backend/routers/evaluation_requests.py`
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+**주요 엔드포인트:**
+- `GET`: 평가 요청 목록 조회 (역할별 필터링)
+- `POST`: 평가 요청 생성 (고객)
+- `PUT`: 승인/거절 (관리자)
 
-    const { searchParams } = new URL(request.url)
-    const year = searchParams.get('year')
+**개선 사항:**
+- ✅ 입력 검증 (company_name, valuation_method 필수)
+- ✅ 역할 기반 접근 제어 (고객: 본인 요청만, 관리자: 전체)
+- ✅ 승인 시 트랜잭션 처리
+- ✅ 명확한 에러 메시지
 
-    let query = supabase
-      .from('project_history')
-      .select('*')
-      .order('completed_at', { ascending: false })
+### 2. app/api/projects/route.ts
 
-    // 역할별 필터링
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single()
+**목표:** 프로젝트 조회/업데이트 API
 
-    if (userData?.role === 'customer') {
-      query = query.eq('user_id', user.id)
-    } else if (userData?.role === 'accountant') {
-      query = query.eq('accountant_id', user.id)
-    }
+**참고 파일:** `backend/routers/projects.py`
 
-    if (year) {
-      query = query.gte('completed_at', `${year}-01-01`)
-               .lte('completed_at', `${year}-12-31`)
-    }
+**주요 엔드포인트:**
+- `GET`: 프로젝트 목록 조회 (역할별 필터링)
+- `PUT`: 프로젝트 상태/단계 업데이트
 
-    const { data, error } = await query
+**개선 사항:**
+- ✅ 역할별 필터링 (customer, accountant, admin)
+- ✅ 단계 진행 검증 (순차 진행 확인)
+- ✅ Accountants 테이블 조인 (담당 회계사 정보)
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 })
-    }
+### 3. app/api/project-history/route.ts
 
-    return NextResponse.json({ history: data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}
+**목표:** 완료된 프로젝트 히스토리 관리
 
-// POST: 프로젝트 완료 → 히스토리로 이동
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+**참고 파일:** `backend/routers/project_history.py`
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+**주요 엔드포인트:**
+- `GET`: 히스토리 조회 (연도별 필터)
+- `POST`: 프로젝트 완료 → 히스토리 이동
 
-    const body = await request.json()
-    const { project_id, final_amount } = body
-
-    if (!project_id) {
-      return NextResponse.json({ error: 'project_id is required' }, { status: 400 })
-    }
-
-    // 프로젝트 데이터 조회
-    const { data: projectData, error: fetchError } = await supabase
-      .from('projects')
-      .select('*')
-      .eq('project_id', project_id)
-      .single()
-
-    if (fetchError) {
-      return NextResponse.json({ error: fetchError.message }, { status: 500 })
-    }
-
-    // project_history에 추가
-    const { data: historyData, error: historyError } = await supabase
-      .from('project_history')
-      .insert({
-        original_project_id: project_id,
-        user_id: projectData.user_id,
-        accountant_id: projectData.accountant_id,
-        company_name: projectData.company_name,
-        company_name_en: projectData.company_name_en,
-        valuation_method: projectData.valuation_method,
-        company_website: projectData.company_website,
-        address: projectData.address,
-        phone: projectData.phone,
-        fax: projectData.fax,
-        final_amount: final_amount || projectData.total_amount,
-        completed_at: new Date().toISOString(),
-      })
-      .select()
-      .single()
-
-    if (historyError) {
-      return NextResponse.json({ error: historyError.message }, { status: 500 })
-    }
-
-    // 원본 프로젝트 상태 변경
-    await supabase
-      .from('projects')
-      .update({ status: 'completed' })
-      .eq('project_id', project_id)
-
-    return NextResponse.json({ history: historyData }, { status: 201 })
-  } catch (error) {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
-  }
-}
-```
-
----
-
-## 생성/수정 파일
-
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|---------------|
-| `app/api/evaluation-requests/route.ts` | 평가 요청 CRUD + 승인/거절 | ~180줄 |
-| `app/api/projects/route.ts` | 프로젝트 조회/업데이트 | ~100줄 |
-| `app/api/project-history/route.ts` | 히스토리 조회 + 완료 처리 | ~120줄 |
-
-**총 파일 수**: 3개
-**총 라인 수**: ~400줄
+**개선 사항:**
+- ✅ 완료 여부 확인 (current_step = 14)
+- ✅ 데이터 무결성 보장 (projects 상태 변경)
+- ✅ 연도별 필터링
 
 ---
 
 ## 완료 기준
 
-### 필수
-- [ ] 평가 요청 생성 API 구현 (고객)
-- [ ] 평가 요청 승인/거절 API 구현 (관리자)
-- [ ] 프로젝트 목록 조회 API 구현 (역할별 필터링)
-- [ ] 프로젝트 상태 업데이트 API 구현
-- [ ] 프로젝트 완료 → 히스토리 이동 API 구현
-- [ ] RLS 보안 적용
-- [ ] 에러 핸들링
+### 필수 (Must Have)
+- [ ] 목업 Python 파일 읽고 로직 분석 완료
+- [ ] 3개 API 엔드포인트 구현 (evaluation-requests, projects, project-history)
+- [ ] 입력 검증 구현
+- [ ] 에러 처리 구현
+- [ ] 권한 확인 구현 (RLS)
+- [ ] 3단계 라이프사이클 동작 확인
 
-### 검증
+### 검증 (Verification)
 - [ ] TypeScript 빌드 성공
-- [ ] API 호출 시 200/201 응답
+- [ ] ESLint 에러 0개
+- [ ] API 호출 시 정상 응답
 - [ ] 역할별 접근 제어 확인
-- [ ] 3단계 라이프사이클 테스트 (요청 → 승인 → 완료)
+- [ ] 승인 → 프로젝트 생성 플로우 동작 확인
+
+### 개선 항목 (Improvement)
+- [ ] 보안: 입력 검증, 권한 확인, 트랜잭션
+- [ ] 성능: 불필요한 쿼리 제거, 필드 최적화
+- [ ] 코드 품질: JSDoc 주석, 에러 처리
+- [ ] API 설계: 일관된 응답 형식
 
 ---
 
-## 데이터 흐름
+## 참조
 
-```
-고객 요청 생성
-     ↓
-evaluation_requests (status: pending)
-     ↓
-관리자 승인
-     ↓
-projects (status: in_progress)
-     ↓
-14단계 워크플로우 진행
-     ↓
-프로젝트 완료
-     ↓
-project_history (아카이브)
-```
+### 기존 프로토타입 (목업)
+
+**⚠️ 주의: 목업은 참고용이며 완벽하지 않음. 개선하면서 마이그레이션할 것**
+
+- `Valuation_Company/valuation-platform/backend/routers/projects.py`
+- `Valuation_Company/valuation-platform/backend/routers/evaluation_requests.py`
+- `Valuation_Company/valuation-platform/backend/models/project.py`
+
+**분석 포인트:**
+1. 어떤 API 엔드포인트가 있는가?
+2. 3단계 라이프사이클은 어떻게 구현되어 있는가?
+3. 승인/거절 로직은 어떻게 되어 있는가?
+4. 에러 처리는 어떻게 되어 있는가? (개선 필요)
+5. 보안 취약점은 없는가? (개선 필요)
+
+### 관련 Task
+- **S1BI1**: Supabase 설정
+- **S1D1**: evaluation_requests, projects, project_history 테이블
+- **S2F6**: 프로젝트 관리 페이지 (API 호출)
 
 ---
+
+## 주의사항
+
+### ⚠️ 목업의 한계
+
+1. **목업은 프로토타입이므로 완벽하지 않음**
+   - 트랜잭션 처리 부족
+   - 에러 핸들링 미흡
+   - 권한 체크 불완전
+
+2. **단순 복사 금지**
+   - 목업을 그대로 복사하면 문제점까지 가져옴
+   - 반드시 개선하면서 마이그레이션
+
+3. **Best Practice 적용**
+   - Next.js 14 최신 패턴 사용
+   - TypeScript strict mode
+   - 보안 강화 (입력 검증, 권한 확인)
+
+### 🔒 보안
+
+1. **RLS 정책 확인**
+   - 본인 프로젝트만 조회/수정 가능
+   - 관리자만 승인/거절 가능
+
+2. **입력 검증**
+   - request_id, project_id 필수
+   - company_name, valuation_method 형식 검증
+
+3. **SQL Injection 방지**
+   - Supabase 파라미터화 쿼리만 사용
+   - 직접 문자열 결합 금지
+
+### ⚡ 성능
+
+1. **쿼리 최적화**
+   - 필요한 필드만 select
+   - 인덱스 활용 (project_id, user_id)
+
+2. **트랜잭션 고려**
+   - 승인 시 evaluation_requests + projects 원자성
+   - 롤백 로직 구현
+
+### 📝 코드 품질
+
+1. **TypeScript strict mode**
+   - `tsconfig.json`의 `strict: true`
+   - null/undefined 명시적 처리
+
+2. **에러 처리**
+   - 모든 async 함수에 try-catch
+   - 명확한 에러 메시지
+   - 에러 로깅
+
+---
+
+## 예상 소요 시간
 
 **작업 복잡도**: Medium-High
-**작성일**: 2026-02-07
-**수정일**: 2026-02-07 (v4 스키마 반영: quotes/negotiations 삭제)
+**파일 수**: 3개
+**라인 수**: ~400줄 (목업 참조하면서 작성)
+
+---
+
+**작성일**: 2026-02-08 (수정)
+**작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 마이그레이션 + 개선 방식으로 변경

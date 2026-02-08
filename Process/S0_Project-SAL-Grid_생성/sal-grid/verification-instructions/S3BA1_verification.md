@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S3BA1
-- **Task Name**: 평가 엔진 오케스트레이터
+- **Task Name**: 평가 엔진 오케스트레이터 구현
 - **Stage**: S3 (Valuation Engines - 개발 2차)
 - **Area**: BA (Backend APIs)
 
@@ -96,8 +96,11 @@
 
 #### 4.1 선행 Task 호환
 
-- [ ] **S2BA1 (Workflow API) 의존성 충족**
+- [ ] **S2BA2 (Workflow API) 의존성 충족**
   - Workflow Manager와 연동 가능
+
+- [ ] **S1D1 (Database Schema) 의존성 충족**
+  - Supabase 테이블 구조 사용 가능
 
 #### 4.2 데이터 흐름 검증
 

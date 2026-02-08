@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F5
-- **Task Name**: 프로세스 단계 템플릿 및 12개 워크플로우 페이지
+- **Task Name**: 프로세스 단계 템플릿 및 12개 워크플로우 페이지 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

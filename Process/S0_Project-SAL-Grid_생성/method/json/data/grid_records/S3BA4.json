@@ -1,12 +1,12 @@
 {
   "task_id": "S3BA4",
-  "task_name": "기타 평가 엔진 (4종)",
+  "task_name": "4개 평가 엔진 구현 (Relative, Asset, Intrinsic, Tax)",
   "stage": 3,
   "area": "BA",
   "level": 2,
   "task_status": "Pending",
   "task_progress": 0,
-  "dependencies": "S3BA1, S3BA2",
+  "dependencies": "S3BA1, S3BA2, S3BA3",
   "task_instruction": "task-instructions/S3BA4_instruction.md",
   "task_agent": "backend-developer",
   "generated_files": "",
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "Relative, Asset, Intrinsic, Tax 평가 엔진",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write"

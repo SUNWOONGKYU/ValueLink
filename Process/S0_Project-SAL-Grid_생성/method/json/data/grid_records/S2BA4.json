@@ -1,6 +1,6 @@
 {
   "task_id": "S2BA4",
-  "task_name": "AI 클라이언트 및 이메일 서비스",
+  "task_name": "AI 클라이언트 및 이메일 서비스 마이그레이션",
   "stage": 2,
   "area": "BA",
   "level": 2,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "Claude + Gemini + ChatGPT 클라이언트 + Resend 이메일",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write",

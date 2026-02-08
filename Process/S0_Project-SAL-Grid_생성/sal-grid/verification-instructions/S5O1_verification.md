@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S5O1
-- **Task Name**: 배포 설정 및 CI/CD
+- **Task Name**: 배포 설정 및 CI/CD 파이프라인
 - **Stage**: S5 (개발 마무리)
 - **Area**: O (DevOps)
 
@@ -230,7 +230,7 @@ curl https://your-domain.vercel.app/api/cron/weekly-collection \
 ### 5. Blocker 확인
 
 - [ ] **의존성 차단**
-  - 모든 S1-S4 Task 완료 확인
+  - 모든 S2-S4 Task 완료 확인 (의존성: 모든 S2-S4 Task 완료)
 
 - [ ] **환경 차단**
   - Vercel 계정 생성 확인

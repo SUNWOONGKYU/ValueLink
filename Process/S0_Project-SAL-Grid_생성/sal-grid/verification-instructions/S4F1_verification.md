@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4F1
-- **Task Name**: Deal 뉴스 트래커 및 투자 모니터
+- **Task Name**: Deal 뉴스 트래커 및 투자 모니터 마이그레이션
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: F (Frontend)
 
@@ -96,11 +96,11 @@
 
 #### 4.1 선행 Task 연동
 
-- [ ] **S1BI1 (Supabase Client)**
+- [ ] **S1BI1 (Supabase Client) 의존성 충족**
   - `createClient()` 정상 작동
   - `investment_tracker` 테이블 접근 가능
 
-- [ ] **S4E2 (News Parser)**
+- [ ] **S4E2 (뉴스 파서 및 데이터 추출) 의존성 충족**
   - 파싱된 데이터가 DB에 저장되어 있는지 확인
   - Deal 정보 필드 (company_name, investment_stage, investors 등) 존재
 

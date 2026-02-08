@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F3
-- **Task Name**: 평가 방법 안내 템플릿 및 5개 방법별 페이지
+- **Task Name**: 평가 방법 가이드 템플릿 및 5개 가이드 페이지 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

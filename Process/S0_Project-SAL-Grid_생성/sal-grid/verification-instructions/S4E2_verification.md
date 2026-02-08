@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4E2
-- **Task Name**: 뉴스 파서 및 데이터 추출
+- **Task Name**: 뉴스 파서 및 데이터 추출 구현
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: E (External)
 

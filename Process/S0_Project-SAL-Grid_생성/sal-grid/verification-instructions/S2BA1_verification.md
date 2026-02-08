@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2BA1
-- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우
+- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 

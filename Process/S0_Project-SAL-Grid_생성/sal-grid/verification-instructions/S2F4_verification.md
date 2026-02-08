@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F4
-- **Task Name**: 역할별 마이페이지 템플릿 및 6개 역할 페이지
+- **Task Name**: 역할별 마이페이지 템플릿 및 6개 역할 페이지 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

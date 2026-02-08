@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4E3
-- **Task Name**: 사이트별 크롤러 구현 (6개)
+- **Task Name**: 6개 투자 뉴스 사이트별 크롤러
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: E (External)
 

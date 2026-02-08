@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2BA3
-- **Task Name**: 문서 및 보고서 API
+- **Task Name**: 문서 및 보고서 API 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 

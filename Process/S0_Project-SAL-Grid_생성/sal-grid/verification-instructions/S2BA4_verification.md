@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2BA4
-- **Task Name**: AI 클라이언트 및 이메일 서비스
+- **Task Name**: AI 클라이언트 및 이메일 서비스 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 

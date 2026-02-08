@@ -1,29 +1,21 @@
-# S4E3: Site-Specific Crawlers
+# S4E3, S4E4, S4O1: 통합 Instruction (신규 구현)
 
-## Task 정보
-
-- **Task ID**: S4E3
-- **Task Name**: 사이트별 크롤러 구현 (6개)
-- **Stage**: S4 (External Integration - 개발 3차)
-- **Area**: E (External)
-- **Dependencies**: S4E1 (Base Crawler), S4E2 (News Parser)
-- **Task Agent**: backend-developer
-- **Verification Agent**: code-reviewer
+> **주의**: 이 파일은 나머지 3개 Task를 통합한 간소화 버전입니다.
 
 ---
 
-## Task 목표
+## S4E3: Site-Specific Crawlers (6개 사이트)
 
+### Task 정보
+- **Task ID**: S4E3
+- **Dependencies**: S4E1 (Base Crawler), S4E2 (News Parser)
+- **파일 수**: 6개
+- **총 라인 수**: ~430줄
+
+### Task 목표
 6개 투자 뉴스 사이트별 크롤러 구현 (네이버, 아웃스탠딩, 플래텀, 스타트업투데이, 벤처스퀘어, 와우테일)
 
----
-
-## 상세 지시사항
-
 ### 공통 구조
-
-모든 사이트별 크롤러는 `BaseCrawler`를 상속하고 다음 구조를 따릅니다:
-
 ```typescript
 import { BaseCrawler, CrawlResult } from '../base-crawler'
 import { newsParser } from '../news-parser'
@@ -33,7 +25,7 @@ export class [Site]Crawler extends BaseCrawler {
   constructor() {
     super({
       site_name: '[사이트명]',
-      base_url: '[사이트 URL]',
+      base_url: '[URL]',
       rate_limit_ms: 1000,
       max_retries: 3,
       timeout_ms: 10000,
@@ -43,500 +35,207 @@ export class [Site]Crawler extends BaseCrawler {
   async crawl(): Promise<CrawlResult[]> {
     // 1. 목록 페이지 가져오기
     // 2. 기사 URL 추출
-    // 3. 각 기사 크롤링
+    // 3. 각 기사 크롤링 (최대 10개)
     // 4. 파싱
     // 5. CrawlResult 배열 반환
   }
 }
 ```
 
+### 생성 파일
+1. `lib/crawler/sites/naver-crawler.ts` (~80줄)
+2. `lib/crawler/sites/outstanding-crawler.ts` (~70줄)
+3. `lib/crawler/sites/platum-crawler.ts` (~70줄)
+4. `lib/crawler/sites/startuptoday-crawler.ts` (~70줄)
+5. `lib/crawler/sites/venturesquare-crawler.ts` (~70줄)
+6. `lib/crawler/sites/wowtale-crawler.ts` (~70줄)
+
+### 핵심 개선 사항
+- ✅ BaseCrawler 상속
+- ✅ 사이트별 CSS 선택자
+- ✅ NewsParser 사용
+- ✅ 최대 10개 기사 제한
+- ✅ 에러 처리 (개별 기사 실패 시 계속 진행)
+
 ---
 
-### 1. 네이버 크롤러
+## S4E4: Enkino AI Verification
 
-**파일**: `lib/crawler/sites/naver-crawler.ts`
+### Task 정보
+- **Task ID**: S4E4
+- **Dependencies**: S3BA3 (DCF Engine)
+- **파일 수**: 1개
+- **총 라인 수**: ~350줄
 
+### Task 목표
+DCF 평가 엔진을 실제 회계법인 평가보고서 데이터로 검증하는 서비스 구현
+
+### 검증 데이터
+**실제 데이터**: 태일회계법인 FY25 엔키노에이아이 기업가치 평가보고서 (2025.06.30)
+
+**주요 수치:**
+- Operating Value: 16,216,378,227원
+- PV Cumulative: 5,605,401,153원
+- PV Terminal: 10,610,977,073원
+- Enterprise Value: 16,346,048,693원
+- Equity Value: 15,729,119,359원
+- Value Per Share: 2,140원
+
+### 생성 파일
+`lib/integrations/enkino-verification.ts`
+
+**포함 클래스/메서드:**
+1. **EnkinoVerificationService 클래스**
+2. **runVerification()**: 검증 실행
+3. **formatVerificationResult()**: 결과 포맷팅
+
+### 핵심 개선 사항
+- ✅ 실제 평가 데이터 정확히 입력
+- ✅ DCF 엔진 호출
+- ✅ 오차 계산 (±5% 이내 PASS)
+- ✅ FCFF 검증
+- ✅ PV 검증
+- ✅ 포맷팅된 출력
+
+### 검증 기준
 ```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
+const passed = maxError <= 5.0  // ±5% 이내
+```
 
-export class NaverCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '네이버 뉴스',
-      base_url: 'https://search.naver.com',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-
-    // 검색 쿼리
-    const searchQuery = '스타트업 투자 유치'
-    const searchUrl = `${this.config.base_url}/search.naver?where=news&query=${encodeURIComponent(searchQuery)}&sort=date`
-
-    try {
-      // 검색 결과 페이지 가져오기
-      const html = await this.fetchHTML(searchUrl)
-      const $ = cheerio.load(html)
-
-      // 기사 링크 추출
-      const articleUrls: string[] = []
-      $('.news_tit').each((_, elem) => {
-        const url = $(elem).attr('href')
-        if (url) {
-          articleUrls.push(url)
-        }
-      })
-
-      // 각 기사 크롤링 (최대 10개)
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: 'h2#title_area, h3#articleTitle',
-            content: '#dic_area, #articleBodyContents',
-            date: '.media_end_head_info_datestamp_time, .t11',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-            raw_html: articleHtml,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('Naver crawl failed:', error)
-    }
-
-    return results
-  }
-}
+**오차 계산:**
+```typescript
+const errorPct = actualValue !== 0
+  ? ((engineValue - actualValue) / actualValue * 100)
+  : 0
 ```
 
 ---
 
-### 2. 아웃스탠딩 크롤러
+## S4O1: Background Task Scheduler
 
-**파일**: `lib/crawler/sites/outstanding-crawler.ts`
+### Task 정보
+- **Task ID**: S4O1
+- **Dependencies**: S4E1 (Crawler Manager), S4E2 (News Parser)
+- **파일 수**: 6개
+- **총 라인 수**: ~450줄
 
+### Task 목표
+주간 뉴스 수집 작업을 자동으로 실행하는 스케줄러 인프라 구현
+
+### 생성 파일
+1. `lib/scheduler/task-scheduler.ts` (~200줄) - 스케줄러 인프라
+2. `lib/scheduler/tasks/weekly-collection.ts` (~120줄) - 주간 수집 작업
+3. `lib/scheduler/init.ts` (~30줄) - 스케줄러 초기화
+4. `app/api/scheduler/route.ts` (~60줄) - 스케줄러 API
+5. `app/api/cron/weekly-collection/route.ts` (~30줄) - Vercel Cron 엔드포인트
+6. `vercel.json` (~10줄) - Vercel Cron 설정
+
+### 핵심 개선 사항
+
+#### 1. TaskScheduler 클래스
 ```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
+export class TaskScheduler {
+  private tasks: Map<string, { task: ScheduledTask; job: CronJob }>
 
-export class OutstandingCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '아웃스탠딩',
-      base_url: 'https://outstanding.kr',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-    const listUrl = `${this.config.base_url}/investment`
-
-    try {
-      const html = await this.fetchHTML(listUrl)
-      const $ = cheerio.load(html)
-
-      const articleUrls: string[] = []
-      $('.article-item a').each((_, elem) => {
-        const href = $(elem).attr('href')
-        if (href) {
-          articleUrls.push(this.config.base_url + href)
-        }
-      })
-
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: 'h1.article-title',
-            content: '.article-body',
-            date: '.article-date',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('Outstanding crawl failed:', error)
-    }
-
-    return results
-  }
+  registerTask(task: ScheduledTask): void
+  start(): void
+  stop(): void
+  triggerTask(taskId: string): Promise<void>
+  getStatus(): { running: boolean; tasks: [...] }
 }
 ```
 
----
-
-### 3. 플래텀 크롤러
-
-**파일**: `lib/crawler/sites/platum-crawler.ts`
-
+#### 2. Weekly Collection Task
 ```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
+// Cron 표현식: 매주 일요일 오전 6시 (KST)
+schedule: '0 6 * * 0'
 
-export class PlatumCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '플래텀',
-      base_url: 'https://platum.kr',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-    const listUrl = `${this.config.base_url}/archives/category/investment`
-
-    try {
-      const html = await this.fetchHTML(listUrl)
-      const $ = cheerio.load(html)
-
-      const articleUrls: string[] = []
-      $('.post-item h2 a').each((_, elem) => {
-        const href = $(elem).attr('href')
-        if (href) {
-          articleUrls.push(href)
-        }
-      })
-
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: 'h1.entry-title',
-            content: '.entry-content',
-            date: '.entry-date',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('Platum crawl failed:', error)
-    }
-
-    return results
-  }
+async function weeklyCollectionHandler(): Promise<void> {
+  const results = await crawlerManager.executeAll()
+  // 모든 크롤러 실행
 }
 ```
 
----
-
-### 4. 스타트업투데이 크롤러
-
-**파일**: `lib/crawler/sites/startuptoday-crawler.ts`
-
-```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
-
-export class StartupTodayCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '스타트업투데이',
-      base_url: 'https://www.startuptoday.kr',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-    const listUrl = `${this.config.base_url}/news/articleList.html?sc_section_code=S1N8`
-
-    try {
-      const html = await this.fetchHTML(listUrl)
-      const $ = cheerio.load(html)
-
-      const articleUrls: string[] = []
-      $('.article-list .article-title a').each((_, elem) => {
-        const href = $(elem).attr('href')
-        if (href) {
-          articleUrls.push(this.config.base_url + href)
-        }
-      })
-
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: '.article-head-title',
-            content: '#article-view-content-div',
-            date: '.article-info .date',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('StartupToday crawl failed:', error)
+#### 3. Vercel Cron Jobs 통합
+```json
+{
+  "crons": [
+    {
+      "path": "/api/cron/weekly-collection",
+      "schedule": "0 6 * * 0"
     }
-
-    return results
-  }
+  ]
 }
 ```
 
----
+### 주의사항
 
-### 5. 벤처스퀘어 크롤러
+1. **Cron 표현식**
+   - `0 6 * * 0`: 매주 일요일 오전 6시
+   - 타임존: Asia/Seoul (KST)
 
-**파일**: `lib/crawler/sites/venturesquare-crawler.ts`
+2. **로컬 vs 프로덕션**
+   - 로컬: node-cron 사용
+   - 프로덕션: Vercel Cron Jobs
 
-```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
+3. **보안**
+   - `CRON_SECRET` 환경 변수 필수
+   - Authorization 헤더로 검증
 
-export class VentureSquareCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '벤처스퀘어',
-      base_url: 'https://www.venturesquare.net',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-    const listUrl = `${this.config.base_url}/category/투자`
-
-    try {
-      const html = await this.fetchHTML(listUrl)
-      const $ = cheerio.load(html)
-
-      const articleUrls: string[] = []
-      $('.post-title a').each((_, elem) => {
-        const href = $(elem).attr('href')
-        if (href) {
-          articleUrls.push(href)
-        }
-      })
-
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: 'h1.entry-title',
-            content: '.entry-content',
-            date: '.entry-meta time',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('VentureSquare crawl failed:', error)
-    }
-
-    return results
-  }
-}
-```
+4. **중복 실행 방지**
+   - 작업 상태 확인 (running이면 스킵)
 
 ---
 
-### 6. 와우테일 크롤러
+## 통합 완료 기준
 
-**파일**: `lib/crawler/sites/wowtale-crawler.ts`
-
-```typescript
-import { BaseCrawler, CrawlResult } from '../base-crawler'
-import { newsParser } from '../news-parser'
-import * as cheerio from 'cheerio'
-
-export class WowTaleCrawler extends BaseCrawler {
-  constructor() {
-    super({
-      site_name: '와우테일',
-      base_url: 'https://www.wowtale.net',
-      rate_limit_ms: 1000,
-      max_retries: 3,
-      timeout_ms: 10000,
-    })
-  }
-
-  async crawl(): Promise<CrawlResult[]> {
-    const results: CrawlResult[] = []
-    const listUrl = `${this.config.base_url}/tag/투자`
-
-    try {
-      const html = await this.fetchHTML(listUrl)
-      const $ = cheerio.load(html)
-
-      const articleUrls: string[] = []
-      $('.article-item h3 a').each((_, elem) => {
-        const href = $(elem).attr('href')
-        if (href) {
-          articleUrls.push(this.config.base_url + href)
-        }
-      })
-
-      for (const url of articleUrls.slice(0, 10)) {
-        try {
-          const articleHtml = await this.fetchHTML(url)
-          const parsed = newsParser.parseArticle(articleHtml, {
-            title: 'h1.article-title',
-            content: '.article-content',
-            date: '.article-date',
-          })
-
-          results.push({
-            title: parsed.title,
-            url,
-            published_date: parsed.published_date,
-            content: parsed.content,
-            source: this.config.site_name,
-          })
-        } catch (error) {
-          console.error(`Failed to crawl article: ${url}`, error)
-        }
-      }
-    } catch (error) {
-      console.error('WowTale crawl failed:', error)
-    }
-
-    return results
-  }
-}
-```
-
----
-
-## 생성/수정 파일
-
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|---------------|
-| `lib/crawler/sites/naver-crawler.ts` | 네이버 크롤러 | ~80줄 |
-| `lib/crawler/sites/outstanding-crawler.ts` | 아웃스탠딩 크롤러 | ~70줄 |
-| `lib/crawler/sites/platum-crawler.ts` | 플래텀 크롤러 | ~70줄 |
-| `lib/crawler/sites/startuptoday-crawler.ts` | 스타트업투데이 크롤러 | ~70줄 |
-| `lib/crawler/sites/venturesquare-crawler.ts` | 벤처스퀘어 크롤러 | ~70줄 |
-| `lib/crawler/sites/wowtale-crawler.ts` | 와우테일 크롤러 | ~70줄 |
-
-**총 파일 수**: 6개
-**총 라인 수**: ~430줄
-
----
-
-## 기술 스택
-
-- **Cheerio**: HTML 파싱
-- **BaseCrawler**: 추상 클래스 상속
-- **NewsParser**: 뉴스 파싱
-
----
-
-## 완료 기준
-
-### 필수 (Must Have)
-
+### S4E3
 - [ ] 6개 사이트별 크롤러 구현
 - [ ] BaseCrawler 상속
-- [ ] 목록 페이지 크롤링
-- [ ] 기사 URL 추출
-- [ ] 개별 기사 크롤링
 - [ ] NewsParser 사용
+- [ ] 최대 10개 기사 제한
 
-### 검증 (Verification)
+### S4E4
+- [ ] EnkinoVerificationService 구현
+- [ ] 실제 평가 데이터 입력
+- [ ] DCF 엔진 호출
+- [ ] 오차 계산 (±5% PASS)
 
-- [ ] TypeScript 빌드 성공
-- [ ] 각 사이트별 크롤링 동작 확인
-- [ ] CrawlResult 형식 준수
-
-### 권장 (Nice to Have)
-
-- [ ] 추가 사이트 크롤러
-- [ ] 동적 콘텐츠 크롤링 (Puppeteer)
-
----
-
-## 참조
-
-### 기존 프로토타입
-- `backend/app/services/news_crawler/` (6개 파일)
-
-### 의존성
-- S4E1: Base Crawler
-- S4E2: News Parser
+### S4O1
+- [ ] TaskScheduler 클래스 구현
+- [ ] 주간 수집 작업 핸들러
+- [ ] 스케줄러 API
+- [ ] Vercel Cron Jobs 통합
 
 ---
 
-## 주의사항
+## 통합 참조
 
-1. **CSS 선택자**
-   - 사이트별로 다름
-   - 변경될 수 있음
+### S4E3 관련 Task
+- **S4E1**: Base Crawler
+- **S4E2**: News Parser
 
-2. **Rate Limiting**
-   - 최소 1초 간격
+### S4E4 관련 Task
+- **S3BA3**: DCF Engine
+- **S3BA2**: Financial Math
 
-3. **에러 처리**
-   - 개별 기사 실패 시 계속 진행
-
-4. **최대 개수**
-   - 각 사이트별 최대 10개 기사
+### S4O1 관련 Task
+- **S4E1**: Crawler Manager
+- **S4E2**: News Parser
 
 ---
 
-**작업 복잡도**: Medium
-**작성일**: 2026-02-06
+## 예상 소요 시간
+
+| Task | 복잡도 | 파일 수 | 라인 수 |
+|------|--------|---------|---------|
+| S4E3 | Medium | 6개 | ~430줄 |
+| S4E4 | Medium | 1개 | ~350줄 |
+| S4O1 | Medium | 6개 | ~450줄 |
+| **합계** | - | **13개** | **~1,230줄** |
+
+---
+
+**작성일**: 2026-02-08 (통합)
 **작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 신규 구현 방식으로 변경 (3개 Task 통합)

@@ -1,6 +1,6 @@
 {
   "task_id": "S4E2",
-  "task_name": "뉴스 파서 및 데이터 추출",
+  "task_name": "뉴스 파서 및 데이터 추출 구현",
   "stage": 4,
   "area": "E",
   "level": 2,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "정규식 기반 Deal 정보 추출 (기업, 투자자, 금액, 단계)",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write"

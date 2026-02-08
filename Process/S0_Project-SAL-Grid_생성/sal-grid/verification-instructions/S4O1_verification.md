@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4O1
-- **Task Name**: 백그라운드 작업 스케줄러
+- **Task Name**: 주간 뉴스 수집 스케줄러
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: O (DevOps)
 
@@ -160,11 +160,11 @@
 
 #### 4.1 선행 Task 연동
 
-- [ ] **S4E1 (Crawler Infrastructure)**
+- [ ] **S4E1 (뉴스 크롤러 인프라) 의존성 충족**
   - crawlerManager 사용 가능
   - crawlerManager.executeAll() 호출 가능
 
-- [ ] **S4E2 (News Parser)**
+- [ ] **S4E2 (뉴스 파서 및 데이터 추출) 의존성 충족**
   - 파싱된 데이터 수집 확인
 
 #### 4.2 로컬 스케줄러 테스트

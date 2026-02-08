@@ -5,8 +5,8 @@
 - **프로젝트명**: ValueLink 기업가치평가 플랫폼 재구축
 - **총 Task 수**: 29개
 - **적용 방법론**: SAL Grid (Stage-Area-Level)
-- **버전**: v1.1
-- **최종 수정일**: 2026-02-07
+- **버전**: v1.2
+- **최종 수정일**: 2026-02-08
 
 ---
 
@@ -120,7 +120,7 @@
 ### Frontend Tasks (7개)
 
 #### S2F1: Valuation Results Template & 5 Method Pages
-- **Task Name**: 평가 결과 페이지 템플릿 및 5개 방법별 페이지
+- **Task Name**: 평가 결과 페이지 템플릿 및 5개 방법별 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (6개):
@@ -138,7 +138,7 @@
   - `Process/P2_프로젝트_기획/Design_System/design-tokens.md`
 
 #### S2F2: Valuation Submission Forms Template & 5 Method Pages
-- **Task Name**: 평가 신청 폼 템플릿 및 5개 방법별 페이지
+- **Task Name**: 평가 신청 폼 템플릿 및 5개 방법별 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S2F1
 - **생성 파일** (6개):
@@ -154,7 +154,7 @@
 - **참조**: `frontend/app/valuation/submissions/dcf-submission.html`
 
 #### S2F3: Educational Guide Template & 5 Method Pages
-- **Task Name**: 평가 방법 가이드 템플릿 및 5개 가이드 페이지
+- **Task Name**: 평가 방법 가이드 템플릿 및 5개 가이드 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1
 - **생성 파일** (6개):
@@ -170,7 +170,7 @@
 - **참조**: `frontend/app/valuation/guides/guide-dcf.html`
 
 #### S2F4: Role-Based My Page Template & 6 Role Variants
-- **Task Name**: 역할별 마이페이지 템플릿 및 6개 역할 페이지
+- **Task Name**: 역할별 마이페이지 템플릿 및 6개 역할 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (7개):
@@ -187,7 +187,7 @@
 - **참조**: `frontend/app/core/mypage-admin.html`
 
 #### S2F5: Process Step Template & 12 Workflow Pages
-- **Task Name**: 프로세스 단계 템플릿 및 12개 워크플로우 페이지
+- **Task Name**: 프로세스 단계 템플릿 및 12개 워크플로우 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S2BA1
 - **생성 파일** (13개):
@@ -210,9 +210,9 @@
 - **참조**: `frontend/app/valuation/evaluation-progress.html`
 
 #### S2F6: Project Management Pages
-- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성)
+- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성) 마이그레이션
 - **Area**: F (Frontend)
-- **Dependencies**: S1BI1, S2BA1
+- **Dependencies**: S1BI1, S2BA2
 - **생성 파일** (3개):
   - `app/projects/list/page.tsx` (프로젝트 목록)
   - `app/projects/[id]/page.tsx` (프로젝트 상세)
@@ -224,7 +224,7 @@
 - **참조**: `frontend/app/core/project-detail.html`
 
 #### S2F7: Authentication & Landing Pages
-- **Task Name**: 인증 페이지 및 랜딩 페이지
+- **Task Name**: 인증 페이지 및 랜딩 페이지 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S2S1
 - **생성 파일** (5개):
@@ -241,7 +241,7 @@
 ### Backend Tasks (4개)
 
 #### S2BA1: Valuation Process API & 14-Step Workflow
-- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우
+- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우 마이그레이션
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (3개):
@@ -253,7 +253,7 @@
 - **참조**: `backend/app/api/v1/endpoints/valuation.py` (기존 FastAPI)
 
 #### S2BA2: Projects & Evaluation Requests API
-- **Task Name**: 프로젝트 및 평가 요청 API
+- **Task Name**: 프로젝트 및 평가 요청 API 마이그레이션
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (3개):
@@ -265,7 +265,7 @@
 - **Verification Agent**: code-reviewer
 
 #### S2BA3: Documents & Reports API
-- **Task Name**: 문서 및 보고서 API
+- **Task Name**: 문서 및 보고서 API 마이그레이션
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1, S1D1
 - **생성 파일** (4개):
@@ -278,7 +278,7 @@
 - **Verification Agent**: code-reviewer
 
 #### S2BA4: AI Client & Email Services
-- **Task Name**: AI 클라이언트 및 이메일 서비스
+- **Task Name**: AI 클라이언트 및 이메일 서비스 마이그레이션
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1
 - **생성 파일** (3개):
@@ -293,7 +293,7 @@
 ### Documentation Tasks (1개)
 
 #### S2M1: User Manual & FAQ
-- **Task Name**: 사용자 매뉴얼 및 FAQ
+- **Task Name**: 사용자 매뉴얼 및 FAQ 마이그레이션
 - **Area**: M (Documentation)
 - **Dependencies**: S2F1~S2F7 (모든 페이지 완료 후)
 - **생성 파일**:
@@ -312,9 +312,9 @@
 ### Tasks (4개)
 
 #### S3BA1: Valuation Engine Orchestrator
-- **Task Name**: 평가 엔진 오케스트레이터
+- **Task Name**: 평가 엔진 오케스트레이터 구현
 - **Area**: BA (Backend APIs)
-- **Dependencies**: S2BA1
+- **Dependencies**: S2BA2, S1D1
 - **생성 파일** (2개):
   - `lib/valuation/orchestrator.ts` (엔진 관리, 실행 순서 제어)
   - `lib/valuation/engine-interface.ts` (공통 인터페이스)
@@ -323,9 +323,9 @@
 - **참조**: `backend/app/services/valuation_orchestrator.py`
 
 #### S3BA2: Financial Math Library
-- **Task Name**: 금융 수학 라이브러리
+- **Task Name**: 재무 수학 라이브러리 구현
 - **Area**: BA (Backend APIs)
-- **Dependencies**: 없음
+- **Dependencies**: S3BA1
 - **생성 파일** (1개):
   - `lib/valuation/financial-math.ts` (WACC, NPV, IRR, 할인율 계산)
 - **Task Agent**: backend-developer
@@ -333,7 +333,7 @@
 - **참조**: `backend/app/services/valuation_engine/common/financial_math.py`
 
 #### S3BA3: DCF Engine & Sensitivity Analysis
-- **Task Name**: DCF 평가 엔진 및 민감도 분석
+- **Task Name**: DCF 평가 엔진 및 민감도 분석 구현
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S3BA1, S3BA2
 - **생성 파일** (2개):
@@ -346,9 +346,9 @@
   - `Process/P3_프로토타입_제작/Documentation/valuation-engines.md`
 
 #### S3BA4: Other Valuation Engines (Relative, Asset, Intrinsic, Tax)
-- **Task Name**: 기타 평가 엔진 (상대, 자산, 내재, 세법)
+- **Task Name**: 4개 평가 엔진 구현 (Relative, Asset, Intrinsic, Tax)
 - **Area**: BA (Backend APIs)
-- **Dependencies**: S3BA1, S3BA2
+- **Dependencies**: S3BA1, S3BA2, S3BA3
 - **생성 파일** (4개):
   - `lib/valuation/engines/relative-engine.ts` (487줄)
   - `lib/valuation/engines/asset-engine.ts` (497줄)
@@ -369,7 +369,7 @@
 ### Frontend Tasks (1개)
 
 #### S4F1: Deal News Tracker & Investment Monitor
-- **Task Name**: Deal 뉴스 트래커 및 투자 모니터
+- **Task Name**: Deal 뉴스 트래커 및 투자 모니터 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S4E2
 - **생성 파일** (2개):
@@ -383,7 +383,7 @@
 ### External Integration Tasks (4개)
 
 #### S4E1: News Crawler Infrastructure
-- **Task Name**: 뉴스 크롤러 인프라
+- **Task Name**: 뉴스 크롤러 인프라 구현
 - **Area**: E (External)
 - **Dependencies**: S1BI1
 - **생성 파일** (2개):
@@ -396,7 +396,7 @@
   - `backend/app/services/news_crawler/crawler_manager.py`
 
 #### S4E2: News Parser & Data Extraction
-- **Task Name**: 뉴스 파서 및 데이터 추출
+- **Task Name**: 뉴스 파서 및 데이터 추출 구현
 - **Area**: E (External)
 - **Dependencies**: S4E1
 - **생성 파일** (1개):
@@ -406,7 +406,7 @@
 - **참조**: `backend/app/services/news_parser.py`
 
 #### S4E3: Site-Specific Crawlers (6 Implementations)
-- **Task Name**: 사이트별 크롤러 구현 (6개)
+- **Task Name**: 6개 투자 뉴스 사이트별 크롤러
 - **Area**: E (External)
 - **Dependencies**: S4E1, S4E2
 - **생성 파일** (6개):
@@ -421,10 +421,10 @@
 - **Verification Agent**: code-reviewer
 - **참조**: `backend/app/services/news_crawler/` (6개 파일)
 
-#### S4E4: Third-Party Integration (Enkino AI Verification)
-- **Task Name**: 외부 서비스 연동 (Enkino AI 검증)
+#### S4E4: DCF Engine Verification
+- **Task Name**: DCF 평가 엔진 검증
 - **Area**: E (External)
-- **Dependencies**: S2BA1
+- **Dependencies**: S3BA3
 - **생성 파일** (1개):
   - `lib/integrations/enkino-verification.ts` (Enkino AI 검증 서비스 연동)
 - **Task Agent**: backend-developer
@@ -433,8 +433,8 @@
 
 ### DevOps Tasks (1개)
 
-#### S4O1: Background Task Scheduler
-- **Task Name**: 백그라운드 작업 스케줄러
+#### S4O1: Weekly News Collection Scheduler
+- **Task Name**: 주간 뉴스 수집 스케줄러
 - **Area**: O (DevOps)
 - **Dependencies**: S4E1, S4E2
 - **생성 파일** (2개):
@@ -482,7 +482,7 @@
 #### S5M1: Final Documentation & Handbook
 - **Task Name**: 최종 문서화 및 핸드북
 - **Area**: M (Documentation)
-- **Dependencies**: 모든 S2-S4 Task 완료
+- **Dependencies**: 모든 S1-S4 Task 완료
 - **생성 파일** (4개):
   - `README.md` (프로젝트 개요, 설치 가이드)
   - `docs/architecture.md` (아키텍처 문서)
@@ -517,11 +517,17 @@ S2BA1 완료 후:
 
 ### S3 (개발 2차)
 ```
-S2BA1 완료 후:
-  → S3BA1, S3BA2 (병렬 가능)
+S2BA2, S1D1 완료 후:
+  → S3BA1 (오케스트레이터)
+
+S3BA1 완료 후:
+  → S3BA2 (재무 수학 라이브러리)
 
 S3BA1, S3BA2 완료 후:
-  → S3BA3, S3BA4 (병렬 가능)
+  → S3BA3 (DCF 엔진)
+
+S3BA1, S3BA2, S3BA3 완료 후:
+  → S3BA4 (4개 기타 엔진)
 ```
 
 ### S4 (개발 3차)
@@ -535,12 +541,10 @@ S4E1 완료 후:
 S4E1, S4E2 완료 후:
   → S4E3 (6개 크롤러)
   → S4O1 (스케줄러)
-
-S4E2 완료 후:
   → S4F1 (Deal 페이지)
 
-S2BA1 완료 후:
-  → S4E4 (Enkino 연동)
+S3BA3 완료 후:
+  → S4E4 (DCF 엔진 검증)
 ```
 
 ### S5 (마무리)
@@ -714,6 +718,13 @@ S2BA1 완료 후:
 
 ## 변경 이력
 
+### v1.2 (2026-02-08)
+- S2~S5 전체 Task Instruction REVISED 반영
+- Task Name 업데이트: S2 "마이그레이션" 접미사 추가, S3 "구현" 접미사 추가
+- Dependencies 변경: S2F6(BA1→BA2), S3BA1(BA1→BA2), S3BA4(+S3BA3), S4E4(BA1→S3BA3), S4F1(→S1BI1,S4E2)
+- S5M1 의존성: S2-S4 → S1-S4로 확장
+- Grid JSON 25개 파일 일괄 업데이트
+
 ### v1.1 (2026-02-07)
 - Task 수 정정: 28개 → 29개 (S4O1 누락 수정)
 - S1D1 완료 상태 반영 (41개 테이블, v4 스키마)
@@ -740,7 +751,7 @@ S2BA1 완료 후:
 
 ---
 
-**문서 작성자**: Claude Code (Sonnet 4.5)
+**문서 작성자**: Claude Code (Opus 4.6)
 **프로젝트 소유자**: ValueLink
-**버전**: v1.0
-**최종 수정**: 2026-02-05
+**버전**: v1.2
+**최종 수정**: 2026-02-08

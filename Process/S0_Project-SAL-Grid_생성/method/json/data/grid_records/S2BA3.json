@@ -1,12 +1,12 @@
 {
   "task_id": "S2BA3",
-  "task_name": "서류 및 보고서 관리 API",
+  "task_name": "문서 및 보고서 API 마이그레이션",
   "stage": 2,
   "area": "BA",
   "level": 2,
   "task_status": "Pending",
   "task_progress": 0,
-  "dependencies": "S1BI1, S1D1, S2BA1",
+  "dependencies": "S1BI1, S1D1",
   "task_instruction": "task-instructions/S2BA3_instruction.md",
   "task_agent": "backend-developer",
   "generated_files": "",
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "서류 업로드 + 초안 생성 + 수정 + 최종 보고서",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write"

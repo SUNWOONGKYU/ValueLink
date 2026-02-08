@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2BA2
-- **Task Name**: 프로젝트 및 평가 요청 API
+- **Task Name**: 프로젝트 및 평가 요청 API 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 

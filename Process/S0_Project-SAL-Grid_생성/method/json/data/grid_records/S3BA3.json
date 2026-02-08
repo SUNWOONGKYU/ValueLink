@@ -1,6 +1,6 @@
 {
   "task_id": "S3BA3",
-  "task_name": "DCF 엔진 및 민감도 분석",
+  "task_name": "DCF 평가 엔진 및 민감도 분석 구현",
   "stage": 3,
   "area": "BA",
   "level": 3,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "DCF 평가 + 5x5 민감도 분석 (WACC x 성장률)",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write"

@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S3BA3
-- **Task Name**: DCF 평가 엔진 및 민감도 분석
+- **Task Name**: DCF 평가 엔진 및 민감도 분석 구현
 - **Stage**: S3 (Valuation Engines - 개발 2차)
 - **Area**: BA (Backend APIs)
 

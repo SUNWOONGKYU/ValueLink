@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S3BA2
-- **Task Name**: 금융 수학 라이브러리
+- **Task Name**: 재무 수학 라이브러리 구현
 - **Stage**: S3 (Valuation Engines - 개발 2차)
 - **Area**: BA (Backend APIs)
 
@@ -149,7 +149,8 @@
 
 ### 5. Blocker 확인
 
-- [ ] **의존성 없음** (독립적인 라이브러리)
+- [ ] **S3BA1 (오케스트레이터) 의존성 충족**
+  - ValuationEngine 인터페이스 참조 가능
 
 ---
 

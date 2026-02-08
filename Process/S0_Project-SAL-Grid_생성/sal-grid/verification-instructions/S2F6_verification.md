@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F6
-- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성)
+- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성) 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

@@ -1,12 +1,12 @@
-# S2F6: Project Management Pages
+# S2F6: Project Management Pages (마이그레이션)
 
 ## Task 정보
 
 - **Task ID**: S2F6
-- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성)
+- **Task Name**: 프로젝트 관리 페이지 (목록, 상세, 생성) 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
-- **Dependencies**: S1BI1 (Next.js 초기화), S2BA1 (프로젝트 API)
+- **Dependencies**: S1BI1 (Next.js 초기화), S2BA2 (프로젝트 API)
 - **Task Agent**: frontend-developer
 - **Verification Agent**: code-reviewer
 
@@ -14,274 +14,157 @@
 
 ## Task 목표
 
-프로젝트 목록, 상세, 생성 페이지를 구현하여 사용자가 프로젝트를 관리할 수 있도록 함
+**Valuation_Company의 HTML 프로젝트 관리 페이지를 Next.js TSX로 마이그레이션하고 개선**
+
+- 기존 HTML 콘텐츠를 참고하여 TSX로 변환
+- 프로젝트 목록, 상세, 생성 페이지 구현
+- **4가지 측면에서 개선** (보안, 성능, 코드 품질, UI/UX)
 
 ---
 
-## 상세 지시사항
+## 🎯 개선 필수 영역 (4가지)
 
-### 0. 전제조건 확인
+### 1️⃣ 보안 강화 (Security)
+- ✅ RLS 정책 (본인 프로젝트만 조회/생성)
+- ✅ 입력 검증 (프로젝트명, 평가 방법)
+- ✅ XSS 방지 (React 자동 이스케이프)
+- ✅ SQL Injection 방지 (Supabase 파라미터화 쿼리)
 
-**S1BI1 완료 확인:**
-- Next.js 프로젝트 초기화됨
-- Supabase 클라이언트 설정 완료
+### 2️⃣ 성능 최적화 (Performance)
+- ✅ Server Components 우선 사용
+- ✅ Client Components 최소화
+- ✅ 페이지네이션 (프로젝트 목록)
+- ✅ 이미지 최적화 (Next.js Image)
+
+### 3️⃣ 코드 품질 향상 (Code Quality)
+- ✅ TypeScript strict mode 준수
+- ✅ 에러 핸들링 강화
+- ✅ 접근성 개선 (ARIA 속성)
+- ✅ 테스트 가능한 구조
+
+### 4️⃣ UI/UX 개선 (User Experience)
+- ✅ 반응형 디자인 (모바일 최적화)
+- ✅ 빈 상태 UI 명확화
+- ✅ 로딩 상태 표시
+- ✅ 검색 및 필터 기능 강화
 
 ---
 
-### 1. 프로젝트 목록 페이지
+## 작업 방식
 
-**파일**: `app/projects/list/page.tsx`
+### Step 1: 기존 HTML 코드 분석
 
-```typescript
-'use client'
-
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
-import {
-  Plus,
-  Filter,
-  Search,
-  FolderOpen,
-  Clock,
-  CheckCircle,
-} from 'lucide-react'
-
-interface Project {
-  project_id: string
-  project_name: string
-  valuation_method: string
-  status: string
-  current_step: number
-  created_at: string
-  updated_at: string
-}
-
-export default function ProjectListPage() {
-  const [projects, setProjects] = useState<Project[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
-
-  useEffect(() => {
-    async function loadProjects() {
-      const supabase = createClient()
-
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      let query = supabase
-        .from('projects')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (filterStatus !== 'all') {
-        query = query.eq('status', filterStatus)
-      }
-
-      const { data } = await query
-
-      setProjects(data || [])
-      setLoading(false)
-    }
-
-    loadProjects()
-  }, [filterStatus])
-
-  const filteredProjects = projects.filter((project) =>
-    project.project_name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-
-  const statusIcons: Record<string, any> = {
-    pending: <Clock className="w-5 h-5 text-yellow-500" />,
-    in_progress: <Clock className="w-5 h-5 text-blue-500" />,
-    completed: <CheckCircle className="w-5 h-5 text-green-500" />,
-  }
-
-  const statusNames: Record<string, string> = {
-    pending: '대기 중',
-    in_progress: '진행 중',
-    completed: '완료',
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 헤더 */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">내 프로젝트</h1>
-            <p className="text-gray-500 mt-1">
-              총 {filteredProjects.length}개 프로젝트
-            </p>
-          </div>
-          <Link
-            href="/projects/create"
-            className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>새 프로젝트</span>
-          </Link>
-        </div>
-
-        {/* 필터 & 검색 */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            {/* 검색 */}
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="프로젝트 이름 검색..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-              />
-            </div>
-
-            {/* 필터 */}
-            <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-gray-400" />
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-              >
-                <option value="all">전체</option>
-                <option value="pending">대기 중</option>
-                <option value="in_progress">진행 중</option>
-                <option value="completed">완료</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* 프로젝트 그리드 */}
-        {filteredProjects.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <FolderOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              프로젝트가 없습니다.
-            </h3>
-            <p className="text-gray-500 mb-6">
-              첫 번째 프로젝트를 시작해보세요.
-            </p>
-            <Link
-              href="/projects/create"
-              className="inline-flex items-center gap-2 px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700"
-            >
-              <Plus className="w-5 h-5" />
-              <span>프로젝트 만들기</span>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <Link
-                key={project.project_id}
-                href={`/projects/${project.project_id}`}
-                className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    {statusIcons[project.status]}
-                    <span className="text-sm font-medium text-gray-700">
-                      {statusNames[project.status] || project.status}
-                    </span>
-                  </div>
-                  <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded">
-                    {project.valuation_method.toUpperCase()}
-                  </span>
-                </div>
-
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {project.project_name}
-                </h3>
-
-                <div className="space-y-2 text-sm text-gray-500">
-                  <div className="flex items-center justify-between">
-                    <span>진행 단계</span>
-                    <span className="font-medium text-gray-900">
-                      {project.current_step}/14
-                    </span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-red-600 h-2 rounded-full"
-                      style={{
-                        width: `${(project.current_step / 14) * 100}%`,
-                      }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <span>생성일</span>
-                    <span>
-                      {new Date(project.created_at).toLocaleDateString('ko-KR')}
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
+**읽어야 할 파일:**
+```
+Valuation_Company/valuation-platform/frontend/app/core/
+├── project-list.html
+├── project-detail.html
+└── (프로젝트 생성 HTML 존재 시)
 ```
 
----
+**분석 항목:**
+1. 프로젝트 목록 표시 방식
+2. 프로젝트 상세 정보 구성
+3. 프로젝트 생성 폼 구조
+4. 검색 및 필터 기능
+5. UI/UX 패턴
 
-### 2. 프로젝트 상세 페이지
+### Step 2: HTML → TSX 변환
 
-**파일**: `app/projects/[id]/page.tsx`
+**변환 가이드:**
 
-```typescript
-'use client'
+| HTML | TSX (React) |
+|------|-------------|
+| `<div class="project-card">` | `<div className="project-card">` |
+| `<a href="/projects/123">` | `<Link href="/projects/123">` |
+| `<input onchange="filter()">` | `<input onChange={handleFilter} />` |
+| `<select onchange="sort()">` | `<select onChange={handleSort} value={filterStatus}>` |
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
-import {
-  ArrowLeft,
-  Calendar,
-  User,
-  FileText,
-  TrendingUp,
-} from 'lucide-react'
+**주의사항:**
+- HTML의 `class` → TSX `className`
+- HTML의 `<a>` → Next.js `<Link>`
+- 동적 라우팅: `[id]` 폴더 사용
 
-interface Project {
-  project_id: string
-  project_name: string
-  valuation_method: string
-  status: string
-  current_step: number
-  created_at: string
-  updated_at: string
-}
+### Step 3: 개선 사항 적용
 
+**목업의 문제점 식별 및 개선:**
+
+```tsx
+// ❌ 목업: 검색 기능 없음 또는 서버 요청
+<input type="text" placeholder="검색..." />
+
+// ✅ 개선: 클라이언트 사이드 검색 (실시간)
+const [searchTerm, setSearchTerm] = useState('')
+
+const filteredProjects = projects.filter((project) =>
+  project.project_name.toLowerCase().includes(searchTerm.toLowerCase())
+)
+
+<div className="relative">
+  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+  <input
+    type="text"
+    placeholder="프로젝트 이름 검색..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+  />
+</div>
+```
+
+```tsx
+// ❌ 목업: 필터 기능 미흡
+<select>
+  <option>전체</option>
+  <option>진행 중</option>
+</select>
+
+// ✅ 개선: 상태별 필터 + 서버 쿼리
+const [filterStatus, setFilterStatus] = useState<string>('all')
+
+useEffect(() => {
+  async function loadProjects() {
+    let query = supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+
+    if (filterStatus !== 'all') {
+      query = query.eq('status', filterStatus)
+    }
+
+    const { data } = await query
+    setProjects(data || [])
+  }
+
+  loadProjects()
+}, [filterStatus])
+
+<select
+  value={filterStatus}
+  onChange={(e) => setFilterStatus(e.target.value)}
+  className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
+>
+  <option value="all">전체</option>
+  <option value="pending">대기 중</option>
+  <option value="in_progress">진행 중</option>
+  <option value="completed">완료</option>
+</select>
+```
+
+```tsx
+// ❌ 목업: 동적 라우팅 없음 (URL 하드코딩)
+<a href="/projects/detail?id=123">프로젝트 보기</a>
+
+// ✅ 개선: Next.js 동적 라우팅
+// app/projects/[id]/page.tsx
 export default function ProjectDetailPage() {
   const params = useParams()
-  const router = useRouter()
   const projectId = params.id as string
-
-  const [project, setProject] = useState<Project | null>(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadProject() {
-      const supabase = createClient()
-
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -294,392 +177,94 @@ export default function ProjectDetailPage() {
       }
 
       setProject(data)
-      setLoading(false)
     }
 
     loadProject()
-  }, [projectId, router])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-      </div>
-    )
-  }
-
-  if (!project) {
-    return null
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 헤더 */}
-        <div className="mb-8">
-          <Link
-            href="/projects/list"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>프로젝트 목록으로</span>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {project.project_name}
-          </h1>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* 메인 정보 */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* 프로젝트 정보 카드 */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                프로젝트 정보
-              </h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">평가 방법</span>
-                  <span className="px-3 py-1 text-sm font-medium bg-red-100 text-red-700 rounded">
-                    {project.valuation_method.toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">상태</span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {project.status}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">현재 단계</span>
-                  <span className="text-sm font-medium text-gray-900">
-                    {project.current_step}/14
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">생성일</span>
-                  <span className="text-sm text-gray-700">
-                    {new Date(project.created_at).toLocaleDateString('ko-KR')}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">수정일</span>
-                  <span className="text-sm text-gray-700">
-                    {new Date(project.updated_at).toLocaleDateString('ko-KR')}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* 진행 상황 */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                진행 상황
-              </h2>
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-600">
-                    {project.current_step}/14 단계 완료
-                  </span>
-                  <span className="text-sm font-semibold text-red-600">
-                    {((project.current_step / 14) * 100).toFixed(0)}%
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className="bg-red-600 h-3 rounded-full transition-all"
-                    style={{
-                      width: `${(project.current_step / 14) * 100}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <Link
-                href={`/valuation/evaluation-progress?project_id=${project.project_id}`}
-                className="w-full px-6 py-3 text-white bg-red-600 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2 font-semibold"
-              >
-                <TrendingUp className="w-5 h-5" />
-                <span>진행 상황 보기</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* 사이드바 */}
-          <div className="space-y-6">
-            {/* 빠른 액션 */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                빠른 액션
-              </h2>
-              <div className="space-y-2">
-                <Link
-                  href={`/valuation/results/${project.valuation_method}?project_id=${project.project_id}`}
-                  className="block px-4 py-3 text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 flex items-center gap-3"
-                >
-                  <FileText className="w-5 h-5 text-gray-600" />
-                  <span>평가 결과 보기</span>
-                </Link>
-                <Link
-                  href={`/valuation/report-download?project_id=${project.project_id}`}
-                  className="block px-4 py-3 text-gray-700 bg-gray-50 rounded-lg hover:bg-gray-100 flex items-center gap-3"
-                >
-                  <Calendar className="w-5 h-5 text-gray-600" />
-                  <span>보고서 다운로드</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* 담당자 정보 */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                담당 회계사
-              </h2>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                  <User className="w-6 h-6 text-gray-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">
-                    배정 대기 중
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    회계사 배정 후 알림 발송
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+  }, [projectId])
 }
 ```
 
----
+### Step 4: Best Practice 적용
 
-### 3. 프로젝트 생성 페이지
+**Next.js 14 App Router 패턴:**
+- Dynamic Routes (`[id]` 폴더)
+- SearchParams (쿼리 파라미터)
+- Server Components 우선
 
-**파일**: `app/projects/create/page.tsx`
-
+**TypeScript 타입 안전성:**
 ```typescript
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
-
-export default function ProjectCreatePage() {
-  const router = useRouter()
-  const [projectName, setProjectName] = useState('')
-  const [valuationMethod, setValuationMethod] = useState<string>('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const methods = [
-    {
-      id: 'dcf',
-      name: 'DCF (현금흐름할인법)',
-      description: '미래 현금흐름을 현재가치로 할인하여 평가',
-      price: '800만원',
-    },
-    {
-      id: 'relative',
-      name: 'Relative (상대가치평가)',
-      description: '유사기업의 배수를 활용하여 평가',
-      price: '500만원',
-    },
-    {
-      id: 'asset',
-      name: 'Asset (자산가치평가)',
-      description: '자산과 부채를 기반으로 평가',
-      price: '600만원',
-    },
-    {
-      id: 'intrinsic',
-      name: 'Intrinsic (내재가치평가)',
-      description: 'ROE와 성장률을 기반으로 평가',
-      price: '600만원',
-    },
-    {
-      id: 'tax',
-      name: 'Tax (세법상평가)',
-      description: '세법 기준에 따라 평가',
-      price: '1,000만원',
-    },
-  ]
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (!projectName || !valuationMethod) {
-      alert('모든 필드를 입력해주세요.')
-      return
-    }
-
-    setIsSubmitting(true)
-
-    try {
-      const supabase = createClient()
-
-      const { data: project, error } = await supabase
-        .from('projects')
-        .insert({
-          project_name: projectName,
-          valuation_method: valuationMethod,
-          status: 'pending',
-          current_step: 1,
-        })
-        .select()
-        .single()
-
-      if (error) throw error
-
-      router.push(`/projects/${project.project_id}`)
-    } catch (error) {
-      console.error('프로젝트 생성 실패:', error)
-      alert('프로젝트 생성에 실패했습니다.')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 헤더 */}
-        <div className="mb-8">
-          <Link
-            href="/projects/list"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>뒤로</span>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-900">
-            새 프로젝트 만들기
-          </h1>
-          <p className="text-gray-500 mt-2">
-            평가 방법을 선택하고 프로젝트를 시작하세요.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 프로젝트명 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              프로젝트명 <span className="text-red-600">*</span>
-            </label>
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder="예: ABC 스타트업 기업가치평가"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
-              required
-            />
-          </div>
-
-          {/* 평가 방법 선택 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              평가 방법 선택 <span className="text-red-600">*</span>
-            </h2>
-            <div className="space-y-3">
-              {methods.map((method) => (
-                <label
-                  key={method.id}
-                  className={`block p-4 border-2 rounded-lg cursor-pointer transition-colors ${
-                    valuationMethod === method.id
-                      ? 'border-red-600 bg-red-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="radio"
-                      name="valuation_method"
-                      value={method.id}
-                      checked={valuationMethod === method.id}
-                      onChange={(e) => setValuationMethod(e.target.value)}
-                      className="mt-1"
-                      required
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-semibold text-gray-900">
-                          {method.name}
-                        </h3>
-                        <span className="text-sm font-medium text-red-600">
-                          {method.price}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        {method.description}
-                      </p>
-                    </div>
-                    {valuationMethod === method.id && (
-                      <CheckCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
-                    )}
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* 액션 버튼 */}
-          <div className="flex justify-end gap-3">
-            <Link
-              href="/projects/list"
-              className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
-            >
-              취소
-            </Link>
-            <button
-              type="submit"
-              disabled={isSubmitting || !projectName || !valuationMethod}
-              className="px-6 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? '생성 중...' : '프로젝트 생성'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
+// ✅ 프로젝트 타입 정의
+export interface Project {
+  project_id: string
+  project_name: string
+  valuation_method: string
+  status: string
+  current_step: number
+  created_at: string
+  updated_at: string
 }
+
+// ✅ 필터 상태 타입
+export type FilterStatus = 'all' | 'pending' | 'in_progress' | 'completed'
+
+// ✅ 정렬 옵션
+export type SortOption = 'created_at' | 'updated_at' | 'project_name'
 ```
 
 ---
 
-## 생성/수정 파일
+## 전제조건 확인
 
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|---------------|
-| `app/projects/list/page.tsx` | 프로젝트 목록 | ~250줄 |
-| `app/projects/[id]/page.tsx` | 프로젝트 상세 | ~280줄 |
-| `app/projects/create/page.tsx` | 프로젝트 생성 | ~230줄 |
+**S1BI1 완료 확인:**
+- Next.js 프로젝트 초기화됨
+- Supabase 클라이언트 설정 완료
 
-**총 파일 수**: 3개
-**총 라인 수**: ~760줄
+**S2BA2 완료 확인 (선택적):**
+- Projects API와 동시 개발 가능
 
 ---
 
-## 기술 스택
+## 생성 파일 (3개)
 
-- **Framework**: Next.js 14 (App Router, Dynamic Routes)
-- **Language**: TypeScript 5.x
-- **Styling**: Tailwind CSS
-- **Database**: Supabase (projects 테이블)
-- **Icons**: lucide-react
+### 1. app/projects/list/page.tsx
+**목표:** 프로젝트 목록 페이지
+
+**참고 파일:** `frontend/app/core/project-list.html`
+
+**개선 사항:**
+- ✅ 검색 기능 (실시간)
+- ✅ 필터 기능 (상태별)
+- ✅ 그리드 레이아웃
+- ✅ 빈 상태 UI
+
+### 2. app/projects/[id]/page.tsx
+**목표:** 프로젝트 상세 페이지
+
+**참고 파일:** `frontend/app/core/project-detail.html`
+
+**개선 사항:**
+- ✅ 동적 라우팅
+- ✅ 진행 상황 표시
+- ✅ 빠른 액션 버튼
+- ✅ 담당자 정보
+
+### 3. app/projects/create/page.tsx
+**목표:** 프로젝트 생성 페이지
+
+**참고 파일:** (HTML 존재 시 참조)
+
+**개선 사항:**
+- ✅ 평가 방법 선택 (라디오 버튼)
+- ✅ 실시간 유효성 검사
+- ✅ Supabase에 프로젝트 생성
+- ✅ 생성 후 리디렉션
 
 ---
 
 ## 완료 기준
 
 ### 필수 (Must Have)
-
+- [ ] 목업 HTML 파일 읽고 구조 분석 완료
 - [ ] 프로젝트 목록 페이지 구현
 - [ ] 프로젝트 상세 페이지 구현
 - [ ] 프로젝트 생성 페이지 구현
@@ -688,29 +273,36 @@ export default function ProjectCreatePage() {
 - [ ] 반응형 디자인
 
 ### 검증 (Verification)
-
 - [ ] TypeScript 빌드 성공
 - [ ] ESLint 에러 0개
 - [ ] 프로젝트 CRUD 정상 동작
 - [ ] 페이지 간 링크 동작 확인
+- [ ] 검색/필터 동작 확인
 
-### 권장 (Nice to Have)
-
-- [ ] 페이지네이션
-- [ ] 정렬 기능
-- [ ] 프로젝트 삭제 기능
+### 개선 항목 (Improvement)
+- [ ] 보안: RLS, 입력 검증
+- [ ] 성능: Server Components, 페이지네이션
+- [ ] 코드 품질: TypeScript strict, 에러 처리
+- [ ] UI/UX: 반응형, 빈 상태 UI, 로딩 상태
 
 ---
 
 ## 참조
 
-### 기존 프로토타입
+### 기존 프로토타입 (목업)
+
+**⚠️ 주의: 목업은 참고용이며 완벽하지 않음. 개선하면서 마이그레이션할 것**
 
 - `Valuation_Company/valuation-platform/frontend/app/core/project-list.html`
 - `Valuation_Company/valuation-platform/frontend/app/core/project-detail.html`
 
-### 관련 Task
+**분석 포인트:**
+1. 프로젝트 목록은 어떻게 표시되는가?
+2. 검색/필터 기능이 있는가? (개선 필요)
+3. 동적 라우팅이 있는가? (개선 필요)
+4. 빈 상태 UI가 있는가? (개선 필요)
 
+### 관련 Task
 - **S1BI1**: Next.js 초기화
 - **S1D1**: projects 테이블
 - **S2BA2**: Projects API
@@ -719,18 +311,49 @@ export default function ProjectCreatePage() {
 
 ## 주의사항
 
+### ⚠️ 목업의 한계
+
+1. **검색/필터 부족**
+   - 실시간 검색 없음
+   - 상태별 필터 미흡
+
+2. **동적 라우팅 없음**
+   - URL 하드코딩
+   - Next.js Dynamic Routes 필요
+
+3. **UX 개선 필요**
+   - 빈 상태 UI 부족
+   - 로딩 상태 표시 미흡
+
+### 🔒 보안
+
 1. **RLS 보안**
    - 본인 프로젝트만 조회/생성
    - user_id 자동 연결
 
-2. **Dynamic Routes**
+2. **입력 검증**
+   - 프로젝트명 필수
+   - 평가 방법 필수
+
+### ⚡ 성능
+
+1. **페이지네이션**
+   - 프로젝트 목록 10개씩
+   - Infinite scroll 고려
+
+2. **Server Components**
+   - 정적 레이아웃은 Server Component
+   - 동적 데이터만 Client Component
+
+### 📝 코드 품질
+
+1. **Dynamic Routes**
    - `[id]` 폴더로 동적 라우팅
    - params.id로 project_id 접근
 
-3. **사용자 경험**
-   - 빈 상태 명확히 표시
-   - 로딩 상태 표시
-   - 에러 핸들링
+2. **에러 핸들링**
+   - 프로젝트 없을 때 404 또는 리디렉션
+   - 네트워크 오류 처리
 
 ---
 
@@ -742,5 +365,6 @@ export default function ProjectCreatePage() {
 
 ---
 
-**작성일**: 2026-02-05
+**작성일**: 2026-02-08 (수정)
 **작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 마이그레이션 + 개선 방식으로 변경

@@ -4,6 +4,7 @@
 
 - **Task ID**: S5M1
 - **Task Name**: 최종 문서화 및 핸드북
+- **Dependencies**: 모든 S1-S4 Task 완료
 - **Stage**: S5 (개발 마무리)
 - **Area**: M (Documentation)
 
@@ -373,7 +374,7 @@ const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
 ### 5. Blocker 확인
 
 - [ ] **의존성 차단**
-  - 모든 S1-S4 Task 완료 확인
+  - 모든 S1-S4 Task 완료 확인 (의존성: 모든 S1-S4 Task 완료)
 
 - [ ] **환경 차단**
   - Markdown 편집기 설치 (VS Code, Typora 등)

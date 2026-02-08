@@ -19,7 +19,12 @@
       "Bash(npm --version:*)",
       "Bash(tee:*)",
       "Bash(node \"C:/Program Files/nodejs/node_modules/npm/bin/npm-cli.js\" install --verbose)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(sort:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)"
     ]
   }
 }

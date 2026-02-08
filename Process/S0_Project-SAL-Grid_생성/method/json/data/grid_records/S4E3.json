@@ -1,6 +1,6 @@
 {
   "task_id": "S4E3",
-  "task_name": "사이트별 크롤러 구현 (6개)",
+  "task_name": "6개 투자 뉴스 사이트별 크롤러",
   "stage": 4,
   "area": "E",
   "level": 2,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "Naver, Outstanding, Platum, StartupToday, VentureSquare, WowTale",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write",

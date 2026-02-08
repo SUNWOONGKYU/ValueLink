@@ -873,7 +873,7 @@
                     <h3 style="margin: 15px 0 10px; color: #667eea;">[5-9] Task Definition</h3>
                     <div class="attr-row"><div class="attr-label">5. Task Instruction</div><div class="attr-value">${task.task_instruction || '-'}</div></div>
                     <div class="attr-row"><div class="attr-label">6. Task Agent</div><div class="attr-value">${task.task_agent || '-'}</div></div>
-                    <div class="attr-row"><div class="attr-label">7. Tools</div><div class="attr-value">${task.tools || '-'}</div></div>
+                    <div class="attr-row"><div class="attr-label">7. Tools</div><div class="attr-value">${Array.isArray(task.tools) ? task.tools.join(', ') : (task.tools || '-')}</div></div>
                     <div class="attr-row"><div class="attr-label">8. Execution Type</div><div class="attr-value">${task.execution_type}</div></div>
                     <div class="attr-row"><div class="attr-label">9. Dependencies</div><div class="attr-value">${task.dependencies || '없음'}</div></div>
 
@@ -888,13 +888,13 @@
                     <div class="attr-row"><div class="attr-label">15. Verification Agent</div><div class="attr-value">${task.verification_agent || '-'}</div></div>
 
                     <h3 style="margin: 15px 0 10px; color: #667eea;">[16-19] Verification Execution</h3>
-                    <div class="attr-row"><div class="attr-label">16. Test</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.test)}</pre></div></div>
-                    <div class="attr-row"><div class="attr-label">17. Build</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.build)}</pre></div></div>
+                    <div class="attr-row"><div class="attr-label">16. Test</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.test_result)}</pre></div></div>
+                    <div class="attr-row"><div class="attr-label">17. Build</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.build_verification)}</pre></div></div>
                     <div class="attr-row"><div class="attr-label">18. Integration Verification</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.integration_verification)}</pre></div></div>
                     <div class="attr-row"><div class="attr-label">19. Blockers</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.blockers)}</pre></div></div>
 
                     <h3 style="margin: 15px 0 10px; color: #667eea;">[20-22] Verification Completion</h3>
-                    <div class="attr-row"><div class="attr-label">20. Comprehensive Verification</div><div class="attr-value">${task.comprehensive_verification || '-'}</div></div>
+                    <div class="attr-row"><div class="attr-label">20. Comprehensive Verification</div><div class="attr-value"><pre style="margin:0;white-space:pre-wrap;">${formatJsonField(task.comprehensive_verification)}</pre></div></div>
                     <div class="attr-row"><div class="attr-label">21. Verification Status</div><div class="attr-value">${task.verification_status}</div></div>
                     <div class="attr-row"><div class="attr-label">22. Remarks</div><div class="attr-value">${task.remarks || '-'}</div></div>
                 </div>

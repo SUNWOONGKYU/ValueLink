@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S4E1
-- **Task Name**: 뉴스 크롤러 인프라
+- **Task Name**: 뉴스 크롤러 인프라 구현
 - **Stage**: S4 (External Integration - 개발 3차)
 - **Area**: E (External)
 

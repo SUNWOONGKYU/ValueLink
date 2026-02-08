@@ -176,7 +176,7 @@ assets/
 
 ## 참고: React/Next.js로 전환할 경우
 
-> 현재 이 프로젝트는 Vanilla를 사용하지만, React로 전환 시 아래 구조 적용
+> 현재 이 프로젝트는 Vanilla를 사용하지만, React로 전환 시 아래 구조 적용함
 
 ```
 루트/

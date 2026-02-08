@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2F2
-- **Task Name**: 평가 신청 폼 템플릿 및 5개 방법별 페이지
+- **Task Name**: 평가 신청 폼 템플릿 및 5개 방법별 페이지 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: F (Frontend)
 

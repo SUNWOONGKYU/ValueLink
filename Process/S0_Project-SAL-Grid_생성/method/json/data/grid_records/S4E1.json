@@ -1,6 +1,6 @@
 {
   "task_id": "S4E1",
-  "task_name": "뉴스 크롤러 인프라",
+  "task_name": "뉴스 크롤러 인프라 구현",
   "stage": 4,
   "area": "E",
   "level": 3,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "BaseCrawler 추상 클래스 + CrawlerManager",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write"

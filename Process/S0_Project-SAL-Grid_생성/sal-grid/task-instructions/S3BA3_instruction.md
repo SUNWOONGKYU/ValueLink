@@ -1,10 +1,10 @@
-# S3BA3: DCF Engine & Sensitivity Analysis
+# S3BA3: DCF Engine & Sensitivity Analysis (신규 구현)
 
 ## Task 정보
 
 - **Task ID**: S3BA3
-- **Task Name**: DCF 평가 엔진 및 민감도 분석
-- **Stage**: S3 (Valuation Engines - 개발 2차)
+- **Task Name**: DCF 평가 엔진 및 민감도 분석 구현
+- **Stage**: S3 (AI Integration - 개발 2차)
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S3BA1 (Orchestrator), S3BA2 (Financial Math)
 - **Task Agent**: backend-developer
@@ -14,399 +14,520 @@
 
 ## Task 목표
 
-DCF(현금흐름할인법) 평가 엔진 및 민감도 분석 기능 구현
+**DCF (현금흐름할인법) 평가 엔진 구현 및 민감도 분석 제공**
+
+- ValuationEngine abstract class 상속
+- Free Cash Flow (FCF) 계산
+- NPV 및 Terminal Value 계산
+- 민감도 분석 (WACC × Growth Rate 매트릭스)
+- **4가지 측면에서 구현** (정확성, 성능, 코드 품질, 확장성)
 
 ---
 
-## 상세 지시사항
+## 🎯 구현 필수 영역 (4가지)
 
-### 1. DCF 평가 엔진
+### 1️⃣ 계산 정확성 (Accuracy)
+- ✅ FCF 수식 정확히 구현 (NOPAT + 감가상각 - Capex - ΔWC)
+- ✅ NPV와 Terminal Value 올바른 계산
+- ✅ 민감도 분석 매트릭스 (WACC ±2%, Growth ±1%)
+- ✅ 입력 데이터 검증 (필수 필드, 범위)
 
-**파일**: `lib/valuation/engines/dcf-engine.ts`
+### 2️⃣ 성능 최적화 (Performance)
+- ✅ 민감도 분석 병렬 계산 (Promise.all)
+- ✅ 중복 계산 제거 (기본 NPV 재사용)
+- ✅ 불필요한 배열 복사 방지
+- ✅ 타임아웃 설정 (무한 루프 방지)
+
+### 3️⃣ 코드 품질 향상 (Code Quality)
+- ✅ TypeScript strict mode 준수
+- ✅ ValuationEngine 인터페이스 준수
+- ✅ JSDoc 주석 (FCF 계산 수식)
+- ✅ 에러 핸들링 강화
+
+### 4️⃣ 확장성 (Extensibility)
+- ✅ 다른 평가 방법과 일관된 인터페이스
+- ✅ 민감도 분석 범위 설정 가능
+- ✅ 중간 계산 결과 반환 (디버깅 용이)
+- ✅ 다양한 FCF 계산 방식 지원 가능
+
+---
+
+## 작업 방식
+
+### Step 1: DCF 이론 검증
+
+**DCF 핵심 수식:**
+
+```
+1. Free Cash Flow (FCF)
+   FCF = NOPAT + 감가상각 - Capex - ΔWC
+   - NOPAT: Net Operating Profit After Tax (세후영업이익)
+   - 감가상각: Depreciation & Amortization
+   - Capex: Capital Expenditure (자본적 지출)
+   - ΔWC: Change in Working Capital (운전자본 변동)
+
+2. NPV (현재가치)
+   NPV = Σ(FCFt / (1 + WACC)^t)
+
+3. Terminal Value (영구가치)
+   TV = FCF_마지막 × (1 + g) / (WACC - g)
+
+4. Enterprise Value (기업가치)
+   EV = NPV + PV(TV)
+   - PV(TV) = TV / (1 + WACC)^n
+
+5. Equity Value (주주가치)
+   Equity = EV - Net Debt
+
+6. Share Price (주당가치)
+   Price = Equity / Shares Outstanding
+```
+
+**민감도 분석:**
+```
+WACC 범위: 기본값 ± 2% (4단계: -2%, -1%, 기본, +1%, +2%)
+Growth 범위: 기본값 ± 1% (4단계: -1%, -0.5%, 기본, +0.5%, +1%)
+
+매트릭스: 4 × 4 = 16개 시나리오
+```
+
+### Step 2: ValuationEngine 상속
+
+**인터페이스 구현:**
 
 ```typescript
-import { ValuationEngine, ValuationInput, ValuationResult } from '../engine-interface'
-import {
-  calculateWACC,
-  calculateEnterpriseValue,
-  calculateEquityValue,
-  calculateSharePrice,
-  discountCashFlows,
-} from '../financial-math'
-
-export interface DCFInput extends ValuationInput {
-  financial_data: {
-    revenue_forecast: number[]      // 5년 매출 예측
-    operating_margin: number         // 영업이익률 (%)
-    tax_rate: number                 // 법인세율 (%)
-    depreciation: number[]           // 감가상각비
-    capex: number[]                  // 자본적지출
-    working_capital_change: number[] // 운전자본 증감
-  }
-  assumptions: {
-    wacc: number                     // WACC (%)
-    terminal_growth_rate: number     // 영구성장률 (%)
-    net_debt: number                 // 순부채
-    shares_outstanding: number       // 발행주식수
+// S3BA1에서 정의한 Abstract class
+abstract class ValuationEngine {
+  abstract getName(): string
+  abstract calculate(data: ValuationInput): Promise<ValuationResult>
+  validate(data: ValuationInput): ValidationResult {
+    // 기본 검증 로직
   }
 }
 
-export class DCFEngine extends ValuationEngine {
-  constructor() {
-    super('dcf')
+// DCF Engine 구현
+class DCFEngine extends ValuationEngine {
+  getName(): string {
+    return 'DCF'
   }
 
-  validate(input: ValuationInput): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
-    const dcfInput = input as DCFInput
-
-    // 필수 필드 검증
-    if (!dcfInput.financial_data.revenue_forecast) {
-      errors.push('Revenue forecast is required')
-    }
-
-    if (dcfInput.financial_data.revenue_forecast.length !== 5) {
-      errors.push('Revenue forecast must be 5 years')
-    }
-
-    if (!dcfInput.assumptions.wacc) {
-      errors.push('WACC is required')
-    }
-
-    if (!dcfInput.assumptions.terminal_growth_rate) {
-      errors.push('Terminal growth rate is required')
-    }
-
-    if (!dcfInput.assumptions.shares_outstanding) {
-      errors.push('Shares outstanding is required')
-    }
-
-    // 논리 검증
-    if (dcfInput.assumptions.wacc <= dcfInput.assumptions.terminal_growth_rate) {
-      errors.push('WACC must be greater than terminal growth rate')
-    }
-
-    return {
-      valid: errors.length === 0,
-      errors,
-    }
+  validate(data: ValuationInput): ValidationResult {
+    // DCF 특화 검증
   }
 
-  async calculate(input: ValuationInput): Promise<ValuationResult> {
-    const dcfInput = input as DCFInput
-    const { financial_data, assumptions } = dcfInput
-
-    // 1. Free Cash Flow 계산
-    const fcf = this.calculateFreeCashFlow(financial_data)
-
-    // 2. 기업가치 계산
-    const enterprise_value = calculateEnterpriseValue(
-      fcf,
-      assumptions.wacc,
-      assumptions.terminal_growth_rate
-    )
-
-    // 3. 자기자본가치 계산
-    const equity_value = calculateEquityValue(enterprise_value, assumptions.net_debt)
-
-    // 4. 주당 가치 계산
-    const share_price = calculateSharePrice(equity_value, assumptions.shares_outstanding)
-
-    // 5. 상세 계산 내역
-    const calculation_details = {
-      free_cash_flows: fcf,
-      discounted_cash_flows: discountCashFlows(fcf, assumptions.wacc),
-      enterprise_value,
-      net_debt: assumptions.net_debt,
-      equity_value,
-      shares_outstanding: assumptions.shares_outstanding,
-      share_price,
-      wacc: assumptions.wacc,
-      terminal_growth_rate: assumptions.terminal_growth_rate,
-    }
-
-    const result: ValuationResult = {
-      project_id: input.project_id,
-      method: 'dcf',
-      enterprise_value,
-      equity_value,
-      share_price,
-      calculation_details,
-      created_at: new Date().toISOString(),
-    }
-
-    // 결과 저장
-    await this.saveResult(result)
-
-    return result
-  }
-
-  private calculateFreeCashFlow(financial_data: DCFInput['financial_data']): number[] {
-    const fcf: number[] = []
-
-    for (let i = 0; i < financial_data.revenue_forecast.length; i++) {
-      const revenue = financial_data.revenue_forecast[i]
-      const operating_income = revenue * (financial_data.operating_margin / 100)
-      const tax = operating_income * (financial_data.tax_rate / 100)
-      const nopat = operating_income - tax // Net Operating Profit After Tax
-
-      const depreciation = financial_data.depreciation[i] || 0
-      const capex = financial_data.capex[i] || 0
-      const wc_change = financial_data.working_capital_change[i] || 0
-
-      // FCF = NOPAT + Depreciation - Capex - ΔWorking Capital
-      const free_cash_flow = nopat + depreciation - capex - wc_change
-
-      fcf.push(free_cash_flow)
-    }
-
-    return fcf
+  async calculate(data: ValuationInput): Promise<ValuationResult> {
+    // DCF 계산 로직
   }
 }
 ```
 
----
+### Step 3: 구현 사항 적용
 
-### 2. 민감도 분석
-
-**파일**: `lib/valuation/engines/sensitivity-analysis.ts`
+**예시 1: FCF 계산**
 
 ```typescript
-import { calculateEnterpriseValue, calculateEquityValue, calculateSharePrice } from '../financial-math'
-
-export interface SensitivityInput {
-  base_fcf: number[]                // 기준 현금흐름
-  base_wacc: number                 // 기준 WACC
-  base_growth: number               // 기준 영구성장률
-  net_debt: number                  // 순부채
-  shares_outstanding: number        // 발행주식수
-  wacc_range: number[]              // WACC 범위 (예: [8, 9, 10, 11, 12])
-  growth_range: number[]            // 성장률 범위 (예: [2, 2.5, 3, 3.5, 4])
+// ❌ 단순 구현: 검증 없음
+function calculateFCF(nopat, depreciation, capex, workingCapital) {
+  return nopat + depreciation - capex - workingCapital
 }
 
-export interface SensitivityResult {
-  share_prices: number[][]          // WACC x Growth 매트릭스
-  wacc_range: number[]
-  growth_range: number[]
-  base_share_price: number
-}
-
+// ✅ 개선: 검증 + 타입 안전성
 /**
- * 민감도 분석 수행
- * WACC와 영구성장률을 변동시켜 주가 변화 분석
+ * Free Cash Flow (FCF) 계산
+ *
+ * FCF = NOPAT + 감가상각 - Capex - ΔWC
+ *
+ * @param nopat - 세후영업이익 (원)
+ * @param depreciation - 감가상각비 (원)
+ * @param capex - 자본적 지출 (원)
+ * @param deltaWorkingCapital - 운전자본 변동 (원)
+ * @returns FCF (원)
  */
-export function performSensitivityAnalysis(input: SensitivityInput): SensitivityResult {
-  const { base_fcf, wacc_range, growth_range, net_debt, shares_outstanding } = input
-
-  const share_prices: number[][] = []
-
-  // WACC 반복
-  for (const wacc of wacc_range) {
-    const row: number[] = []
-
-    // 성장률 반복
-    for (const growth of growth_range) {
-      // WACC <= 성장률이면 무한대 → 건너뛰기
-      if (wacc <= growth) {
-        row.push(NaN)
-        continue
-      }
-
-      const enterprise_value = calculateEnterpriseValue(base_fcf, wacc, growth)
-      const equity_value = calculateEquityValue(enterprise_value, net_debt)
-      const share_price = calculateSharePrice(equity_value, shares_outstanding)
-
-      row.push(share_price)
-    }
-
-    share_prices.push(row)
+function calculateFCF(
+  nopat: number,
+  depreciation: number,
+  capex: number,
+  deltaWorkingCapital: number
+): number {
+  // 입력 검증
+  if (isNaN(nopat) || isNaN(depreciation) || isNaN(capex) || isNaN(deltaWorkingCapital)) {
+    throw new Error('모든 입력값은 숫자여야 합니다.')
   }
 
-  // 기준 주가 계산 (기준 WACC, 기준 성장률)
-  const base_enterprise_value = calculateEnterpriseValue(
-    base_fcf,
-    input.base_wacc,
-    input.base_growth
-  )
-  const base_equity_value = calculateEquityValue(base_enterprise_value, net_debt)
-  const base_share_price = calculateSharePrice(base_equity_value, shares_outstanding)
+  // FCF 계산
+  const fcf = nopat + depreciation - capex - deltaWorkingCapital
+
+  // 반올림 (원 단위)
+  return Math.round(fcf)
+}
+```
+
+**예시 2: DCF Engine 구현**
+
+```typescript
+// ❌ 단순 구현: 검증 없음, 중간 결과 없음
+class DCFEngine extends ValuationEngine {
+  async calculate(data: any) {
+    const npv = calculateNPV(data.cashFlows, data.wacc)
+    const tv = calculateTerminalValue(data.lastCF, data.g, data.wacc)
+    return { value: npv + tv }
+  }
+}
+
+// ✅ 개선: 검증 + 중간 결과 + 명확한 타입
+class DCFEngine extends ValuationEngine {
+  getName(): string {
+    return 'DCF'
+  }
+
+  validate(data: ValuationInput): ValidationResult {
+    // 부모 검증 먼저
+    const baseValidation = super.validate(data)
+    if (!baseValidation.valid) return baseValidation
+
+    // DCF 필수 필드 검증
+    if (!data.cashFlows || data.cashFlows.length === 0) {
+      return {
+        valid: false,
+        error: '현금흐름 데이터가 필요합니다.'
+      }
+    }
+
+    if (!data.wacc || data.wacc <= 0 || data.wacc >= 1) {
+      return {
+        valid: false,
+        error: 'WACC는 0과 1 사이여야 합니다.'
+      }
+    }
+
+    if (!data.terminalGrowthRate && data.terminalGrowthRate !== 0) {
+      return {
+        valid: false,
+        error: '영구성장률이 필요합니다.'
+      }
+    }
+
+    if (data.terminalGrowthRate >= data.wacc) {
+      return {
+        valid: false,
+        error: '영구성장률은 WACC보다 작아야 합니다.'
+      }
+    }
+
+    return { valid: true }
+  }
+
+  async calculate(data: ValuationInput): Promise<ValuationResult> {
+    // 검증
+    const validation = this.validate(data)
+    if (!validation.valid) {
+      throw new Error(validation.error)
+    }
+
+    try {
+      // 1. NPV 계산
+      const npv = calculateNPV(data.cashFlows!, data.wacc!)
+
+      // 2. Terminal Value 계산
+      const lastCashFlow = data.cashFlows![data.cashFlows!.length - 1]
+      const terminalValue = calculateTerminalValue(
+        lastCashFlow,
+        data.terminalGrowthRate!,
+        data.wacc!
+      )
+
+      // 3. Terminal Value의 현재가치
+      const pvTerminalValue = terminalValue / Math.pow(1 + data.wacc!, data.cashFlows!.length)
+
+      // 4. Enterprise Value
+      const enterpriseValue = npv + pvTerminalValue
+
+      // 5. Equity Value
+      const netDebt = data.netDebt || 0
+      const equityValue = enterpriseValue - netDebt
+
+      // 6. Share Price
+      const sharesOutstanding = data.sharesOutstanding || 1
+      const sharePrice = equityValue / sharesOutstanding
+
+      return {
+        method: 'DCF',
+        enterpriseValue: Math.round(enterpriseValue),
+        equityValue: Math.round(equityValue),
+        sharePrice: Math.round(sharePrice * 100) / 100,
+        details: {
+          npv: Math.round(npv),
+          terminalValue: Math.round(terminalValue),
+          pvTerminalValue: Math.round(pvTerminalValue),
+          netDebt,
+          sharesOutstanding
+        },
+        timestamp: new Date().toISOString()
+      }
+    } catch (error: any) {
+      throw new Error(`DCF 계산 실패: ${error.message}`)
+    }
+  }
+}
+```
+
+**예시 3: 민감도 분석**
+
+```typescript
+// ❌ 단순 구현: 순차 계산 (느림)
+async function sensitivityAnalysis(data) {
+  const results = []
+  for (const wacc of waccRange) {
+    for (const growth of growthRange) {
+      const result = await calculateDCF({ ...data, wacc, growth })
+      results.push(result)
+    }
+  }
+  return results
+}
+
+// ✅ 개선: 병렬 계산 (빠름)
+/**
+ * DCF 민감도 분석
+ *
+ * WACC와 Growth Rate를 변화시켜 기업가치 변동 분석
+ *
+ * @param baseData - 기본 평가 데이터
+ * @param waccRange - WACC 범위 (기본값 ± 2%)
+ * @param growthRange - Growth Rate 범위 (기본값 ± 1%)
+ * @returns 민감도 분석 매트릭스
+ */
+async function performSensitivityAnalysis(
+  baseData: ValuationInput,
+  waccRange: number[] = [-0.02, -0.01, 0, 0.01, 0.02],
+  growthRange: number[] = [-0.01, -0.005, 0, 0.005, 0.01]
+): Promise<SensitivityAnalysisResult> {
+  const baseWacc = baseData.wacc!
+  const baseGrowth = baseData.terminalGrowthRate!
+
+  const dcfEngine = new DCFEngine()
+  const scenarios: Promise<SensitivityScenario>[] = []
+
+  // 병렬 계산을 위한 Promise 배열
+  for (const waccDelta of waccRange) {
+    for (const growthDelta of growthRange) {
+      const newWacc = baseWacc + waccDelta
+      const newGrowth = baseGrowth + growthDelta
+
+      // WACC > Growth 검증
+      if (newWacc <= newGrowth) continue
+
+      const scenario = dcfEngine.calculate({
+        ...baseData,
+        wacc: newWacc,
+        terminalGrowthRate: newGrowth
+      }).then((result) => ({
+        wacc: newWacc,
+        growthRate: newGrowth,
+        enterpriseValue: result.enterpriseValue,
+        equityValue: result.equityValue,
+        sharePrice: result.sharePrice
+      }))
+
+      scenarios.push(scenario)
+    }
+  }
+
+  // 병렬 실행
+  const results = await Promise.all(scenarios)
+
+  // 매트릭스 형태로 변환
+  const matrix: number[][] = []
+  let idx = 0
+
+  for (let i = 0; i < waccRange.length; i++) {
+    matrix[i] = []
+    for (let j = 0; j < growthRange.length; j++) {
+      if (idx < results.length) {
+        matrix[i][j] = results[idx].enterpriseValue
+        idx++
+      } else {
+        matrix[i][j] = NaN // WACC <= Growth인 경우
+      }
+    }
+  }
 
   return {
-    share_prices,
-    wacc_range,
-    growth_range,
-    base_share_price,
+    waccRange: waccRange.map((d) => baseWacc + d),
+    growthRange: growthRange.map((d) => baseGrowth + d),
+    matrix,
+    scenarios: results
   }
-}
-
-/**
- * 민감도 분석 결과를 차트 데이터로 변환
- */
-export function formatSensitivityData(result: SensitivityResult) {
-  const { share_prices, wacc_range, growth_range } = result
-
-  return wacc_range.map((wacc, i) => {
-    const row: Record<string, any> = { wacc: `${wacc}%` }
-
-    growth_range.forEach((growth, j) => {
-      row[`growth_${growth}`] = share_prices[i][j]
-    })
-
-    return row
-  })
 }
 ```
 
----
+### Step 4: Best Practice 적용
 
-### 3. DCF 민감도 분석 API
-
-**파일**: `app/api/valuation/dcf-sensitivity/route.ts`
-
+**TypeScript 타입 정의:**
 ```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { performSensitivityAnalysis } from '@/lib/valuation/engines/sensitivity-analysis'
-
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const {
-      project_id,
-      base_fcf,
-      base_wacc,
-      base_growth,
-      net_debt,
-      shares_outstanding,
-      wacc_range,
-      growth_range,
-    } = body
-
-    // 프로젝트 소유권 확인
-    const { data: project } = await supabase
-      .from('projects')
-      .select('id')
-      .eq('id', project_id)
-      .eq('user_id', user.id)
-      .single()
-
-    if (!project) {
-      return NextResponse.json(
-        { error: 'Project not found or access denied' },
-        { status: 404 }
-      )
-    }
-
-    // 민감도 분석 수행
-    const result = performSensitivityAnalysis({
-      base_fcf,
-      base_wacc,
-      base_growth,
-      net_debt,
-      shares_outstanding,
-      wacc_range: wacc_range || [6, 8, 10, 12, 14],
-      growth_range: growth_range || [1, 2, 3, 4, 5],
-    })
-
-    return NextResponse.json({ result }, { status: 200 })
-  } catch (error: any) {
-    return NextResponse.json(
-      { error: error.message || 'Sensitivity analysis failed' },
-      { status: 500 }
-    )
-  }
+export interface DCFInput extends ValuationInput {
+  cashFlows: number[] // 5년 FCF
+  wacc: number // WACC (0~1)
+  terminalGrowthRate: number // 영구성장률 (0~1)
+  netDebt?: number // 순차입금
+  sharesOutstanding?: number // 발행주식수
 }
+
+export interface SensitivityScenario {
+  wacc: number
+  growthRate: number
+  enterpriseValue: number
+  equityValue: number
+  sharePrice: number
+}
+
+export interface SensitivityAnalysisResult {
+  waccRange: number[]
+  growthRange: number[]
+  matrix: number[][] // [WACC][Growth] = EV
+  scenarios: SensitivityScenario[]
+}
+```
+
+**병렬 처리 패턴:**
+```typescript
+// ✅ Promise.all로 병렬 실행
+const scenarios = [scenario1, scenario2, ...]
+const results = await Promise.all(scenarios)
 ```
 
 ---
 
-## 생성/수정 파일
+## 전제조건 확인
 
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|---------------|
-| `lib/valuation/engines/dcf-engine.ts` | DCF 평가 엔진 | ~180줄 |
-| `lib/valuation/engines/sensitivity-analysis.ts` | 민감도 분석 | ~100줄 |
-| `app/api/valuation/dcf-sensitivity/route.ts` | 민감도 API | ~70줄 |
+**S3BA1 완료 확인:**
+- ValuationEngine abstract class 구현됨
 
-**총 파일 수**: 3개
-**총 라인 수**: ~350줄
+**S3BA2 완료 확인:**
+- calculateNPV(), calculateTerminalValue() 함수 구현됨
 
 ---
 
-## 기술 스택
+## 생성 파일 (1개)
 
-- **TypeScript 5.x**: 타입 안전성
-- **Financial Math Library**: S3BA2에서 구현한 함수 사용
-- **Valuation Engine Interface**: S3BA1에서 정의한 인터페이스 상속
+### api/Backend_APIs/valuation/engines/dcf-engine.ts
+**목표:** DCF 평가 엔진 및 민감도 분석
+
+**포함 메서드:**
+1. **getName()**: 엔진 이름 반환 ('DCF')
+2. **validate()**: 입력 검증 (cashFlows, wacc, terminalGrowthRate)
+3. **calculate()**: DCF 계산 (NPV + Terminal Value)
+4. **performSensitivityAnalysis()**: 민감도 분석 (WACC × Growth)
+
+**개선 사항:**
+- ✅ FCF 계산 함수
+- ✅ 입력 검증 (필수 필드, 범위)
+- ✅ 중간 계산 결과 반환
+- ✅ 민감도 분석 병렬 처리
+- ✅ JSDoc 주석
 
 ---
 
 ## 완료 기준
 
 ### 필수 (Must Have)
-
-- [ ] DCF 평가 엔진 구현 (`DCFEngine` 클래스)
-- [ ] Free Cash Flow 계산
-- [ ] 기업가치/자기자본가치/주당가치 계산
-- [ ] 입력 검증 (validate 메서드)
-- [ ] 민감도 분석 함수 구현
-- [ ] 민감도 분석 API 구현
+- [ ] DCFEngine 클래스 구현
+- [ ] ValuationEngine 상속 확인
+- [ ] calculate() 메서드 구현
+- [ ] 민감도 분석 구현
+- [ ] 입력 검증 로직
 
 ### 검증 (Verification)
-
 - [ ] TypeScript 빌드 성공
-- [ ] DCF 계산 정확성 검증
-- [ ] 민감도 분석 매트릭스 생성 확인
-- [ ] API 응답 확인
+- [ ] ESLint 에러 0개
+- [ ] DCF 계산 결과 확인
+- [ ] 민감도 분석 매트릭스 확인
+- [ ] WACC > Growth 검증 테스트
 
-### 권장 (Nice to Have)
-
-- [ ] 몬테카를로 시뮬레이션
-- [ ] 시나리오 분석 (Base, Optimistic, Pessimistic)
-- [ ] 차트 데이터 포맷 최적화
+### 구현 항목 (Implementation)
+- [ ] 정확성: FCF 수식, NPV, Terminal Value
+- [ ] 성능: 민감도 분석 병렬 처리
+- [ ] 코드 품질: JSDoc, 타입 안전성
+- [ ] 확장성: 중간 결과 반환, 범위 설정
 
 ---
 
 ## 참조
 
-### 기존 프로토타입
-- `backend/app/services/valuation_engine/dcf/dcf_engine.py` (504줄 Python 버전)
-- `Process/P3_프로토타입_제작/Documentation/valuation-engines.md`
+### DCF 수식
+```
+FCF = NOPAT + 감가상각 - Capex - ΔWC
+NPV = Σ(FCFt / (1+WACC)^t)
+Terminal Value = FCF_마지막 × (1+g) / (WACC-g)
+Enterprise Value = NPV + PV(Terminal Value)
+Equity Value = EV - Net Debt
+Share Price = Equity Value / Shares Outstanding
+```
 
-### 의존성
-- S3BA1: Orchestrator (ValuationEngine 인터페이스)
-- S3BA2: Financial Math (금융 함수)
+### 민감도 분석 매트릭스
+```
+        Growth -1%  -0.5%   0%    +0.5%  +1%
+WACC
+-2%       1000    1050   1100   1150   1200
+-1%        950    1000   1050   1100   1150
+ 0%        900     950   1000   1050   1100
++1%        850     900    950   1000   1050
++2%        800     850    900    950   1000
+```
+
+### 관련 Task
+- **S3BA1**: Valuation Engine (Abstract class)
+- **S3BA2**: Financial Math (NPV, Terminal Value)
+- **S3BA4**: Other Engines (Relative, Asset, Intrinsic, Tax)
 
 ---
 
 ## 주의사항
 
-1. **WACC > 성장률 검증**
-   - WACC <= 성장률이면 무한대
-   - 검증 로직 필수
+### 🔢 계산 정확성
 
-2. **Free Cash Flow 계산**
-   - FCF = NOPAT + Depreciation - Capex - ΔWC
-   - 모든 항목 누락 시 0 처리
+1. **FCF 계산**
+   - NOPAT + 감가상각 - Capex - ΔWC
+   - 모든 항목 원 단위 반올림
 
-3. **민감도 분석 범위**
-   - WACC: 6~14% (2% 간격)
-   - 성장률: 1~5% (1% 간격)
-   - 커스텀 범위 지원
+2. **Terminal Value**
+   - Growth Rate < WACC 필수
+   - WACC - Growth = 0 방지
 
-4. **결과 저장**
-   - `valuation_results` 테이블
-   - `sensitivity_data` JSON 형식
+3. **민감도 분석**
+   - WACC > Growth인 경우만 계산
+   - 나머지는 NaN 처리
+
+### ⚡ 성능
+
+1. **병렬 처리**
+   - Promise.all로 모든 시나리오 병렬 실행
+   - 4×4 = 16개 시나리오 동시 계산
+
+2. **중복 계산 제거**
+   - 기본 NPV 재사용
+   - 불필요한 배열 복사 방지
+
+### 📝 코드 품질
+
+1. **ValuationEngine 인터페이스**
+   - getName(), validate(), calculate() 구현
+   - 일관된 반환 타입
+
+2. **중간 결과 반환**
+   - NPV, Terminal Value, PV(TV) 반환
+   - 디버깅 및 검증 용이
 
 ---
 
-**작업 복잡도**: High
-**작성일**: 2026-02-06
+## 예상 소요 시간
+
+**작업 복잡도**: Medium-High
+**파일 수**: 1개
+**라인 수**: ~350줄
+
+---
+
+**작성일**: 2026-02-08 (수정)
 **작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 신규 구현 방식으로 변경

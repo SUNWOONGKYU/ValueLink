@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S2M1
-- **Task Name**: 사용자 매뉴얼 및 FAQ
+- **Task Name**: 사용자 매뉴얼 및 FAQ 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: M (Documentation)
 

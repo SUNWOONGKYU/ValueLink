@@ -1,9 +1,9 @@
-# S2BA1: Valuation Process API & 14-Step Workflow
+# S2BA1: Valuation Process API & 14-Step Workflow (마이그레이션)
 
 ## Task 정보
 
 - **Task ID**: S2BA1
-- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우
+- **Task Name**: 평가 프로세스 API 및 14단계 워크플로우 마이그레이션
 - **Stage**: S2 (Core Platform - 개발 1차)
 - **Area**: BA (Backend APIs)
 - **Dependencies**: S1BI1 (Supabase 설정), S1D1 (DB 스키마)
@@ -14,29 +14,151 @@
 
 ## Task 목표
 
-14단계 평가 워크플로우를 관리하는 API와 22개 AI 승인 포인트 시스템을 구현
+**Valuation_Company의 Python/FastAPI 워크플로우 API를 Next.js TypeScript로 마이그레이션하고 개선**
+
+- 기존 Python 로직을 참고하여 TypeScript로 변환
+- 14단계 평가 워크플로우 관리 시스템
+- 22개 AI 승인 포인트 시스템
+- **4가지 측면에서 개선** (보안, 성능, 코드 품질, UI/UX)
 
 ---
 
-## 상세 지시사항
+## 🎯 개선 필수 영역 (4가지)
 
-### 0. 전제조건 확인
+### 1️⃣ 보안 강화 (Security)
+- ✅ 입력 검증 및 sanitization (project_id, step_number 등)
+- ✅ SQL Injection 방지 (Supabase 파라미터화 쿼리 사용)
+- ✅ 인증/인가 체크 강화 (본인 프로젝트만 접근)
+- ✅ Rate limiting 고려 (API 남용 방지)
+- ✅ CSRF 토큰 (추후 적용)
 
-**S1BI1 완료 확인:**
-- Supabase 클라이언트 설정 완료
+### 2️⃣ 성능 최적화 (Performance)
+- ✅ 불필요한 데이터베이스 쿼리 최소화
+- ✅ 데이터 캐싱 전략 (자주 조회되는 워크플로우 단계 정보)
+- ✅ 병렬 처리 (여러 승인 포인트 조회 시)
+- ✅ 응답 크기 최적화 (필요한 필드만 select)
 
-**S1D1 완료 확인:**
-- projects, approval_points 테이블 존재
+### 3️⃣ 코드 품질 향상 (Code Quality)
+- ✅ TypeScript strict mode 준수
+- ✅ ESLint/Prettier 규칙 준수
+- ✅ 에러 핸들링 강화 (try-catch, 명확한 에러 메시지)
+- ✅ JSDoc 주석으로 함수 문서화
+- ✅ 테스트 가능한 구조 (클래스 기반 서비스)
+
+### 4️⃣ API 설계 개선 (API Design)
+- ✅ RESTful 원칙 준수
+- ✅ 일관된 응답 형식 (success, error, data 구조)
+- ✅ 상세한 에러 코드 및 메시지
+- ✅ API 버전 관리 준비
 
 ---
 
-### 1. 워크플로우 관리자
+## 작업 방식
 
-**파일**: `lib/workflow/workflow-manager.ts`
+### Step 1: 기존 Python 코드 분석
+
+**읽어야 할 파일:**
+```
+Valuation_Company/valuation-platform/backend/
+├── routers/approvals.py (승인 API)
+├── models/approval_point.py (승인 포인트 모델)
+├── schemas/approval.py (승인 스키마)
+└── services/valuation_orchestrator.py (워크플로우 오케스트레이션)
+```
+
+**분석 항목:**
+1. 14단계 워크플로우 정의
+2. 승인 필요 단계 식별
+3. 승인 타입 (auto, manual, ai)
+4. 단계 진행 로직
+5. 에러 처리 방식
+
+### Step 2: Python → TypeScript 변환
+
+**변환 가이드:**
+
+| Python | TypeScript |
+|--------|------------|
+| `@router.get("/approvals")` | `export async function GET(request: NextRequest)` |
+| `async def get_approvals(project_id: str):` | `const projectId = searchParams.get('project_id')` |
+| `class ApprovalPoint:` | `export class ApprovalPointManager {` |
+| `def __init__(self, project_id: str):` | `constructor(private projectId: string) {}` |
+| `supabase.from('approval_points').select('*')` | `supabase.from('approval_points').select('*')` (동일) |
+| `return {"data": result}` | `return NextResponse.json({ data: result })` |
+
+**주의사항:**
+- Python의 `None` → TypeScript `null`
+- Python의 `True/False` → TypeScript `true/false`
+- Python의 딕셔너리 → TypeScript 객체 또는 Map
+- Python의 리스트 컴프리헨션 → TypeScript `map()`, `filter()`
+
+### Step 3: 개선 사항 적용
+
+**목업의 문제점 식별 및 개선:**
 
 ```typescript
-import { createClient } from '@/lib/supabase/server'
+// ❌ 목업: 에러 처리 부족
+const { data } = await supabase.from('approval_points').select('*')
+return data
 
+// ✅ 개선: 명확한 에러 처리
+const { data, error } = await supabase
+  .from('approval_points')
+  .select('*')
+  .eq('project_id', projectId)
+
+if (error) {
+  console.error('Failed to fetch approval points:', error)
+  return NextResponse.json(
+    { error: 'Failed to fetch approval points', details: error.message },
+    { status: 500 }
+  )
+}
+
+if (!data || data.length === 0) {
+  return NextResponse.json(
+    { error: 'No approval points found' },
+    { status: 404 }
+  )
+}
+
+return NextResponse.json({ success: true, data })
+```
+
+```typescript
+// ❌ 목업: 입력 검증 없음
+const { project_id } = body
+
+// ✅ 개선: 입력 검증
+const { project_id } = body
+
+if (!project_id || typeof project_id !== 'string') {
+  return NextResponse.json(
+    { error: 'project_id is required and must be a string' },
+    { status: 400 }
+  )
+}
+
+// 프로젝트 ID 형식 검증 (예: PRJ-2026-001)
+const projectIdRegex = /^PRJ-\d{4}-\d{3}$/
+if (!projectIdRegex.test(project_id)) {
+  return NextResponse.json(
+    { error: 'Invalid project_id format. Expected: PRJ-YYYY-NNN' },
+    { status: 400 }
+  )
+}
+```
+
+### Step 4: Best Practice 적용
+
+**Next.js 14 App Router 패턴:**
+- Server Actions 사용 (필요시)
+- Route Handlers (GET, POST)
+- Server Components vs Client Components 구분
+
+**TypeScript 타입 안전성:**
+```typescript
+// ✅ 강력한 타입 정의
 export type WorkflowStep = {
   step_number: number
   step_name: string
@@ -45,445 +167,85 @@ export type WorkflowStep = {
   approval_required: boolean
 }
 
-export const WORKFLOW_STEPS: WorkflowStep[] = [
-  { step_number: 1, step_name: 'project_creation', description: '프로젝트 생성', approval_required: false },
-  { step_number: 2, step_name: 'quote_request', description: '견적 요청', approval_required: false },
-  { step_number: 3, step_name: 'negotiation', description: '협상', approval_required: false },
-  { step_number: 4, step_name: 'document_upload', description: '문서 업로드', approval_required: false },
-  { step_number: 5, step_name: 'evaluation_progress', description: '평가 진행', approval_required: true, required_role: 'accountant' },
-  { step_number: 6, step_name: 'data_collection', description: '데이터 수집', approval_required: true, required_role: 'accountant' },
-  { step_number: 7, step_name: 'accountant_review', description: '회계사 검토', approval_required: true, required_role: 'accountant' },
-  { step_number: 8, step_name: 'draft_generation', description: '초안 생성', approval_required: true },
-  { step_number: 9, step_name: 'report_draft', description: '초안 확인', approval_required: true, required_role: 'customer' },
-  { step_number: 10, step_name: 'revision_request', description: '수정 요청', approval_required: false },
-  { step_number: 11, step_name: 'final_preparation', description: '최종 준비', approval_required: true, required_role: 'accountant' },
-  { step_number: 12, step_name: 'report_final', description: '최종 보고서', approval_required: true, required_role: 'customer' },
-  { step_number: 13, step_name: 'payment', description: '결제', approval_required: false },
-  { step_number: 14, step_name: 'report_download', description: '보고서 다운로드', approval_required: false },
-]
-
-export class WorkflowManager {
-  constructor(private projectId: string) {}
-
-  async getCurrentStep(): Promise<number> {
-    const supabase = createClient()
-
-    const { data } = await supabase
-      .from('projects')
-      .select('current_step')
-      .eq('project_id', this.projectId)
-      .single()
-
-    return data?.current_step || 1
-  }
-
-  async advanceStep(): Promise<{ success: boolean; nextStep: number }> {
-    const supabase = createClient()
-    const currentStep = await this.getCurrentStep()
-
-    if (currentStep >= 14) {
-      return { success: false, nextStep: 14 }
-    }
-
-    const nextStep = currentStep + 1
-
-    const { error } = await supabase
-      .from('projects')
-      .update({
-        current_step: nextStep,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('project_id', this.projectId)
-
-    if (error) {
-      console.error('Failed to advance step:', error)
-      return { success: false, nextStep: currentStep }
-    }
-
-    return { success: true, nextStep }
-  }
-
-  async canAdvanceToStep(stepNumber: number): Promise<boolean> {
-    const currentStep = await this.getCurrentStep()
-
-    // 현재 단계보다 1단계 앞으로만 이동 가능
-    if (stepNumber !== currentStep + 1) {
-      return false
-    }
-
-    // 승인이 필요한 단계인지 확인
-    const step = WORKFLOW_STEPS.find((s) => s.step_number === currentStep)
-    if (step?.approval_required) {
-      // 승인이 필요한 경우 approval_points 확인
-      const approved = await this.isStepApproved(currentStep)
-      return approved
-    }
-
-    return true
-  }
-
-  async isStepApproved(stepNumber: number): Promise<boolean> {
-    const supabase = createClient()
-
-    const { data } = await supabase
-      .from('approval_points')
-      .select('approved')
-      .eq('project_id', this.projectId)
-      .eq('step_number', stepNumber)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    return data?.approved === true
-  }
-
-  async getStepInfo(stepNumber: number): Promise<WorkflowStep | undefined> {
-    return WORKFLOW_STEPS.find((s) => s.step_number === stepNumber)
-  }
-
-  async getAllSteps(): Promise<WorkflowStep[]> {
-    return WORKFLOW_STEPS
-  }
+// ✅ 제네릭 사용
+async function fetchFromSupabase<T>(
+  table: string,
+  projectId: string
+): Promise<{ data: T | null; error: Error | null }> {
+  // ...
 }
 ```
 
 ---
 
-### 2. 승인 포인트 관리자
+## 전제조건 확인
 
-**파일**: `lib/workflow/approval-points.ts`
+**S1BI1 완료 확인:**
+- Supabase 클라이언트 설정 완료
+- `lib/supabase/client.ts`, `lib/supabase/server.ts` 존재
 
-```typescript
-import { createClient } from '@/lib/supabase/server'
-
-export type ApprovalPoint = {
-  approval_id: string
-  project_id: string
-  step_number: number
-  approved_by?: string
-  approved: boolean
-  approval_type: 'auto' | 'manual' | 'ai'
-  approval_message?: string
-  created_at: string
-}
-
-export class ApprovalPointManager {
-  constructor(private projectId: string) {}
-
-  async createApprovalPoint(
-    stepNumber: number,
-    approvalType: 'auto' | 'manual' | 'ai',
-    approvedBy?: string,
-    message?: string
-  ): Promise<ApprovalPoint | null> {
-    const supabase = createClient()
-
-    const { data, error } = await supabase
-      .from('approval_points')
-      .insert({
-        project_id: this.projectId,
-        step_number: stepNumber,
-        approved: false,
-        approval_type: approvalType,
-        approved_by: approvedBy,
-        approval_message: message,
-      })
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Failed to create approval point:', error)
-      return null
-    }
-
-    return data as ApprovalPoint
-  }
-
-  async approveStep(
-    stepNumber: number,
-    userId: string,
-    message?: string
-  ): Promise<boolean> {
-    const supabase = createClient()
-
-    // 기존 승인 포인트 찾기
-    const { data: existing } = await supabase
-      .from('approval_points')
-      .select('*')
-      .eq('project_id', this.projectId)
-      .eq('step_number', stepNumber)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    if (existing) {
-      // 기존 승인 포인트 업데이트
-      const { error } = await supabase
-        .from('approval_points')
-        .update({
-          approved: true,
-          approved_by: userId,
-          approval_message: message,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('approval_id', existing.approval_id)
-
-      if (error) {
-        console.error('Failed to approve step:', error)
-        return false
-      }
-    } else {
-      // 새 승인 포인트 생성
-      const { error } = await supabase.from('approval_points').insert({
-        project_id: this.projectId,
-        step_number: stepNumber,
-        approved: true,
-        approval_type: 'manual',
-        approved_by: userId,
-        approval_message: message,
-      })
-
-      if (error) {
-        console.error('Failed to create approval:', error)
-        return false
-      }
-    }
-
-    return true
-  }
-
-  async getApprovalHistory(
-    stepNumber?: number
-  ): Promise<ApprovalPoint[]> {
-    const supabase = createClient()
-
-    let query = supabase
-      .from('approval_points')
-      .select('*')
-      .eq('project_id', this.projectId)
-      .order('created_at', { ascending: false })
-
-    if (stepNumber) {
-      query = query.eq('step_number', stepNumber)
-    }
-
-    const { data } = await query
-
-    return (data as ApprovalPoint[]) || []
-  }
-
-  async getPendingApprovals(): Promise<ApprovalPoint[]> {
-    const supabase = createClient()
-
-    const { data } = await supabase
-      .from('approval_points')
-      .select('*')
-      .eq('project_id', this.projectId)
-      .eq('approved', false)
-      .order('created_at', { ascending: false })
-
-    return (data as ApprovalPoint[]) || []
-  }
-
-  async isStepApproved(stepNumber: number): Promise<boolean> {
-    const supabase = createClient()
-
-    const { data } = await supabase
-      .from('approval_points')
-      .select('approved')
-      .eq('project_id', this.projectId)
-      .eq('step_number', stepNumber)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single()
-
-    return data?.approved === true
-  }
-}
-```
+**S1D1 완료 확인:**
+- `projects` 테이블 존재 (current_step 필드 포함)
+- `approval_points` 테이블 존재
+- RLS 정책 설정 완료
 
 ---
 
-### 3. 워크플로우 API 엔드포인트
+## 생성 파일 (3개)
 
-**파일**: `app/api/valuation/route.ts`
+### 1. lib/workflow/workflow-manager.ts
 
-```typescript
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
-import { WorkflowManager } from '@/lib/workflow/workflow-manager'
-import { ApprovalPointManager } from '@/lib/workflow/approval-points'
+**목표:** 14단계 워크플로우 관리 클래스
 
-// GET: 현재 워크플로우 상태 조회
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const projectId = searchParams.get('project_id')
+**참고 파일:** `backend/services/valuation_orchestrator.py`
 
-    if (!projectId) {
-      return NextResponse.json(
-        { error: 'project_id is required' },
-        { status: 400 }
-      )
-    }
+**주요 메서드:**
+- `getCurrentStep()`: 현재 단계 조회
+- `advanceStep()`: 다음 단계로 진행
+- `canAdvanceToStep()`: 진행 가능 여부 확인 (승인 체크 포함)
+- `isStepApproved()`: 단계 승인 여부 확인
+- `getStepInfo()`: 단계 정보 조회
+- `getAllSteps()`: 전체 단계 조회
 
-    const workflow = new WorkflowManager(projectId)
-    const currentStep = await workflow.getCurrentStep()
-    const allSteps = await workflow.getAllSteps()
-    const currentStepInfo = await workflow.getStepInfo(currentStep)
+**개선 사항:**
+- ✅ 에러 처리 강화 (프로젝트 미존재 시 명확한 에러)
+- ✅ 로깅 추가 (단계 진행 이력)
+- ✅ 트랜잭션 고려 (승인 + 단계 진행 원자성)
 
-    const approvalManager = new ApprovalPointManager(projectId)
-    const pendingApprovals = await approvalManager.getPendingApprovals()
+### 2. lib/workflow/approval-points.ts
 
-    return NextResponse.json({
-      project_id: projectId,
-      current_step: currentStep,
-      current_step_info: currentStepInfo,
-      all_steps: allSteps,
-      pending_approvals: pendingApprovals,
-    })
-  } catch (error) {
-    console.error('Workflow GET error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
+**목표:** 승인 포인트 관리 클래스
 
-// POST: 다음 단계로 진행
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { project_id, action } = body
+**참고 파일:** `backend/models/approval_point.py`, `backend/routers/approvals.py`
 
-    if (!project_id) {
-      return NextResponse.json(
-        { error: 'project_id is required' },
-        { status: 400 }
-      )
-    }
+**주요 메서드:**
+- `createApprovalPoint()`: 승인 포인트 생성
+- `approveStep()`: 단계 승인
+- `rejectStep()`: 승인 취소 (신규 추가)
+- `getApprovalHistory()`: 승인 히스토리 조회
+- `getPendingApprovals()`: 대기 중인 승인 조회
+- `isStepApproved()`: 승인 여부 확인
 
-    const workflow = new WorkflowManager(project_id)
-    const approvalManager = new ApprovalPointManager(project_id)
+**개선 사항:**
+- ✅ 승인 타입별 검증 로직 (auto는 시스템만, manual은 사용자만)
+- ✅ 승인자 권한 확인 (역할별 승인 권한)
+- ✅ 중복 승인 방지
 
-    switch (action) {
-      case 'advance': {
-        const currentStep = await workflow.getCurrentStep()
-        const canAdvance = await workflow.canAdvanceToStep(currentStep + 1)
+### 3. app/api/valuation/route.ts
 
-        if (!canAdvance) {
-          return NextResponse.json(
-            { error: 'Cannot advance: approval required or invalid step' },
-            { status: 400 }
-          )
-        }
+**목표:** 평가 워크플로우 API 엔드포인트
 
-        const result = await workflow.advanceStep()
+**참고 파일:** `backend/app/api/v1/endpoints/valuation.py`
 
-        return NextResponse.json({
-          success: result.success,
-          next_step: result.nextStep,
-        })
-      }
+**엔드포인트:**
+- `GET /api/valuation?project_id=XXX`: 워크플로우 상태 조회
+- `POST /api/valuation`: 워크플로우 액션 (advance, approve, reject)
 
-      case 'approve': {
-        const { step_number, user_id, message } = body
-
-        if (!step_number || !user_id) {
-          return NextResponse.json(
-            { error: 'step_number and user_id are required' },
-            { status: 400 }
-          )
-        }
-
-        const approved = await approvalManager.approveStep(
-          step_number,
-          user_id,
-          message
-        )
-
-        if (!approved) {
-          return NextResponse.json(
-            { error: 'Failed to approve step' },
-            { status: 500 }
-          )
-        }
-
-        return NextResponse.json({
-          success: true,
-          step_number,
-          approved: true,
-        })
-      }
-
-      case 'create_approval_point': {
-        const { step_number, approval_type, approved_by, message } = body
-
-        if (!step_number || !approval_type) {
-          return NextResponse.json(
-            { error: 'step_number and approval_type are required' },
-            { status: 400 }
-          )
-        }
-
-        const approvalPoint = await approvalManager.createApprovalPoint(
-          step_number,
-          approval_type,
-          approved_by,
-          message
-        )
-
-        if (!approvalPoint) {
-          return NextResponse.json(
-            { error: 'Failed to create approval point' },
-            { status: 500 }
-          )
-        }
-
-        return NextResponse.json({
-          success: true,
-          approval_point: approvalPoint,
-        })
-      }
-
-      default:
-        return NextResponse.json(
-          { error: 'Invalid action' },
-          { status: 400 }
-        )
-    }
-  } catch (error) {
-    console.error('Workflow POST error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
-  }
-}
-```
-
----
-
-## 생성/수정 파일
-
-| 파일 | 변경 내용 | 라인 수 (예상) |
-|------|----------|---------------|
-| `lib/workflow/workflow-manager.ts` | 워크플로우 관리 로직 | ~150줄 |
-| `lib/workflow/approval-points.ts` | 승인 포인트 관리 로직 | ~180줄 |
-| `app/api/valuation/route.ts` | 워크플로우 API 엔드포인트 | ~170줄 |
-
-**총 파일 수**: 3개
-**총 라인 수**: ~500줄
-
----
-
-## 기술 스택
-
-- **Runtime**: Next.js 14 Route Handlers
-- **Language**: TypeScript 5.x
-- **Database**: Supabase (projects, approval_points 테이블)
-- **Pattern**: Class-based Service Layer
+**개선 사항:**
+- ✅ 프로젝트 존재 여부 사전 확인
+- ✅ 사용자 권한 확인 (본인 프로젝트만 접근)
+- ✅ 액션별 명확한 응답 구조
+- ✅ 에러 코드 체계화 (400 Bad Request, 403 Forbidden, 404 Not Found, 500 Internal Error)
 
 ---
 
@@ -491,34 +253,50 @@ export async function POST(request: NextRequest) {
 
 ### 필수 (Must Have)
 
-- [ ] 워크플로우 관리자 구현
-- [ ] 승인 포인트 관리자 구현
+- [ ] 목업 Python 파일 읽고 로직 분석 완료
+- [ ] 워크플로우 관리자 구현 (14단계)
+- [ ] 승인 포인트 관리자 구현 (22개 포인트)
 - [ ] API 엔드포인트 구현 (GET, POST)
-- [ ] 단계 진행 로직 구현
-- [ ] 승인 로직 구현
+- [ ] 입력 검증 구현
+- [ ] 에러 처리 구현
+- [ ] 권한 확인 구현 (RLS)
 
 ### 검증 (Verification)
 
 - [ ] TypeScript 빌드 성공
 - [ ] ESLint 에러 0개
-- [ ] API 호출 시 200 응답
-- [ ] 워크플로우 단계 진행 동작
+- [ ] API 호출 시 정상 응답
+- [ ] 잘못된 입력 시 400 에러 응답
+- [ ] 권한 없는 접근 시 403 에러 응답
+- [ ] 워크플로우 단계 진행 동작 확인
 - [ ] 승인 로직 동작 확인
 
-### 권장 (Nice to Have)
+### 개선 항목 (Improvement)
 
-- [ ] 롤백 기능
-- [ ] 단계 건너뛰기 (관리자 전용)
-- [ ] 알림 발송 연동
+- [ ] 보안: 입력 검증, 권한 확인
+- [ ] 성능: 불필요한 쿼리 제거
+- [ ] 코드 품질: JSDoc 주석, 에러 처리
+- [ ] API 설계: 일관된 응답 형식
 
 ---
 
 ## 참조
 
-### 기존 프로토타입
+### 기존 프로토타입 (목업)
 
-- `Valuation_Company/valuation-platform/backend/app/api/v1/endpoints/valuation.py`
-- `Valuation_Company/valuation-platform/backend/app/services/valuation_orchestrator.py`
+**⚠️ 주의: 목업은 참고용이며 완벽하지 않음. 개선하면서 마이그레이션할 것**
+
+- `Valuation_Company/valuation-platform/backend/routers/approvals.py`
+- `Valuation_Company/valuation-platform/backend/models/approval_point.py`
+- `Valuation_Company/valuation-platform/backend/schemas/approval.py`
+- `Valuation_Company/valuation-platform/backend/services/valuation_orchestrator.py`
+
+**분석 포인트:**
+1. 어떤 API 엔드포인트가 있는가?
+2. 14단계 워크플로우는 어떻게 정의되어 있는가?
+3. 승인 로직은 어떻게 구현되어 있는가?
+4. 에러 처리는 어떻게 되어 있는가? (개선 필요)
+5. 보안 취약점은 없는가? (개선 필요)
 
 ### 관련 Task
 
@@ -530,21 +308,61 @@ export async function POST(request: NextRequest) {
 
 ## 주의사항
 
-1. **단계 순서**
-   - 반드시 순서대로 진행 (건너뛰기 불가)
-   - 이전 단계 완료 확인 필수
+### ⚠️ 목업의 한계
 
-2. **승인 로직**
-   - 승인이 필요한 단계만 approval_points 생성
-   - 승인 완료 후 다음 단계 진행 가능
+1. **목업은 프로토타입이므로 완벽하지 않음**
+   - 보안 취약점 있을 수 있음 (입력 검증 부족)
+   - 에러 처리 미흡할 수 있음
+   - 성능 최적화 안 되어 있을 수 있음
 
-3. **RLS 보안**
-   - 본인 프로젝트만 조회/수정
+2. **단순 복사 금지**
+   - 목업을 그대로 복사하면 문제점까지 가져옴
+   - 반드시 개선하면서 마이그레이션
+
+3. **Best Practice 적용**
+   - Next.js 14 최신 패턴 사용
+   - TypeScript strict mode
+   - 보안 강화 (입력 검증, 권한 확인)
+
+### 🔒 보안
+
+1. **RLS 정책 확인**
+   - 본인 프로젝트만 조회/수정 가능
    - 역할 기반 승인 권한 확인
 
-4. **에러 처리**
+2. **입력 검증**
+   - project_id, step_number, user_id 필수
+   - 형식 검증 (정규식)
+   - 타입 검증 (string, number)
+
+3. **SQL Injection 방지**
+   - Supabase 파라미터화 쿼리만 사용
+   - 직접 문자열 결합 금지
+
+### ⚡ 성능
+
+1. **쿼리 최적화**
+   - 필요한 필드만 select
+   - 인덱스 활용 (project_id, step_number)
+
+2. **캐싱 고려**
+   - WORKFLOW_STEPS는 상수 (메모리 캐시)
+   - 자주 조회되는 데이터는 Redis 캐시 고려 (향후)
+
+### 📝 코드 품질
+
+1. **TypeScript strict mode**
+   - `tsconfig.json`의 `strict: true`
+   - null/undefined 명시적 처리
+
+2. **에러 처리**
+   - 모든 async 함수에 try-catch
    - 명확한 에러 메시지
-   - 트랜잭션 고려 (향후)
+   - 에러 로깅
+
+3. **테스트 가능성**
+   - 클래스 기반 구조 (의존성 주입 가능)
+   - 순수 함수 활용
 
 ---
 
@@ -552,9 +370,10 @@ export async function POST(request: NextRequest) {
 
 **작업 복잡도**: High
 **파일 수**: 3개
-**라인 수**: ~500줄
+**라인 수**: ~500줄 (목업 참조하면서 작성)
 
 ---
 
-**작성일**: 2026-02-05
+**작성일**: 2026-02-08 (수정)
 **작성자**: Claude Code (Sonnet 4.5)
+**수정 이유**: 마이그레이션 + 개선 방식으로 변경

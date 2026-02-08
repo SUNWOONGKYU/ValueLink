@@ -3,7 +3,7 @@
 ## 검증 대상
 
 - **Task ID**: S3BA4
-- **Task Name**: 기타 평가 엔진 (Relative, Asset, Intrinsic, Tax)
+- **Task Name**: 4개 평가 엔진 구현 (Relative, Asset, Intrinsic, Tax)
 - **Stage**: S3 (Valuation Engines - 개발 2차)
 - **Area**: BA (Backend APIs)
 
@@ -153,8 +153,8 @@
 
 ### 5. Blocker 확인
 
-- [ ] **S3BA1, S3BA2 완료**
-  - 인터페이스 및 금융 함수 사용 가능
+- [ ] **S3BA1, S3BA2, S3BA3 완료**
+  - 인터페이스, 금융 함수, DCF 엔진 사용 가능
 
 - [ ] **Supabase 연결**
   - `valuation_results` 테이블 존재
