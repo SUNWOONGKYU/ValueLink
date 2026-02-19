@@ -1,6 +1,6 @@
 {
   "task_id": "S4E4",
-  "task_name": "외부 연동 (Enkino AI 검증)",
+  "task_name": "DCF 평가 엔진 검증",
   "stage": 4,
   "area": "E",
   "level": 2,
@@ -24,7 +24,7 @@
   "stage_gate_status": "",
   "remarks": "DCF 엔진 정확도 검증 (실제 회계법인 보고서 대조)",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-06",
+  "updated_at": "2026-02-08",
   "tools": [
     "Read",
     "Write",
