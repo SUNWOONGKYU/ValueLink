@@ -1350,15 +1350,31 @@
 
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('페이지 로드됨');
+            console.log('✅ DOMContentLoaded 이벤트 발생');
 
             // Supabase에서 데이터 로드
-            // loadDashboardStats(); // 백엔드 API 서버 불필요 - 제거
-            loadLatestNews();
-            // loadNewsProviders(); // HTML 하드코딩 사용 (더VC 1번 + 5개 뉴스 소스)
-            // loadInvestmentStats(); // loadDeals에서 통계 계산 - 중복 제거
-            loadDeals(); // Deal 테이블 로드 (통계도 함께 계산)
-            setupFilters(); // 필터 이벤트 리스너 설정
+            try {
+                console.log('📰 최신 뉴스 로드 중...');
+                loadLatestNews();
+            } catch (err) {
+                console.warn('⚠️ loadLatestNews 실패:', err.message);
+            }
+
+            try {
+                console.log('📊 Deal 테이블 로드 중...');
+                loadDeals(); // Deal 테이블 로드 (통계도 함께 계산)
+            } catch (err) {
+                console.error('❌ loadDeals 실패:', err.message);
+            }
+
+            try {
+                console.log('🎯 필터 설정 중...');
+                setupFilters(); // 필터 이벤트 리스너 설정
+            } catch (err) {
+                console.warn('⚠️ setupFilters 실패:', err.message);
+            }
+
+            console.log('✨ 페이지 초기화 완료');
         });
 
         // 대시보드 통계 로드
@@ -1562,50 +1578,69 @@
         async function loadDeals() {
             currentPage = 1;
             try {
-                console.log('Deal 테이블 로딩 중...');
+                console.log('🔄 Deal 테이블 로딩 시작...');
+                console.log('Supabase URL:', SUPABASE_URL);
 
-                // Supabase에서 Deal 데이터 가져오기 (number 순서대로 정렬)
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc,number.desc`, {
+                // Supabase에서 Deal 데이터 가져오기 (news_date 내림차순 정렬)
+                const url = `${SUPABASE_URL}/rest/v1/deals?select=*&order=news_date.desc,number.desc`;
+                console.log('📡 요청 URL:', url);
+
+                const response = await fetch(url, {
                     headers: {
                         'apikey': SUPABASE_KEY,
                         'Authorization': `Bearer ${SUPABASE_KEY}`
                     }
                 });
 
-                if (response.ok) {
-                    const deals = await response.json();
-                    console.log('Deal 데이터:', deals.length, '개');
+                console.log('📊 응답 상태:', response.status, response.statusText);
 
-                    if (deals && deals.length > 0) {
-                        // 통계 계산
-                        const now = new Date();
-                        const today = now.toISOString().split('T')[0];
-                        const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                        const yearStart = `${now.getFullYear()}-01-01`;
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
 
-                        const yesterdayCount = deals.filter(d => d.news_date === yesterday).length;
-                        const lastWeekCount = deals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
-                        const yearTotalCount = deals.length; // 전체 Deal 수
+                const deals = await response.json();
+                console.log('✅ Deal 데이터 로드 성공:', deals.length, '개');
 
-                        // 통계 업데이트
-                        document.getElementById('stat-yesterday').textContent = yesterdayCount;
-                        document.getElementById('stat-last-week').textContent = lastWeekCount;
-                        document.getElementById('stat-year-total').textContent = yearTotalCount;
+                if (deals && deals.length > 0) {
+                    // 통계 계산
+                    const now = new Date();
+                    const today = now.toISOString().split('T')[0];
+                    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                    const yearStart = `${now.getFullYear()}-01-01`;
 
-                        renderDealsTable(deals);
-                    } else {
-                        console.log('DB에 Deal 없음');
-                        const tbody = document.getElementById('deals-tbody');
-                        if (tbody) {
-                            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
-                        }
-                    }
+                    const yesterdayCount = deals.filter(d => d.news_date === yesterday).length;
+                    const lastWeekCount = deals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
+                    const yearTotalCount = deals.length;
+
+                    console.log('📈 통계:', { 어제: yesterdayCount, 이번주: lastWeekCount, 전체: yearTotalCount });
+
+                    // 통계 업데이트
+                    const statYesterday = document.getElementById('stat-yesterday');
+                    const statLastWeek = document.getElementById('stat-last-week');
+                    const statYearTotal = document.getElementById('stat-year-total');
+
+                    if (statYesterday) statYesterday.textContent = yesterdayCount;
+                    if (statLastWeek) statLastWeek.textContent = lastWeekCount;
+                    if (statYearTotal) statYearTotal.textContent = yearTotalCount;
+
+                    console.log('🎨 테이블 렌더링 시작...');
+                    renderDealsTable(deals);
+                    console.log('✨ 테이블 렌더링 완료!');
                 } else {
-                    console.log('Deal 조회 실패');
+                    console.warn('⚠️ DB에 Deal이 없음');
+                    const tbody = document.getElementById('deals-tbody');
+                    if (tbody) {
+                        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #6B7280;">투자 유치 데이터가 없습니다.</td></tr>';
+                    }
                 }
             } catch (err) {
-                console.log('Deal 로딩 실패:', err.message);
+                console.error('❌ Deal 로딩 실패:', err.message);
+                console.error('스택 트레이스:', err.stack);
+                const tbody = document.getElementById('deals-tbody');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 40px; color: red;">오류: ${err.message}</td></tr>`;
+                }
             }
         }
 
@@ -1717,7 +1752,12 @@
         // Deal 테이블 렌더링 (No. 컬럼 추가 + 페이지네이션)
         function renderDealsTable(deals) {
             const tbody = document.getElementById('deals-tbody');
-            if (!tbody) return;
+            if (!tbody) {
+                console.error('❌ deals-tbody 요소를 찾을 수 없음!');
+                return;
+            }
+
+            console.log('📋 renderDealsTable 호출, deals 개수:', deals.length);
 
             // 최초 호출 시에만 currentDeals 갱신 (goToPage에서 재호출 시는 이미 설정됨)
             if (deals !== currentDeals) {
@@ -1729,6 +1769,7 @@
 
             const startIdx = (currentPage - 1) * PAGE_SIZE;
             const pageDeals = currentDeals.slice(startIdx, startIdx + PAGE_SIZE);
+            console.log(`📄 페이지 ${currentPage}/${totalPages} 렌더링, ${pageDeals.length}개 행`);
 
             tbody.innerHTML = pageDeals.map((deal, index) => {
                 const number = startIdx + index + 1;  // 페이지 기반 순서 번호
