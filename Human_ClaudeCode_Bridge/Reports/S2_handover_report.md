@@ -106,7 +106,7 @@ ValueLink는 5가지 기업가치 평가 방법(DCF, 상대가치, 본질가치,
 ### 3.1 Supabase 프로젝트
 - **URL**: https://arxrfetgaitkgiiqabap.supabase.co
 - **Project Ref**: arxrfetgaitkgiiqabap
-- **Management API Token**: sbp_230ea7b6564b4c7007c01a37d17f9844b8bf661f
+- **Management API Token**: [REDACTED - Supabase Dashboard에서 확인]
 
 ### 3.2 테이블 현황 (56개)
 
