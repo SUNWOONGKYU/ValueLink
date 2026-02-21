@@ -37,7 +37,7 @@ from urllib.parse import urlparse, quote
 if sys.platform == 'win32':
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
 
-load_dotenv()
+load_dotenv(override=True)  # .env 파일을 시스템 환경변수보다 우선
 
 
 # 업종 대분류 카테고리 매핑
