@@ -21,7 +21,7 @@
   "blockers": "{\"status\":\"No Blockers\"}",
   "comprehensive_verification": "{\"task_instruction\":\"PASS\",\"test\":\"PASS 3/3\",\"build\":\"PASS 2/2\",\"integration\":\"PASS 3/3\",\"blockers\":\"None\",\"final\":\"Passed\"}",
   "ai_verification_note": "5대 언론사 + Google Search + Naver API 크롤러 구현. 중복 제거, 날짜 범위 필터링 정상 작동",
-  "stage_gate_status": "",
+  "stage_gate_status": "Approved",
   "remarks": "벤처스퀘어, 스타트업투데이, 아웃스탠딩, 플래텀, WOWTALE 5개 사이트 크롤러 완성. Naver API 추가 보완",
   "created_at": "2026-02-06",
   "updated_at": "2026-02-21",
