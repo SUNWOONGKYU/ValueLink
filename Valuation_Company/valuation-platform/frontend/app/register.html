@@ -1064,11 +1064,15 @@
         async function saveAdminData(userId) {
             const adminCode = document.getElementById('adminCode').value.trim();
 
-            // 관리자 코드 검증 (예시: "ADMIN2026")
-            const VALID_ADMIN_CODE = 'ADMIN2026';
-
-            if (adminCode !== VALID_ADMIN_CODE) {
-                throw new Error('관리자 인증 코드가 올바르지 않습니다');
+            // 관리자 코드 검증 (서버사이드)
+            const verifyRes = await fetch('/api/auth/verify-admin-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: adminCode }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyData.valid) {
+                throw new Error(verifyData.error || '관리자 인증 코드가 올바르지 않습니다');
             }
 
             console.log('Admin verified:', userId);

@@ -4,14 +4,15 @@
  * Stage folder to Root folder auto-sync script
  * Executed by Pre-commit Hook
  *
- * Mapping:
- *   Frontend to pages
- *   Backend_APIs to api/Backend_APIs
- *   Security to api/Security
- *   Backend_Infra to api/Backend_Infra
- *   External to api/External
- *   S0 viewer to viewer
- *   S0 method/json/data to method/json/data
+ * Mapping (Next.js App Router):
+ *   Frontend/ → root (app/, components/, types/ etc.)
+ *   Backend_APIs/app/api/ → app/api/
+ *   Backend_APIs/lib/ → lib/
+ *   Security → api/Security
+ *   Backend_Infra → api/Backend_Infra
+ *   External → api/External
+ *   S0 viewer → viewer
+ *   S0 method/json/data → method/json/data
  */
 
 const fs = require('fs');
@@ -19,6 +20,7 @@ const path = require('path');
 
 // 프로젝트 루트 경로
 const PROJECT_ROOT = path.resolve(__dirname, '..');
+const PROCESS_DIR = path.join(PROJECT_ROOT, 'Process');
 
 // Stage 폴더 패턴 (S1 ~ S5)
 const STAGE_FOLDERS = [
@@ -29,13 +31,18 @@ const STAGE_FOLDERS = [
     'S5_개발_마무리'
 ];
 
-// Area → Root 매핑
+// Area → Root 매핑 ('' = project root)
 const AREA_MAPPING = {
-    'Frontend': 'pages',
-    'Backend_APIs': 'api/Backend_APIs',
+    'Frontend': '',
     'Security': 'api/Security',
     'Backend_Infra': 'api/Backend_Infra',
     'External': 'api/External'
+};
+
+// Backend_APIs는 특수 처리 (app/api/ → app/api/, lib/ → lib/)
+const BACKEND_API_SUBFOLDERS = {
+    'app/api': 'app/api',
+    'lib': 'lib'
 };
 
 // 콘솔 출력 헬퍼
@@ -112,12 +119,13 @@ function syncToRoot() {
 
     // S1~S5 Stage 폴더 동기화
     for (const stageFolder of STAGE_FOLDERS) {
-        const stagePath = path.join(PROJECT_ROOT, stageFolder);
+        const stagePath = path.join(PROCESS_DIR, stageFolder);
 
         if (!fs.existsSync(stagePath)) {
             continue;
         }
 
+        // 일반 Area 매핑 (Frontend, Security, Backend_Infra, External)
         for (const [areaFolder, rootTarget] of Object.entries(AREA_MAPPING)) {
             const srcPath = path.join(stagePath, areaFolder);
             const destPath = path.join(PROJECT_ROOT, rootTarget);
@@ -129,6 +137,23 @@ function syncToRoot() {
             const stats = copyRecursive(srcPath, destPath);
             totalCopied += stats.copied;
             totalSkipped += stats.skipped;
+        }
+
+        // Backend_APIs 특수 처리 (app/api/ → app/api/, lib/ → lib/)
+        const backendPath = path.join(stagePath, 'Backend_APIs');
+        if (fs.existsSync(backendPath)) {
+            for (const [subFolder, rootTarget] of Object.entries(BACKEND_API_SUBFOLDERS)) {
+                const srcPath = path.join(backendPath, subFolder);
+                const destPath = path.join(PROJECT_ROOT, rootTarget);
+
+                if (!fs.existsSync(srcPath)) {
+                    continue;
+                }
+
+                const stats = copyRecursive(srcPath, destPath);
+                totalCopied += stats.copied;
+                totalSkipped += stats.skipped;
+            }
         }
     }
 

@@ -24,7 +24,9 @@
       "Bash(ls:*)",
       "Bash(sort:*)",
       "Bash(wc:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx supabase:*)",
+      "Bash(python:*)"
     ]
   }
 }

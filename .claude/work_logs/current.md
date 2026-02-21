@@ -2,6 +2,173 @@
 
 ---
 
+## 2026-02-21 S4 뉴스 크롤러 Task 완료 반영 + Gemini API 수정
+
+### 세션 개요
+
+| 항목 | 내용 |
+|------|------|
+| 날짜 | 2026-02-21 |
+| 목표 | Gemini API 수정 + 뉴스 수집 복구 + S4 Task 완료 반영 |
+| 결과 | **S4 5/6 Tasks Completed** |
+
+### Gemini API 수정
+
+| 항목 | 내용 |
+|------|------|
+| 문제 | `load_dotenv()`가 시스템 환경변수(무료 키)를 우선하여 429 에러 |
+| 수정 | `daily_auto_collect.py` line 40: `load_dotenv()` → `load_dotenv(override=True)` |
+| 결과 | Gemini API 정상 작동, Feb 10-20 데이터 수집 완료 (151 Deals) |
+
+### S4 Task 완료 상태 반영 (5개)
+
+| Task ID | Task Name | 검증 결과 | 생성 파일 |
+|---------|-----------|----------|----------|
+| S4E1 | 뉴스 크롤러 인프라 구현 | Verified | daily_auto_collect.py 외 3개 |
+| S4E2 | 뉴스 파서 및 데이터 추출 | Verified | Gemini 기반 extract/verify 함수 |
+| S4E3 | 6개 투자 뉴스 사이트별 크롤러 | Verified | 5대 언론사+Google+Naver 크롤러 |
+| S4F1 | Deal 뉴스 트래커 프론트엔드 | Verified | deal.html, deals-test.html |
+| S4O1 | 주간 뉴스 수집 스케줄러 | Verified | GitHub Actions 2개 + 이메일 2개 |
+
+### Task CRUD 5개 위치 업데이트
+
+| # | 위치 | 상태 |
+|---|------|------|
+| 1 | TASK_PLAN.md | ✅ v1.3 업데이트 |
+| 2 | Task Instruction 파일 | ✅ 기존 존재 |
+| 3 | Verification Instruction 파일 | ✅ 기존 존재 |
+| 4 | JSON 파일 (grid_records) | ✅ 5개 파일 Completed/Verified |
+| 5 | work_logs/current.md | ✅ 이 항목 |
+
+### 프로젝트 진행 현황
+
+| Stage | 완료 | 전체 | 진행률 |
+|-------|------|------|--------|
+| S1 | 4 | 4 | 100% |
+| S2 | 12 | 12 | 100% |
+| S3 | 0 | 4 | 0% |
+| S4 | 5 | 6 | 83% |
+| S5 | 0 | 3 | 0% |
+| **합계** | **21** | **29** | **72%** |
+
+### 남은 Task (8개)
+
+- S3BA1~S3BA4: 평가 엔진 (직렬 의존성)
+- S4E4: DCF 엔진 검증 (S3BA3 의존)
+- S5O1, S5T1, S5M1: 마무리 (S2-S4 완료 후)
+
+---
+
+## 2026-02-09 백서 및 업무 인수인계서 작성
+
+### 산출물
+| 파일 | 위치 | 내용 |
+|------|------|------|
+| HANDOVER.md | 루트 (`C:\ValueLink\`) | 백서 + 인수인계서 (전체) |
+| S2_handover_report.md | `Human_ClaudeCode_Bridge/Reports/` | 동일 (Reports 사본) |
+| current.md | `.claude/work_logs/` | 작업 로그 (이 파일) |
+
+### 포함 내용
+- 프로젝트 개요 및 기술 스택
+- S1~S2 완료 현황 (16/29 Task, 55%)
+- S2 산출물 66파일 상세 목록
+- DB 현황 (56 테이블, deals 140행 복원)
+- 환경 설정 (API 키, 스크립트)
+- 6대 절대 규칙
+- 알려진 이슈 및 주의사항
+- S3 시작 가이드
+
+---
+
+## 2026-02-09 DB 복원 + v4 테이블 재생성 + S2 PO 승인
+
+### DB 복원
+- Supabase 백업(Feb 8) 복원 → deals 140행 복원 완료
+- v4 method 테이블 30개 재생성 (CREATE TABLE IF NOT EXISTS)
+- 5개 평가 방법별 모의 데이터 투입 (documents, drafts, results, approval_points)
+- 절대 규칙 6 추가: 파괴적 작업(DROP TABLE 등) 사전 승인 필수
+
+### S2 PO 최종 승인
+- PO가 S2 Stage Gate 승인 (2026-02-09)
+- S2GATE_verification_report.md에 Approved 기록
+
+---
+
+## 2026-02-09 S2 Stage Gate 통과 (12/12 완료)
+
+### 세션 개요
+
+| 항목 | 내용 |
+|------|------|
+| 날짜 | 2026-02-09 |
+| 목표 | S2 Phase 3+4 실행 + S2 Stage Gate |
+| 결과 | **12/12 S2 Tasks Completed + Stage Gate Pass** |
+
+---
+
+### Phase 3 완료 (S2BA4 + S2F7)
+
+| Task ID | Task Name | 검증 결과 | 비고 |
+|---------|-----------|----------|------|
+| S2BA4 | AI 클라이언트 및 이메일 서비스 | Verified | 3개 파일, Human-AI (API 키 필요) |
+| S2F7 | 인증/랜딩 페이지 마이그레이션 | Verified | 6개 파일 |
+
+### Phase 4 완료 (S2M1)
+
+| Task ID | Task Name | 검증 결과 | 비고 |
+|---------|-----------|----------|------|
+| S2M1 | 사용자 매뉴얼 및 FAQ | Verified | 2개 파일 (user-manual.md, faq.md) |
+
+### S2 Stage Gate Verification
+
+- **리포트**: `sal-grid/stage-gates/S2GATE_verification_report.md`
+- **산출물**: 47개 파일 (Backend 15개, Frontend 30개, Documentation 2개)
+- **스키마 정합성**: 모든 파일 schema-v4-final.sql 일치
+- **Blockers**: 코드 레벨 0개, S2BA4 API 키 설정 대기 (Human-AI)
+- **상태**: Pass (PO 승인 대기)
+
+---
+
+## 2026-02-09 S2 개발 Phase 2 완료
+
+### 세션 개요
+
+| 항목 | 내용 |
+|------|------|
+| 날짜 | 2026-02-09 |
+| 목표 | S2 Phase 2 실행 + 검증 + 스키마 수정 |
+| 결과 | 9/12 S2 Tasks Completed |
+
+---
+
+### Phase 2 완료된 Task (5개)
+
+| Task ID | Task Name | 검증 결과 | 비고 |
+|---------|-----------|----------|------|
+| S2F2 | 평가 신청 폼 템플릿 + 5개 방법별 페이지 | Verified | 8개 파일 |
+| S2F4 | 역할별 마이페이지 + 6개 역할 페이지 | Verified | 7개 파일 |
+| S2F5 | 프로세스 단계 템플릿 + 12개 워크플로우 | Verified | 13개 파일 |
+| S2F6 | 프로젝트 관리 페이지 (목록/상세/생성) | Verified | 3개 파일 |
+| S2BA3 | 문서 및 보고서 API (4개 API) | Verified | 수정 후 재검증 |
+
+### S2BA3 스키마 수정 내역
+
+| 파일 | 수정 전 | 수정 후 |
+|------|---------|---------|
+| documents/route.ts | document_type, mime_type, uploaded_at | category, file_type, created_at |
+| drafts/route.ts | content JSONB, sections_completed JSONB, review_status, reviewed_by/comment/at | 9개 section TEXT, 9개 completed BOOL, status, created_by |
+| reports/route.ts | review_status, 'approved' | status, 'confirmed'/'finalized' |
+
+### S2 전체 진행 현황
+
+| Phase | Tasks | Status |
+|-------|-------|--------|
+| Phase 1 | S2BA1, S2BA2, S2F1, S2F3 | Completed |
+| Phase 2 | S2F2, S2F4, S2F5, S2F6, S2BA3 | Completed |
+| Remaining | S2BA4 (Human-AI), S2F7 (blocked by S2S1), S2M1 (needs all F tasks) | Pending |
+
+---
+
 ## 2026-02-08 Task Instruction REVISED 반영 작업
 
 ### 세션 개요

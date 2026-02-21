@@ -265,28 +265,32 @@ CREATE INDEX IF NOT EXISTS idx_valuation_reports_company ON public.valuation_rep
 CREATE INDEX IF NOT EXISTS idx_valuation_reports_method ON public.valuation_reports(valuation_method);
 
 -- ============================================
--- A8. deals - 투자 딜 뉴스
+-- A8. deals - 투자 딜 뉴스 (스크래퍼 daily_auto_collect.py 기준)
 -- ============================================
 CREATE TABLE IF NOT EXISTS public.deals (
     id SERIAL PRIMARY KEY,
+    number INTEGER,
     company_name VARCHAR(200) NOT NULL,
     industry VARCHAR(100),
-    investment_stage VARCHAR(50),
-    investment_amount VARCHAR(100),
+    industry_category VARCHAR(100),
+    stage VARCHAR(50),
     investors TEXT,
+    amount VARCHAR(100),
     location VARCHAR(100),
-    employees VARCHAR(50),
-    article_url VARCHAR(500),
-    article_title TEXT,
-    article_source VARCHAR(100),
-    published_date DATE,
-    score INTEGER DEFAULT 0,
+    news_title TEXT,
+    news_url VARCHAR(500),
+    news_date DATE,
+    site_name VARCHAR(100),
+    ceo VARCHAR(100),
+    founded VARCHAR(50),
+    total_funding VARCHAR(100),
+    investment_reason TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_deals_company ON public.deals(company_name);
-CREATE INDEX IF NOT EXISTS idx_deals_score ON public.deals(score DESC);
+CREATE INDEX IF NOT EXISTS idx_deals_number ON public.deals(number);
 
 -- ============================================
 -- A9. investment_news_articles - 투자 뉴스 기사

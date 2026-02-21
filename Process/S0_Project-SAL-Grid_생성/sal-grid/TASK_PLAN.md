@@ -5,8 +5,8 @@
 - **프로젝트명**: ValueLink 기업가치평가 플랫폼 재구축
 - **총 Task 수**: 29개
 - **적용 방법론**: SAL Grid (Stage-Area-Level)
-- **버전**: v1.2
-- **최종 수정일**: 2026-02-08
+- **버전**: v1.3
+- **최종 수정일**: 2026-02-21
 
 ---
 
@@ -368,58 +368,58 @@
 
 ### Frontend Tasks (1개)
 
-#### S4F1: Deal News Tracker & Investment Monitor
+#### S4F1: Deal News Tracker & Investment Monitor ✅
 - **Task Name**: Deal 뉴스 트래커 및 투자 모니터 마이그레이션
 - **Area**: F (Frontend)
 - **Dependencies**: S1BI1, S4E2
 - **생성 파일** (2개):
-  - `app/deal/page.tsx` (Deal 뉴스 페이지, 2497줄 복잡도)
-  - `app/link/page.tsx` (네트워크/연결 페이지, 959줄)
+  - `Valuation_Company/valuation-platform/frontend/app/deal.html`
+  - `Valuation_Company/valuation-platform/frontend/app/deals-test.html`
 - **그룹핑 근거**: 투자 생태계 관련 기능, 뉴스 데이터 시각화
 - **Task Agent**: frontend-developer
-- **Verification Agent**: qa-specialist
+- **Verification Agent**: code-reviewer
+- **완료 상태**: ✅ 완료 (2026-02-21) - Supabase deals 테이블 연동, 151개 Deal 표시
 - **참조**: `frontend/app/deal.html`, `frontend/app/link.html`
 
 ### External Integration Tasks (4개)
 
-#### S4E1: News Crawler Infrastructure
+#### S4E1: News Crawler Infrastructure ✅
 - **Task Name**: 뉴스 크롤러 인프라 구현
 - **Area**: E (External)
 - **Dependencies**: S1BI1
-- **생성 파일** (2개):
-  - `lib/crawler/base-crawler.ts` (추상 베이스 클래스)
-  - `lib/crawler/crawler-manager.ts` (크롤러 관리, 스케줄링)
+- **생성 파일** (4개):
+  - `Valuation_Company/scripts/investment-news-scraper/daily_auto_collect.py`
+  - `Valuation_Company/scripts/investment-news-scraper/bill-news-tracker-enhanced.js`
+  - `Valuation_Company/scripts/investment-news-scraper/bill-news-tracker.js`
+  - `Valuation_Company/scripts/investment-news-scraper/collect_recent_news.py`
 - **Task Agent**: backend-developer
 - **Verification Agent**: code-reviewer
-- **참조**:
-  - `backend/app/services/news_crawler/base_crawler.py`
-  - `backend/app/services/news_crawler/crawler_manager.py`
+- **완료 상태**: ✅ 완료 (2026-02-21) - Python+Node.js 이중 구현, 10단계 자동화 파이프라인
+- **참조**: `backend/app/services/news_crawler/`
 
-#### S4E2: News Parser & Data Extraction
+#### S4E2: News Parser & Data Extraction ✅
 - **Task Name**: 뉴스 파서 및 데이터 추출 구현
 - **Area**: E (External)
 - **Dependencies**: S4E1
 - **생성 파일** (1개):
-  - `lib/crawler/news-parser.ts` (HTML 파싱, 데이터 추출, Deal 정보 추출)
+  - `Valuation_Company/scripts/investment-news-scraper/daily_auto_collect.py` (extract_deal_info_with_gemini, verify_with_gemini 함수)
 - **Task Agent**: backend-developer
 - **Verification Agent**: code-reviewer
+- **완료 상태**: ✅ 완료 (2026-02-21) - Gemini API 기반 검증 + 점수 시스템(11점 만점) 선정
 - **참조**: `backend/app/services/news_parser.py`
 
-#### S4E3: Site-Specific Crawlers (6 Implementations)
+#### S4E3: Site-Specific Crawlers (6 Implementations) ✅
 - **Task Name**: 6개 투자 뉴스 사이트별 크롤러
 - **Area**: E (External)
 - **Dependencies**: S4E1, S4E2
-- **생성 파일** (6개):
-  - `lib/crawler/sites/naver-crawler.ts`
-  - `lib/crawler/sites/outstanding-crawler.ts`
-  - `lib/crawler/sites/platum-crawler.ts`
-  - `lib/crawler/sites/startuptoday-crawler.ts`
-  - `lib/crawler/sites/venturesquare-crawler.ts`
-  - `lib/crawler/sites/wowtale-crawler.ts`
-- **그룹핑 근거**: 6개 크롤러가 동일한 베이스 클래스 상속, 사이트별 파싱 로직만 차이
+- **생성 파일** (2개):
+  - `Valuation_Company/scripts/investment-news-scraper/daily_auto_collect.py` (5대 언론사 크롤러)
+  - `Valuation_Company/scripts/investment-news-scraper/bill-news-tracker-enhanced.js`
+- **그룹핑 근거**: 5대 언론사 + Google Search + Naver API 통합 크롤러
 - **Task Agent**: backend-developer
 - **Verification Agent**: code-reviewer
-- **참조**: `backend/app/services/news_crawler/` (6개 파일)
+- **완료 상태**: ✅ 완료 (2026-02-21) - 벤처스퀘어, 스타트업투데이, 아웃스탠딩, 플래텀, WOWTALE
+- **참조**: `backend/app/services/news_crawler/`
 
 #### S4E4: DCF Engine Verification
 - **Task Name**: DCF 평가 엔진 검증
@@ -433,18 +433,19 @@
 
 ### DevOps Tasks (1개)
 
-#### S4O1: Weekly News Collection Scheduler
+#### S4O1: Weekly News Collection Scheduler ✅
 - **Task Name**: 주간 뉴스 수집 스케줄러
 - **Area**: O (DevOps)
 - **Dependencies**: S4E1, S4E2
-- **생성 파일** (2개):
-  - `lib/scheduler/task-scheduler.ts` (스케줄러 인프라)
-  - `lib/scheduler/tasks/weekly-collection.ts` (주간 데이터 수집)
+- **생성 파일** (4개):
+  - `.github/workflows/daily-news-scraper.yml` (매일 8am KST)
+  - `.github/workflows/investment-news-weekly.yml` (주간)
+  - `Valuation_Company/scripts/investment-news-scraper/send_daily_email.py`
+  - `Valuation_Company/scripts/investment-news-scraper/send_weekly_email.py`
 - **Task Agent**: devops-troubleshooter
 - **Verification Agent**: code-reviewer
-- **참조**:
-  - `backend/app/core/scheduler.py`
-  - `backend/app/tasks/weekly_collection.py`
+- **완료 상태**: ✅ 완료 (2026-02-21) - GitHub Actions 자동화, Gmail SMTP 이메일 발송
+- **참조**: `backend/app/core/scheduler.py`
 
 ---
 
@@ -718,6 +719,12 @@ S3BA3 완료 후:
 
 ## 변경 이력
 
+### v1.3 (2026-02-21)
+- S4 뉴스 크롤러 5개 Task 완료 상태 반영 (S4E1, S4E2, S4E3, S4F1, S4O1)
+- 생성 파일 목록을 실제 구현 파일로 업데이트 (TypeScript 계획 → Python/Node.js/HTML 실제)
+- S4 진행률: 0/6 → 5/6 (83%), S4E4만 Pending (S3BA3 의존)
+- 프로젝트 전체 진행률: S1 ✅ 4/4, S2 ✅ 12/12, S3 ⏳ 0/4, S4 🔄 5/6, S5 ⏳ 0/3
+
 ### v1.2 (2026-02-08)
 - S2~S5 전체 Task Instruction REVISED 반영
 - Task Name 업데이트: S2 "마이그레이션" 접미사 추가, S3 "구현" 접미사 추가
@@ -753,5 +760,5 @@ S3BA3 완료 후:
 
 **문서 작성자**: Claude Code (Opus 4.6)
 **프로젝트 소유자**: ValueLink
-**버전**: v1.2
-**최종 수정**: 2026-02-08
+**버전**: v1.3
+**최종 수정**: 2026-02-21
