@@ -373,18 +373,37 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Step advancement logic
+    // [Phase 5 수정] step-validator 사용
     if (target_step !== undefined) {
       const currentStep = project.current_step as number
 
-      // Must be exactly current_step + 1 (sequential, no skipping)
-      if (target_step !== currentStep + 1) {
+      // Import step-validator (파일 상단에 추가 필요)
+      const { canAdvanceToStep } = await import('@/lib/workflow/step-validator')
+
+      // 프로젝트 데이터 준비
+      const projectData = {
+        project_id: project.project_id as string,
+        current_step: currentStep,
+        status: project.status as string,
+        // 추가 필드는 필요 시 fetch
+      }
+
+      // Step 진행 가능 여부 검증
+      const validationResult = await canAdvanceToStep(currentStep, target_step, projectData)
+
+      if (!validationResult.valid) {
         return NextResponse.json(
           {
             success: false,
-            error: `Step must advance sequentially. Current step is ${currentStep}, target must be ${currentStep + 1}.`,
+            error: validationResult.error,
           },
           { status: 400 },
         )
+      }
+
+      // 경고가 있으면 콘솔에 출력
+      if (validationResult.warnings && validationResult.warnings.length > 0) {
+        console.warn('Step advancement warnings:', validationResult.warnings)
       }
 
       // Cannot go beyond MAX_STEP
