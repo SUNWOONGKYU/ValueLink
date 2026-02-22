@@ -85,12 +85,10 @@ export default function LoginPage() {
   // ---- Role-based redirect ----
   function redirectByRole(role: string) {
     switch (role) {
-      case 'admin':
-        router.push('/admin')
-        break
       case 'customer':
       case 'accountant':
       case 'investor':
+      case 'admin':
         router.push(`/mypage/${role}`)
         break
       default:
