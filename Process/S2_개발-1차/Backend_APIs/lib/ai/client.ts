@@ -5,7 +5,7 @@
  * 50:30:20 hybrid strategy implementation
  * Claude 50% (Opus 4.6 - Feb 2026) - DCF calculation, code review, security review
  * Gemini 20% (3.1 Pro - Latest Feb 2026) - Large document analysis, company research, industry analysis
- * OpenAI 30% - PDF analysis, image OCR, Excel formula, chatbot
+ * OpenAI 30% (GPT-5.2 - Latest Feb 2026) - PDF analysis, image OCR, Excel formula, chatbot
  */
 
 // ---------------------------------------------------------------------------
@@ -320,7 +320,7 @@ class AIClient {
     if (!apiKey) throw new Error('[AIClient] OPENAI_API_KEY is not set');
 
     const body: Record<string, unknown> = {
-      model: 'gpt-4o',
+      model: 'gpt-5.2',
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       max_tokens: options?.maxTokens ?? 4096,
     };
