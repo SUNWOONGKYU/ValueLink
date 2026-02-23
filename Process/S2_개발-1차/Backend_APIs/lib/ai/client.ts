@@ -4,7 +4,7 @@
  *
  * 50:30:20 hybrid strategy implementation
  * Claude 50% - DCF calculation, code review, security review
- * Gemini 20% - Large document analysis, company research, industry analysis
+ * Gemini 20% (3.1 Pro - Latest Feb 2026) - Large document analysis, company research, industry analysis
  * OpenAI 30% - PDF analysis, image OCR, Excel formula, chatbot
  */
 
@@ -80,7 +80,7 @@ const DEFAULT_CONFIG: AIConfig = {
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro:generateContent';
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 
 // ---------------------------------------------------------------------------
