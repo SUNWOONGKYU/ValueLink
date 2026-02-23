@@ -3,7 +3,7 @@
  * @description AI integrated client - Claude, Gemini, GPT
  *
  * 50:30:20 hybrid strategy implementation
- * Claude 50% - DCF calculation, code review, security review
+ * Claude 50% (Opus 4.6 - Feb 2026) - DCF calculation, code review, security review
  * Gemini 20% (3.1 Pro - Latest Feb 2026) - Large document analysis, company research, industry analysis
  * OpenAI 30% - PDF analysis, image OCR, Excel formula, chatbot
  */
@@ -204,7 +204,7 @@ class AIClient {
     const nonSystemMsgs = messages.filter((m) => m.role !== 'system');
 
     const body: Record<string, unknown> = {
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-opus-4-6',
       max_tokens: options?.maxTokens ?? 4096,
       messages: nonSystemMsgs.map((m) => ({ role: m.role, content: m.content })),
     };
