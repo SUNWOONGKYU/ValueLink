@@ -1,6 +1,6 @@
 {
   "project_id": "ValueLink",
-  "updated_at": "2026-02-22T15:56:29.243Z",
+  "updated_at": "2026-02-23T07:15:28.750Z",
   "phases": {
     "P0": {
       "name": "작업 디렉토리 구조 생성",
@@ -59,8 +59,8 @@
     "S5": {
       "name": "개발 마무리",
       "progress": 100,
-      "completed": 3,
-      "total": 3
+      "completed": 6,
+      "total": 6
     }
   }
 }
