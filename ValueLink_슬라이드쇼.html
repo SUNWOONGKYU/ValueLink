@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ValueLink 투자 평가 플랫폼</title>
+    <title>ValueLink - 투자 평가 플랫폼</title>
     <style>
         * {
             margin: 0;
@@ -13,211 +13,328 @@
 
         body {
             font-family: 'Malgun Gothic', -apple-system, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #1E40AF 0%, #0F766E 100%);
-            min-height: 100vh;
+            background: #1F2937;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
             padding: 20px;
         }
 
-        .container {
-            max-width: 1200px;
+        .slideshow-wrapper {
             width: 100%;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
+            max-width: 1200px;
         }
 
-        .left-section {
-            padding: 60px 50px;
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
             background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-content {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide-info {
+            flex: 1;
+            padding: 60px 50px;
+            background: linear-gradient(135deg, #1E40AF 0%, #0F766E 100%);
+            color: white;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
-        .right-section {
-            background: linear-gradient(135deg, #1E40AF 0%, #0F766E 100%);
+        .slide-info h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide-info h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #F0F9FF;
+            line-height: 1.4;
+        }
+
+        .slide-features {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .slide-features li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #F0F9FF;
+        }
+
+        .slide-features li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #60A5FA;
+            font-size: 20px;
+        }
+
+        .slide-image {
+            flex: 1;
+            background: #F9FAFB;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 40px;
         }
 
-        .screenshot {
+        .slide-image img {
             max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            font-size: 48px;
-            font-weight: 800;
-            color: #1E40AF;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 24px;
-            color: #0F766E;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-
-        .features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-
-        .features li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
-            font-size: 16px;
-            color: #1F2937;
-            line-height: 1.6;
-        }
-
-        .features li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #0F766E;
-            font-weight: bold;
-            font-size: 20px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background: linear-gradient(135deg, #1E40AF, #0F766E);
-            color: white;
-            padding: 16px 40px;
+            max-height: 100%;
+            object-fit: contain;
             border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        /* 네비게이션 */
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 60px;
+            height: 60px;
             border: none;
+            background: rgba(30, 64, 175, 0.7);
+            color: white;
+            font-size: 28px;
             cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(30, 64, 175, 0.3);
+        .nav-button:hover {
+            background: rgba(30, 64, 175, 0.95);
+            transform: translateY(-50%) scale(1.1);
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 2px solid #E5E7EB;
+        .prev {
+            left: 20px;
         }
 
-        .stat-item {
-            text-align: center;
+        .next {
+            right: 20px;
         }
 
-        .stat-number {
-            display: block;
-            font-size: 32px;
-            font-weight: bold;
-            color: #1E40AF;
+        /* 인디케이터 */
+        .indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 5;
         }
 
-        .stat-label {
-            font-size: 13px;
-            color: #6B7280;
-            margin-top: 5px;
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(30, 64, 175, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        @media (max-width: 968px) {
-            .container {
-                grid-template-columns: 1fr;
+        .dot.active {
+            background: #1E40AF;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        .dot:hover {
+            background: rgba(30, 64, 175, 0.8);
+        }
+
+        /* 카운터 */
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 64, 175, 0.9);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 5;
+        }
+
+        /* 반응형 */
+        @media (max-width: 1024px) {
+            .slide-info {
+                flex: 0.8;
+                padding: 40px 30px;
             }
 
-            .right-section {
+            .slide-info h1 {
+                font-size: 40px;
+            }
+
+            .slide-info h2 {
+                font-size: 22px;
+            }
+
+            .slide-features li {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slideshow-container {
+                aspect-ratio: auto;
+                min-height: 600px;
+            }
+
+            .slide-content {
+                flex-direction: column;
+            }
+
+            .slide-info {
+                flex: 1;
+                padding: 30px 20px;
                 min-height: 300px;
             }
 
-            h1 {
-                font-size: 36px;
+            .slide-image {
+                flex: 1;
+                min-height: 300px;
+                padding: 20px;
             }
 
-            .subtitle {
-                font-size: 20px;
+            .slide-info h1 {
+                font-size: 32px;
             }
 
-            .left-section {
-                padding: 40px 30px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 28px;
+            .slide-info h2 {
+                font-size: 18px;
             }
 
-            .subtitle {
-                font-size: 16px;
-            }
-
-            .features li {
-                font-size: 14px;
-            }
-
-            .left-section {
-                padding: 30px 20px;
+            .nav-button {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="left-section">
-            <h1>ValueLink</h1>
-            <div class="subtitle">투자 평가 플랫폼</div>
-
-            <ul class="features">
-                <li><strong>AI 기반 가치평가</strong> - DCF, 비교분석, 시뮬레이션</li>
-                <li><strong>Real-time Deal 분석</strong> - 투자 뉴스 자동 수집</li>
-                <li><strong>전문가 협업</strong> - 투자자, 창업가, 회계사 협력</li>
-                <li><strong>AI Q&A 시스템</strong> - 투자 관련 질문 즉시 답변</li>
-                <li><strong>Risk Assessment</strong> - 자동 위험 요소 분석</li>
-            </ul>
-
-            <button class="cta-button">지금 시작하기</button>
-
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number">32</span>
-                    <span class="stat-label">Tasks</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">95</span>
-                    <span class="stat-label">Files</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">5</span>
-                    <span class="stat-label">Stages</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Coverage</span>
+    <div class="slideshow-wrapper">
+        <div class="slideshow-container">
+            <!-- 슬라이드 1 -->
+            <div class="slide active">
+                <div class="slide-content">
+                    <div class="slide-info">
+                        <h1>ValueLink</h1>
+                        <h2>AI 기반 투자평가 플랫폼</h2>
+                        <ul class="slide-features">
+                            <li><strong>주요 기능:</strong> Valuation (가치평가)</li>
+                            <li><strong>AI 자동화:</strong> 시스템 활용</li>
+                            <li><strong>처리 시간:</strong> 48시간 내 작성 완료</li>
+                            <li><strong>기업 가치 분석:</strong> 정량적 평가</li>
+                            <li><strong>투자 의사결정:</strong> 데이터 기반 인사이트</li>
+                        </ul>
+                    </div>
+                    <div class="slide-image">
+                        <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼">
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="right-section">
-            <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼" class="screenshot">
+            <!-- 네비게이션 -->
+            <button class="nav-button prev" onclick="changeSlide(-1)">❮</button>
+            <button class="nav-button next" onclick="changeSlide(1)">❯</button>
+
+            <!-- 인디케이터 -->
+            <div class="indicators">
+                <div class="dot active" onclick="currentSlide(0)"></div>
+            </div>
+
+            <!-- 카운터 -->
+            <div class="slide-counter">
+                <span id="current">1</span> / <span id="total">1</span>
+            </div>
         </div>
     </div>
+
+    <script>
+        let slideIndex = 0;
+        const totalSlides = 1;
+
+        function changeSlide(n) {
+            slideIndex += n;
+            if (slideIndex >= totalSlides) slideIndex = 0;
+            if (slideIndex < 0) slideIndex = totalSlides - 1;
+            showSlide(slideIndex);
+        }
+
+        function currentSlide(n) {
+            slideIndex = n;
+            showSlide(slideIndex);
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            slides[n].classList.add('active');
+            dots[n].classList.add('active');
+
+            document.getElementById('current').textContent = n + 1;
+        }
+
+        // 키보드 네비게이션
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            if (e.key === 'ArrowRight') changeSlide(1);
+            if (e.key === ' ') {
+                e.preventDefault();
+                changeSlide(1);
+            }
+        });
+
+        // 초기화
+        showSlide(0);
+    </script>
 </body>
 </html>
