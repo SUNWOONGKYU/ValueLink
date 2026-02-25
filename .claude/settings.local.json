@@ -26,7 +26,11 @@
       "Bash(wc:*)",
       "Bash(grep:*)",
       "Bash(npx supabase:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(node scripts/test-valuation-api.js:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint:*)"
     ]
   }
 }

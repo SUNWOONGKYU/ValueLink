@@ -14,13 +14,20 @@ out/
 build/
 dist/
 
-# Environment Variables
+# Environment Variables (민감 정보 - 절대 푸시 금지!)
 .env
 .env.local
 .env*.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# 🔒 보안 키 파일 (절대 푸시 금지!)
+**/service-role-key*
+**/service_role_key*
+**/*secret*
+**/*SECRET*
+**/*credentials*
 
 # Debug
 npm-debug.log*
