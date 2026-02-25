@@ -3,10 +3,10 @@
 ## 프로젝트 개요
 
 - **프로젝트명**: ValueLink 기업가치평가 플랫폼 재구축
-- **총 Task 수**: 29개
+- **총 Task 수**: 32개
 - **적용 방법론**: SAL Grid (Stage-Area-Level)
-- **버전**: v1.5
-- **최종 수정일**: 2026-02-22
+- **버전**: v1.6
+- **최종 수정일**: 2026-02-23
 
 ---
 
@@ -35,8 +35,8 @@
 | **S2** | Core Platform | 개발 1차 | 12 | 핵심 워크플로우, 페이지, API |
 | **S3** | Valuation Engines | 개발 2차 | 4 | 5개 평가 엔진 통합 |
 | **S4** | External Integration | 개발 3차 | 6 | 뉴스 크롤링, 외부 연동, 스케줄러 |
-| **S5** | Finalization | 개발 마무리 | 3 | 배포, QA, 문서화 |
-| **합계** | | | **29** | |
+| **S5** | Finalization | 개발 마무리 | 6 | 배포, QA, 문서화, 품질 향상 |
+| **합계** | | | **32** | |
 
 ---
 
@@ -48,8 +48,8 @@
 | **S2** | 개발 1차 | 7 | 4 | - | - | - | - | - | 1 | 12 |
 | **S3** | 개발 2차 | - | 4 | - | - | - | - | - | - | 4 |
 | **S4** | 개발 3차 | 1 | - | - | 4 | - | - | 1 | - | 6 |
-| **S5** | 마무리 | - | - | - | - | - | 1 | 1 | 1 | 3 |
-| **합계** | | 8 | 8 | 1 | 4 | 1 | 1 | 2 | 4 | **29** |
+| **S5** | 마무리 | 1 | - | - | - | - | 2 | 1 | 2 | 6 |
+| **합계** | | 9 | 8 | 1 | 4 | 1 | 3 | 2 | 5 | **32** |
 
 ---
 
@@ -453,9 +453,9 @@
 ## S5: Finalization (개발 마무리)
 
 ### 목표
-배포, 품질 보증, 최종 문서화
+배포, 품질 보증, 최종 문서화, 품질 향상 (88점 → 95점)
 
-### Tasks (3개)
+### Tasks (6개)
 
 #### S5O1: Deployment Configuration & CI/CD
 - **Task Name**: 배포 설정 및 CI/CD 파이프라인
@@ -492,6 +492,54 @@
   - `docs/troubleshooting.md` (문제 해결 가이드)
 - **Task Agent**: documentation-specialist
 - **Verification Agent**: code-reviewer
+
+#### S5F8: UX Improvement (Toast & Loading Indicator)
+- **Task Name**: UX 개선 (Toast 및 로딩 인디케이터)
+- **Area**: F (Frontend)
+- **Dependencies**: S5T1
+- **생성 파일** (2개):
+  - `app/components/ui/toast.tsx` (Toast 컴포넌트, 자동 숨김 시간 4초)
+  - `app/components/ui/loading-indicator.tsx` (로딩 인디케이터 컴포넌트)
+- **개선 항목**:
+  - Toast 자동 숨김 시간 연장 (2초 → 4초)
+  - DCF 평가 실행 중 로딩 인디케이터 추가 (7-8초 대기 시간)
+  - 로딩 상태 관리 개선
+- **Task Agent**: frontend-developer
+- **Verification Agent**: qa-specialist
+- **목표**: 완성도 +1점 (17→18)
+
+#### S5T2: Test Coverage & Error Handling Enhancement
+- **Task Name**: 테스트 커버리지 향상 및 에러 핸들링 강화
+- **Area**: T (Testing)
+- **Dependencies**: S5T1
+- **생성 파일** (3개):
+  - `tests/integration/edge-cases.test.ts` (엣지 케이스 테스트)
+  - `lib/errors/api-errors.ts` (API 에러 클래스)
+  - `docs/error-handling-guide.md` (에러 핸들링 가이드)
+- **개선 항목**:
+  - Branch Coverage 향상 (82.1% → 85%+)
+  - API 에러 핸들링 강화 (구체적 에러 메시지)
+  - 엣지 케이스 테스트 추가
+- **Task Agent**: test-engineer
+- **Verification Agent**: qa-specialist
+- **목표**: 완성도 +1점 (18→19), 유용성 +1점 (17→18)
+
+#### S5M2: Code Quality & Readability Enhancement
+- **Task Name**: 코드 품질 및 가독성 향상
+- **Area**: M (Documentation)
+- **Dependencies**: S5M1
+- **생성 파일** (3개):
+  - `docs/code-style-guide.md` (코드 스타일 가이드)
+  - `docs/user-guide-enhanced.md` (향상된 사용자 가이드, 단계별 도움말)
+  - `docs/sample-datasets.md` (샘플 데이터 세트)
+- **개선 항목**:
+  - 코드 주석 추가 (복잡한 로직 설명)
+  - 변수명 개선 (더 명확하게)
+  - 사용자 가이드 개선 (단계별 도움말)
+  - 샘플 데이터 세트 추가 (실전 예시)
+- **Task Agent**: documentation-specialist
+- **Verification Agent**: code-reviewer
+- **목표**: 기술 +1점 (18→19), 가독성 +1점 (18→19), 구조 +1점 (18→19), 유용성 +1점 (18→19)
 
 ---
 
@@ -766,7 +814,17 @@ S3BA3 완료 후:
 
 ---
 
-**문서 작성자**: Claude Code (Opus 4.6)
+**문서 작성자**: Claude Code (Sonnet 4.5)
 **프로젝트 소유자**: ValueLink
-**버전**: v1.4
-**최종 수정**: 2026-02-22
+**버전**: v1.6
+**최종 수정**: 2026-02-23
+
+---
+
+## 변경 이력
+
+| 날짜 | 버전 | 변경 내용 |
+|------|------|----------|
+| 2026-02-23 | v1.6 | 19점 로드맵: S5에 3개 Task 추가 (S5F8, S5T2, S5M2) - 품질 향상 (88→95점 목표) |
+| 2026-02-22 | v1.5 | S5 Task 완료, 전체 프로젝트 100% 완료 |
+| 2026-02-21 | v1.4 | 초안 작성, 29개 Task 정의 |

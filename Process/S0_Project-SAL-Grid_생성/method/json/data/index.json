@@ -2,8 +2,8 @@
   "project_id": "valuelink-reconstruction",
   "project_name": "ValueLink Platform Reconstruction",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-07",
-  "total_tasks": 29,
+  "updated_at": "2026-02-23",
+  "total_tasks": 32,
   "description": "Task ID 목록입니다. 각 Task 상세는 grid_records/{task_id}.json에 저장됩니다.",
   "task_ids": [
     "S1BI1",
@@ -34,6 +34,9 @@
     "S4O1",
     "S5O1",
     "S5T1",
-    "S5M1"
+    "S5M1",
+    "S5F8",
+    "S5T2",
+    "S5M2"
   ]
 }
