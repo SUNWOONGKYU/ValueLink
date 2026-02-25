@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif; }
 
-    /* ── Theme Variables (원본 PPTX 색상 반영) ── */
+    /* ── Theme Variables (원본 PPTX 색상) ── */
     :root {
       --bg: #ffffff;
       --surface: #f8fafc;
@@ -33,71 +33,37 @@
     body { background: var(--bg); color: var(--text); }
 
     /* ── Progress Bar ── */
-    .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 100; transition: width 0.3s ease; }
+    .progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); z-index: 100; transition: width 0.3s ease; width: 100%; }
 
     /* ── Slide Container ── */
     .slides { position: relative; width: 100%; height: 100vh; }
     .slide {
       position: absolute; inset: 0;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      padding: 60px 48px 80px;
-      opacity: 0; transform: translateX(60px);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-      pointer-events: none;
+      display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+      padding: 40px 48px 60px;
+      opacity: 1;
+      overflow-y: auto;
     }
-    .slide.active { opacity: 1; transform: translateX(0); pointer-events: auto; }
-    .slide.prev { opacity: 0; transform: translateX(-60px); }
     .slide-inner {
       max-width: var(--slide-max-w); width: 100%;
     }
 
     /* ── Typography ── */
-    .slide h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 32px; line-height: 1.3; color: var(--accent); }
-    .slide h3 { font-size: 1.3rem; color: var(--accent); margin-bottom: 16px; font-weight: 700; }
-    .slide p { font-size: 1.15rem; line-height: 1.8; color: var(--muted); margin-bottom: 16px; }
-    .slide ul, .slide ol { font-size: 1.1rem; line-height: 2; padding-left: 24px; color: var(--text); }
-    .slide li { margin-bottom: 8px; }
+    .slide h1 { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 900; margin-bottom: 12px; line-height: 1.2; color: var(--accent); text-align: center; }
+    .slide .subtitle { font-size: 1.2rem; color: var(--muted); margin-bottom: 32px; text-align: center; }
+    .slide h2 { font-size: 1.5rem; font-weight: 800; margin-top: 32px; margin-bottom: 16px; color: var(--accent); }
+    .slide h3 { font-size: 1.2rem; color: var(--text); margin-top: 24px; margin-bottom: 12px; font-weight: 700; }
+    .slide p { font-size: 1rem; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+    .slide ul, .slide ol { font-size: 1rem; line-height: 1.8; padding-left: 24px; color: var(--text); margin-bottom: 16px; }
+    .slide li { margin-bottom: 6px; }
     .slide li::marker { color: var(--accent); }
     .slide strong { color: var(--accent); font-weight: 700; }
 
-    /* ── Title Slide ── */
-    .slide.title-slide { text-align: center; }
-    .slide.title-slide h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 900; line-height: 1.2; margin-bottom: 16px; color: var(--accent); }
-    .slide.title-slide .subtitle { font-size: 1.3rem; color: var(--muted); margin-bottom: 24px; }
-    .slide.title-slide .date { font-size: 1rem; color: var(--accent); }
-
-    /* ── End Slide ── */
-    .slide.end-slide { text-align: center; }
-
     /* ── Highlight Box ── */
-    .highlight { background: linear-gradient(135deg, rgba(30,64,175,0.1), rgba(59,130,246,0.1)); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 16px 0; }
+    .highlight { background: linear-gradient(135deg, rgba(30,64,175,0.08), rgba(59,130,246,0.08)); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 20px 0; }
 
-    /* ── Side Arrows ── */
-    .arrow {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.1); border: none; color: var(--accent);
-      font-size: 38px; cursor: pointer; padding: 18px 10px; z-index: 10;
-      border-radius: 6px; transition: background 0.2s; line-height: 1;
-    }
-    .arrow:hover { background: rgba(30,64,175,0.2); }
-    .arrow-l { left: 0; }
-    .arrow-r { right: 0; }
-
-    /* ── Bottom Nav Bar ── */
-    .nav-bar {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: var(--surface); border-top: 1px solid rgba(148,163,184,0.15);
-      padding: 10px 20px; display: flex; align-items: center; justify-content: center;
-      gap: 20px; z-index: 100;
-    }
-    .nav-btn {
-      background: none; border: 2px solid var(--accent); color: var(--accent);
-      padding: 6px 24px; border-radius: 20px; cursor: pointer;
-      font-size: 15px; font-weight: 700; transition: all 0.2s; font-family: inherit;
-    }
-    .nav-btn:hover { background: var(--accent); color: var(--bg); }
-    .nav-btn:disabled { border-color: rgba(148,163,184,0.2); color: rgba(148,163,184,0.3); cursor: default; background: none; }
-    .counter { color: var(--muted); font-size: 15px; min-width: 70px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+    /* ── Line Separator ── */
+    hr { border: none; height: 1px; background: linear-gradient(to right, transparent, var(--accent), transparent); margin: 24px 0; opacity: 0.3; }
 
     /* ── Theme Toggle ── */
     .theme-toggle { position: fixed; top: 12px; right: 12px; z-index: 100; background: var(--surface); border: 1px solid rgba(148,163,184,0.2); color: var(--text); border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 13px; }
@@ -105,15 +71,13 @@
 
     /* ── Print ── */
     @media print {
-      .nav-bar, .progress, .theme-toggle, .fs-toggle, .arrow { display: none !important; }
-      .slides { position: static; height: auto; }
-      .slide { position: static; opacity: 1 !important; transform: none !important; pointer-events: auto !important; page-break-after: always; height: 100vh; padding: 40px; }
+      .theme-toggle, .fs-toggle, .progress { display: none !important; }
+      .slide { overflow-y: visible; }
     }
 
     /* ── Mobile ── */
     @media (max-width: 640px) {
-      .slide { padding: 40px 20px 70px; }
-      .arrow { font-size: 28px; padding: 14px 8px; }
+      .slide { padding: 30px 20px 50px; }
     }
   </style>
 </head>
@@ -124,114 +88,56 @@
 <button class="theme-toggle" id="themeToggle">Dark</button>
 
 <div class="slides" id="slides">
-  <button class="arrow arrow-l" id="arrow-l" onclick="prev()" title="이전 (←)">❮</button>
-  <button class="arrow arrow-r" id="arrow-r" onclick="next()" title="다음 (→)">❯</button>
 
-  <!-- 슬라이드 1: 타이틀 -->
-  <div class="slide title-slide active">
+  <div class="slide">
     <div class="slide-inner">
+
       <h1>ValueLink</h1>
       <div class="subtitle">AI 기반 기업가치평가 플랫폼</div>
-      <div class="date">2026년 2월</div>
-    </div>
-  </div>
 
-  <!-- 슬라이드 2: 메인 서비스 -->
-  <div class="slide">
-    <div class="slide-inner">
-      <h2>메인 서비스: <strong>Valuation</strong></h2>
+      <hr>
+
+      <h2>메인 서비스: Valuation (기업가치평가)</h2>
+
       <div class="highlight">
-        <p style="font-size:1.2rem;margin:0;font-weight:700;">AI 자동화 시스템 구현</p>
-        <p style="font-size:1.1rem;margin-top:8px;">⚡ <strong>48시간 내 작성 완료</strong> &nbsp;|&nbsp; 💰 <strong>기존 비용의 절반 이하</strong></p>
+        <p style="font-size:1.1rem;margin:0;font-weight:700;color:var(--accent);">AI 자동화 시스템 구현</p>
+        <p style="font-size:1.05rem;margin-top:8px;"><strong>48시간 내 작성 완료</strong> &nbsp;|&nbsp; <strong>💰 기존 비용의 절반 이하</strong></p>
       </div>
-      <p style="font-size:1.05rem;line-height:1.7;margin-top:24px;">
-        AI 기반 자동화로 기업가치평가를 빠르고 저렴하게 제공합니다.
-        전문 회계사 검증을 통해 신뢰성을 보장합니다.
-      </p>
-    </div>
-  </div>
 
-  <!-- 슬라이드 3: 5가지 평가법 -->
-  <div class="slide">
-    <div class="slide-inner">
-      <h2>5가지 평가법</h2>
-      <ul style="font-size:1.15rem;line-height:2.2;">
-        <li><strong>DCF 평가법</strong> - 미래 현금흐름 할인</li>
-        <li><strong>상대가치 평가법</strong> - 유사 기업 비교</li>
-        <li><strong>본질가치 평가법</strong> - 순자산 기반</li>
-        <li><strong>자산가치 평가법</strong> - 장부가액 기반</li>
-        <li><strong>상증세법 평가법</strong> - 상속세법 기준</li>
+      <h3>5가지 평가법</h3>
+      <ul>
+        <li>DCF 평가법</li>
+        <li>상대가치 평가법</li>
+        <li>본질가치 평가법</li>
+        <li>자산가치 평가법</li>
+        <li>상증세법 평가법</li>
       </ul>
-      <p style="margin-top:24px;color:var(--muted);">
-        의뢰인이 원하는 방법을 선택하거나 복수 평가 가능
-      </p>
-    </div>
-  </div>
 
-  <!-- 슬라이드 4: 부대 서비스 -->
-  <div class="slide end-slide">
-    <div class="slide-inner">
+      <hr>
+
       <h2>부대 서비스</h2>
-      <ul style="font-size:1.15rem;line-height:2.2;text-align:left;margin:24px auto;max-width:700px;">
+      <ul>
         <li><strong>Link</strong> - 평가 완료 기업과 투자자·서포터 연결</li>
         <li><strong>Deals</strong> - 최신 벤처 투자 뉴스 수집 및 제공</li>
       </ul>
-      <p style="margin-top:40px;font-size:1.3rem;color:var(--accent);font-weight:700;">감사합니다</p>
-      <p style="margin-top:12px;color:var(--muted);">Q&A</p>
+
     </div>
   </div>
 
 </div>
 
-<nav class="nav-bar">
-  <button class="nav-btn" id="btn-p" onclick="prev()">◀ 이전</button>
-  <span class="counter" id="counter">1 / 4</span>
-  <button class="nav-btn" id="btn-n" onclick="next()">다음 ▶</button>
-</nav>
-
 <script>
-const slides = document.querySelectorAll('.slide');
-const btnP = document.getElementById('btn-p');
-const btnN = document.getElementById('btn-n');
-const arrowL = document.getElementById('arrow-l');
-const arrowR = document.getElementById('arrow-r');
-const counter = document.getElementById('counter');
-const progress = document.getElementById('progress');
-let cur = 0;
-
-function updateSlide(n) {
-  if (n < 0 || n >= slides.length) return;
-  slides.forEach(s => s.classList.remove('active', 'prev'));
-  if (n > cur) slides[cur].classList.add('prev');
-  cur = n;
-  slides[cur].classList.add('active');
-  counter.textContent = (cur + 1) + ' / ' + slides.length;
-  progress.style.width = ((cur + 1) / slides.length * 100) + '%';
-  btnP.disabled = (cur === 0);
-  btnN.disabled = (cur === slides.length - 1);
-  arrowL.style.display = (cur === 0) ? 'none' : '';
-  arrowR.style.display = (cur === slides.length - 1) ? 'none' : '';
-}
-function next() { updateSlide(cur + 1); }
-function prev() { updateSlide(cur - 1); }
 function toggleFS() { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-  if (e.key === 'ArrowLeft') prev();
   if (e.key === 'f' || e.key === 'F') toggleFS();
-  if (e.key === 'Home') updateSlide(0);
-  if (e.key === 'End') updateSlide(slides.length - 1);
 });
-let tx = 0;
-document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
-document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } });
+
 document.getElementById('themeToggle').addEventListener('click', () => {
   document.documentElement.classList.toggle('dark');
   document.getElementById('themeToggle').textContent = document.documentElement.classList.contains('dark') ? 'Light' : 'Dark';
 });
 document.getElementById('fsToggle').addEventListener('click', toggleFS);
-updateSlide(0);
 </script>
 </body>
 </html>
