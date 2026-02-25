@@ -56,92 +56,118 @@
             display: flex;
             width: 100%;
             height: 100%;
+        }
+
+        .slide-left {
+            flex: 1;
+            padding: 35px 40px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #ecfdf5 100%);
+            display: flex;
             flex-direction: column;
-            padding: 40px 50px;
-            background: white;
-            color: #333;
-            justify-content: flex-start;
-            overflow-y: auto;
+            justify-content: center;
+        }
+
+        .slide-right {
+            flex: 1;
+            padding: 35px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .slide-title {
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 800;
             color: #1E40AF;
-            margin-bottom: 10px;
-            text-align: center;
+            margin-bottom: 8px;
         }
 
         .slide-subtitle {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 600;
             color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 12px;
+        }
+
+        .content-section {
+            margin-bottom: 14px;
+        }
+
+        .content-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E40AF;
+            margin-bottom: 6px;
+        }
+
+        .content-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .highlight-text {
+            background: #FEF3C7;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #333;
+            margin: 8px 0;
+            border-left: 3px solid #F59E0B;
         }
 
         .section-title {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 700;
             color: #1E40AF;
-            margin-top: 20px;
-            margin-bottom: 15px;
+            margin-top: 14px;
+            margin-bottom: 8px;
         }
 
-        .main-service {
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .highlight-box {
-            background: #E0F2FE;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #333;
-        }
-
-        .section-list {
+        .item-list {
             list-style: none;
-            margin: 15px 0 0 0;
-            padding-left: 0;
+            padding: 0;
+            margin: 0;
         }
 
-        .section-list li {
-            padding: 8px 0;
-            padding-left: 25px;
+        .item-list li {
+            padding: 4px 0;
+            padding-left: 16px;
             position: relative;
-            font-size: 15px;
+            font-size: 13px;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.35;
         }
 
-        .section-list li:before {
-            content: "";
+        .item-list li:before {
+            content: "•";
             position: absolute;
-            left: 5px;
+            left: 0;
+            color: #1E40AF;
+            font-weight: bold;
         }
 
         .service-item {
-            padding: 8px 0;
-            font-size: 15px;
+            padding: 5px 0;
+            font-size: 13px;
             color: #333;
-            line-height: 1.5;
+            line-height: 1.35;
         }
 
         .slide-image {
-            margin-top: auto;
-            text-align: right;
-            padding-top: 20px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
         }
 
         .slide-image img {
-            max-height: 200px;
+            max-width: 90%;
+            max-height: 90%;
             object-fit: contain;
         }
 
@@ -223,8 +249,12 @@
 
         /* 반응형 */
         @media (max-width: 1024px) {
-            .slide-content {
-                padding: 30px;
+            .slide-left {
+                padding: 30px 30px;
+            }
+
+            .slide-right {
+                padding: 30px 30px;
             }
 
             .slide-title {
@@ -232,15 +262,19 @@
             }
 
             .slide-subtitle {
-                font-size: 16px;
-            }
-
-            .section-title {
-                font-size: 16px;
-            }
-
-            .section-list li {
                 font-size: 14px;
+            }
+
+            .content-label {
+                font-size: 12px;
+            }
+
+            .content-text {
+                font-size: 13px;
+            }
+
+            .item-list li {
+                font-size: 12px;
             }
         }
 
@@ -251,6 +285,14 @@
             }
 
             .slide-content {
+                flex-direction: column;
+            }
+
+            .slide-left {
+                padding: 20px;
+            }
+
+            .slide-right {
                 padding: 20px;
             }
 
@@ -259,7 +301,7 @@
             }
 
             .slide-subtitle {
-                font-size: 14px;
+                font-size: 12px;
             }
 
             .nav-button {
@@ -276,32 +318,42 @@
             <!-- 슬라이드 1 -->
             <div class="slide active">
                 <div class="slide-content">
-                    <div class="slide-title">ValueLink</div>
-                    <div class="slide-subtitle">AI 기반 기업가치평가 플랫폼</div>
+                    <div class="slide-left">
+                        <div class="slide-title">ValueLink</div>
+                        <div class="slide-subtitle">AI 기반 기업가치평가 플랫폼</div>
 
-                    <div class="main-service">메인 서비스: Valuation (기업가치평가)</div>
+                        <div class="content-section">
+                            <div class="content-label">메인 서비스</div>
+                            <div class="content-text">Valuation (기업가치평가)</div>
+                        </div>
 
-                    <div class="main-service">AI 자동화 시스템 구현</div>
+                        <div class="content-section">
+                            <div class="content-label">핵심 기능</div>
+                            <div class="content-text">AI 자동화 시스템 구현</div>
+                        </div>
 
-                    <div class="highlight-box">
-                        48시간 내 작성 완료  |  💰 기존 비용의 절반 이하
+                        <div class="highlight-text">
+                            48시간 내 작성 완료  |  💰 기존 비용의 절반 이하
+                        </div>
+
+                        <div class="section-title">5가지 평가법</div>
+                        <ul class="item-list">
+                            <li>DCF 평가법</li>
+                            <li>상대가치 평가법</li>
+                            <li>본질가치 평가법</li>
+                            <li>자산가치 평가법</li>
+                            <li>상증세법 평가법</li>
+                        </ul>
+
+                        <div class="section-title">부대 서비스</div>
+                        <div class="service-item">• Link - 기업과 투자자·서포터 연결</div>
+                        <div class="service-item">• Deals - 벤처 투자 뉴스 수집</div>
                     </div>
 
-                    <div class="section-title">5가지 평가법</div>
-                    <ul class="section-list">
-                        <li>DCF 평가법</li>
-                        <li>상대가치 평가법</li>
-                        <li>본질가치 평가법</li>
-                        <li>자산가치 평가법</li>
-                        <li>상증세법 평가법</li>
-                    </ul>
-
-                    <div class="section-title">부대 서비스</div>
-                    <div class="service-item">Link - 평가 완료 기업과 투자자·서포터 연결</div>
-                    <div class="service-item">Deals - 최신 벤처 투자 뉴스 수집 및 제공</div>
-
-                    <div class="slide-image">
-                        <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼">
+                    <div class="slide-right">
+                        <div class="slide-image">
+                            <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼">
+                        </div>
                     </div>
                 </div>
             </div>
