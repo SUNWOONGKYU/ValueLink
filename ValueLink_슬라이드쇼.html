@@ -56,69 +56,82 @@
             display: flex;
             width: 100%;
             height: 100%;
-        }
-
-        .slide-info {
-            flex: 1;
-            padding: 60px 50px;
-            background: linear-gradient(135deg, #1E40AF 0%, #0F766E 100%);
-            color: white;
-            display: flex;
             flex-direction: column;
-            justify-content: center;
+            padding: 40px 50px;
+            background: white;
+            color: #333;
+            justify-content: flex-start;
+            overflow-y: auto;
         }
 
-        .slide-info h1 {
-            font-size: 52px;
+        .slide-title {
+            font-size: 48px;
             font-weight: 800;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            color: #1E40AF;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
-        .slide-info h2 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            color: #F0F9FF;
-            line-height: 1.4;
-        }
-
-        .slide-features {
-            list-style: none;
-            margin-top: 30px;
-        }
-
-        .slide-features li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #F0F9FF;
-        }
-
-        .slide-features li:before {
-            content: "▸";
-            position: absolute;
-            left: 0;
-            color: #60A5FA;
+        .slide-subtitle {
             font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E40AF;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .highlight-box {
+            background: #E0F2FE;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .section-list {
+            list-style: none;
+            margin: 15px 0 0 0;
+            padding-left: 0;
+        }
+
+        .section-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .section-list li:before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #1E40AF;
+            font-size: 18px;
         }
 
         .slide-image {
-            flex: 1;
-            background: #F9FAFB;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
+            margin-top: auto;
+            text-align: right;
+            padding-top: 20px;
         }
 
         .slide-image img {
-            max-width: 100%;
-            max-height: 100%;
+            max-height: 200px;
             object-fit: contain;
-            border-radius: 8px;
         }
 
         /* 네비게이션 */
@@ -199,20 +212,23 @@
 
         /* 반응형 */
         @media (max-width: 1024px) {
-            .slide-info {
-                flex: 0.8;
-                padding: 40px 30px;
+            .slide-content {
+                padding: 30px;
             }
 
-            .slide-info h1 {
-                font-size: 40px;
+            .slide-title {
+                font-size: 36px;
             }
 
-            .slide-info h2 {
-                font-size: 22px;
+            .slide-subtitle {
+                font-size: 16px;
             }
 
-            .slide-features li {
+            .section-title {
+                font-size: 16px;
+            }
+
+            .section-list li {
                 font-size: 14px;
             }
         }
@@ -224,27 +240,15 @@
             }
 
             .slide-content {
-                flex-direction: column;
-            }
-
-            .slide-info {
-                flex: 1;
-                padding: 30px 20px;
-                min-height: 300px;
-            }
-
-            .slide-image {
-                flex: 1;
-                min-height: 300px;
                 padding: 20px;
             }
 
-            .slide-info h1 {
-                font-size: 32px;
+            .slide-title {
+                font-size: 28px;
             }
 
-            .slide-info h2 {
-                font-size: 18px;
+            .slide-subtitle {
+                font-size: 14px;
             }
 
             .nav-button {
@@ -261,15 +265,31 @@
             <!-- 슬라이드 1 -->
             <div class="slide active">
                 <div class="slide-content">
-                    <div class="slide-info">
-                        <h1>ValueLink</h1>
-                        <h2>AI 기반 투자평가 플랫폼</h2>
-                        <ul class="slide-features">
-                            <li>주요 기능: Valuation (가치평가)</li>
-                            <li>AI 자동화 시스템 활용</li>
-                            <li>48시간 내 작성 완료</li>
-                        </ul>
+                    <div class="slide-title">ValueLink</div>
+                    <div class="slide-subtitle">AI 기반 깃원가치평가 플랫폼</div>
+
+                    <div class="section-title">메인 서비스: Valuation (깃원가치평가)</div>
+
+                    <div class="highlight-box">
+                        <strong>AI 자동화 시스템 구현</strong><br>
+                        48시간 내 작성 완료 | 6가지 비용의 절반 이하
                     </div>
+
+                    <div class="section-title">5가지 평가법</div>
+                    <ul class="section-list">
+                        <li>DCF 평가법</li>
+                        <li>상대가치 평가법</li>
+                        <li>분할가치 평가법</li>
+                        <li>자산가치 평가법</li>
+                        <li>상중성분 평가법</li>
+                    </ul>
+
+                    <div class="section-title">부대 서비스</div>
+                    <ul class="section-list">
+                        <li>Link (평가 완료 기업과 투자자·서포트 연결)</li>
+                        <li>Deals (최신 벤처 투자 뉴스 수집 및 제공)</li>
+                    </ul>
+
                     <div class="slide-image">
                         <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼">
                     </div>
