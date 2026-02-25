@@ -90,12 +90,18 @@
             margin-bottom: 15px;
         }
 
+        .main-service {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
         .highlight-box {
             background: #E0F2FE;
             padding: 20px;
             border-radius: 8px;
             margin: 15px 0;
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1.6;
             color: #333;
         }
@@ -116,11 +122,16 @@
         }
 
         .section-list li:before {
-            content: "•";
+            content: "";
             position: absolute;
             left: 5px;
-            color: #1E40AF;
-            font-size: 18px;
+        }
+
+        .service-item {
+            padding: 8px 0;
+            font-size: 15px;
+            color: #333;
+            line-height: 1.5;
         }
 
         .slide-image {
@@ -266,29 +277,28 @@
             <div class="slide active">
                 <div class="slide-content">
                     <div class="slide-title">ValueLink</div>
-                    <div class="slide-subtitle">AI 기반 깃원가치평가 플랫폼</div>
+                    <div class="slide-subtitle">AI 기반 기업가치평가 플랫폼</div>
 
-                    <div class="section-title">메인 서비스: Valuation (깃원가치평가)</div>
+                    <div class="main-service">메인 서비스: Valuation (기업가치평가)</div>
+
+                    <div class="main-service">AI 자동화 시스템 구현</div>
 
                     <div class="highlight-box">
-                        <strong>AI 자동화 시스템 구현</strong><br>
-                        48시간 내 작성 완료 | 6가지 비용의 절반 이하
+                        48시간 내 작성 완료  |  💰 기존 비용의 절반 이하
                     </div>
 
                     <div class="section-title">5가지 평가법</div>
                     <ul class="section-list">
                         <li>DCF 평가법</li>
                         <li>상대가치 평가법</li>
-                        <li>분할가치 평가법</li>
+                        <li>본질가치 평가법</li>
                         <li>자산가치 평가법</li>
-                        <li>상중성분 평가법</li>
+                        <li>상증세법 평가법</li>
                     </ul>
 
                     <div class="section-title">부대 서비스</div>
-                    <ul class="section-list">
-                        <li>Link (평가 완료 기업과 투자자·서포트 연결)</li>
-                        <li>Deals (최신 벤처 투자 뉴스 수집 및 제공)</li>
-                    </ul>
+                    <div class="service-item">Link - 평가 완료 기업과 투자자·서포터 연결</div>
+                    <div class="service-item">Deals - 최신 벤처 투자 뉴스 수집 및 제공</div>
 
                     <div class="slide-image">
                         <img src="valuelink-screenshot.jpg" alt="ValueLink 플랫폼">
