@@ -291,15 +291,18 @@ export default function MyPageTemplate({
 
             {/* Right: Mobile menu toggle (handled client-side via CSS checkbox hack) */}
             <div className="flex items-center gap-3">
-              {/* Desktop logout link */}
-              <Link
-                href="/api/auth/logout"
-                className="hidden items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 sm:flex"
-                aria-label="로그아웃"
-              >
-                <NavIcon name="logout" className="h-4 w-4" />
-                <span>로그아웃</span>
-              </Link>
+              {/* Desktop logout button — 파괴적 액션이므로 POST 폼 사용
+                  (<Link>는 뷰포트 진입 시 프리페치 GET을 보내 자동 로그아웃을 유발함) */}
+              <form action="/api/auth/logout" method="post" className="contents">
+                <button
+                  type="submit"
+                  className="hidden items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 sm:flex"
+                  aria-label="로그아웃"
+                >
+                  <NavIcon name="logout" className="h-4 w-4" />
+                  <span>로그아웃</span>
+                </button>
+              </form>
 
               {/* Mobile hamburger: uses CSS :target for no-JS toggle */}
               <a
@@ -362,15 +365,17 @@ export default function MyPageTemplate({
             ))}
           </ul>
 
-          {/* Logout */}
+          {/* Logout — 파괴적 액션이므로 POST 폼 사용 (프리페치 GET 방지) */}
           <div className="mt-6 border-t border-gray-200 pt-6">
-            <Link
-              href="/api/auth/logout"
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
-            >
-              <NavIcon name="logout" className="h-5 w-5" />
-              로그아웃
-            </Link>
+            <form action="/api/auth/logout" method="post">
+              <button
+                type="submit"
+                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+              >
+                <NavIcon name="logout" className="h-5 w-5" />
+                로그아웃
+              </button>
+            </form>
           </div>
         </nav>
       </div>
@@ -405,15 +410,17 @@ export default function MyPageTemplate({
                 </ul>
               </nav>
 
-              {/* Logout */}
+              {/* Logout — 파괴적 액션이므로 POST 폼 사용 (프리페치 GET 방지) */}
               <div className="mt-6 border-t border-gray-200 pt-6">
-                <Link
-                  href="/api/auth/logout"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
-                >
-                  <NavIcon name="logout" className="h-5 w-5" />
-                  로그아웃
-                </Link>
+                <form action="/api/auth/logout" method="post">
+                  <button
+                    type="submit"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
+                  >
+                    <NavIcon name="logout" className="h-5 w-5" />
+                    로그아웃
+                  </button>
+                </form>
               </div>
             </div>
           </aside>

@@ -62,12 +62,21 @@ async function main() {
   }
 
   // J2: 마이페이지에서 프로젝트 목록 진입 (링크 클릭 우선, 없으면 직접 이동)
+  // 주의: 클라이언트 렌더링이라 hydration 대기 필수 + 반응형 중복 nav 중 '보이는' 링크만 클릭
   try {
-    const listLink = page.locator('a[href*="/projects/list"], a[href="/projects"]').first()
-    if (await listLink.count() > 0) {
-      await listLink.click()
+    const visibleListLink = page
+      .locator('a[href*="/projects/list"], a[href="/projects"]')
+      .filter({ visible: true })
+      .first()
+    const found = await visibleListLink
+      .waitFor({ timeout: 15000 })
+      .then(() => true)
+      .catch(() => false)
+    if (found) {
+      const text = (await visibleListLink.textContent() || '').trim()
+      await visibleListLink.click()
       await page.waitForURL(/\/projects/, { timeout: 15000 })
-      record('J2 프로젝트 목록 진입', true, `링크 클릭으로 이동: ${page.url().split('?')[0]}`)
+      record('J2 프로젝트 목록 진입', true, `링크("${text}") 클릭으로 이동: ${page.url().split('?')[0]}`)
     } else {
       await page.goto(bypassUrl('/projects/list'), { waitUntil: 'domcontentloaded', timeout: 30000 })
       record('J2 프로젝트 목록 진입', true, `마이페이지에 목록 링크 없음 → 직접 이동: ${page.url().split('?')[0]}`)
@@ -80,10 +89,17 @@ async function main() {
   // J3: 목록에서 프로젝트 상세 진입
   let detailReached = false
   try {
-    await page.waitForLoadState('networkidle', { timeout: 20000 }).catch(() => {})
-    const detailLink = page.locator('a[href^="/projects/"]:not([href*="list"]):not([href*="create"])').first()
+    // 클라이언트 네비게이션 직후 목록 데이터 fetch가 진행 중일 수 있음 — 보이는 링크를 명시적으로 대기
+    const detailLink = page
+      .locator('a[href^="/projects/"]:not([href*="list"]):not([href*="create"])')
+      .filter({ visible: true })
+      .first()
     const projectCard = page.locator('text=E2E 검증용 테스트기업').first()
-    if (await detailLink.count() > 0) {
+    const detailFound = await detailLink
+      .waitFor({ timeout: 20000 })
+      .then(() => true)
+      .catch(() => false)
+    if (detailFound) {
       const href = await detailLink.getAttribute('href')
       await detailLink.click()
       await page.waitForURL(/\/projects\/(?!list$|create$)[^/]+$/, { timeout: 20000 })
