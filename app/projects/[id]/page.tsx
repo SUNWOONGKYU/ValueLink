@@ -428,7 +428,7 @@ function ForbiddenView() {
 // ---------------------------------------------------------------------------
 
 export default function ProjectDetailPage() {
-  const params = useParams()
+  const params = useParams()!
   const router = useRouter()
   const projectId = params.id as string
 
@@ -791,7 +791,7 @@ export default function ProjectDetailPage() {
               <QuickActionButton
                 label="프로세스 진행"
                 description={`${STEP_LABELS[project.current_step - 1] ?? `단계 ${project.current_step}`} 진행하기`}
-                href={`/valuation/process/${project.project_id}?step=${project.current_step}`}
+                href={`/valuation/process/step-${Math.min(project.current_step, 12)}?project_id=${project.project_id}`}
                 icon={
                   <svg
                     className="h-5 w-5"
@@ -813,53 +813,8 @@ export default function ProjectDetailPage() {
                   project.status === 'archived'
                 }
               />
-              <QuickActionButton
-                label="서류 관리"
-                description="프로젝트 관련 문서를 관리합니다"
-                href={`/projects/${project.project_id}/documents`}
-                icon={
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                }
-              />
-              <QuickActionButton
-                label="보고서 확인"
-                description={
-                  project.current_step >= 9
-                    ? '생성된 보고서를 확인합니다'
-                    : '보고서 생성 전입니다 (9단계 이후 이용 가능)'
-                }
-                href={`/projects/${project.project_id}/reports`}
-                icon={
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                }
-                disabled={project.current_step < 9}
-              />
+              {/* 서류 관리: /projects/{id}/documents 페이지 미구현 — 구현 전까지 비표시 */}
+              {/* 보고서 확인: /projects/{id}/reports 페이지 미구현 — 구현 전까지 비표시 */}
             </div>
           </div>
         </div>

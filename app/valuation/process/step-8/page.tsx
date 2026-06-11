@@ -73,7 +73,7 @@ function RevisionStatusBadge({ status }: { status: RevisionRequest['status'] }) 
 
 function Step8Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [revisions, setRevisions] = useState<RevisionRequest[]>([])

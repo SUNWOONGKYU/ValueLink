@@ -104,7 +104,7 @@ function AccountCopyButton() {
 
 function Step10Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [loading, setLoading] = useState(true)

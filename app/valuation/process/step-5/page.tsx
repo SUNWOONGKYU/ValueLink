@@ -67,7 +67,7 @@ function formatKRW(value: number): string {
 
 function Step5Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [drafts, setDrafts] = useState<DraftSummary[]>([])

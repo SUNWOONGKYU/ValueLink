@@ -13,6 +13,23 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database.types'
+
+type ReportsTableName =
+  | 'dcf_reports'
+  | 'relative_reports'
+  | 'asset_reports'
+  | 'intrinsic_reports'
+  | 'tax_reports'
+
+type DraftsTableName =
+  | 'dcf_drafts'
+  | 'relative_drafts'
+  | 'asset_drafts'
+  | 'intrinsic_drafts'
+  | 'tax_drafts'
+
+type ReportInsert = Database['public']['Tables']['dcf_reports']['Insert']
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,12 +78,12 @@ function validateMethod(method: string): method is ValuationMethod {
   return (VALID_METHODS as readonly string[]).includes(method)
 }
 
-function getReportsTable(method: ValuationMethod): string {
-  return `${method}_reports`
+function getReportsTable(method: ValuationMethod): ReportsTableName {
+  return `${method}_reports` as ReportsTableName
 }
 
-function getDraftsTable(method: ValuationMethod): string {
-  return `${method}_drafts`
+function getDraftsTable(method: ValuationMethod): DraftsTableName {
+  return `${method}_drafts` as DraftsTableName
 }
 
 // ---------------------------------------------------------------------------
@@ -278,8 +295,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     const table = getReportsTable(method)
 
+    // Cast to representative table: all five *_reports tables share the same schema.
     const { data, error, count } = await supabase
-      .from(table)
+      .from(table as 'dcf_reports')
       .select(
         'report_id, project_id, draft_id, report_url, file_size, download_count, issued_by, issued_at, created_at',
         { count: 'exact' },
@@ -302,8 +320,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
         const signedUrl = await getSignedDownloadUrl(supabase, report.report_url)
 
         // Increment download_count (fire-and-forget, non-blocking)
+        // Cast to representative table: all five *_reports tables share the same schema.
         supabase
-          .from(table)
+          .from(table as 'dcf_reports')
           .update({ download_count: (report.download_count ?? 0) + 1 })
           .eq('report_id', report.report_id)
           .then(({ error: incError }) => {
@@ -421,9 +440,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // Verify the referenced draft exists and is confirmed/finalized
+    // Cast to representative table: all five *_drafts tables share the same schema.
     const draftsTable = getDraftsTable(validatedMethod)
     const { data: draft, error: draftError } = await supabase
-      .from(draftsTable)
+      .from(draftsTable as 'dcf_drafts')
       .select('draft_id, project_id, status')
       .eq('draft_id', draft_id)
       .single()
@@ -456,8 +476,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     const reportsTable = getReportsTable(validatedMethod)
     const now = new Date().toISOString()
 
+    // Cast to representative table: all five *_reports tables share the same schema.
     const { data: report, error: insertError } = await supabase
-      .from(reportsTable)
+      .from(reportsTable as 'dcf_reports')
       .insert({
         project_id,
         draft_id,
@@ -467,7 +488,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
         issued_by: user.id,
         issued_at: now,
         created_at: now,
-      })
+      } as ReportInsert)
       .select(
         'report_id, project_id, draft_id, report_url, file_size, download_count, issued_by, issued_at, created_at',
       )

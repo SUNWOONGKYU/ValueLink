@@ -66,12 +66,26 @@ function validateMethod(method: string): method is ValuationMethod {
   return (VALID_METHODS as readonly string[]).includes(method)
 }
 
-function getRevisionsTable(method: ValuationMethod): string {
-  return `${method}_revisions`
+type RevisionsTableName =
+  | 'dcf_revisions'
+  | 'relative_revisions'
+  | 'asset_revisions'
+  | 'intrinsic_revisions'
+  | 'tax_revisions'
+
+type DraftsTableName =
+  | 'dcf_drafts'
+  | 'relative_drafts'
+  | 'asset_drafts'
+  | 'intrinsic_drafts'
+  | 'tax_drafts'
+
+function getRevisionsTable(method: ValuationMethod): RevisionsTableName {
+  return `${method}_revisions` as RevisionsTableName
 }
 
-function getDraftsTable(method: ValuationMethod): string {
-  return `${method}_drafts`
+function getDraftsTable(method: ValuationMethod): DraftsTableName {
+  return `${method}_drafts` as DraftsTableName
 }
 
 // ---------------------------------------------------------------------------
@@ -582,9 +596,10 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
       updatePayload.completed_at = now
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- updatePayload is dynamically constructed; Supabase RejectExcessProperties rejects Record<string, unknown>
     const { data: updated, error: updateError } = await supabase
       .from(revisionsTable)
-      .update(updatePayload)
+      .update(updatePayload as any)
       .eq('revision_id', revision_id)
       .select(
         'revision_id, draft_id, revision_type, section, details, status, requested_by, assigned_to, requested_at, completed_at, created_at, updated_at',

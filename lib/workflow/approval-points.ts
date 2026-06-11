@@ -54,28 +54,28 @@ export interface ApprovalDecision {
   rationale?: string
 }
 
-/** Row shape returned by the approval_points table */
+/**
+ * Row shape returned by the approval_points table (schema-v5).
+ *
+ * Schema-v5 simplified the table: legacy fields (point_id, point_name,
+ * display_name, importance, valuation_method, description, ai_value,
+ * suggested_range, custom_value, status, approved_by, approved_at,
+ * approval_rationale, impact_analysis, updated_at) were removed.
+ * The v5 columns are:
+ *   approval_id (number, PK), project_id, point_code, category,
+ *   question, ai_decision, ai_rationale, human_decision, human_note, created_at
+ */
 export interface ApprovalPointRow {
-  project_id: string
-  point_id: string
-  point_name: string
-  display_name: string
-  category: string
-  importance: string
-  valuation_method: string
-  description: string
-  ai_value: unknown
+  approval_id: number
+  project_id: string | null
+  point_code: string | null   // previously point_id (e.g. "JP001")
+  category: string | null
+  question: string | null     // previously description
+  ai_decision: string | null
   ai_rationale: string | null
-  suggested_range: unknown
-  human_decision: ApprovalStatus | null
-  custom_value: unknown
-  status: ApprovalStatus
-  approved_by: string | null
-  approved_at: string | null
-  approval_rationale: string | null
-  impact_analysis: unknown
-  created_at: string
-  updated_at: string
+  human_decision: string | null
+  human_note: string | null   // previously approval_rationale
+  created_at: string | null
   [key: string]: unknown
 }
 
@@ -416,27 +416,20 @@ export class ApprovalPointManager {
       }
 
       const now = new Date().toISOString()
+      // Schema-v5: approval_points has point_code, category, question,
+      // ai_decision, ai_rationale, human_decision, human_note, created_at.
+      // Legacy fields (point_name, display_name, importance, valuation_method,
+      // description, status, approved_by, updated_at, etc.) were dropped.
       const rows = APPROVAL_POINTS_SPEC.map((spec) => ({
         project_id: projectId,
-        point_id: spec.point_id,
-        point_name: spec.point_name,
-        display_name: spec.display_name,
-        category: spec.category,
-        importance: spec.importance,
-        valuation_method: spec.valuation_method,
-        description: spec.description,
-        ai_value: null,
+        point_code: spec.point_id,   // JP001-JP022 stored in point_code
+        category: spec.category as string,
+        question: spec.description,   // description maps to question
+        ai_decision: null,
         ai_rationale: null,
-        suggested_range: null,
         human_decision: null,
-        custom_value: null,
-        status: 'pending' as const,
-        approved_by: null,
-        approved_at: null,
-        approval_rationale: null,
-        impact_analysis: null,
+        human_note: null,
         created_at: now,
-        updated_at: now,
       }))
 
       const { error: insertErr } = await supabase
@@ -519,7 +512,7 @@ export class ApprovalPointManager {
         .from('approval_points')
         .select('*')
         .eq('project_id', projectId)
-        .eq('point_id', pointId)
+        .eq('point_code', pointId)   // schema-v5: point_id is stored in point_code
         .single()
 
       if (fetchErr || !point) {
@@ -544,30 +537,21 @@ export class ApprovalPointManager {
         }
       }
 
-      // --- Compute impact analysis (improved over Python hardcoded zeros) ---
-      const impactAnalysis = this.computeImpactAnalysis(
-        pointId,
-        decision,
-        existing.ai_value,
-        customValue,
-      )
-
-      // --- Persist ---
-      const now = new Date().toISOString()
+      // --- Persist (schema-v5 fields only) ---
+      // Legacy fields (custom_value, status, approved_by, approved_at,
+      // approval_rationale, impact_analysis, updated_at) were removed in v5.
+      // human_note stores the rationale; custom decision value is embedded in human_note.
+      const noteValue = decision === 'custom' && customValue !== undefined
+        ? `${rationale ?? ''} [custom_value: ${JSON.stringify(customValue)}]`
+        : (rationale ?? null)
       const { data: updated, error: updateErr } = await supabase
         .from('approval_points')
         .update({
           human_decision: decision,
-          custom_value: decision === 'custom' ? customValue : null,
-          status: decision,
-          approval_rationale: rationale ?? null,
-          approved_by: approvedBy ?? null,
-          approved_at: now,
-          impact_analysis: impactAnalysis,
-          updated_at: now,
+          human_note: noteValue,
         })
         .eq('project_id', projectId)
-        .eq('point_id', pointId)
+        .eq('point_code', pointId)   // schema-v5: use point_code
         .select()
         .single()
 
@@ -740,7 +724,7 @@ export class ApprovalPointManager {
         .from('approval_points')
         .select('*')
         .eq('project_id', projectId)
-        .order('point_id', { ascending: true })
+        .order('point_code', { ascending: true })   // schema-v5: point_code replaces point_id
 
       if (error) {
         return { success: false, error: error.message }
@@ -797,12 +781,13 @@ export class ApprovalPointManager {
 
       const supabase = await createClient()
 
+      // schema-v5: no 'status' column; pending points are those with null human_decision
       const { data, error } = await supabase
         .from('approval_points')
         .select('*')
         .eq('project_id', projectId)
-        .eq('status', 'pending')
-        .order('point_id', { ascending: true })
+        .is('human_decision', null)
+        .order('point_code', { ascending: true })   // schema-v5: point_code replaces point_id
 
       if (error) {
         return { success: false, error: error.message }

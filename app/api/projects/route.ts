@@ -10,6 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
 
 // ---------------------------------------------------------------------------
@@ -104,7 +105,9 @@ function validateUpdateBody(body: unknown): string | null {
 // Auth helper
 // ---------------------------------------------------------------------------
 
-async function getAuthenticatedUser(supabase: Awaited<ReturnType<typeof createClient>>) {
+async function getAuthenticatedUser(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<{ user: User; role: UserRole } | { user: null; role: null }> {
   const {
     data: { user },
     error,
@@ -166,14 +169,16 @@ function parsePagination(searchParams: URLSearchParams): PaginationParams {
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient()
-    const { user, role } = await getAuthenticatedUser(supabase)
+    const authResult = await getAuthenticatedUser(supabase)
 
-    if (!user) {
+    if (!authResult.user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required.' },
         { status: 401 },
       )
     }
+
+    const { user, role } = authResult
 
     const searchParams = request.nextUrl.searchParams
     const { page, limit } = parsePagination(searchParams)
@@ -191,7 +196,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Build query with join for accountant info (aligned with schema-v4-final.sql)
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase query builder chaining narrows the type when conditionally branching; cast to any to preserve re-assignability across switch branches
+    let query: any = supabase
       .from('projects')
       .select(
         `project_id,
@@ -297,14 +303,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 export async function PUT(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient()
-    const { user, role } = await getAuthenticatedUser(supabase)
+    const authResult = await getAuthenticatedUser(supabase)
 
-    if (!user) {
+    if (!authResult.user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required.' },
         { status: 401 },
       )
     }
+
+    const { user, role } = authResult
 
     // Parse and validate body
     let body: unknown
@@ -431,9 +439,10 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // 5. Persist (aligned with projects table columns)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- updatePayload is dynamically constructed; Supabase RejectExcessProperties rejects Record<string, unknown>
     const { data: updated, error: updateError } = await supabase
       .from('projects')
-      .update(updatePayload)
+      .update(updatePayload as any)
       .eq('project_id', project_id)
       .select(
         'project_id, company_name_kr, status, current_step, accountant_id, updated_at',

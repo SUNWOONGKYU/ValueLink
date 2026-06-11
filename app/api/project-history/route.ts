@@ -10,6 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import type { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server'
 
 // ---------------------------------------------------------------------------
@@ -40,7 +41,9 @@ const COMPLETION_STEP = 14
 // Auth helper
 // ---------------------------------------------------------------------------
 
-async function getAuthenticatedUser(supabase: Awaited<ReturnType<typeof createClient>>) {
+async function getAuthenticatedUser(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+): Promise<{ user: User; role: UserRole } | { user: null; role: null }> {
   const {
     data: { user },
     error,
@@ -100,14 +103,16 @@ function parsePagination(searchParams: URLSearchParams): PaginationParams {
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient()
-    const { user, role } = await getAuthenticatedUser(supabase)
+    const authResult = await getAuthenticatedUser(supabase)
 
-    if (!user) {
+    if (!authResult.user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required.' },
         { status: 401 },
       )
     }
+
+    const { user, role } = authResult
 
     const searchParams = request.nextUrl.searchParams
     const { page, limit } = parsePagination(searchParams)
@@ -126,7 +131,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     }
 
     // Build query against project_history table (aligned with schema-v4-final.sql)
-    let query = supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase query builder chaining narrows the type when conditionally branching; cast to any to preserve re-assignability across switch branches
+    let query: any = supabase
       .from('project_history')
       .select(
         `history_id,
@@ -234,14 +240,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse>> {
   try {
     const supabase = await createClient()
-    const { user, role } = await getAuthenticatedUser(supabase)
+    const authResult = await getAuthenticatedUser(supabase)
 
-    if (!user) {
+    if (!authResult.user) {
       return NextResponse.json(
         { success: false, error: 'Authentication required.' },
         { status: 401 },
       )
     }
+
+    const { user, role } = authResult
 
     // Parse body
     let body: unknown

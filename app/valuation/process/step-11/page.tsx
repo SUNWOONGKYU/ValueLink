@@ -43,7 +43,7 @@ function formatCurrency(value: number): string {
 function Step11Content() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [loading, setLoading] = useState(true)

@@ -9,7 +9,7 @@
   "dependencies": "",
   "task_instruction": "task-instructions/S1D1_instruction.md",
   "task_agent": "database-specialist",
-  "generated_files": "database/schema-v4-final.sql, database/triggers-v4.sql, database/rls-policies-v2.sql",
+  "generated_files": "database/schema-v4-final.sql, database/triggers-v4.sql, database/rls-policies-v2.sql, database/schema-v5-code-truth.sql",
   "duration": "2h",
   "build_result": "SUCCESS",
   "verification_instruction": "verification-instructions/S1D1_verification.md",
@@ -24,7 +24,7 @@
     "compile": "N/A - SQL file",
     "lint": "N/A",
     "syntax": "PASS - Valid PostgreSQL syntax",
-    "deploy": "PENDING - Requires Supabase deployment"
+    "deploy": "PASS - schema-v5-code-truth.sql applied to Supabase (2026-06-11). 14 tables created, legacy tables preserved (_legacy rename)"
   },
   "integration_verification": {
     "dependency_propagation": "PASS - All tables reference correct parent tables",
@@ -43,11 +43,11 @@
     "blockers": "None",
     "final": "Passed"
   },
-  "ai_verification_note": "S1D1 v4 검증 완료. 41개 테이블 (기본 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 3단계 프로젝트 라이프사이클(evaluation_requests→projects→project_history) 적용. 불필요 테이블(quotes, negotiations, report_draft_sections, draft_method_status) 삭제 및 필드 통합 완료. Supabase 배포 대기 중.",
+  "ai_verification_note": "S1D1 v4 검증 완료. 41개 테이블 (기본 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 3단계 프로젝트 라이프사이클(evaluation_requests→projects→project_history) 적용. 불필요 테이블(quotes, negotiations, report_draft_sections, draft_method_status) 삭제 및 필드 통합 완료. [2026-06-11 수정] schema-v5-code-truth.sql 실DB 적용 완료 — 코드 역분석 기반 14테이블 신규 작성 (valuation_projects, support_cases, partner_referrals, deal_news, investor_watchlist, workflow_approvals 등 포함). 구 테이블은 _legacy rename 보관 (valuation_results_legacy 25행, projects_legacy 10행). users 5행 무손실.",
   "stage_gate_status": "",
-  "remarks": "v4 최종: 41개 테이블 (기존 11개 + 평가법별 30개), 22개 AI 승인 포인트, 29개 트리거. 삭제된 테이블: quotes, negotiations, report_draft_sections, draft_method_status",
+  "remarks": "v4 최종: 41개 테이블, 22개 AI 승인 포인트, 29개 트리거. [2026-06-11] schema-v5-code-truth.sql 실DB 적용: 코드 기준 14테이블 신규 생성 + legacy 보관. database.types.ts 재생성 완료 (S1BI1 연동).",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-07",
+  "updated_at": "2026-06-11",
   "tools": [
     "Read",
     "Write"

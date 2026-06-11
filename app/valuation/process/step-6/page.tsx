@@ -123,7 +123,7 @@ function ReviewStatusDisplay({ status }: { status: ReviewData['review_status'] }
 
 function Step6Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [review, setReview] = useState<ReviewData | null>(null)

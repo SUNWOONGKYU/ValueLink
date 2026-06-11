@@ -136,7 +136,7 @@ export default function Header() {
 
   // ---- Is active link ----
   function isActive(href: string): boolean {
-    return pathname === href || pathname.startsWith(href + '/')
+    return pathname === href || (pathname?.startsWith(href + '/') ?? false)
   }
 
   // ---- Render ----

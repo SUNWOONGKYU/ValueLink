@@ -52,7 +52,7 @@ const METHOD_LABELS: Record<string, string> = {
 
 function Step9Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [reports, setReports] = useState<ReportStatus[]>([])

@@ -18,6 +18,9 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/database.types'
+
+type DraftUpdate = Database['public']['Tables']['dcf_drafts']['Update']
 
 // ---------------------------------------------------------------------------
 // Types
@@ -120,8 +123,19 @@ function validateMethod(method: string): method is ValuationMethod {
   return (VALID_METHODS as readonly string[]).includes(method)
 }
 
-function getDraftsTable(method: ValuationMethod): string {
-  return `${method}_drafts`
+// ---------------------------------------------------------------------------
+// Per-method draft row shape (all five *_drafts tables share identical columns)
+// Used for narrow casts on .from() calls.
+// ---------------------------------------------------------------------------
+type DraftsTableName =
+  | 'dcf_drafts'
+  | 'relative_drafts'
+  | 'asset_drafts'
+  | 'intrinsic_drafts'
+  | 'tax_drafts'
+
+function getDraftsTable(method: ValuationMethod): DraftsTableName {
+  return `${method}_drafts` as DraftsTableName
 }
 
 /**
@@ -292,8 +306,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     const table = getDraftsTable(method)
 
+    // Cast to representative table: all five *_drafts tables share the same schema.
     const { data, error, count } = await supabase
-      .from(table)
+      .from(table as 'dcf_drafts')
       .select(DRAFT_SELECT_COLUMNS, { count: 'exact' })
       .eq('project_id', projectId)
       .order('version', { ascending: false })
@@ -420,8 +435,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     const table = getDraftsTable(validatedMethod)
 
     // Auto-increment version: get max version for this project
+    // Cast to representative table: all five *_drafts tables share the same schema.
     const { data: maxVersionRow } = await supabase
-      .from(table)
+      .from(table as 'dcf_drafts')
       .select('version')
       .eq('project_id', projectId)
       .order('version', { ascending: false })
@@ -434,8 +450,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     // Pick section fields from body
     const sectionData = pickSectionFields(body)
 
+    // Cast to representative table: all five *_drafts tables share the same schema.
+    type DraftInsert = Database['public']['Tables']['dcf_drafts']['Insert']
     const { data: draft, error: insertError } = await supabase
-      .from(table)
+      .from(table as 'dcf_drafts')
       .insert({
         project_id: projectId,
         version: nextVersion,
@@ -444,7 +462,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
         created_by: user.id,
         created_at: now,
         updated_at: now,
-      })
+      } as DraftInsert)
       .select(DRAFT_SELECT_COLUMNS)
       .single()
 
@@ -548,8 +566,9 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
     const table = getDraftsTable(validatedMethod)
 
     // Fetch the draft to verify it exists and get its project_id
+    // Cast to representative table: all five *_drafts tables share the same schema.
     const { data: draft, error: fetchError } = await supabase
-      .from(table)
+      .from(table as 'dcf_drafts')
       .select('draft_id, project_id, status')
       .eq('draft_id', draftId)
       .single()
@@ -602,9 +621,11 @@ export async function PUT(request: NextRequest): Promise<NextResponse<ApiRespons
       }
     }
 
+    // Cast to representative table: all five *_drafts tables share the same schema.
+    // updateData keys are a known subset of dcf_drafts Update columns (section_* + status + timestamps).
     const { data: updated, error: updateError } = await supabase
-      .from(table)
-      .update(updateData)
+      .from(table as 'dcf_drafts')
+      .update(updateData as DraftUpdate)
       .eq('draft_id', draftId)
       .select(DRAFT_SELECT_COLUMNS)
       .single()

@@ -66,8 +66,33 @@ function validateMethod(method: string): method is ValuationMethod {
   return (VALID_METHODS as readonly string[]).includes(method)
 }
 
-function getDocumentsTable(method: ValuationMethod): string {
-  return `${method}_documents`
+// ---------------------------------------------------------------------------
+// Per-method document row shape (all five tables share identical columns)
+// Used for narrow casts on .from() calls where the dynamic table name
+// would otherwise widen to `string` and break the typed overload.
+// ---------------------------------------------------------------------------
+interface DocumentRow {
+  document_id: string
+  project_id: string
+  category: string | null
+  file_name: string | null
+  file_path: string | null
+  file_size: number | null
+  file_type: string | null
+  upload_status: string | null
+  uploaded_by: string | null
+  created_at: string | null
+}
+
+type DocumentsTableName =
+  | 'dcf_documents'
+  | 'relative_documents'
+  | 'asset_documents'
+  | 'intrinsic_documents'
+  | 'tax_documents'
+
+function getDocumentsTable(method: ValuationMethod): DocumentsTableName {
+  return `${method}_documents` as DocumentsTableName
 }
 
 /**
@@ -235,8 +260,9 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     const table = getDocumentsTable(method)
 
+    // Cast to representative table: all five *_documents tables share the same schema.
     const { data, error, count } = await supabase
-      .from(table)
+      .from(table as 'dcf_documents')
       .select(
         'document_id, project_id, category, file_name, file_path, file_size, file_type, upload_status, uploaded_by, created_at',
         { count: 'exact' },
@@ -439,8 +465,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     const table = getDocumentsTable(method)
     const now = new Date().toISOString()
 
+    // Cast to representative table: all five *_documents tables share the same schema.
     const { data: docRecord, error: insertError } = await supabase
-      .from(table)
+      .from(table as 'dcf_documents')
       .insert({
         project_id: projectId,
         category: category.trim(),
@@ -539,8 +566,9 @@ export async function DELETE(request: NextRequest): Promise<NextResponse<ApiResp
     const table = getDocumentsTable(method)
 
     // Fetch existing document
+    // Cast to representative table: all five *_documents tables share the same schema.
     const { data: doc, error: fetchError } = await supabase
-      .from(table)
+      .from(table as 'dcf_documents')
       .select('document_id, file_path, uploaded_by')
       .eq('document_id', documentId)
       .single()
@@ -575,8 +603,9 @@ export async function DELETE(request: NextRequest): Promise<NextResponse<ApiResp
     }
 
     // Delete metadata
+    // Cast to representative table: all five *_documents tables share the same schema.
     const { error: deleteError } = await supabase
-      .from(table)
+      .from(table as 'dcf_documents')
       .delete()
       .eq('document_id', documentId)
 

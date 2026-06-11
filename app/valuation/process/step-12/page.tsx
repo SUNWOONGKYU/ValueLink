@@ -63,7 +63,7 @@ function formatFileSize(bytes: number): string {
 
 function Step12Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [reports, setReports] = useState<DeliveredReport[]>([])
@@ -276,7 +276,7 @@ function Step12Content() {
       {/* 프로젝트 목록으로 이동 */}
       <div className="flex flex-col items-center gap-4">
         <Link
-          href="/projects"
+          href="/projects/list"
           className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
         >
           <svg
