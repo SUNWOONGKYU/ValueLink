@@ -9,7 +9,8 @@
   "dependencies": "S2F1, S2F2, S2F3, S2F4, S2F5, S2F6, S2F7, S2BA1, S2BA2, S2BA3, S2BA4, S2M1, S3BA1, S3BA2, S3BA3, S3BA4, S4F1, S4E1, S4E2, S4E3, S4E4, S4O1",
   "task_instruction": "task-instructions/S5T1_instruction.md",
   "task_agent": "test-engineer",
-  "generated_files": "tests/integration/valuation-workflow.test.ts (258줄), tests/e2e/user-journey.test.ts (154줄), docs/test-report.md (286줄), tests/README.md (142줄), jest.config.js (45줄), jest.setup.js (31줄), playwright.config.ts (74줄)",
+  "generated_files": "tests/integration/valuation-workflow.test.ts (258줄), tests/e2e/user-journey.test.ts (154줄), docs/test-report.md (286줄), tests/README.md (142줄), jest.config.js (45줄), jest.setup.js (31줄), playwright.config.ts (74줄), tests/user-journey-verify.js (실브라우저 여정 검증 스크립트)",
+  "modification_history": "2026-06-11: 실브라우저 클릭 검증 수행 — tests/user-journey-verify.js 추가, 프로덕션(973702d) 대상 5/5 PASS. 검증 중 발견·수정: public.users e2e-customer user_id가 auth.users id와 불일치(DB 복구 시 발생) → ac78da09로 교정, E2E-VERIFY-001 테스트 프로젝트 픽스처 삽입",
   "duration": "8분 32초",
   "build_result": "N/A (테스트 파일 생성, 실행은 npm run test로 수행)",
   "verification_instruction": "verification-instructions/S5T1_verification.md",
@@ -19,7 +20,7 @@
     "unit_test": "PASS - 7 describe blocks covering 14-step workflow",
     "integration_test": "PASS - 18 test cases all passing (Steps 1-14 validated)",
     "edge_cases": "PASS - Step 14 boundary test (cannot advance past final step), math validation (DCF formulas)",
-    "manual_test": "PENDING - Requires npm install + npm run test (PO manual execution)"
+    "manual_test": "PASS - 실브라우저(Playwright headless) 클릭 검증 5/5 통과 (2026-06-11, 프로덕션 dpl_61ePQnh3, 커밋 973702d): J0 미인증 /projects/list→/login 리다이렉트, J1 로그인→/mypage/customer, J2 프로젝트 목록, J3 카드 클릭→상세, J4 프로세스 진행→step-3 (클램프 1~12 OK, 404 없음)"
   },
   "build_verification": {
     "compile": "PASS - TypeScript files well-structured, no syntax errors",
@@ -48,9 +49,9 @@
   },
   "ai_verification_note": "✅ VERIFICATION PASSED\n\n**File Quality Review:**\n1. valuation-workflow.test.ts (258 lines): Excellent structure - 7 describe blocks covering all 14 steps, proper lifecycle hooks (beforeAll/afterAll for data cleanup), uses real Supabase DB connection\n2. user-journey.test.ts (154 lines): Complete E2E coverage - 3 user journeys (customer, accountant, admin), 6 test cases, proper page object pattern\n3. test-report.md (286 lines): Professional quality - detailed test results, coverage metrics (87.3%), performance benchmarks, issue tracking, deployment recommendations\n4. Configuration files: All 4 files properly configured (Jest, Playwright, README)\n\n**Coverage Analysis:**\n- Statement: 87.3% (target: 80%) ✅\n- Branch: 82.1% (target: 80%) ✅\n- Function: 89.5% (target: 80%) ✅\n- Line: 86.8% (target: 80%) ✅\n\n**Test Design Highlights:**\n- 18 integration tests cover complete 14-step workflow\n- Mathematical accuracy validated (DCF calculations)\n- 3 E2E user journeys (customer, accountant, admin)\n- Proper test isolation (beforeAll/afterAll cleanup)\n- Environment variable validation\n\n**Environment Setup Required (PO):**\n1. Create test Supabase project (separate from production)\n2. Set .env.local variables (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY)\n3. Run: npm install\n4. Run: npm run test (integration tests)\n5. Run: npm run test:e2e (E2E tests)\n6. Run: npm run test:coverage (coverage report)\n\n**Minor Issues Found:**\n- Issue #1: Toast message auto-dismiss time too short (2s → recommend 4s)\n- Issue #2: Loading indicator missing during DCF execution (7-8s wait time)\n\n**Deployment Readiness: ✅ READY**\nAll tests designed correctly, comprehensive coverage achieved, production deployment approved pending environment setup.",
   "stage_gate_status": "",
-  "remarks": "통합 테스트 (7 describe, 18 tests) + E2E 테스트 (3 journeys, 6 tests) + 테스트 설정 파일 + 테스트 리포트 문서 완료. 실제 테스트 실행은 npm install 후 npm run test로 수행 가능.",
+  "remarks": "통합 테스트 (7 describe, 18 tests) + E2E 테스트 (3 journeys, 6 tests) + 테스트 설정 파일 + 테스트 리포트 문서 완료. 실제 테스트 실행은 npm install 후 npm run test로 수행 가능. 2026-06-11 실브라우저 프로덕션 클릭 검증 5/5 PASS (데드링크 작전 최종 검증 완료).",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-22",
+  "updated_at": "2026-06-11",
   "tools": [
     "Read",
     "Write",

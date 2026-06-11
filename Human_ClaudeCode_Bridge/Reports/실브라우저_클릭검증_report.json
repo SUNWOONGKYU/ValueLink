@@ -1,0 +1,42 @@
+{
+  "report_name": "실브라우저 클릭 검증 (데드링크 작전 최종 검증)",
+  "date": "2026-06-11",
+  "target_deployment": {
+    "url": "https://valuelink-mxtnqrtxx-finder-world.vercel.app",
+    "deployment_id": "dpl_61ePQnh3FW46Ce2PJAwuDT1utmES",
+    "commit": "973702d",
+    "target": "production",
+    "access": "Vercel Protection Bypass 토큰 사용"
+  },
+  "method": "결정적(deterministic) Playwright headless 스크립트 — tests/user-journey-verify.js (직전 세션 자유서술형 에이전트 3회 실패 → 방식 전환)",
+  "test_account": "e2e-customer@valuelink.test (customer)",
+  "results": [
+    { "step": "J0 미인증 /projects/list 접근", "result": "PASS", "detail": "/login으로 리다이렉트 (커밋 973702d 수정 검증 완료)" },
+    { "step": "J1 로그인", "result": "PASS", "detail": "이메일/비밀번호 입력 → /mypage/customer 도착" },
+    { "step": "J2 프로젝트 목록 진입", "result": "PASS", "detail": "/projects/list 정상 렌더 (총 1건 표시)" },
+    { "step": "J3 프로젝트 상세 진입", "result": "PASS", "detail": "프로젝트 카드 클릭(onClick router.push) → /projects/E2E-VERIFY-001" },
+    { "step": "J4 프로세스 진행 클릭", "result": "PASS", "detail": "QuickActionButton 클릭 → /valuation/process/step-3 (current_step=3, 클램프 1~12 OK, 404 없음)" }
+  ],
+  "summary": "5/5 PASS — 직전 세션 데드링크 수정분(973702d) 프로덕션 실브라우저 검증 완료",
+  "blocker_found_and_fixed": {
+    "issue": "로그인 실패 '사용자 정보를 가져올 수 없습니다' — public.users의 e2e-customer user_id(a1658b2f, 실제로는 e2e-admin의 auth id)가 auth.users id(ac78da09)와 불일치. Track A DB 복구 과정에서 발생한 것으로 추정",
+    "fix": [
+      "UPDATE public.users SET user_id='ac78da09-...' WHERE email='e2e-customer@valuelink.test' (FK 참조 0건 확인 후 실행)",
+      "projects에 E2E-VERIFY-001 테스트 픽스처 삽입 (company_name_kr='E2E 검증용 테스트기업', current_step=3)"
+    ]
+  },
+  "findings_non_blocking": [
+    "F-1: /mypage/customer에 프로젝트 목록으로 가는 링크 없음 (테스트는 직접 이동으로 우회) — UX 개선 후보",
+    "F-2: e2e-admin@valuelink.test는 auth.users에만 있고 public.users 행 없음 → 로그인 시 동일 오류 발생 예정 (e2e-accountant는 정상)",
+    "F-3: 프로젝트 카드·QuickActionButton이 <a href>가 아닌 onClick(router.push) 방식 — 동작은 정상이나 새 탭 열기/접근성 측면 개선 후보",
+    "F-4: scripts/setup-e2e-users.js의 계정 목록(wksun999@hanmail.net 등)이 실제 e2e-*@valuelink.test 계정과 불일치 (스크립트 노후화)"
+  ],
+  "generated_files": [
+    "tests/user-journey-verify.js",
+    "tests/screenshots/ (실패 시 증적용, 최종 실행에서는 미생성)"
+  ],
+  "sal_grid": {
+    "updated_records": ["S5T1"],
+    "fields": ["test_result.manual_test", "modification_history", "generated_files", "remarks", "updated_at"]
+  }
+}

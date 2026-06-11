@@ -2,6 +2,42 @@
 
 ---
 
+## 2026-06-11 실브라우저 클릭 검증 완료 (데드링크 작전 최종 검증) ✅
+
+### 작업 상태: ✅ 완료 — 5/5 PASS
+
+### 작업 개요
+| 항목 | 내용 |
+|------|------|
+| 작업 유형 | 프로덕션 실브라우저 사용자 여정 클릭 검증 |
+| 대상 | 커밋 973702d (dpl_61ePQnh3, valuelink-mxtnqrtxx) |
+| 방식 | 결정적 Playwright 스크립트 (`tests/user-journey-verify.js`) — 자유서술형 에이전트 3회 실패 후 방식 전환 |
+
+### 검증 결과 (5/5 PASS)
+| 여정 | 결과 |
+|------|------|
+| J0 미인증 /projects/list → /login 리다이렉트 | ✅ (973702d 수정 검증) |
+| J1 로그인 → /mypage/customer | ✅ |
+| J2 프로젝트 목록 진입 | ✅ |
+| J3 카드 클릭 → 프로젝트 상세 | ✅ |
+| J4 "프로세스 진행" 클릭 → step-3 (클램프 1~12 OK) | ✅ |
+
+### 검증 중 발견·수정한 차단 이슈
+- **public.users e2e-customer user_id 불일치** (DB 복구 시 발생): `a1658b2f`(실제 e2e-admin auth id) → `ac78da09`(진짜 auth id)로 UPDATE (FK 참조 0건 확인 후)
+- projects 비어있음 → `E2E-VERIFY-001` 테스트 픽스처 삽입 (current_step=3)
+
+### 비차단 발견사항
+- F-1: 마이페이지에 프로젝트 목록 링크 없음
+- F-2: e2e-admin@valuelink.test public.users 행 없음 (로그인 불가 상태)
+- F-3: 카드/QuickActionButton이 href 없는 onClick 방식
+- F-4: setup-e2e-users.js 계정 목록 노후화
+
+### 문서화
+- SAL Grid: S5T1.json (manual_test PASS, modification_history, updated_at)
+- Reports: `Human_ClaudeCode_Bridge/Reports/실브라우저_클릭검증_report.json`
+
+---
+
 ## 2026-06-11 Track A DB 복구 백호작전 — SAL Grid 업데이트 (Phase 7)
 
 ### 작업 상태: 🔄 진행 중 (Phase 4~6 완료 대기)
