@@ -504,8 +504,8 @@ export default function ProjectListPage() {
       } = await supabase.auth.getUser()
 
       if (!user) {
-        setError('로그인이 필요합니다.')
-        setIsLoading(false)
+        // 미인증 시 다른 보호 페이지(mypage/*)와 동일하게 로그인으로 이동
+        router.replace('/login')
         return
       }
 
@@ -598,7 +598,7 @@ export default function ProjectListPage() {
     } finally {
       setIsLoading(false)
     }
-  }, [supabase, currentPage, statusFilter, sortField, debouncedSearch])
+  }, [supabase, router, currentPage, statusFilter, sortField, debouncedSearch])
 
   useEffect(() => {
     fetchProjects()
