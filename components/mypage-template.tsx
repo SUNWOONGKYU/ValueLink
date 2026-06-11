@@ -110,8 +110,8 @@ const ROLE_NAV: Record<UserRole, NavItem[]> = {
   customer: [
     { label: '대시보드', href: '/mypage/customer', icon: 'dashboard' },
     { label: '프로젝트 목록', href: '/mypage/customer#projects', icon: 'folder' },
-    { label: '새 프로젝트', href: '/valuation/request', icon: 'add' },
-    { label: '평가 결과', href: '/valuation-results', icon: 'chart' },
+    { label: '새 프로젝트', href: '/projects/create', icon: 'add' },
+    { label: '프로젝트 목록', href: '/projects/list', icon: 'chart' },
   ],
   accountant: [
     { label: '대시보드', href: '/mypage/accountant', icon: 'dashboard' },
@@ -294,7 +294,7 @@ export default function MyPageTemplate({
             <div className="flex items-center gap-3">
               {/* Desktop logout link */}
               <Link
-                href="/auth/logout"
+                href="/api/auth/logout"
                 className="hidden items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 sm:flex"
                 aria-label="로그아웃"
               >
@@ -366,7 +366,7 @@ export default function MyPageTemplate({
           {/* Logout */}
           <div className="mt-6 border-t border-gray-200 pt-6">
             <Link
-              href="/auth/logout"
+              href="/api/auth/logout"
               className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
             >
               <NavIcon name="logout" className="h-5 w-5" />
@@ -409,7 +409,7 @@ export default function MyPageTemplate({
               {/* Logout */}
               <div className="mt-6 border-t border-gray-200 pt-6">
                 <Link
-                  href="/auth/logout"
+                  href="/api/auth/logout"
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
                 >
                   <NavIcon name="logout" className="h-5 w-5" />

@@ -5034,3 +5034,26 @@ npm run test:coverage
 - **작업 시간**: ~5분
 - **버전**: Task S5F8 v1.0
 
+
+---
+
+## 2026-06-11 데드링크 작전 마무리 (직전 세션 이어가기)
+
+### 작업 상태: ✅ 완료
+
+### 수정 내역
+| 항목 | 파일 | 내용 |
+|------|------|------|
+| LIVE 버그 | lib/workflow/approval-points.ts:402 | .select('point_id') → .select('point_code') (schema-v5 정합성) |
+| 데드코드 제거 | lib/workflow/approval-points.ts | computeImpactAnalysis 메서드 삭제 (레거시 pre-v5 의미론, regression 위험) |
+| SHADOW 해소 | app/projects/[id]/page.tsx:794 | step 경로 클램프 Math.min(Math.max(current_step??1,1),12) |
+| 렌더링 방어 | app/projects/[id]/page.tsx:783 | ProgressTracker currentStep 1~14 클램프 |
+| Stage 동기화 | Process/S2_개발-1차/** | 루트 최신본을 Stage 원본에 복사 (구버전 Stage가 루트를 덮어쓰는 사고 예방) |
+
+### 검증
+- next build: exit 0, 타입오류 0건 (1차·2차 모두)
+- reviewer 에이전트 역검증: 1차 Needs Fix(R-1 데드코드, R-4 클램프 누락) → 즉시 수정 → 재검증 **Verified**
+- 비차단 기술부채(R-2 point_id 네이밍, R-3 무효 파라미터, R-5 타입 선언 불일치)는 잔존 기록
+
+### SAL Grid 업데이트
+- S2BA1.json, S2F6.json, S2F4.json — modification_history/remarks/updated_at 기록

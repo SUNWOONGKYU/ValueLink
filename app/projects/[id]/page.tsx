@@ -780,7 +780,7 @@ export default function ProjectDetailPage() {
         {/* Right column: Progress + Quick Actions */}
         <div className="space-y-6">
           {/* Progress Tracker */}
-          <ProgressTracker currentStep={project.current_step} />
+          <ProgressTracker currentStep={Math.min(Math.max(project.current_step ?? 1, 1), 14)} />
 
           {/* Quick Actions */}
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -791,7 +791,7 @@ export default function ProjectDetailPage() {
               <QuickActionButton
                 label="프로세스 진행"
                 description={`${STEP_LABELS[project.current_step - 1] ?? `단계 ${project.current_step}`} 진행하기`}
-                href={`/valuation/process/step-${Math.min(project.current_step, 12)}?project_id=${project.project_id}`}
+                href={`/valuation/process/step-${Math.min(Math.max(project.current_step ?? 1, 1), 12)}?project_id=${project.project_id}`}
                 icon={
                   <svg
                     className="h-5 w-5"

@@ -399,7 +399,7 @@ export class ApprovalPointManager {
       // Check for existing points (idempotency)
       const { data: existing, error: checkErr } = await supabase
         .from('approval_points')
-        .select('point_id')
+        .select('point_code')   // schema-v5: point_id column dropped, use point_code
         .eq('project_id', projectId)
         .limit(1)
 
@@ -877,42 +877,7 @@ export class ApprovalPointManager {
     return APPROVAL_POINTS_SPEC.filter((s) => s.category === category)
   }
 
-  // -----------------------------------------------------------------------
-  // Private helpers
-  // -----------------------------------------------------------------------
-
-  /**
-   * Computes a basic impact analysis for a decision.
-   *
-   * The Python original hardcoded all impact values to zero. This
-   * implementation provides a structural placeholder with the correct shape
-   * and a flag indicating the analysis is estimated. A full implementation
-   * would invoke the relevant valuation engine to re-calculate.
-   */
-  private computeImpactAnalysis(
-    pointId: string,
-    decision: string,
-    aiValue: unknown,
-    customValue: unknown,
-  ): Record<string, unknown> {
-    const spec = SPEC_MAP.get(pointId)
-    const affectedMethods = spec ? [spec.valuation_method] : []
-
-    // When the decision is 'approved' the AI value is kept, so the nominal
-    // change is zero.  For 'custom' a real re-calculation would be needed.
-    const hasChange = decision === 'custom' && customValue !== undefined
-    const changeNote = hasChange
-      ? 'Re-calculation required with custom value.'
-      : 'No change from AI-proposed value.'
-
-    return {
-      point_id: pointId,
-      decision,
-      ai_value: aiValue,
-      custom_value: customValue ?? null,
-      affected_methods: affectedMethods,
-      value_change_estimated: hasChange,
-      note: changeNote,
-    }
-  }
+  // NOTE: legacy computeImpactAnalysis() helper was removed (schema-v5).
+  // It was dead code carrying pre-v5 semantics (point_id/ai_value/custom_value)
+  // and risked schema violations if ever wired into an update payload.
 }

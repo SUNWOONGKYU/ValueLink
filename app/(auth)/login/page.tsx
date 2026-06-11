@@ -275,7 +275,7 @@ export default function LoginPage() {
             </div>
 
             {/* Options */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center mb-6">
               <label
                 htmlFor="rememberMe"
                 className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer select-none"
@@ -289,12 +289,6 @@ export default function LoginPage() {
                 />
                 로그인 상태 유지
               </label>
-              <Link
-                href="/forgot-password"
-                className="text-sm font-semibold text-blue-700 hover:underline"
-              >
-                비밀번호 찾기
-              </Link>
             </div>
 
             {/* Submit */}

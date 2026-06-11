@@ -22,9 +22,10 @@
   "comprehensive_verification": "{\"task_instruction\":\"PASS - All 3 files generated as specified\",\"test\":\"PASS 4/4\",\"build\":\"PASS 3/3\",\"integration\":\"PASS 3/3\",\"blockers\":\"None\",\"final\":\"Passed\"}",
   "ai_verification_note": "All column names verified against schema-v4-final.sql. Search, filter, pagination features fully implemented.",
   "stage_gate_status": "",
-  "remarks": "프로젝트 목록, 상세, 생성 페이지",
+  "modification_history": "2026-06-11: projects/[id]/page.tsx 데드링크 수정 — C-3 step 경로 클램프(/valuation/process/step-N, N=1~12 보장: Math.min(Math.max(current_step??1,1),12)), H-4/H-6 링크 정리, ProgressTracker 호출부 1~14 클램프 적용(렌더링 overflow 방어). reviewer 에이전트 재검증 Verified.",
+  "remarks": "프로젝트 목록, 상세, 생성 페이지. 2026-06-11 데드링크·클램프 수정 완료.",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-09",
+  "updated_at": "2026-06-11",
   "tools": [
     "Read",
     "Write"
