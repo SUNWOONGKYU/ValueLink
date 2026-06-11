@@ -2,6 +2,37 @@
 
 ---
 
+## 2026-06-12 데드링크 작전 최종 배포 검증 + 로그아웃 프리페치 회귀 수정 ✅
+
+### 작업 상태: ✅ 완료 — reviewer Verified, 프로덕션 검증 8/8 PASS
+
+### 경과
+1. 커밋 21af407 배포(dpl_FDnoPvtu) 대상 실브라우저 클릭 검증 수행 중 **간헐 자동 로그아웃 회귀 발견**
+   - 원인: F-3 표준화 때 로그아웃이 `<Link href="/api/auth/logout">`로 전환됨 → Next.js Link가 뷰포트 진입 시 프리페치 GET 발사 → GET 핸들러의 signOut() 실행 → **페이지를 보기만 해도 세션 파괴**
+   - 증상: 여정 검증 중 무작위 "로그인이 필요합니다" / 로그인 페이지 튕김 (네트워크 로그에서 `GET /api/auth/logout 307` 자동 호출 포착)
+2. 수정 (커밋 f3531f3): 로그아웃 3곳 `<Link>` → POST `<form>`, logout route signOut을 POST(303)로 이동, GET은 무해한 리다이렉트
+3. reviewer 서브에이전트 검증: **Verified** (Critical 0, Warning 3)
+4. Warning 일괄 수정 (커밋 7ed1707): W-1 display:contents→hidden sm:block(Safari), W-2 GET 302 명시, W-3 same-origin 가드(로그아웃 CSRF)
+5. 최종 배포(dpl_8T1Pmk) 프로덕션 검증:
+   - 여정 5/5 PASS — J2가 **실제 사이드바 링크 클릭**으로 통과 (F-1 정상 작동 확인)
+   - 로그아웃 3/3 PASS — L1 체류 중 세션 유지(프리페치 무해), L2 로그아웃 클릭 정상, L3 세션 실제 파괴
+
+### 수정 파일
+| 파일 | 내용 |
+|------|------|
+| components/mypage-template.tsx (+Stage 원본) | 로그아웃 3곳 POST 폼 전환 |
+| app/api/auth/logout/route.ts (+Stage 원본) | POST signOut + same-origin 가드, GET 무해화 |
+| tests/user-journey-verify.js | J2/J3 hydration 대기 + visible 필터 (count() 즉시 체크 → 폴백 오탐 수정) |
+| tests/check-logout-click.js (신규) | 로그아웃 3단계 검증 스크립트 |
+
+### SAL Grid
+- S2F4.json, S5T1.json modification_history + S5T1 manual_test 갱신 (루트 + Process 원본)
+
+### 발견 사항 (비차단)
+- method/json/data/grid_records/S1F1.json — index.json task_ids에 없는 고아 레코드 (Pending 상태, 진행률 계산에서 제외됨). 정리 여부 PO 확인 필요
+
+---
+
 ## 2026-06-12 데드링크 작전 잔여 7항목 완료 (F-1~F-4, R-2/R-3/R-5) ✅
 
 ### 작업 상태: ✅ 완료 — reviewer 재검증 Verified

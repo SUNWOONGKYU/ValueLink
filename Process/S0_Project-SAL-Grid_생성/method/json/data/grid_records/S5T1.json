@@ -10,7 +10,7 @@
   "task_instruction": "task-instructions/S5T1_instruction.md",
   "task_agent": "test-engineer",
   "generated_files": "tests/integration/valuation-workflow.test.ts (258줄), tests/e2e/user-journey.test.ts (154줄), docs/test-report.md (286줄), tests/README.md (142줄), jest.config.js (45줄), jest.setup.js (31줄), playwright.config.ts (74줄), tests/user-journey-verify.js (실브라우저 여정 검증 스크립트)",
-  "modification_history": "2026-06-11: 실브라우저 클릭 검증 수행 — tests/user-journey-verify.js 추가, 프로덕션(973702d) 대상 5/5 PASS. 검증 중 발견·수정: public.users e2e-customer user_id가 auth.users id와 불일치(DB 복구 시 발생) → ac78da09로 교정, E2E-VERIFY-001 테스트 프로젝트 픽스처 삽입\n2026-06-12: F-4 — scripts/setup-e2e-users.js 계정 목록을 실계정에서 e2e-*@valuelink.test 전용 계정으로 교체 + 기존 사용자 조회 시 users[0] 오매칭 버그 수정(이메일 일치 find). F-2 — e2e-admin public.users 행 생성(user_id a1658b2f, REST 검증 OK).",
+  "modification_history": "2026-06-11: 실브라우저 클릭 검증 수행 — tests/user-journey-verify.js 추가, 프로덕션(973702d) 대상 5/5 PASS. 검증 중 발견·수정: public.users e2e-customer user_id가 auth.users id와 불일치(DB 복구 시 발생) → ac78da09로 교정, E2E-VERIFY-001 테스트 프로젝트 픽스처 삽입\n2026-06-12: F-4 — scripts/setup-e2e-users.js 계정 목록을 실계정에서 e2e-*@valuelink.test 전용 계정으로 교체 + 기존 사용자 조회 시 users[0] 오매칭 버그 수정(이메일 일치 find). F-2 — e2e-admin public.users 행 생성(user_id a1658b2f, REST 검증 OK).\n2026-06-12: 데드링크 작전 최종 배포 검증 — 프로덕션(dpl_8T1Pmk, 커밋 7ed1707) 실브라우저 클릭 검증 여정 5/5 PASS(J2가 실제 사이드바 링크 클릭으로 통과 — F-1 검증 완료) + 로그아웃 검증 3/3 PASS(체류 중 세션 유지/로그아웃 클릭/세션 파괴). 검증 중 발견한 로그아웃 프리페치 회귀는 S2F4에서 수정. user-journey-verify.js J2/J3 hydration 대기 보강, check-logout-click.js 추가",
   "duration": "8분 32초",
   "build_result": "N/A (테스트 파일 생성, 실행은 npm run test로 수행)",
   "verification_instruction": "verification-instructions/S5T1_verification.md",
@@ -20,7 +20,7 @@
     "unit_test": "PASS - 7 describe blocks covering 14-step workflow",
     "integration_test": "PASS - 18 test cases all passing (Steps 1-14 validated)",
     "edge_cases": "PASS - Step 14 boundary test (cannot advance past final step), math validation (DCF formulas)",
-    "manual_test": "PASS - 실브라우저(Playwright headless) 클릭 검증 5/5 통과 (2026-06-11, 프로덕션 dpl_61ePQnh3, 커밋 973702d): J0 미인증 /projects/list→/login 리다이렉트, J1 로그인→/mypage/customer, J2 프로젝트 목록, J3 카드 클릭→상세, J4 프로세스 진행→step-3 (클램프 1~12 OK, 404 없음)"
+    "manual_test": "PASS - 실브라우저(Playwright headless) 클릭 검증: 여정 5/5 + 로그아웃 3/3 통과 (2026-06-12, 프로덕션 dpl_8T1Pmk, 커밋 7ed1707): J0 미인증 리다이렉트, J1 로그인, J2 사이드바 링크 클릭→목록(F-1 검증), J3 카드 링크→상세, J4 프로세스 진행→step-3(클램프 OK), L1 체류 중 세션 유지(프리페치 무해), L2 로그아웃 클릭, L3 세션 파괴 확인"
   },
   "build_verification": {
     "compile": "PASS - TypeScript files well-structured, no syntax errors",
@@ -51,7 +51,7 @@
   "stage_gate_status": "",
   "remarks": "통합 테스트 (7 describe, 18 tests) + E2E 테스트 (3 journeys, 6 tests) + 테스트 설정 파일 + 테스트 리포트 문서 완료. 실제 테스트 실행은 npm install 후 npm run test로 수행 가능. 2026-06-11 실브라우저 프로덕션 클릭 검증 5/5 PASS (데드링크 작전 최종 검증 완료).",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-12",
+  "updated_at": "2026-06-12T01:30:00+09:00",
   "tools": [
     "Read",
     "Write",
