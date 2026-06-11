@@ -10,7 +10,6 @@
 
 import { useSearchParams } from 'next/navigation'
 import { useState, useEffect, Suspense } from 'react'
-import Link from 'next/link'
 import ProcessStepTemplate from '@/components/process-step-template'
 
 // ---------------------------------------------------------------------------
@@ -22,7 +21,7 @@ interface ProjectData {
   company_name_kr: string
   requested_methods: string[] | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
 }
 
 // ---------------------------------------------------------------------------
@@ -85,7 +84,7 @@ const METHOD_LABELS: Record<string, string> = {
 
 function Step2Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -158,7 +157,7 @@ function Step2Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={2}
       stepTitle="서류 제출 요청"
       companyName={project.company_name_kr}
@@ -272,30 +271,10 @@ function Step2Content() {
         </ul>
       </div>
 
-      {/* 서류 업로드 버튼 */}
-      <div className="mt-8 flex flex-col items-center gap-4">
-        <Link
-          href={`/valuation/process/documents/upload?project_id=${projectId}`}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 transition-colors"
-        >
-          <svg
-            className="h-4 w-4"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>
-          서류 업로드
-        </Link>
-        <p className="text-xs text-gray-500">
-          업로드 페이지에서 서류를 첨부한 후 제출을 완료해 주세요.
+      {/* 서류 업로드 버튼: /valuation/process/documents/upload 페이지 미구현 — 구현 전까지 비표시 */}
+      <div className="mt-8 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-center">
+        <p className="text-sm text-yellow-700">
+          서류 업로드 기능은 준비 중입니다. 담당 회계사에게 직접 서류를 제출해 주세요.
         </p>
       </div>
     </ProcessStepTemplate>

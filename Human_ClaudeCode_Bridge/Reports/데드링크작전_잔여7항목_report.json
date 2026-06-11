@@ -1,0 +1,64 @@
+{
+  "report_name": "데드링크 작전 잔여 7항목 완료 (F-1~F-4, R-2/R-3/R-5)",
+  "date": "2026-06-12",
+  "summary": "실브라우저 검증(728548d)에서 비차단으로 분류됐던 F-1~F-4와 마무리 리포트의 기술부채 R-2/R-3/R-5를 전부 수정. reviewer 1차 리뷰에서 current_step 방어 누락 15파일이 추가 발견되어 전수 수정 후 재검증 Verified.",
+  "changes": [
+    {
+      "id": "F-1",
+      "files": ["app/mypage/customer/page.tsx", "components/mypage-template.tsx"],
+      "fix": "customer 마이페이지에 '전체 프로젝트 보기' Link(/projects/list) 추가, mypage-template customer nav 중복 '프로젝트 목록' 항목 제거 및 href를 /projects/list로 정정"
+    },
+    {
+      "id": "F-2",
+      "files": ["(DB) public.users"],
+      "fix": "e2e-admin@valuelink.test public.users 행 생성 (user_id a1658b2f = 본인 auth id). Supabase REST로 e2e 3계정 정합 검증 완료"
+    },
+    {
+      "id": "F-3",
+      "files": ["app/projects/list/page.tsx", "app/projects/[id]/page.tsx"],
+      "fix": "onClick(router.push) 버튼을 <Link href>로 전환 — ProjectCard, EmptyState, 새 프로젝트(2곳), QuickActionButton(disabled시 div/활성시 Link), ForbiddenView, 상세 뒤로가기. 새 탭 열기·접근성·dead-link 정적 분석 가능해짐"
+    },
+    {
+      "id": "F-4",
+      "files": ["scripts/setup-e2e-users.js"],
+      "fix": "실계정(wksun999@hanmail.net 등) 목록을 e2e-*@valuelink.test 전용 계정으로 교체 + 기존 사용자 조회 시 listData.users[0] 대신 이메일 일치 find 적용 (과거 e2e-customer에 e2e-admin auth id가 들어간 사고의 원인 수정)"
+    },
+    {
+      "id": "R-2",
+      "files": ["lib/workflow/approval-points.ts"],
+      "fix": "ApprovalPointSpec.point_id → point_code 리네임 (22개 엔트리, SPEC_MAP, 시딩 코드). DB PK approval_id와의 혼동 제거. ApprovalDecision.point_id는 API wire format이라 유지(주석 명시)"
+    },
+    {
+      "id": "R-3",
+      "files": ["lib/workflow/approval-points.ts"],
+      "fix": "approveStep의 approvedBy(결정자)를 human_note에 '[decided_by: ...]' 태그로 보존 — schema-v5에 approved_by 컬럼이 없어 기존엔 silent drop되던 정보 손실 해소"
+    },
+    {
+      "id": "R-5",
+      "files": [
+        "app/projects/[id]/page.tsx", "app/projects/list/page.tsx",
+        "app/mypage/customer/page.tsx", "app/mypage/admin/page.tsx", "app/mypage/accountant/page.tsx",
+        "app/valuation/process/step-1~12/page.tsx (12개)"
+      ],
+      "fix": "Project.current_step을 number | null로 전환(런타임 nullable과 타입 일치) + 프론트 사용처 25곳 전부 ?? 1 방어. StepIndicator 1~14 클램프 추가"
+    }
+  ],
+  "verification": {
+    "build": "next build exit 0, 타입 오류 0건 (수정 전후 2회)",
+    "agent": "reviewer 서브에이전트 — 1차 Needs Fix(mypage 3종·step-1~12 current_step 방어 누락) → 전수 수정 → 재검증 Verified. app/ 전체 project.current_step 무방어 노출 0건 확인",
+    "db": "Supabase REST로 e2e 3계정(customer ac78da09 / accountant 168e357a / admin a1658b2f) user_id·role·is_active 정합 확인",
+    "browser_test": "배포 후 tests/user-journey-verify.js Playwright 재검증 예정",
+    "stage_sync": "수정 20파일 전부 Stage 원본(Process/S2_개발-1차/**) 동기화 — pre-commit 역덮어쓰기 방지"
+  },
+  "remaining_tech_debt_non_blocking": [
+    "W-2: QuickActionButton disabled시 tabIndex/role 미부여 (스크린리더 대응 필요 시 추가)",
+    "W-3: POINT_ID_REGEX(/^JP\\d{3}$/)가 JP000 등 미정의 코드 통과 (DB 조회 실패로 안전)",
+    "W-4: human_note 태그 파싱 규약 미문서화 — 태그 소비 코드 생기기 전 처리 권장",
+    "W-5: projects/list 미인증 시 getUser 중복 호출 (성능, 기능 오류 아님)",
+    "API: app/api/projects/route.ts:386 current_step as number 캐스트 — null이면 NaN 전파 가능 (서버 레이어, 이번 범위 밖)"
+  ],
+  "sal_grid": {
+    "updated_records": ["S2F4", "S2F5", "S2F6", "S2BA1", "S5T1"],
+    "fields": ["modification_history", "updated_at"]
+  }
+}

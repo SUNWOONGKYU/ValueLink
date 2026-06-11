@@ -20,10 +20,14 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1)
 }
 
+// F-4: 실계정(wksun999@hanmail.net 등) 목록 제거 — 전용 e2e 계정만 사용
+// (실계정이 들어 있으면 스크립트가 실제 사용자 데이터를 건드릴 위험이 있음)
+const TEST_PASSWORD = process.env.E2E_PASSWORD || 'E2ETest123!@#'
+
 const TEST_ACCOUNTS = [
   {
-    email: 'wksun999@hanmail.net',
-    password: 'E2ETest123!@#',
+    email: 'e2e-customer@valuelink.test',
+    password: TEST_PASSWORD,
     role: 'customer',
     metadata: {
       name: 'E2E Customer',
@@ -31,8 +35,8 @@ const TEST_ACCOUNTS = [
     },
   },
   {
-    email: 'wksun99@gmail.com',
-    password: 'E2ETest123!@#',
+    email: 'e2e-accountant@valuelink.test',
+    password: TEST_PASSWORD,
     role: 'accountant',
     metadata: {
       name: 'E2E Accountant',
@@ -40,8 +44,8 @@ const TEST_ACCOUNTS = [
     },
   },
   {
-    email: 'wksun999@naver.com',
-    password: 'E2ETest123!@#',
+    email: 'e2e-admin@valuelink.test',
+    password: TEST_PASSWORD,
     role: 'admin',
     metadata: {
       name: 'E2E Admin',
@@ -97,8 +101,15 @@ async function createUser(account) {
 
         if (listUsersResponse.ok) {
           const listData = await listUsersResponse.json()
-          if (listData.users && listData.users.length > 0) {
-            userId = listData.users[0].id
+          // ⚠️ Admin API가 email 쿼리 필터를 무시하고 전체 목록을 반환할 수 있음.
+          // users[0]을 그대로 쓰면 다른 사용자의 user_id가 들어가는 사고 발생
+          // (실제로 e2e-customer에 e2e-admin의 auth id가 들어갔던 전례 있음).
+          // 반드시 이메일 일치를 검증한다.
+          const found = (listData.users || []).find(
+            (u) => u.email?.toLowerCase() === email.toLowerCase()
+          )
+          if (found) {
+            userId = found.id
             console.log(`   Found user_id: ${userId.substring(0, 8)}...`)
           } else {
             throw new Error('User exists but not found in list')

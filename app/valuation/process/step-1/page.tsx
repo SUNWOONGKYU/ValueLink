@@ -23,7 +23,7 @@ interface ProjectData {
   valuation_purpose: string | null
   requested_methods: string[] | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   created_at: string
 }
 
@@ -150,7 +150,7 @@ function Step1Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={1}
       stepTitle="프로젝트 생성"
       companyName={project.company_name_kr}

@@ -23,7 +23,7 @@ interface ProjectData {
   company_name_kr: string
   requested_methods: string[] | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
 }
 
 // ---------------------------------------------------------------------------
@@ -183,7 +183,7 @@ function Step7Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={7}
       stepTitle="고객 확인 요청"
       companyName={project.company_name_kr}

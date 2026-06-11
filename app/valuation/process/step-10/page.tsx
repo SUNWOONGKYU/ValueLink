@@ -21,7 +21,7 @@ interface ProjectData {
   project_id: string
   company_name_kr: string
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   agreed_price: number | null
   deposit_amount: number | null
   deposit_paid_at: string | null
@@ -178,7 +178,7 @@ function Step10Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={10}
       stepTitle="잔금 결제 요청"
       companyName={project.company_name_kr}

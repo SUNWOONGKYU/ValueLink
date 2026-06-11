@@ -10,7 +10,7 @@
   "task_instruction": "task-instructions/S5T1_instruction.md",
   "task_agent": "test-engineer",
   "generated_files": "tests/integration/valuation-workflow.test.ts (258줄), tests/e2e/user-journey.test.ts (154줄), docs/test-report.md (286줄), tests/README.md (142줄), jest.config.js (45줄), jest.setup.js (31줄), playwright.config.ts (74줄), tests/user-journey-verify.js (실브라우저 여정 검증 스크립트)",
-  "modification_history": "2026-06-11: 실브라우저 클릭 검증 수행 — tests/user-journey-verify.js 추가, 프로덕션(973702d) 대상 5/5 PASS. 검증 중 발견·수정: public.users e2e-customer user_id가 auth.users id와 불일치(DB 복구 시 발생) → ac78da09로 교정, E2E-VERIFY-001 테스트 프로젝트 픽스처 삽입",
+  "modification_history": "2026-06-11: 실브라우저 클릭 검증 수행 — tests/user-journey-verify.js 추가, 프로덕션(973702d) 대상 5/5 PASS. 검증 중 발견·수정: public.users e2e-customer user_id가 auth.users id와 불일치(DB 복구 시 발생) → ac78da09로 교정, E2E-VERIFY-001 테스트 프로젝트 픽스처 삽입\n2026-06-12: F-4 — scripts/setup-e2e-users.js 계정 목록을 실계정에서 e2e-*@valuelink.test 전용 계정으로 교체 + 기존 사용자 조회 시 users[0] 오매칭 버그 수정(이메일 일치 find). F-2 — e2e-admin public.users 행 생성(user_id a1658b2f, REST 검증 OK).",
   "duration": "8분 32초",
   "build_result": "N/A (테스트 파일 생성, 실행은 npm run test로 수행)",
   "verification_instruction": "verification-instructions/S5T1_verification.md",
@@ -51,7 +51,7 @@
   "stage_gate_status": "",
   "remarks": "통합 테스트 (7 describe, 18 tests) + E2E 테스트 (3 journeys, 6 tests) + 테스트 설정 파일 + 테스트 리포트 문서 완료. 실제 테스트 실행은 npm install 후 npm run test로 수행 가능. 2026-06-11 실브라우저 프로덕션 클릭 검증 5/5 PASS (데드링크 작전 최종 검증 완료).",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-11",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write",

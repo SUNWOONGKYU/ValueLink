@@ -22,10 +22,10 @@
   "comprehensive_verification": "{\"task_instruction\":\"PASS - 3개 파일, 14단계, 22개 포인트, 보안/성능/품질 개선\",\"test\":\"PASS 4/4\",\"build\":\"PASS 3/4 (deploy N/A)\",\"integration\":\"PASS 3/3 with warnings\",\"blockers\":\"None (경고만)\",\"final\":\"Passed\"}",
   "ai_verification_note": "코드 품질 우수. Python→TypeScript 마이그레이션 성공. 타입 안전성, 에러 핸들링, 입력 검증, 보안(auth+authz) 크게 개선. DB 테이블명(valuation_projects vs projects) 정렬은 스키마 업데이트로 해결 필요.",
   "stage_gate_status": "",
-  "modification_history": "2026-06-11: approval-points.ts L402 .select('point_id') → .select('point_code') 수정 (schema-v5에 point_id 컬럼 없음, 런타임 실패 버그). 동일자: 데드코드 computeImpactAnalysis 메서드 삭제 (레거시 pre-v5 의미론 잔존, regression 위험). Stage 원본과 루트 동기화 완료. reviewer 에이전트 재검증 Verified.",
+  "modification_history": "2026-06-11: approval-points.ts L402 .select('point_id') → .select('point_code') 수정 (schema-v5에 point_id 컬럼 없음, 런타임 실패 버그). 동일자: 데드코드 computeImpactAnalysis 메서드 삭제 (레거시 pre-v5 의미론 잔존, regression 위험). Stage 원본과 루트 동기화 완료. reviewer 에이전트 재검증 Verified.\n2026-06-12: R-2 — ApprovalPointSpec.point_id를 point_code로 리네임(DB PK approval_id와의 혼동 제거, API wire format point_id는 유지). R-3 — approveStep의 approvedBy를 human_note에 [decided_by: ...] 태그로 보존(schema-v5에 approved_by 컬럼 없음, 기존엔 silent drop). reviewer 재검증 Verified.",
   "remarks": "14단계 워크플로우 + 22개 승인 포인트. Verified with warnings (테이블명 정렬 필요). 2026-06-11 schema-v5 잔존 버그(point_id 조회) 수정 완료.",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-11",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write",

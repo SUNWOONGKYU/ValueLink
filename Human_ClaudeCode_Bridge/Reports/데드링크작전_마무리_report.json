@@ -1,0 +1,58 @@
+{
+  "report_name": "데드링크 작전 마무리 (직전 세션 이어가기)",
+  "date": "2026-06-11",
+  "commit": "413c349",
+  "summary": "직전 세션 잔여 작업 완료: schema-v5 LIVE 버그 수정, 클램프 적용, 미배포분 통합 배포, SAL Grid 기록",
+  "changes": [
+    {
+      "id": "LIVE-1",
+      "file": "lib/workflow/approval-points.ts:402",
+      "fix": ".select('point_id') → .select('point_code') (schema-v5에 point_id 컬럼 없음, 런타임 실패 버그)"
+    },
+    {
+      "id": "R-1",
+      "file": "lib/workflow/approval-points.ts",
+      "fix": "데드코드 computeImpactAnalysis 메서드 삭제 (pre-v5 레거시 의미론, regression 위험)"
+    },
+    {
+      "id": "SHADOW-1",
+      "file": "app/projects/[id]/page.tsx:794",
+      "fix": "step 경로 클램프 Math.min(Math.max(current_step??1,1),12) — step-0/step-13 경로 생성 차단"
+    },
+    {
+      "id": "R-4",
+      "file": "app/projects/[id]/page.tsx:783",
+      "fix": "ProgressTracker currentStep 1~14 클램프 (진행 바 overflow/underflow 방어)"
+    },
+    {
+      "id": "DEPLOY-1",
+      "files": ["components/mypage-template.tsx", "app/(auth)/login/page.tsx", "app/api/auth/logout/route.ts"],
+      "fix": "직전 세션 Charlie 미배포 3파일 커밋·배포 포함"
+    },
+    {
+      "id": "SYNC-1",
+      "files": ["Process/S2_개발-1차/**"],
+      "fix": "Stage 원본을 루트 최신본과 동기화 (구버전 Stage가 pre-commit sync로 루트를 덮어쓰는 사고 경로 차단)"
+    }
+  ],
+  "verification": {
+    "build": "next build exit 0, 타입오류 0건 (수정 전후 2회)",
+    "agent": "reviewer 서브에이전트 — 1차 Needs Fix(R-1, R-4) → 수정 → 재검증 Verified",
+    "browser_test": "BLOCKED — Vercel SSO Protection 활성(HTTP 401), PO의 Deployment Protection 해제 필요",
+    "remaining_tech_debt": [
+      "R-2: ApprovalPointSpec.point_id 필드명이 DB PK(approval_id)와 혼동 유발 (비차단)",
+      "R-3: approvedBy/rejectedBy 파라미터가 update 페이로드에 미반영 (비차단)",
+      "R-5: current_step: number 타입 선언 vs 런타임 nullable 불일치 (?? 1 방어 적용됨, 비차단)"
+    ]
+  },
+  "sal_grid": {
+    "updated_records": ["S2BA1", "S2F4", "S2F6"],
+    "fields": ["modification_history", "remarks", "updated_at"],
+    "progress_upload": "10/10 phases DB 업로드 완료"
+  },
+  "deployment": {
+    "url": "https://valuelink-23lbcb91b-finder-world.vercel.app",
+    "target": "production",
+    "status": "Ready"
+  }
+}

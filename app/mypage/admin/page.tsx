@@ -40,7 +40,7 @@ interface ProjectOverview {
   project_id: string
   company_name_kr: string
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   user_id: string
   accountant_id: string | null
   created_at: string
@@ -480,7 +480,7 @@ export default function AdminMyPage() {
                           </td>
                           <td className="px-4 py-3 text-gray-900">{project.company_name_kr}</td>
                           <td className="px-4 py-3"><StatusBadge status={project.status} /></td>
-                          <td className="px-4 py-3 text-center text-gray-700">{project.current_step}/14</td>
+                          <td className="px-4 py-3 text-center text-gray-700">{project.current_step ?? 1}/14</td>
                           <td className="px-4 py-3 text-gray-600">
                             {project.accountant_id ? (
                               <span className="text-emerald-600">배정됨</span>
@@ -510,7 +510,7 @@ export default function AdminMyPage() {
                     </div>
                     <p className="font-medium text-gray-900">{project.company_name_kr}</p>
                     <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                      <span>단계 {project.current_step}/14</span>
+                      <span>단계 {project.current_step ?? 1}/14</span>
                       <span>{formatDateTime(project.updated_at)}</span>
                     </div>
                   </Link>

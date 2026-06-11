@@ -23,7 +23,7 @@ interface ProjectData {
   company_name_kr: string
   requested_methods: string[] | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
 }
 
 interface DeliveredReport {
@@ -63,7 +63,7 @@ function formatFileSize(bytes: number): string {
 
 function Step12Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [reports, setReports] = useState<DeliveredReport[]>([])
@@ -144,7 +144,7 @@ function Step12Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={12}
       stepTitle="보고서 전달"
       companyName={project.company_name_kr}
@@ -276,7 +276,7 @@ function Step12Content() {
       {/* 프로젝트 목록으로 이동 */}
       <div className="flex flex-col items-center gap-4">
         <Link
-          href="/projects"
+          href="/projects/list"
           className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
         >
           <svg

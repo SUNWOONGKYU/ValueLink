@@ -22,10 +22,10 @@
   "comprehensive_verification": "{\"task_instruction\":\"PASS - All 3 files generated as specified\",\"test\":\"PASS 4/4\",\"build\":\"PASS 3/3\",\"integration\":\"PASS 3/3\",\"blockers\":\"None\",\"final\":\"Passed\"}",
   "ai_verification_note": "All column names verified against schema-v4-final.sql. Search, filter, pagination features fully implemented.",
   "stage_gate_status": "",
-  "modification_history": "2026-06-11: projects/[id]/page.tsx 데드링크 수정 — C-3 step 경로 클램프(/valuation/process/step-N, N=1~12 보장: Math.min(Math.max(current_step??1,1),12)), H-4/H-6 링크 정리, ProgressTracker 호출부 1~14 클램프 적용(렌더링 overflow 방어). reviewer 에이전트 재검증 Verified. 동일자 추가: projects/list/page.tsx 미인증 시 막다른 에러 메시지 대신 /login 리다이렉트로 통일(실브라우저 검증에서 발견).",
+  "modification_history": "2026-06-11: projects/[id]/page.tsx 데드링크 수정 — C-3 step 경로 클램프(/valuation/process/step-N, N=1~12 보장: Math.min(Math.max(current_step??1,1),12)), H-4/H-6 링크 정리, ProgressTracker 호출부 1~14 클램프 적용(렌더링 overflow 방어). reviewer 에이전트 재검증 Verified. 동일자 추가: projects/list/page.tsx 미인증 시 막다른 에러 메시지 대신 /login 리다이렉트로 통일(실브라우저 검증에서 발견).\n2026-06-12: F-3 <a href> 표준화 — projects/list의 ProjectCard/EmptyState/새 프로젝트 버튼을 onClick(router.push)에서 <Link href>로 전환, projects/[id]의 QuickActionButton(disabled시 div, 활성시 Link)·ForbiddenView·뒤로가기 버튼 Link화. R-5 — current_step nullable 전환 및 STEP_LABELS 인덱싱 ?? 1 방어. reviewer 재검증 Verified.",
   "remarks": "프로젝트 목록, 상세, 생성 페이지. 2026-06-11 데드링크·클램프 수정 완료.",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-11",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write"

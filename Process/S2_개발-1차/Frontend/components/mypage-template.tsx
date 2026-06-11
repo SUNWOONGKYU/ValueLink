@@ -109,9 +109,8 @@ const COMMON_NAV: NavItem[] = [
 const ROLE_NAV: Record<UserRole, NavItem[]> = {
   customer: [
     { label: '대시보드', href: '/mypage/customer', icon: 'dashboard' },
-    { label: '프로젝트 목록', href: '/mypage/customer#projects', icon: 'folder' },
+    { label: '프로젝트 목록', href: '/projects/list', icon: 'folder' },
     { label: '새 프로젝트', href: '/projects/create', icon: 'add' },
-    { label: '프로젝트 목록', href: '/projects/list', icon: 'chart' },
   ],
   accountant: [
     { label: '대시보드', href: '/mypage/accountant', icon: 'dashboard' },

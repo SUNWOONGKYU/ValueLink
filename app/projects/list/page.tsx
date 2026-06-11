@@ -12,6 +12,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createBrowserClient } from '@supabase/ssr'
 
 // ---------------------------------------------------------------------------
@@ -46,7 +47,7 @@ interface Project {
   target_date: string | null
   requirements: string | null
   status: ProjectStatus
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   accountant: AccountantInfo | null
   created_at: string
   updated_at: string
@@ -161,7 +162,7 @@ function StatusBadge({ status }: { status: ProjectStatus }) {
 }
 
 function StepIndicator({ step }: { step: number }) {
-  const percentage = Math.round((step / 14) * 100)
+  const percentage = Math.round((Math.min(Math.max(step, 1), 14) / 14) * 100)
   return (
     <div className="flex items-center gap-2" aria-label={`진행 단계: ${step}/14`}>
       <div className="h-1.5 w-16 overflow-hidden rounded-full bg-gray-200">
@@ -186,7 +187,7 @@ function MethodTag({ method }: { method: string }) {
   )
 }
 
-function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
+function EmptyState() {
   return (
     <div
       className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-white px-6 py-16"
@@ -213,9 +214,8 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
       <p className="mb-6 text-sm text-gray-500">
         새로운 가치평가 프로젝트를 시작해보세요.
       </p>
-      <button
-        type="button"
-        onClick={onCreateClick}
+      <Link
+        href="/projects/create"
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="새 프로젝트 시작하기"
       >
@@ -223,7 +223,7 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
         </svg>
         새 프로젝트 시작
-      </button>
+      </Link>
     </div>
   )
 }
@@ -231,17 +231,14 @@ function EmptyState({ onCreateClick }: { onCreateClick: () => void }) {
 function ProjectCard({
   project,
   userRole,
-  onClick,
 }: {
   project: Project
   userRole: UserRole
-  onClick: () => void
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group w-full rounded-xl border border-gray-200 bg-white p-5 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    <Link
+      href={`/projects/${project.project_id}`}
+      className="group block w-full rounded-xl border border-gray-200 bg-white p-5 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       aria-label={`프로젝트: ${project.company_name_kr}, 상태: ${STATUS_CONFIG[project.status]?.label ?? project.status}`}
     >
       {/* Header row */}
@@ -268,7 +265,7 @@ function ProjectCard({
 
       {/* Step indicator */}
       <div className="mb-3">
-        <StepIndicator step={project.current_step} />
+        <StepIndicator step={project.current_step ?? 1} />
       </div>
 
       {/* Info row */}
@@ -298,7 +295,7 @@ function ProjectCard({
         <span>생성일: {formatDate(project.created_at)}</span>
         <span className="font-mono">{project.project_id}</span>
       </div>
-    </button>
+    </Link>
   )
 }
 
@@ -605,14 +602,6 @@ export default function ProjectListPage() {
   }, [fetchProjects])
 
   // Handlers
-  const handleProjectClick = (projectId: string) => {
-    router.push(`/projects/${projectId}`)
-  }
-
-  const handleCreateClick = () => {
-    router.push('/projects/create')
-  }
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -637,9 +626,8 @@ export default function ProjectListPage() {
             )}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleCreateClick}
+        <Link
+          href="/projects/create"
           className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           aria-label="새 프로젝트 만들기"
         >
@@ -658,7 +646,7 @@ export default function ProjectListPage() {
             />
           </svg>
           새 프로젝트
-        </button>
+        </Link>
       </div>
 
       {/* Search & Filter Bar */}
@@ -767,7 +755,7 @@ export default function ProjectListPage() {
 
       {/* Empty State */}
       {!isLoading && !error && projects.length === 0 && (
-        <EmptyState onCreateClick={handleCreateClick} />
+        <EmptyState />
       )}
 
       {/* Project Grid */}
@@ -783,7 +771,6 @@ export default function ProjectListPage() {
                 <ProjectCard
                   project={project}
                   userRole={userRole}
-                  onClick={() => handleProjectClick(project.project_id)}
                 />
               </div>
             ))}

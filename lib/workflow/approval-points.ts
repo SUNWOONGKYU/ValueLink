@@ -37,7 +37,8 @@ export type ValuationMethod =
 
 /** Static specification of a single approval point */
 export interface ApprovalPointSpec {
-  point_id: string
+  /** JP code (JP001-JP022) — DB의 point_code 컬럼에 대응 (PK approval_id와 무관) */
+  point_code: string
   point_name: string
   display_name: string
   category: ApprovalCategory
@@ -48,6 +49,7 @@ export interface ApprovalPointSpec {
 
 /** Shape of an individual decision in a batch request */
 export interface ApprovalDecision {
+  /** API wire format은 point_id 유지 — 값은 JP code (DB point_code에 저장됨) */
   point_id: string
   decision: 'approved' | 'rejected' | 'custom'
   custom_value?: unknown
@@ -100,7 +102,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
   [
     // --- FINANCIAL (JP001-JP008) ---
     {
-      point_id: 'JP001',
+      point_code: 'JP001',
       point_name: 'revenue_growth_rate',
       display_name: '매출 성장률',
       category: 'FINANCIAL',
@@ -110,7 +112,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Projected revenue growth rate used in the DCF free-cash-flow forecast.',
     },
     {
-      point_id: 'JP002',
+      point_code: 'JP002',
       point_name: 'ebit_margin',
       display_name: '영업이익률',
       category: 'FINANCIAL',
@@ -120,7 +122,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Operating profit margin assumption for the projection period.',
     },
     {
-      point_id: 'JP003',
+      point_code: 'JP003',
       point_name: 'wacc_rate',
       display_name: 'WACC (가중평균자본비용)',
       category: 'FINANCIAL',
@@ -130,7 +132,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Weighted Average Cost of Capital used to discount future cash flows.',
     },
     {
-      point_id: 'JP004',
+      point_code: 'JP004',
       point_name: 'terminal_growth_rate',
       display_name: '영구성장률',
       category: 'FINANCIAL',
@@ -140,7 +142,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Long-term sustainable growth rate for the terminal value calculation.',
     },
     {
-      point_id: 'JP005',
+      point_code: 'JP005',
       point_name: 'forecast_period',
       display_name: '예측 기간',
       category: 'FINANCIAL',
@@ -150,7 +152,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Number of years in the explicit forecast period before terminal value.',
     },
     {
-      point_id: 'JP006',
+      point_code: 'JP006',
       point_name: 'capex_rate',
       display_name: '자본적지출률',
       category: 'FINANCIAL',
@@ -160,7 +162,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Capital expenditure as a percentage of revenue during the forecast period.',
     },
     {
-      point_id: 'JP007',
+      point_code: 'JP007',
       point_name: 'working_capital_change',
       display_name: '운전자본 변화',
       category: 'FINANCIAL',
@@ -170,7 +172,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Projected change in net working capital that affects free cash flow.',
     },
     {
-      point_id: 'JP008',
+      point_code: 'JP008',
       point_name: 'beta_coefficient',
       display_name: '베타 계수',
       category: 'FINANCIAL',
@@ -182,7 +184,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
 
     // --- MARKET (JP009-JP012) ---
     {
-      point_id: 'JP009',
+      point_code: 'JP009',
       point_name: 'comparable_companies',
       display_name: '비교기업 목록',
       category: 'MARKET',
@@ -192,7 +194,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Set of peer companies selected for relative valuation multiples.',
     },
     {
-      point_id: 'JP010',
+      point_code: 'JP010',
       point_name: 'selected_multiple',
       display_name: '선택 멀티플',
       category: 'MARKET',
@@ -202,7 +204,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Primary valuation multiple chosen (PER, PBR, EV/EBITDA, etc.).',
     },
     {
-      point_id: 'JP011',
+      point_code: 'JP011',
       point_name: 'industry_multiple',
       display_name: '업종 멀티플',
       category: 'MARKET',
@@ -212,7 +214,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Industry-average multiple applied as a cross-check or primary input.',
     },
     {
-      point_id: 'JP012',
+      point_code: 'JP012',
       point_name: 'unlisted_discount',
       display_name: '비상장 할인율',
       category: 'MARKET',
@@ -224,7 +226,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
 
     // --- ASSET (JP013-JP018) ---
     {
-      point_id: 'JP013',
+      point_code: 'JP013',
       point_name: 'land_building_appraisal',
       display_name: '토지/건물 감정평가액',
       category: 'ASSET',
@@ -234,7 +236,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Fair market value of land and buildings from certified appraisals.',
     },
     {
-      point_id: 'JP014',
+      point_code: 'JP014',
       point_name: 'patent_valuation',
       display_name: '특허권 평가액',
       category: 'ASSET',
@@ -244,7 +246,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Assessed value of patents and intellectual property held by the company.',
     },
     {
-      point_id: 'JP015',
+      point_code: 'JP015',
       point_name: 'contingent_liabilities',
       display_name: '우발채무',
       category: 'ASSET',
@@ -254,7 +256,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Contingent liabilities (lawsuits, guarantees) that may affect net asset value.',
     },
     {
-      point_id: 'JP016',
+      point_code: 'JP016',
       point_name: 'allowance_for_bad_debts',
       display_name: '대손충당금',
       category: 'ASSET',
@@ -264,7 +266,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Adequacy of the bad-debt reserve relative to receivable quality.',
     },
     {
-      point_id: 'JP017',
+      point_code: 'JP017',
       point_name: 'inventory_nrv',
       display_name: '재고자산 순실현가치',
       category: 'ASSET',
@@ -274,7 +276,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Net Realisable Value of inventory versus its book value.',
     },
     {
-      point_id: 'JP018',
+      point_code: 'JP018',
       point_name: 'unlisted_equity_valuation',
       display_name: '비상장주식 평가액',
       category: 'ASSET',
@@ -286,7 +288,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
 
     // --- LEGAL (JP019-JP022) ---
     {
-      point_id: 'JP019',
+      point_code: 'JP019',
       point_name: 'income_value_method',
       display_name: '수익가치 산정 방법',
       category: 'LEGAL',
@@ -296,7 +298,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Method used to compute the income/earnings value under the Capital Market Act.',
     },
     {
-      point_id: 'JP020',
+      point_code: 'JP020',
       point_name: 'asset_income_weight',
       display_name: '자산가치/수익가치 가중치',
       category: 'LEGAL',
@@ -306,7 +308,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Weighting ratio between asset value and income value per statutory formula.',
     },
     {
-      point_id: 'JP021',
+      point_code: 'JP021',
       point_name: 'three_year_avg_income',
       display_name: '최근 3년 평균 순손익',
       category: 'LEGAL',
@@ -316,7 +318,7 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
         'Three-year weighted average net income used for the Inheritance Tax Act valuation.',
     },
     {
-      point_id: 'JP022',
+      point_code: 'JP022',
       point_name: 'ownership_ratio',
       display_name: '지분율 및 주주 유형',
       category: 'LEGAL',
@@ -328,9 +330,9 @@ export const APPROVAL_POINTS_SPEC: readonly ApprovalPointSpec[] = Object.freeze(
   ],
 )
 
-/** Quick lookup map: point_id -> spec */
+/** Quick lookup map: point_code (JP001-JP022) -> spec */
 const SPEC_MAP = new Map<string, ApprovalPointSpec>(
-  APPROVAL_POINTS_SPEC.map((s) => [s.point_id, s]),
+  APPROVAL_POINTS_SPEC.map((s) => [s.point_code, s]),
 )
 
 // ---------------------------------------------------------------------------
@@ -422,7 +424,7 @@ export class ApprovalPointManager {
       // description, status, approved_by, updated_at, etc.) were dropped.
       const rows = APPROVAL_POINTS_SPEC.map((spec) => ({
         project_id: projectId,
-        point_code: spec.point_id,   // JP001-JP022 stored in point_code
+        point_code: spec.point_code,   // JP001-JP022 stored in point_code
         category: spec.category as string,
         question: spec.description,   // description maps to question
         ai_decision: null,
@@ -464,6 +466,8 @@ export class ApprovalPointManager {
    * @param customValue - Custom value when decision is 'custom'.
    * @param rationale  - Rationale / notes explaining the decision.
    * @param approvedBy - Email or identifier of the approving accountant.
+   *                     (schema-v5에 approved_by 컬럼이 없어 human_note에
+   *                     `[decided_by: ...]` 태그로 보존됨)
    * @returns The updated approval point row.
    */
   async approveStep(
@@ -540,10 +544,14 @@ export class ApprovalPointManager {
       // --- Persist (schema-v5 fields only) ---
       // Legacy fields (custom_value, status, approved_by, approved_at,
       // approval_rationale, impact_analysis, updated_at) were removed in v5.
-      // human_note stores the rationale; custom decision value is embedded in human_note.
-      const noteValue = decision === 'custom' && customValue !== undefined
+      // human_note stores the rationale; custom decision value and the
+      // decision-maker (approvedBy) are embedded in human_note as tagged suffixes.
+      const baseNote = decision === 'custom' && customValue !== undefined
         ? `${rationale ?? ''} [custom_value: ${JSON.stringify(customValue)}]`
         : (rationale ?? null)
+      const noteValue = approvedBy
+        ? `${baseNote ?? ''}${baseNote ? ' ' : ''}[decided_by: ${approvedBy}]`
+        : baseNote
       const { data: updated, error: updateErr } = await supabase
         .from('approval_points')
         .update({

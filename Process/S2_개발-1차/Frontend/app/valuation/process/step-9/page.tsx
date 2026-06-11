@@ -23,7 +23,7 @@ interface ProjectData {
   company_name_kr: string
   requested_methods: string[] | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
 }
 
 interface ReportStatus {
@@ -52,7 +52,7 @@ const METHOD_LABELS: Record<string, string> = {
 
 function Step9Content() {
   const searchParams = useSearchParams()
-  const projectId = searchParams.get('project_id') ?? ''
+  const projectId = searchParams!.get('project_id') ?? ''
 
   const [project, setProject] = useState<ProjectData | null>(null)
   const [reports, setReports] = useState<ReportStatus[]>([])
@@ -140,7 +140,7 @@ function Step9Content() {
   return (
     <ProcessStepTemplate
       projectId={projectId}
-      currentStep={project.current_step}
+      currentStep={project.current_step ?? 1}
       stepNumber={9}
       stepTitle="최종 보고서 생성"
       companyName={project.company_name_kr}

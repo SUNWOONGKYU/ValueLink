@@ -31,7 +31,7 @@ interface AssignedProject {
   company_name_kr: string
   company_name_en: string | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   valuation_purpose: string | null
   requested_methods: string[] | null
   created_at: string
@@ -304,7 +304,7 @@ export default function AccountantMyPage() {
                           )}
                         </td>
                         <td className="px-4 py-3"><StatusBadge status={project.status} /></td>
-                        <td className="px-4 py-3 text-center text-gray-700">{project.current_step}/14</td>
+                        <td className="px-4 py-3 text-center text-gray-700">{project.current_step ?? 1}/14</td>
                         <td className="px-4 py-3 text-gray-600">{project.valuation_purpose ?? '-'}</td>
                         <td className="px-4 py-3 text-gray-600">{formatMethods(project.requested_methods)}</td>
                         <td className="px-4 py-3 text-gray-500">{formatDate(project.updated_at)}</td>
@@ -329,7 +329,7 @@ export default function AccountantMyPage() {
                   </div>
                   <p className="font-medium text-gray-900">{project.company_name_kr}</p>
                   <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                    <span>단계 {project.current_step}/14</span>
+                    <span>단계 {project.current_step ?? 1}/14</span>
                     <span>{formatDate(project.updated_at)}</span>
                   </div>
                   {project.valuation_purpose && (

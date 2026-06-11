@@ -22,10 +22,10 @@
   "comprehensive_verification": "{\"task_instruction\":\"PASS - All 7 files generated as specified\",\"test\":\"PASS 4/4\",\"build\":\"PASS 3/3\",\"integration\":\"PASS 3/3\",\"blockers\":\"None\",\"final\":\"Passed\"}",
   "ai_verification_note": "All schema field names verified against schema-v4-final.sql. Template pattern correctly reused across 6 role pages.",
   "stage_gate_status": "",
-  "modification_history": "2026-06-11: 데드링크 일괄수정 — mypage-template.tsx H-1(/valuation/request→/projects/create, /valuation-results→/projects/list), 로그아웃 링크 /auth/logout→/api/auth/logout(신규 API 라우트 app/api/auth/logout/route.ts 생성), H-3 customer, H-4 accountant 페이지 링크 수정. login 페이지 /forgot-password 링크 제거.",
+  "modification_history": "2026-06-11: 데드링크 일괄수정 — mypage-template.tsx H-1(/valuation/request→/projects/create, /valuation-results→/projects/list), 로그아웃 링크 /auth/logout→/api/auth/logout(신규 API 라우트 app/api/auth/logout/route.ts 생성), H-3 customer, H-4 accountant 페이지 링크 수정. login 페이지 /forgot-password 링크 제거.\n2026-06-12: F-1 마이페이지 프로젝트 링크 누락 수정 — customer 페이지에 전체 프로젝트 보기 Link(/projects/list) 추가, mypage-template customer nav 중복 항목 제거 및 href 정정. R-5 — customer/admin/accountant 3개 페이지 current_step nullable(number|null) 전환 + 표시처 ?? 1 방어. reviewer 재검증 Verified.",
   "remarks": "템플릿 + Company, Accountant, Investor, Partner, Supporter, Admin 마이페이지. 2026-06-11 데드링크 수정 완료.",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-11",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write"

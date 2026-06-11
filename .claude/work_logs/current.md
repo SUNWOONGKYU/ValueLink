@@ -2,6 +2,34 @@
 
 ---
 
+## 2026-06-12 데드링크 작전 잔여 7항목 완료 (F-1~F-4, R-2/R-3/R-5) ✅
+
+### 작업 상태: ✅ 완료 — reviewer 재검증 Verified
+
+### 항목별 수정 내역
+| 항목 | 파일 | 내용 |
+|------|------|------|
+| F-1 | app/mypage/customer/page.tsx, components/mypage-template.tsx | "전체 프로젝트 보기" Link 추가, customer nav 중복 항목 제거·href 정정 |
+| F-2 | (DB) public.users | e2e-admin 행 생성 (user_id a1658b2f, REST 검증 OK) |
+| F-3 | app/projects/list/page.tsx, app/projects/[id]/page.tsx | onClick(router.push) → `<Link href>` 전환 (ProjectCard, EmptyState, 새 프로젝트, QuickActionButton, ForbiddenView, 뒤로가기) |
+| F-4 | scripts/setup-e2e-users.js | 실계정 목록 → e2e-* 전용 계정 교체 + users[0] 오매칭 버그 수정 |
+| R-2 | lib/workflow/approval-points.ts | ApprovalPointSpec.point_id → point_code 리네임 (API wire format은 유지) |
+| R-3 | lib/workflow/approval-points.ts | approvedBy를 human_note에 `[decided_by: ...]` 태그로 보존 (기존 silent drop) |
+| R-5 | 프론트 17개 파일 | current_step `number \| null` 전환 + 사용처 25곳 `?? 1` 방어 (mypage 3종 + step-1~12는 reviewer 1차 리뷰 지적으로 확대 수정) |
+
+### 검증
+- next build exit 0 (수정 전후 2회), 타입 오류 0건
+- reviewer 서브에이전트: 1차 Needs Fix(current_step 방어 누락 15파일) → 전수 수정 → 재검증 **Verified**
+- F-2: Supabase REST로 e2e 3계정 user_id/role 정합 확인
+- Stage 원본 20파일 루트 최신본과 동기화 (pre-commit 역덮어쓰기 방지)
+
+### 잔여 기술부채 (비차단, reviewer 기록)
+- W-2: QuickActionButton disabled시 tabIndex/role 미부여 (스크린리더 대응 시 추가)
+- W-4: human_note 태그([decided_by]/[custom_value]) 파싱 규약 미문서화 — 소비 코드 생기기 전 처리 권장
+- API: app/api/projects/route.ts:386 `as number` 캐스트 (null이면 NaN 가능, 서버 레이어)
+
+---
+
 ## 2026-06-11 실브라우저 클릭 검증 완료 (데드링크 작전 최종 검증) ✅
 
 ### 작업 상태: ✅ 완료 — 5/5 PASS

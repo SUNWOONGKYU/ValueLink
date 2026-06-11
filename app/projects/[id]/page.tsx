@@ -13,6 +13,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { createBrowserClient } from '@supabase/ssr'
 
 // ---------------------------------------------------------------------------
@@ -55,7 +56,7 @@ interface Project {
   deposit_paid_at: string | null
   balance_paid_at: string | null
   status: ProjectStatus
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   accountant: AccountantInfo | null
   created_at: string
   updated_at: string
@@ -315,20 +316,8 @@ function QuickActionButton({
   icon: React.ReactNode
   disabled?: boolean
 }) {
-  const router = useRouter()
-  return (
-    <button
-      type="button"
-      onClick={() => !disabled && router.push(href)}
-      disabled={disabled}
-      className={`flex w-full items-start gap-4 rounded-xl border p-4 text-left transition-all ${
-        disabled
-          ? 'cursor-not-allowed border-gray-200 bg-gray-50 opacity-50'
-          : 'border-gray-200 bg-white shadow-sm hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-      }`}
-      aria-label={label}
-      aria-disabled={disabled}
-    >
+  const content = (
+    <>
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
         {icon}
       </div>
@@ -336,7 +325,29 @@ function QuickActionButton({
         <h3 className="text-sm font-semibold text-gray-900">{label}</h3>
         <p className="mt-0.5 text-xs text-gray-500">{description}</p>
       </div>
-    </button>
+    </>
+  )
+
+  if (disabled) {
+    return (
+      <div
+        className="flex w-full cursor-not-allowed items-start gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4 text-left opacity-50 transition-all"
+        aria-label={label}
+        aria-disabled="true"
+      >
+        {content}
+      </div>
+    )
+  }
+
+  return (
+    <Link
+      href={href}
+      className="flex w-full items-start gap-4 rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:border-blue-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      aria-label={label}
+    >
+      {content}
+    </Link>
   )
 }
 
@@ -388,7 +399,6 @@ function DetailSkeleton() {
 // ---------------------------------------------------------------------------
 
 function ForbiddenView() {
-  const router = useRouter()
   return (
     <div
       className="flex flex-col items-center justify-center px-4 py-24"
@@ -412,13 +422,12 @@ function ForbiddenView() {
       <p className="mb-6 text-sm text-gray-500">
         이 프로젝트에 대한 접근 권한이 없습니다.
       </p>
-      <button
-        type="button"
-        onClick={() => router.push('/projects/list')}
+      <Link
+        href="/projects/list"
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         프로젝트 목록으로 돌아가기
-      </button>
+      </Link>
     </div>
   )
 }
@@ -614,9 +623,8 @@ export default function ProjectDetailPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Back navigation */}
-      <button
-        type="button"
-        onClick={() => router.push('/projects/list')}
+      <Link
+        href="/projects/list"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700"
         aria-label="프로젝트 목록으로 돌아가기"
       >
@@ -635,7 +643,7 @@ export default function ProjectDetailPage() {
           />
         </svg>
         프로젝트 목록
-      </button>
+      </Link>
 
       {/* Project Header */}
       <div className="mb-8">
@@ -790,7 +798,7 @@ export default function ProjectDetailPage() {
             <div className="space-y-3">
               <QuickActionButton
                 label="프로세스 진행"
-                description={`${STEP_LABELS[project.current_step - 1] ?? `단계 ${project.current_step}`} 진행하기`}
+                description={`${STEP_LABELS[(project.current_step ?? 1) - 1] ?? `단계 ${project.current_step ?? 1}`} 진행하기`}
                 href={`/valuation/process/step-${Math.min(Math.max(project.current_step ?? 1, 1), 12)}?project_id=${project.project_id}`}
                 icon={
                   <svg

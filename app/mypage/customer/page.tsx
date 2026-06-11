@@ -32,7 +32,7 @@ interface Project {
   company_name_kr: string
   company_name_en: string | null
   status: string
-  current_step: number
+  current_step: number | null   // DB는 DEFAULT 1이지만 nullable — 사용처에서 ?? 1 방어
   valuation_purpose: string | null
   requested_methods: string[] | null
   created_at: string
@@ -241,8 +241,14 @@ export default function CustomerMyPage() {
         description="등록된 프로젝트를 관리합니다"
         id="projects"
       >
-        {/* CTA button */}
-        <div className="mb-4 flex justify-end">
+        {/* CTA buttons */}
+        <div className="mb-4 flex justify-end gap-2">
+          <Link
+            href="/projects/list"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          >
+            전체 프로젝트 보기
+          </Link>
           <Link
             href="/projects/create"
             className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
@@ -319,7 +325,7 @@ export default function CustomerMyPage() {
                           <StatusBadge status={project.status} />
                         </td>
                         <td className="px-4 py-3 text-center text-gray-700">
-                          {project.current_step}/14
+                          {project.current_step ?? 1}/14
                         </td>
                         <td className="px-4 py-3 text-gray-600">
                           {formatMethods(project.requested_methods)}
@@ -352,7 +358,7 @@ export default function CustomerMyPage() {
                     {project.company_name_kr}
                   </p>
                   <div className="mt-2 flex items-center gap-4 text-xs text-gray-500">
-                    <span>단계 {project.current_step}/14</span>
+                    <span>단계 {project.current_step ?? 1}/14</span>
                     <span>{formatDate(project.updated_at)}</span>
                   </div>
                 </Link>
