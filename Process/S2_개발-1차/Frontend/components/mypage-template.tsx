@@ -292,11 +292,16 @@ export default function MyPageTemplate({
             {/* Right: Mobile menu toggle (handled client-side via CSS checkbox hack) */}
             <div className="flex items-center gap-3">
               {/* Desktop logout button — 파괴적 액션이므로 POST 폼 사용
-                  (<Link>는 뷰포트 진입 시 프리페치 GET을 보내 자동 로그아웃을 유발함) */}
-              <form action="/api/auth/logout" method="post" className="contents">
+                  (<Link>는 뷰포트 진입 시 프리페치 GET을 보내 자동 로그아웃을 유발함)
+                  반응형 표시 제어는 form에 둔다 (display:contents는 구형 Safari 비호환) */}
+              <form
+                action="/api/auth/logout"
+                method="post"
+                className="hidden sm:block"
+              >
                 <button
                   type="submit"
-                  className="hidden items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/20 sm:flex"
+                  className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white/90 transition-colors hover:bg-white/20"
                   aria-label="로그아웃"
                 >
                   <NavIcon name="logout" className="h-4 w-4" />
