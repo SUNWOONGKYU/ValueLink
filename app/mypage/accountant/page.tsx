@@ -84,7 +84,7 @@ export default function AccountantMyPage() {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !user) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 
@@ -95,7 +95,7 @@ export default function AccountantMyPage() {
           .single()
 
         if (profileError || !profile) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 
@@ -291,7 +291,7 @@ export default function AccountantMyPage() {
                       >
                         <td className="px-4 py-3">
                           <Link
-                            href={`/projects/${project.project_id}/review`}
+                            href={`/projects/${project.project_id}`}
                             className="font-medium text-emerald-600 hover:underline"
                           >
                             {project.project_id}
@@ -320,7 +320,7 @@ export default function AccountantMyPage() {
               {projects.map(project => (
                 <Link
                   key={project.project_id}
-                  href={`/projects/${project.project_id}/review`}
+                  href={`/projects/${project.project_id}`}
                   className="block rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
                 >
                   <div className="mb-2 flex items-center justify-between">

@@ -86,7 +86,7 @@ export default function CustomerMyPage() {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !user) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 
@@ -98,7 +98,7 @@ export default function CustomerMyPage() {
           .single()
 
         if (profileError || !profile) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 
@@ -244,7 +244,7 @@ export default function CustomerMyPage() {
         {/* CTA button */}
         <div className="mb-4 flex justify-end">
           <Link
-            href="/valuation/request"
+            href="/projects/create"
             className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -263,7 +263,7 @@ export default function CustomerMyPage() {
             title="아직 등록된 프로젝트가 없습니다"
             description="새 프로젝트를 시작하여 기업가치 평가를 받아보세요."
             actionLabel="새 프로젝트 시작"
-            actionHref="/valuation/request"
+            actionHref="/projects/create"
           />
         ) : (
           <>

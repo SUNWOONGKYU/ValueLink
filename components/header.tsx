@@ -129,7 +129,6 @@ export default function Header() {
 
   // ---- My Page path by role ----
   function getMyPagePath(): string {
-    if (userRole === 'admin') return '/admin'
     if (userRole) return `/mypage/${userRole}`
     return '/mypage/customer'
   }

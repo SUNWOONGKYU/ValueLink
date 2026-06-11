@@ -153,7 +153,7 @@ export default function AdminMyPage() {
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
         if (authError || !user) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 
@@ -164,7 +164,7 @@ export default function AdminMyPage() {
           .single()
 
         if (profileError || !profile) {
-          router.replace('/auth/login')
+          router.replace('/login')
           return
         }
 

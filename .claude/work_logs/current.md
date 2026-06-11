@@ -2,6 +2,52 @@
 
 ---
 
+## 2026-06-11 Track A DB 복구 백호작전 — SAL Grid 업데이트 (Phase 7)
+
+### 작업 상태: 🔄 진행 중 (Phase 4~6 완료 대기)
+
+### 작업 개요
+| 항목 | 내용 |
+|------|------|
+| 작업 유형 | SAL Grid JSON 업데이트 (schema-v5 마이그레이션 반영) |
+| 담당 분대 | Delta (4분대장) |
+| 기반 작전 | Track A — DB 복구 백호작전 |
+
+### Phase 2, 3 완료 사항 반영 (확정)
+
+| Phase | 담당 | 내용 | 상태 |
+|-------|------|------|------|
+| Phase 2 | Alpha | 코드 역분석 → schema-v5-code-truth.sql 작성 (562줄) | ✅ 완료 |
+| Phase 3 | Bravo | Supabase CLI로 실DB 적용 완료. 14테이블 신규, legacy 보관 | ✅ 완료 |
+
+### 업데이트된 JSON 파일
+
+#### 1. S1D1.json (데이터베이스 스키마 및 RLS 정책 정의)
+- generated_files: schema-v5-code-truth.sql 추가
+- build_verification.deploy: "PENDING" → "PASS - schema-v5 applied (2026-06-11)"
+- ai_verification_note: schema-v5 적용 내역 추가
+- remarks: v5 적용 내역 추가
+- updated_at: 2026-06-11
+
+#### 2. S1BI1.json (데이터베이스 및 설정 인프라 구축)
+- ai_verification_note: database.types.ts 재생성 완료 내역 추가
+- remarks: schema-v5 연동 내역 추가
+- updated_at: 2026-06-11
+
+### Phase 4~6 완료 후 추가 업데이트 예정
+
+| 업데이트 대상 | 조건 | 내용 |
+|-------------|------|------|
+| S1BI1.json | Phase 4 완료 (next build 통과) | build_verification.compile PASS 업데이트 |
+| S5O1.json | Phase 5 완료 (Vercel 재배포) | build_verification.deploy PASS 업데이트, CRON_SECRET 수정 기록 |
+| S5T1/S5T2.json | Phase 6 완료 (실브라우저 검증) | test_result.manual_test 결과 반영 |
+
+### 다음 단계
+- Charlie(Phase 6) 검증 결과 수신 대기
+- 검증 결과 수신 후 최종 JSON 업데이트 및 완료 보고
+
+---
+
 ## 2026-02-26 S5 Stage & PPTX 슬라이드쇼 최종 완료 ✅
 
 ### 작업 상태: ✅ 전체 완료
