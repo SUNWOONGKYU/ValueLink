@@ -1,0 +1,68 @@
+{
+  "report_id": "baekho-phase5-rls-v3-followup",
+  "date": "2026-06-12",
+  "operation": "백호 작전 Phase 5 완결 — RLS v2 적용 확인 + security 검증 반영 v3 후속 치유",
+  "status": "Completed",
+  "verification_verdict": "Verified (security 에이전트 재검증)",
+  "summary": "이전 세션 강제 종료로 불명확했던 RLS v2 적용 여부를 독립 재검증(19/19 PASS)으로 확인. security 에이전트 별도 검증에서 Needs Fix(H-1/H-2/M-1/M-2) 판정 → PO 승인(회계사 자기가입 차단) 후 v3 SQL 작성·실DB 적용, register.html 회계사/관리자 가입 경로 제거, 검증 스위트 28건으로 보강. 재검증 Verified.",
+  "findings_and_fixes": [
+    {
+      "id": "H-1",
+      "severity": "HIGH",
+      "finding": "공개 가입 페이지에서 accountant 역할 자기선택 가능 → users INSERT가 role<>'admin'만 차단해 회계사 가입 시 customers 전체 열람 권한 획득",
+      "fix": "users_insert_signup을 role IN ('customer','investor','partner','supporter') 화이트리스트로 교체 (PO 승인) + register.html 회계사/관리자 카드·폼·JS 제거",
+      "status": "Fixed"
+    },
+    {
+      "id": "H-2",
+      "severity": "HIGH",
+      "finding": "accountants INSERT/UPDATE가 authenticated 전체 허용 — 로그인만 하면 타인 회계사 프로필(rating/bio 등) 변조 가능",
+      "fix": "admin 전용으로 교체. 실DB accountants에 user_id 컬럼 없음 확인 → '본인 행' 정책 적용 불가, 프론트 쓰기 경로는 스키마 불일치로 원래 동작 불가라 기능 영향 없음",
+      "status": "Fixed"
+    },
+    {
+      "id": "M-1",
+      "severity": "MEDIUM",
+      "finding": "newsletter_subscribers anon INSERT 무제한 (스팸/이메일 폭탄 위험)",
+      "fix": "의도된 공개 구독 기능으로 위험 수용. 앱 레벨 rate limiting을 후속 과제로 기록",
+      "status": "Risk Accepted"
+    },
+    {
+      "id": "M-2",
+      "severity": "MEDIUM",
+      "finding": "customers INSERT/UPDATE/DELETE가 authenticated 전체 허용 — 로그인만 하면 타사 고객정보 변조/삭제 가능",
+      "fix": "admin 전용으로 교체 (register.html의 customers INSERT는 실DB에 없는 user_id 컬럼 참조로 이미 동작 불가 → 영향 없음)",
+      "status": "Fixed"
+    },
+    {
+      "id": "INFO-1",
+      "severity": "INFO",
+      "finding": "register.html에 accountant/admin 데드코드 잔존 (재검증 시 지적)",
+      "fix": "accountantFields/adminFields 폼, saveAccountantData/saveAdminData, 학력·경력 헬퍼 전부 제거 후 실브라우저 재검증 7/7 PASS",
+      "status": "Fixed"
+    }
+  ],
+  "verification": {
+    "api_level": "28/28 PASS — scripts/rls-verify.js (anon 차단 7, 공개기능 유지 5, admin 회귀 4, accountant 회귀/승격차단 5, v3 보강 7)",
+    "browser_level": "7/7 PASS — tests/verify-register-role-removal.js (역할 라디오 4개만 존재, 고객 가입 Step1→3 플로우 정상, JS 페이지 에러 0건)",
+    "independent_review": "security 서브에이전트 1차 Needs Fix → 수정 반영 → 재검증 Verified"
+  },
+  "db_changes": {
+    "applied_sql": "Valuation_Company/valuation-platform/backend/database/rls_remediation_delta_v3.sql",
+    "method": "Supabase Management API 단일 트랜잭션",
+    "rollback": "v3 파일 하단 롤백 SQL (실DB pg_policies 조회 결과 기준, 데이터 무손실)"
+  },
+  "files": [
+    "Valuation_Company/valuation-platform/backend/database/rls_remediation_delta_v3.sql (신규)",
+    "Valuation_Company/valuation-platform/frontend/app/register.html (회계사/관리자 가입 경로 제거)",
+    "scripts/rls-verify.js (19→28건 보강)",
+    "scripts/rls-apply.js (SQL 경로 인자화)",
+    "tests/verify-register-role-removal.js (신규)",
+    "scripts/update-grid-baekho-rls.js (신규)"
+  ],
+  "sal_grid_updates": ["S1D1", "S2F7", "S5T1"],
+  "follow_up_tasks": [
+    "newsletter_subscribers 구독 rate limiting (앱/엣지 레벨) — M-1 위험 수용에 따른 후속 과제",
+    "register.html customers INSERT 스키마 불일치(user_id 컬럼 부재)로 고객 추가정보 저장이 동작하지 않는 기존 문제 — RLS와 무관한 별도 수리 필요"
+  ]
+}

@@ -2,6 +2,47 @@
 
 ---
 
+## 2026-06-12 백호 작전 Phase 5 완결 — RLS v2 적용 확인 + v3 후속 치유 (security Verified) ✅
+
+### 작업 상태: ✅ 완료 — security 에이전트 재검증 Verified, API 28/28 + 실브라우저 7/7 PASS
+
+### 배경
+이전 세션이 RLS v2 SQL 실행 직후 강제 종료되어 "실행 여부 불명확" 상태로 핸드오프됨. 새 세션에서 재확인 → **v2는 실제 적용돼 있었음** (rls-verify.js 19/19 PASS로 독립 확인).
+
+### 수행 내역
+1. **security 에이전트 별도 검증** (Phase 5 잔여 항목) → **Needs Fix 판정**
+   - H-1: 가입 페이지에서 accountant 역할 자기선택 가능 → customers 전체 열람 권한 획득 경로
+   - H-2: accountants 테이블 INSERT/UPDATE가 authenticated 전체 허용 (타인 프로필 변조 가능)
+   - M-1: newsletter anon INSERT 무제한 (스팸 위험) / M-2: customers 쓰기 authenticated 전체 허용
+2. **PO 승인**: 회계사 자기가입 차단 방향 확정
+3. **rls_remediation_delta_v3.sql 작성 + 실DB 적용** (Management API 단일 트랜잭션)
+   - 가입 역할 화이트리스트: customer/investor/partner/supporter만 허용
+   - accountants·customers 쓰기 admin 전용 (실DB에 user_id 컬럼 없어 '본인 행' 정책 불가 — 프론트 쓰기 경로는 스키마 불일치로 원래 동작 불가라 영향 없음)
+   - M-1은 의도된 공개 구독 기능으로 위험 수용 (앱 레벨 rate limiting 후속 과제)
+   - 롤백 SQL 동봉 (실DB pg_policies 조회 결과 기준)
+4. **register.html 정리**: 공인회계사/관리자 역할 카드 + 추가정보 폼 + saveAccountantData/saveAdminData/학력·경력 헬퍼 전부 제거 (재검증 INFO 지적까지 반영)
+5. **rls-verify.js 보강**: 19→28건 — 뉴스레터 anon DELETE/PATCH(B4/B5), accountant 자기가입 차단(E1), 화이트리스트 역할 RLS 통과(E2, representation 없이 — RETURNING의 SELECT 요구로 인한 가짜 거부 회피), 비admin 변조·삭제 차단(E3~E5, 프로브 행), admin no-op 회귀(E6), anon count 유출(E7), B3 고정 이메일 버그 수정
+6. **security 에이전트 재검증**: **Verified** (잔여 INFO 데드코드 → 즉시 제거 완료)
+
+### 검증 결과
+- API 레벨: **28/28 PASS** (scripts/rls-verify.js — anon 차단 7 + 공개기능 5 + admin 회귀 4 + accountant 회귀 5 + v3 보강 7)
+- 실브라우저: **7/7 PASS** (tests/verify-register-role-removal.js — 역할 4개만 잔존, 고객 가입 플로우 정상, JS 에러 0건)
+
+### 파일
+| 파일 | 내용 |
+|------|------|
+| backend/database/rls_remediation_delta_v3.sql (신규) | v3 정책 + 롤백 |
+| frontend/app/register.html | 회계사/관리자 가입 경로 제거 |
+| scripts/rls-verify.js | 28건으로 보강 |
+| scripts/rls-apply.js | SQL 경로 인자화 |
+| tests/verify-register-role-removal.js (신규) | register 실브라우저 검증 |
+| scripts/update-grid-baekho-rls.js (신규) | SAL Grid 기록 자동화 |
+
+### SAL Grid
+- S1D1·S2F7·S5T1.json modification_history + updated_at 갱신 (루트 + Process 원본)
+
+---
+
 ## 2026-06-12 백호 작전 잔여 마무리 — 리네임 런타임 검증 + 역할위조 보안 패치 ✅
 
 ### 작업 상태: ✅ 완료 — reviewer Verified, 실브라우저 검증 30/30 PASS

@@ -555,25 +555,7 @@
                         </label>
                     </div>
 
-                    <!-- Accountant -->
-                    <div class="role-card">
-                        <input type="radio" name="role" id="roleAccountant" value="accountant">
-                        <label for="roleAccountant">
-                            <div class="role-icon">👨‍💼</div>
-                            <div class="role-name">공인회계사</div>
-                            <div class="role-desc">평가 수행</div>
-                        </label>
-                    </div>
-
-                    <!-- Admin -->
-                    <div class="role-card">
-                        <input type="radio" name="role" id="roleAdmin" value="admin">
-                        <label for="roleAdmin">
-                            <div class="role-icon">⚙️</div>
-                            <div class="role-name">관리자</div>
-                            <div class="role-desc">플랫폼 관리</div>
-                        </label>
-                    </div>
+                    <!-- 공인회계사/관리자 역할은 자기가입 차단 (RLS v3, 관리자가 직접 부여) -->
 
                     <!-- Investor -->
                     <div class="role-card">
@@ -658,62 +640,7 @@
                     </div>
                 </div>
 
-                <!-- Accountant 추가 정보 -->
-                <div id="accountantFields" style="display: none;">
-                    <h2 class="form-title">공인회계사 정보</h2>
-                    <p class="form-subtitle">자격 및 경력 정보를 입력해주세요</p>
-
-                    <div class="form-group">
-                        <label>공인회계사 면허번호 <span class="required">*</span></label>
-                        <input type="text" id="licenseNumber" placeholder="예: 12345">
-                        <div class="hint">금융감독원 공인회계사 등록번호</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>전화번호</label>
-                        <input type="tel" id="accountantPhone" placeholder="010-1234-5678">
-                    </div>
-
-                    <div class="array-input-group">
-                        <label>학력</label>
-                        <div id="educationContainer">
-                            <div class="array-input-item">
-                                <input type="text" class="education-input" placeholder="예: 연세대학교 경영학과 졸업 (2010)">
-                                <button type="button" class="btn-remove" onclick="removeEducation(this)">삭제</button>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addEducation()">+ 학력 추가</button>
-                    </div>
-
-                    <div class="array-input-group">
-                        <label>경력</label>
-                        <div id="careerContainer">
-                            <div class="array-input-item">
-                                <input type="text" class="career-input" placeholder="예: 삼일회계법인 (2010-2015)">
-                                <button type="button" class="btn-remove" onclick="removeCareer(this)">삭제</button>
-                            </div>
-                        </div>
-                        <button type="button" class="btn-add" onclick="addCareer()">+ 경력 추가</button>
-                    </div>
-
-                    <div class="form-group">
-                        <label>전문 분야</label>
-                        <textarea id="specialization" placeholder="예: DCF평가, IPO 준비, M&A 자문"></textarea>
-                        <div class="hint">쉼표(,)로 구분하여 입력</div>
-                    </div>
-                </div>
-
-                <!-- Admin 추가 정보 -->
-                <div id="adminFields" style="display: none;">
-                    <h2 class="form-title">관리자 인증</h2>
-                    <p class="form-subtitle">관리자 인증 코드를 입력해주세요</p>
-
-                    <div class="form-group">
-                        <label>관리자 인증 코드 <span class="required">*</span></label>
-                        <input type="password" id="adminCode" placeholder="관리자 인증 코드">
-                        <div class="hint">관리자로부터 받은 인증 코드를 입력하세요</div>
-                    </div>
-                </div>
+                <!-- 공인회계사/관리자 추가정보 폼은 자기가입 차단(RLS v3)과 함께 제거됨 -->
 
                 <div class="btn-group">
                     <button class="btn btn-secondary" onclick="goToStep2()">이전</button>
@@ -857,65 +784,11 @@
             return true;
         }
 
-        // 역할별 추가 정보 필드 표시
+        // 역할별 추가 정보 필드 표시 (회계사/관리자 폼은 자기가입 차단으로 제거됨)
         function showRoleFields() {
             const selectedRole = document.querySelector('input[name="role"]:checked').value;
-
-            // 모든 필드 숨기기
-            document.getElementById('customerFields').style.display = 'none';
-            document.getElementById('accountantFields').style.display = 'none';
-            document.getElementById('adminFields').style.display = 'none';
-
-            // 선택된 역할 필드 표시
-            if (selectedRole === 'customer') {
-                document.getElementById('customerFields').style.display = 'block';
-            } else if (selectedRole === 'accountant') {
-                document.getElementById('accountantFields').style.display = 'block';
-            } else if (selectedRole === 'admin') {
-                document.getElementById('adminFields').style.display = 'block';
-            }
-        }
-
-        // 학력 추가/삭제
-        function addEducation() {
-            const container = document.getElementById('educationContainer');
-            const item = document.createElement('div');
-            item.className = 'array-input-item';
-            item.innerHTML = `
-                <input type="text" class="education-input" placeholder="예: 연세대학교 경영학과 졸업 (2010)">
-                <button type="button" class="btn-remove" onclick="removeEducation(this)">삭제</button>
-            `;
-            container.appendChild(item);
-        }
-
-        function removeEducation(btn) {
-            const container = document.getElementById('educationContainer');
-            if (container.children.length > 1) {
-                btn.parentElement.remove();
-            } else {
-                alert('최소 1개 이상의 학력이 필요합니다');
-            }
-        }
-
-        // 경력 추가/삭제
-        function addCareer() {
-            const container = document.getElementById('careerContainer');
-            const item = document.createElement('div');
-            item.className = 'array-input-item';
-            item.innerHTML = `
-                <input type="text" class="career-input" placeholder="예: 삼일회계법인 (2010-2015)">
-                <button type="button" class="btn-remove" onclick="removeCareer(this)">삭제</button>
-            `;
-            container.appendChild(item);
-        }
-
-        function removeCareer(btn) {
-            const container = document.getElementById('careerContainer');
-            if (container.children.length > 1) {
-                btn.parentElement.remove();
-            } else {
-                alert('최소 1개 이상의 경력이 필요합니다');
-            }
+            document.getElementById('customerFields').style.display =
+                selectedRole === 'customer' ? 'block' : 'none';
         }
 
         // 에러 표시/숨김
@@ -966,13 +839,9 @@
 
                 console.log('User table insert success');
 
-                // 3. 역할별 추가 정보 저장
+                // 3. 역할별 추가 정보 저장 (회계사/관리자는 자기가입 차단 — RLS v3)
                 if (selectedRole === 'customer') {
                     await saveCustomerData(userId);
-                } else if (selectedRole === 'accountant') {
-                    await saveAccountantData(userId);
-                } else if (selectedRole === 'admin') {
-                    await saveAdminData(userId);
                 }
 
                 // 성공
@@ -1013,71 +882,8 @@
             console.log('Customer data saved');
         }
 
-        // Accountant 데이터 저장
-        async function saveAccountantData(userId) {
-            const licenseNumber = document.getElementById('licenseNumber').value.trim();
-
-            if (!licenseNumber) {
-                throw new Error('공인회계사 면허번호를 입력해주세요');
-            }
-
-            // 학력 배열
-            const educationInputs = document.querySelectorAll('.education-input');
-            const education = Array.from(educationInputs)
-                .map(input => input.value.trim())
-                .filter(val => val);
-
-            // 경력 배열
-            const careerInputs = document.querySelectorAll('.career-input');
-            const career = Array.from(careerInputs)
-                .map(input => input.value.trim())
-                .filter(val => val);
-
-            // 전문 분야 (쉼표로 구분)
-            const specializationText = document.getElementById('specialization').value.trim();
-            const specialization = specializationText
-                ? specializationText.split(',').map(s => s.trim()).filter(s => s)
-                : [];
-
-            // accountant_id 생성 (ACC + 타임스탬프)
-            const accountantId = 'ACC' + Date.now().toString().slice(-8);
-
-            const { error } = await supabaseClient
-                .from('accountants')
-                .insert([{
-                    accountant_id: accountantId,
-                    user_id: userId,
-                    license_number: licenseNumber,
-                    education: education.length > 0 ? education : null,
-                    career: career.length > 0 ? career : null,
-                    specialization: specialization.length > 0 ? specialization : null,
-                    rating: 0.00,
-                    total_projects: 0,
-                    is_available: true
-                }]);
-
-            if (error) throw error;
-            console.log('Accountant data saved:', accountantId);
-        }
-
-        // Admin 데이터 저장
-        async function saveAdminData(userId) {
-            const adminCode = document.getElementById('adminCode').value.trim();
-
-            // 관리자 코드 검증 (서버사이드)
-            const verifyRes = await fetch('/api/auth/verify-admin-code', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: adminCode }),
-            });
-            const verifyData = await verifyRes.json();
-            if (!verifyData.valid) {
-                throw new Error(verifyData.error || '관리자 인증 코드가 올바르지 않습니다');
-            }
-
-            console.log('Admin verified:', userId);
-            // Admin은 users 테이블에만 저장 (별도 테이블 없음)
-        }
+        // saveAccountantData/saveAdminData는 자기가입 차단(RLS v3)으로 제거됨
+        // (회계사/관리자 계정은 관리자가 직접 부여)
     </script>
 </body>
 </html>

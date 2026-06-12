@@ -24,10 +24,11 @@
   "stage_gate_status": "",
   "remarks": "로그인, 회원가입, 랜딩 페이지, 서비스안내, 헤더, 사이드바",
   "created_at": "2026-02-06",
-  "updated_at": "2026-02-09",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write"
   ],
-  "execution_type": "AI-Only"
+  "execution_type": "AI-Only",
+  "modification_history": "2026-06-12: 백호 작전 Phase 5 후속 — 정적 register.html에서 공인회계사/관리자 역할 카드 + 추가정보 폼 + saveAccountantData/saveAdminData/학력·경력 헬퍼 데드코드 제거 (RLS v3 가입 화이트리스트와 동기화, 회계사·관리자 계정은 관리자가 부여). 실브라우저 검증 7/7 PASS(tests/verify-register-role-removal.js)."
 }

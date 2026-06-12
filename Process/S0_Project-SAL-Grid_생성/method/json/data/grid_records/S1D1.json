@@ -9,7 +9,7 @@
   "dependencies": "",
   "task_instruction": "task-instructions/S1D1_instruction.md",
   "task_agent": "database-specialist",
-  "generated_files": "database/schema-v4-final.sql, database/triggers-v4.sql, database/rls-policies-v2.sql, database/schema-v5-code-truth.sql",
+  "generated_files": "database/schema-v4-final.sql, database/triggers-v4.sql, database/rls-policies-v2.sql, database/schema-v5-code-truth.sql, database/rls_remediation_delta_v2.sql, database/rls_remediation_delta_v3.sql",
   "duration": "2h",
   "build_result": "SUCCESS",
   "verification_instruction": "verification-instructions/S1D1_verification.md",
@@ -47,10 +47,11 @@
   "stage_gate_status": "",
   "remarks": "v4 최종: 41개 테이블, 22개 AI 승인 포인트, 29개 트리거. [2026-06-11] schema-v5-code-truth.sql 실DB 적용: 코드 기준 14테이블 신규 생성 + legacy 보관. database.types.ts 재생성 완료 (S1BI1 연동).",
   "created_at": "2026-02-06",
-  "updated_at": "2026-06-11",
+  "updated_at": "2026-06-12",
   "tools": [
     "Read",
     "Write"
   ],
-  "execution_type": "AI-Only"
+  "execution_type": "AI-Only",
+  "modification_history": "2026-06-12: 백호 작전 Phase 5 — RLS 치유 SQL v2+v3 실DB 적용(Management API 단일 트랜잭션). v2: users/accountants/레거시7테이블 RLS 활성화 + get_my_role() SECURITY DEFINER 함수(무한재귀 방지) + 셀프 role 승격 차단 + customers/newsletter_subscribers 공개 SELECT 차단. v3(security 에이전트 Needs Fix H-1/H-2/M-2 반영): 가입 역할 화이트리스트 customer/investor/partner/supporter(회계사·관리자 자기가입 차단, PO 승인), accountants·customers 쓰기 admin 전용. M-1(뉴스레터 anon INSERT 스팸)은 의도된 공개 기능으로 위험 수용, 앱 레벨 rate limiting 후속 과제. 런타임 검증 28/28 PASS(scripts/rls-verify.js) + security 에이전트 재검증 Verified. 롤백 SQL 동봉."
 }
