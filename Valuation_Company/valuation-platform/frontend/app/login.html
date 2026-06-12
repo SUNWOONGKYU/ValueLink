@@ -428,11 +428,18 @@
                 console.log('Login success:', data.user.email);
 
                 // users 테이블에서 역할 조회
-                const { data: userData, error: userError } = await supabaseClient
+                let { data: userData, error: userError } = await supabaseClient
                     .from('users')
                     .select('role, is_active')
                     .eq('user_id', data.user.id)
                     .single();
+
+                // 가입 시 이메일 확인이 필요했던 계정: 첫 로그인 시점에
+                // register.html이 보류 저장(vl_pending_profile)한 프로필을 DB에 기록
+                if (userError && userError.code === 'PGRST116') {
+                    userData = await completePendingRegistration(data.user, email);
+                    userError = null;
+                }
 
                 if (userError) {
                     console.error('User data fetch error:', userError);
@@ -496,6 +503,57 @@
             }
         });
 
+        // 이메일 확인 후 첫 로그인: 보류된 가입 프로필(users + customers)을 DB에 저장
+        async function completePendingRegistration(user, email) {
+            let pending = null;
+            try {
+                const raw = localStorage.getItem('vl_pending_profile');
+                if (raw) pending = JSON.parse(raw);
+            } catch (e) { /* 손상된 데이터는 무시 */ }
+
+            // 이메일 비교는 대소문자 무시 (가입/로그인 입력 표기가 달라도 매칭)
+            const emailLc = (email || '').toLowerCase();
+            const pendingMatches = pending && (pending.email || '').toLowerCase() === emailLc;
+
+            // 다른 기기에서 가입했거나 저장이 지워진 경우: 최소 정보로 계정 생성
+            const name = (pendingMatches && pending.name) || email.split('@')[0];
+            // 가입 허용 역할 화이트리스트 (RLS도 차단하지만 프론트에서도 한 번 더 — 명확한 UX)
+            const ALLOWED_ROLES = ['customer', 'investor', 'partner', 'supporter'];
+            let role = (pendingMatches && pending.role) || 'customer';
+            if (!ALLOWED_ROLES.includes(role)) role = 'customer';
+
+            const { error: userError } = await supabaseClient
+                .from('users')
+                .insert([{
+                    user_id: user.id,
+                    email: email,
+                    name: name,
+                    role: role,
+                    is_active: true
+                }]);
+            if (userError) {
+                console.error('Pending profile users insert error:', userError);
+                // 세션만 살아있는 좀비 상태 방지 — 로그아웃 후 에러 안내
+                await supabaseClient.auth.signOut();
+                throw new Error('가입 정보 저장에 실패했습니다. 다시 로그인해주세요.');
+            }
+
+            if (role === 'customer' && pendingMatches && pending.customer) {
+                const { error: custError } = await supabaseClient
+                    .from('customers')
+                    .insert([Object.assign({ user_id: user.id, email: email }, pending.customer)]);
+                if (custError) {
+                    // 회사 정보 실패는 로그인 자체를 막지 않음 (마이페이지에서 재등록 가능)
+                    console.error('Pending customer insert error:', custError);
+                    alert('로그인은 완료됐지만 회사 정보 저장에 실패했습니다.\n마이페이지에서 다시 입력해주세요.');
+                }
+            }
+
+            localStorage.removeItem('vl_pending_profile');
+            console.log('Pending registration completed:', role);
+            return { role: role, is_active: true };
+        }
+
         // 에러 표시/숨김
         function showError(id, message) {
             const errorEl = document.getElementById(id);
@@ -538,7 +596,7 @@
 
             try {
                 const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: window.location.origin + window.location.pathname.replace('login.html', '') + 'register.html'
+                    redirectTo: new URL('login.html', window.location.href).toString()
                 });
                 if (error) throw error;
                 msgEl.textContent = '재설정 링크를 이메일로 발송했습니다. 이메일을 확인해주세요.';
@@ -558,11 +616,30 @@
         });
 
         // 이미 로그인된 경우 리다이렉트
+        // (확인 메일 링크로 돌아와 세션이 자동 생성된 경우, 보류 프로필 저장을 먼저 완료)
         (async function checkAuth() {
             const { data: { user } } = await supabaseClient.auth.getUser();
-            if (user) {
+            if (!user) return;
+
+            try {
+                const { error: rowError } = await supabaseClient
+                    .from('users')
+                    .select('role')
+                    .eq('user_id', user.id)
+                    .single();
+
+                if (rowError && rowError.code === 'PGRST116') {
+                    // users 행 없음 → 보류 프로필 저장 후 진입
+                    await completePendingRegistration(user, user.email);
+                } else if (rowError) {
+                    throw rowError;
+                }
+
                 console.log('Already logged in, redirecting...');
                 window.location.href = 'core/mypage.html';
+            } catch (e) {
+                // 저장 실패 시 로그인 페이지에 머무름 (completePendingRegistration이 signOut 처리)
+                console.error('checkAuth pending registration error:', e);
             }
         })();
     </script>

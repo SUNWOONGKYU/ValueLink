@@ -1,0 +1,43 @@
+{
+  "report_name": "가입/로그인 불능 수정 — Resend SMTP 연결 + 이메일 확인 플로우 재설계",
+  "date": "2026-06-12",
+  "status": "Completed",
+  "verification": "Verified (reviewer 에이전트, 이슈 10건 전부 해소 확인)",
+  "root_causes": [
+    "Supabase 내장 SMTP 시간당 2통 제한 → 가입 시 429 over_email_send_rate_limit",
+    "이메일 확인 ON + 가입 직후 DB INSERT 구조 → 세션 없어 회사정보 저장 불가",
+    "확인 전 로그인 시 email_not_confirmed 거부",
+    "site_url=localhost:3000 → 확인 메일 링크가 localhost로 향함"
+  ],
+  "fixes": {
+    "supabase_auth_config": {
+      "smtp": "Resend (smtp.resend.com:465, noreply@ssalworks.ai.kr — 검증 도메인)",
+      "rate_limit_email_sent": "2 → 50",
+      "site_url": "https://valuelink-platform.vercel.app",
+      "uri_allow_list": "vercel.app / sunwoongkyu.github.io / localhost:3000"
+    },
+    "register_html": "signUp 전 사전검증 → emailRedirectTo=login.html → 프로필 localStorage 보류 저장 → 확인 메일 안내 (autoconfirm 분기 병행 지원)",
+    "login_html": "첫 로그인 시 보류 프로필(users+customers) 자동 저장 (completePendingRegistration), checkAuth 동일 처리, 비번재설정 redirectTo 오류 수정",
+    "review_feedback": "W-1~W-4, I-1~I-4 전부 반영. C-1/C-2는 실DB 증거로 반박 → 리뷰어 철회"
+  },
+  "test_results": {
+    "api_flow": "8/8 PASS (scripts/signup-flow-verify.js)",
+    "browser_e2e": "9/9 PASS (tests/verify-signup-login-flow.js — 실브라우저 Playwright)",
+    "regression": "7/7 PASS (tests/verify-register-role-removal.js)",
+    "reviewer_agent": "Verified"
+  },
+  "side_work_vercel_private_deploy": {
+    "url": "https://valuelink-platform.vercel.app",
+    "protection": "해제됨 (URL만 알면 접근)",
+    "search_engine": "noindex 헤더 + robots.txt Disallow"
+  },
+  "generated_files": [
+    "Valuation_Company/valuation-platform/frontend/app/register.html (재설계)",
+    "Valuation_Company/valuation-platform/frontend/app/login.html (재설계)",
+    "Valuation_Company/valuation-platform/frontend/vercel.json",
+    "Valuation_Company/valuation-platform/frontend/robots.txt",
+    "scripts/auth-config-apply.js",
+    "scripts/signup-flow-verify.js",
+    "tests/verify-signup-login-flow.js"
+  ]
+}

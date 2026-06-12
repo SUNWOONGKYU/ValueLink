@@ -2,6 +2,44 @@
 
 ---
 
+## 2026-06-12 가입/로그인 불능 수정 — Resend SMTP + 이메일 확인 플로우 재설계 (reviewer Verified) ✅
+
+### 작업 상태: ✅ 완료 — reviewer Verified, API 8/8 + 실브라우저 E2E 9/9 + 회귀 7/7 PASS
+
+### 원인 진단 (직접 재현으로 확정)
+1. **Supabase 내장 SMTP 시간당 2통 제한** → 가입 시 `429 over_email_send_rate_limit`로 가입 자체 실패
+2. **이메일 확인(mailer_autoconfirm=false) ON** + 가입 직후 DB INSERT 구조 → 세션 없어 customers 저장 불가(42501)
+3. **확인 전 로그인 → email_not_confirmed 거부**
+4. **site_url=localhost:3000** → 확인 메일 링크가 localhost로 향함 (추가 발견)
+
+### 수정 내역
+1. **Supabase Auth 설정** (scripts/auth-config-apply.js, Management API):
+   - Resend SMTP 연결 (smtp.resend.com:465, 발신 noreply@ssalworks.ai.kr — Resend 검증 도메인)
+   - rate_limit_email_sent 2→50
+   - site_url → https://valuelink-platform.vercel.app, uri_allow_list에 vercel/github.io/localhost 등록
+2. **register.html 재설계**: signUp 전 고객정보 사전검증 → signUp(emailRedirectTo=login.html) → 프로필 localStorage 보류 저장(vl_pending_profile) → "확인 메일" 안내. autoconfirm 환경도 분기 지원(즉시 저장+보류분 정리)
+3. **login.html**: 첫 로그인 시 users 행 없으면(PGRST116) completePendingRegistration이 users(+customers) 저장. checkAuth도 동일 처리(확인 링크 자동 세션 케이스). 비번재설정 redirectTo register.html→login.html 오류 수정
+4. **리뷰어 지적 반영**: W-1(redirectTo)·W-2(실패 시 signOut 좀비세션 방지)·W-3(역할 화이트리스트 프론트 강제)·W-4(보류 저장 선행으로 반쪽계정 자동복구)·I-1~I-4 전부 수정. C-1/C-2는 구버전 파일 기준 오판 → 실DB 증거로 반박, 리뷰어 철회
+
+### 검증 결과
+- API 플로우 재현: **8/8 PASS** (scripts/signup-flow-verify.js — 가입 200+메일발송 / 확인 전 로그인 거부 / 확인 후 로그인 / users·customers 저장 / 역할 조회)
+- 실브라우저 E2E: **9/9 PASS** (tests/verify-signup-login-flow.js — 가입 폼→안내→localStorage→로그인→mypage 리다이렉트→DB 행 생성→pending 정리→JS 에러 0)
+- register.html 역할 제거 회귀: **7/7 PASS**
+- reviewer 에이전트: **Verified** (이슈 10건 전부 해소 확인)
+
+### 부수 작업: Vercel 비공개 배포 (/vercel-private-url-배포)
+- https://valuelink-platform.vercel.app (프로젝트 valuelink-platform, 정적 배포)
+- Deployment Protection 해제(로그인 차단 없음), noindex 헤더 + robots.txt Disallow 적용
+- 해결 이슈: ① 프론트에 Next.js 잔재 package.json → vercel.json framework null ② public/ 폴더 존재로 outputDirectory 오감지 → "." 명시
+
+### 산출물
+- `Valuation_Company/valuation-platform/frontend/app/register.html`, `login.html` (플로우 재설계)
+- `Valuation_Company/valuation-platform/frontend/vercel.json`, `robots.txt` (Vercel 정적 배포 설정)
+- `scripts/auth-config-apply.js` (Auth 설정 적용, 키는 .env.local에서 읽음), `scripts/signup-flow-verify.js`
+- `tests/verify-signup-login-flow.js` (실브라우저 E2E)
+
+---
+
 ## 2026-06-12 백호 후속과제 2건 완료 — 뉴스레터 rate limiting + 고객가입 customers 저장 수정 (security Verified) ✅
 
 ### 작업 상태: ✅ 완료 — security 에이전트 Verified(권고 M-1/M-3 즉시 반영), API 신규 10/10 + 회귀 28/28 PASS
