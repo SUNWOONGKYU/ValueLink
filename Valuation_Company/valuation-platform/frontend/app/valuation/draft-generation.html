@@ -365,10 +365,50 @@
     <script>
         (function() {
             var role = localStorage.getItem('userRole') || 'customer';
-            if (role === 'accountant' || role === 'admin') return;
+            if (role === 'accountant' || role === 'admin') {
+                // [보안 2차 검증] localStorage 값은 위조 가능 — Supabase 세션 + DB role 재확인
+                var runVerify = function() {
+                    var verifyScript = document.createElement('script');
+                    verifyScript.type = 'module';
+                    verifyScript.textContent = `
+                        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+                        try {
+                            const sb = createClient(
+                                'https://arxrfetgaitkgiiqabap.supabase.co',
+                                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+                            );
+                            const { data: { session } } = await sb.auth.getSession();
+                            // 세션 없음(만료 포함)이면 차단 — 의도된 동작 (재로그인 필요)
+                            let verifiedRole = null;
+                            if (session && session.user) {
+                                const { data: userData } = await sb
+                                    .from('users').select('role').eq('user_id', session.user.id).single();
+                                verifiedRole = userData ? userData.role : null;
+                            }
+                            if (verifiedRole !== 'admin' && verifiedRole !== 'accountant') {
+                                localStorage.removeItem('userRole');
+                                var hdr = document.getElementById('header-container');
+                                if (hdr) hdr.style.display = 'none';
+                                ['.hero-section', '.page-wrapper', 'footer'].forEach(function(sel) {
+                                    var el = document.querySelector(sel);
+                                    if (el) el.style.display = 'none';
+                                });
+                                document.getElementById('access-denied').style.display = 'block';
+                            }
+                        } catch(e) { console.warn('역할 2차 검증 실패(네트워크 오류) — 화면 유지, 데이터는 RLS로 보호:', e); }
+                    `;
+                    document.body.appendChild(verifyScript);
+                };
+                // 파싱 중이면 DOMContentLoaded 대기, 이미 로드 완료면 즉시 실행 (리스너 미발화 우회 방지)
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', runVerify);
+                } else {
+                    runVerify();
+                }
+                return;
+            }
             document.getElementById('access-denied').style.display = 'block';
             document.addEventListener('DOMContentLoaded', function() {
-                var els = ['header-container', '.hero-section', '.page-wrapper', 'footer'];
                 ['header-container'].forEach(function(id) {
                     var el = document.getElementById(id);
                     if (el) el.style.display = 'none';

@@ -746,11 +746,11 @@
 
     <script>
         // Supabase 초기화
-        let supabase = null;
+        let supabaseClient = null;
         try {
             const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
 
         // 현재 단계
@@ -941,7 +941,7 @@
                 const userPassword = document.getElementById('userPassword').value;
 
                 // 1. Supabase Auth 회원가입
-                const { data: authData, error: authError } = await supabase.auth.signUp({
+                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
                     email: userEmail,
                     password: userPassword
                 });
@@ -952,7 +952,7 @@
                 console.log('Auth signup success:', userId);
 
                 // 2. users 테이블에 기본 정보 저장
-                const { error: userError } = await supabase
+                const { error: userError } = await supabaseClient
                     .from('users')
                     .insert([{
                         user_id: userId,
@@ -996,7 +996,7 @@
                 throw new Error('필수 항목을 모두 입력해주세요');
             }
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('customers')
                 .insert([{
                     user_id: userId,
@@ -1042,7 +1042,7 @@
             // accountant_id 생성 (ACC + 타임스탬프)
             const accountantId = 'ACC' + Date.now().toString().slice(-8);
 
-            const { error } = await supabase
+            const { error } = await supabaseClient
                 .from('accountants')
                 .insert([{
                     accountant_id: accountantId,

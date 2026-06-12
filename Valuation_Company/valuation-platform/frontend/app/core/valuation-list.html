@@ -429,12 +429,12 @@
             });
 
         // Supabase 설정 (옵션 - 테스트 모드에서는 사용하지 않음)
-        let supabase = null;
+        let supabaseClient = null;
         try {
             if (window.supabase) {
                 const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
                 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             }
         } catch (e) {
             console.log('Supabase 초기화 스킵 (테스트 모드)');

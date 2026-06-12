@@ -590,7 +590,7 @@
         // ====== Supabase 초기화 ======
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // ====== 상수 ======
         const METHOD_NAMES = {
@@ -638,9 +638,9 @@
 
             try {
                 // 1. 프로젝트 정보 조회
-                const { data: project, error: projError } = await supabase
+                const { data: project, error: projError } = await supabaseClient
                     .from('projects')
-                    .select('project_id, company_name, valuation_date')
+                    .select('project_id, company_name_kr, valuation_date')
                     .eq('project_id', projectId)
                     .single();
 
@@ -653,7 +653,7 @@
                 }
 
                 // draft_method_status에서 방법별 상태 확인
-                const { data: methodStatus } = await supabase
+                const { data: methodStatus } = await supabaseClient
                     .from('draft_method_status')
                     .select('draft_status, draft_submitted_at, final_report_url')
                     .eq('project_id', projectId)
@@ -668,7 +668,7 @@
                 }
 
                 // 2. 섹션 내용 로드
-                const { data: sections, error: secError } = await supabase
+                const { data: sections, error: secError } = await supabaseClient
                     .from('report_draft_sections')
                     .select('*')
                     .eq('project_id', projectId)
@@ -713,7 +713,7 @@
         function renderCover(project, method) {
             var methodFullName = METHOD_FULL_NAMES[method] || method;
             var methodName = METHOD_NAMES[method] || method;
-            var companyName = project.company_name || '-';
+            var companyName = project.company_name_kr || '-';
             var today = new Date();
             var writeDate = today.getFullYear() + '년 ' + (today.getMonth() + 1) + '월 ' + today.getDate() + '일';
             var baseDate = project.valuation_date || writeDate;

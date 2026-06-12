@@ -165,6 +165,50 @@
             background: #1E40AF;
         }
 
+        /* 탭 네비게이션 */
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border-radius: 16px;
+            padding: 6px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: transparent;
+            color: #6B7280;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .tab-btn:hover { background: #F3F4F6; color: #111827; }
+        .tab-btn.active { background: #7C3AED; color: white; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* 로그아웃 버튼 */
+        .btn-logout-page {
+            display: block;
+            margin: 32px auto 0;
+            padding: 12px 32px;
+            background: #F3F4F6;
+            color: #374151;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-logout-page:hover { background: #E5E7EB; }
+
         /* Empty state */
         .empty-state {
             text-align: center;
@@ -217,42 +261,57 @@
             <p class="page-subtitle">지원 활동을 관리합니다</p>
         </div>
 
-        <!-- 통계 -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">🎯</div>
-                <div class="stat-label">지원 활동</div>
-                <div class="stat-value" id="statActivities">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-label">완료된 지원</div>
-                <div class="stat-value" id="statCompleted">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">📊</div>
-                <div class="stat-label">멘토링 횟수</div>
-                <div class="stat-value" id="statMentoring">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">⭐</div>
-                <div class="stat-label">포인트</div>
-                <div class="stat-value" id="statPoints">0P</div>
-            </div>
+        <!-- 탭 네비게이션 -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchSupporterTab('dashboard', this)">대시보드</button>
+            <button class="tab-btn" onclick="switchSupporterTab('activities', this)">활동 내역</button>
+            <button class="tab-btn" onclick="switchSupporterTab('profile', this)">내 프로필</button>
         </div>
 
-        <!-- 최근 활동 -->
-        <div class="section">
-            <h2 class="section-title">최근 활동</h2>
-            <div class="activity-list" id="activityList">
-                <div class="empty-state">
-                    <div class="empty-icon">🎯</div>
-                    <div class="empty-text">최근 활동이 없습니다</div>
-                    <div class="empty-subtext">지원 활동을 시작해보세요</div>
+        <!-- 탭 1: 대시보드 -->
+        <div id="tab-dashboard" class="tab-panel active">
+            <!-- 통계 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-label">지원 활동</div>
+                    <div class="stat-value" id="statActivities">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-label">완료된 지원</div>
+                    <div class="stat-value" id="statCompleted">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">멘토링 횟수</div>
+                    <div class="stat-value" id="statMentoring">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-label">포인트</div>
+                    <div class="stat-value" id="statPoints">0P</div>
                 </div>
             </div>
         </div>
 
+        <!-- 탭 2: 활동 내역 -->
+        <div id="tab-activities" class="tab-panel">
+            <!-- 최근 활동 -->
+            <div class="section">
+                <h2 class="section-title">최근 활동</h2>
+                <div class="activity-list" id="activityList">
+                    <div class="empty-state">
+                        <div class="empty-icon">🎯</div>
+                        <div class="empty-text">최근 활동이 없습니다</div>
+                        <div class="empty-subtext">지원 활동을 시작해보세요</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 탭 3: 내 프로필 -->
+        <div id="tab-profile" class="tab-panel">
         <!-- 서포터 프로필 -->
         <div class="section">
             <h2 class="section-title">서포터 프로필</h2>
@@ -284,15 +343,18 @@
             </div>
             <button class="btn-edit" onclick="editProfile()">프로필 수정</button>
         </div>
+        </div><!-- /tab-profile -->
+
+        <button class="btn-logout-page" onclick="doLogout()">로그아웃</button>
     </div>
 
     <script>
         // Supabase 초기화
-        let supabase = null;
+        let supabaseClient = null;
         try {
             const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
 
         // 헤더 로드
@@ -307,7 +369,7 @@
         async function initPage() {
             try {
                 // 로그인 확인
-                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
 
                 if (authError || !user) {
                     alert('로그인이 필요합니다');
@@ -316,7 +378,7 @@
                 }
 
                 // users 테이블에서 정보 조회
-                const { data: userData, error: userError } = await supabase
+                const { data: userData, error: userError } = await supabaseClient
                     .from('users')
                     .select('*')
                     .eq('user_id', user.id)
@@ -371,6 +433,26 @@
         function editProfile() {
             alert('프로필 수정 기능은 개발 중입니다');
             // TODO: 프로필 수정 모달 또는 페이지
+        }
+
+        // 탭 전환
+        function switchSupporterTab(tabName, btn) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // 로그아웃
+        async function doLogout() {
+            try {
+                if (supabaseClient) await supabaseClient.auth.signOut();
+            } catch(e) { /* 무시 */ }
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.setItem('loggedOut', 'true');
+            window.location.href = '../login.html';
         }
 
         // 페이지 로드 시 실행

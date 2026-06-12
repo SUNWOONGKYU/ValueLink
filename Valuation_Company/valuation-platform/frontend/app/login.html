@@ -207,6 +207,92 @@
             text-decoration: underline;
         }
 
+        /* 비밀번호 찾기 모달 */
+        .pw-reset-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .pw-reset-overlay.active { display: flex; }
+        .pw-reset-box {
+            background: white;
+            border-radius: 16px;
+            padding: 36px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .pw-reset-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .pw-reset-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .pw-reset-box input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+        .pw-reset-box input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+        .pw-reset-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .pw-reset-actions button {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .btn-pw-send {
+            background: var(--deep-blue);
+            color: white;
+        }
+        .btn-pw-send:hover { background: #1E40AF; }
+        .btn-pw-cancel {
+            background: var(--bg-light);
+            color: var(--text-secondary);
+        }
+        .btn-pw-cancel:hover { background: #E5E7EB; }
+        .pw-reset-msg {
+            font-size: 13px;
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: none;
+        }
+        .pw-reset-msg.success {
+            background: #DCFCE7;
+            color: #059669;
+            display: block;
+        }
+        .pw-reset-msg.error {
+            background: #FEE2E2;
+            color: #DC2626;
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .login-header {
                 padding: 30px 20px;
@@ -254,7 +340,7 @@
                         <input type="checkbox" id="rememberMe">
                         <span>로그인 상태 유지</span>
                     </label>
-                    <a href="#" class="forgot-password">비밀번호 찾기</a>
+                    <a href="#" class="forgot-password" onclick="openPwReset(event)">비밀번호 찾기</a>
                 </div>
 
                 <button type="submit" class="btn-login" id="loginBtn">로그인</button>
@@ -270,6 +356,20 @@
         </div>
     </div>
     </div> <!-- /login-wrapper -->
+
+    <!-- 비밀번호 찾기 모달 -->
+    <div class="pw-reset-overlay" id="pwResetOverlay">
+        <div class="pw-reset-box">
+            <h2>비밀번호 찾기</h2>
+            <p>가입하신 이메일 주소를 입력하시면<br>비밀번호 재설정 링크를 보내드립니다.</p>
+            <input type="email" id="pwResetEmail" placeholder="example@email.com" autocomplete="email">
+            <div class="pw-reset-actions">
+                <button class="btn-pw-cancel" onclick="closePwReset()">취소</button>
+                <button class="btn-pw-send" onclick="sendPwReset()">이메일 전송</button>
+            </div>
+            <div class="pw-reset-msg" id="pwResetMsg"></div>
+        </div>
+    </div>
 
     <!-- 헤더 로드 -->
     <script>
@@ -293,11 +393,11 @@
 
     <script>
         // Supabase 초기화
-        let supabase = null;
+        let supabaseClient = null;
         try {
             const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
 
         // 로그인 폼 제출
@@ -318,7 +418,7 @@
 
             try {
                 // Supabase Auth 로그인
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
@@ -328,7 +428,7 @@
                 console.log('Login success:', data.user.email);
 
                 // users 테이블에서 역할 조회
-                const { data: userData, error: userError } = await supabase
+                const { data: userData, error: userError } = await supabaseClient
                     .from('users')
                     .select('role, is_active')
                     .eq('user_id', data.user.id)
@@ -341,7 +441,7 @@
 
                 // 계정 활성화 여부 확인
                 if (!userData.is_active) {
-                    await supabase.auth.signOut();
+                    await supabaseClient.auth.signOut();
                     throw new Error('비활성화된 계정입니다. 관리자에게 문의하세요.');
                 }
 
@@ -355,7 +455,7 @@
                 localStorage.removeItem('loggedOut');
 
                 // 사용자 이름 조회 및 저장
-                const { data: profileData } = await supabase
+                const { data: profileData } = await supabaseClient
                     .from('users')
                     .select('name')
                     .eq('user_id', data.user.id)
@@ -408,9 +508,58 @@
             errorEl.classList.remove('show');
         }
 
+        // 비밀번호 찾기 모달
+        function openPwReset(e) {
+            if (e) e.preventDefault();
+            document.getElementById('pwResetOverlay').classList.add('active');
+            document.getElementById('pwResetEmail').value = document.getElementById('email').value || '';
+            document.getElementById('pwResetMsg').className = 'pw-reset-msg';
+            document.getElementById('pwResetMsg').textContent = '';
+        }
+
+        function closePwReset() {
+            document.getElementById('pwResetOverlay').classList.remove('active');
+        }
+
+        async function sendPwReset() {
+            const email = document.getElementById('pwResetEmail').value.trim();
+            const msgEl = document.getElementById('pwResetMsg');
+            msgEl.className = 'pw-reset-msg';
+
+            if (!email) {
+                msgEl.textContent = '이메일을 입력해주세요.';
+                msgEl.classList.add('error');
+                return;
+            }
+
+            const sendBtn = document.querySelector('.btn-pw-send');
+            sendBtn.disabled = true;
+            sendBtn.textContent = '전송 중...';
+
+            try {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname.replace('login.html', '') + 'register.html'
+                });
+                if (error) throw error;
+                msgEl.textContent = '재설정 링크를 이메일로 발송했습니다. 이메일을 확인해주세요.';
+                msgEl.classList.add('success');
+            } catch (err) {
+                msgEl.textContent = '발송 실패: ' + (err.message || '다시 시도해주세요.');
+                msgEl.classList.add('error');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = '이메일 전송';
+            }
+        }
+
+        // 오버레이 클릭 시 모달 닫기
+        document.getElementById('pwResetOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closePwReset();
+        });
+
         // 이미 로그인된 경우 리다이렉트
         (async function checkAuth() {
-            const { data: { user } } = await supabase.auth.getUser();
+            const { data: { user } } = await supabaseClient.auth.getUser();
             if (user) {
                 console.log('Already logged in, redirecting...');
                 window.location.href = 'core/mypage.html';

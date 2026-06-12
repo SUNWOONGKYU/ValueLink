@@ -558,7 +558,7 @@
     <script>
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const METHOD_NAMES = {
             dcf: 'DCF평가법',
@@ -585,7 +585,7 @@
                 }
 
                 // 프로젝트 정보 조회
-                const { data: project, error } = await supabase
+                const { data: project, error } = await supabaseClient
                     .from('projects')
                     .select('*')
                     .eq('project_id', projectId)
@@ -598,7 +598,7 @@
                 }
 
                 // Check payment status
-                const { data: payment } = await supabase
+                const { data: payment } = await supabaseClient
                     .from('balance_payments')
                     .select('status')
                     .eq('project_id', projectId)
@@ -624,7 +624,7 @@
                 }
 
                 // draft_method_status에서 final_report_url 조회 (방법별)
-                const { data: methodStatus } = await supabase
+                const { data: methodStatus } = await supabaseClient
                     .from('draft_method_status')
                     .select('final_report_url')
                     .eq('project_id', projectId)
@@ -690,7 +690,7 @@
                 } else {
                     // 데모: Supabase Storage에서 보고서 조회 시도
                     const path = `reports/${method}/${projectId}.pdf`;
-                    const { data } = supabase.storage.from('valuation-reports').getPublicUrl(path);
+                    const { data } = supabaseClient.storage.from('valuation-reports').getPublicUrl(path);
 
                     if (data?.publicUrl) {
                         window.open(data.publicUrl, '_blank');
@@ -740,7 +740,7 @@
 
             try {
                 // Supabase에 이메일 발송 요청 기록
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('report_delivery_requests')
                     .insert({
                         project_id: projectId,
@@ -794,7 +794,7 @@
 
             try {
                 // Supabase에 하드카피 배송 요청 기록
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('report_delivery_requests')
                     .insert({
                         project_id: projectId,

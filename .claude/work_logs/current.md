@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-06-12 백호 작전 잔여 마무리 — 리네임 런타임 검증 + 역할위조 보안 패치 ✅
+
+### 작업 상태: ✅ 완료 — reviewer Verified, 실브라우저 검증 30/30 PASS
+
+### 배경
+이전 세션(세션 한도 종료)에서 supabase→supabaseClient 리네임 22파일(레드팀 정적검증 CLEAN, 미커밋)과 Delta RLS 감사(rls_remediation_delta.sql 작성)까지 완료. 잔여: Echo 런타임 검증, localStorage 위조 패치, 보고·커밋.
+
+### 수행 내역
+1. **Echo 실브라우저 런타임 검증 (22/22 PASS)** — tests/echo-rename-error-check.js 신규. 수정 22파일 전체 로드, 식별자/supabase 참조 에러 0건. 기존 echo-runtime-verification.spec.js 12/15 통과(3건 실패는 비로그인 리다이렉트/데이터 게이팅으로 인한 테스트 셀렉터 오매칭 — 실결함 아님 확인)
+2. **localStorage 역할위조 보안 패치 (5파일)** — valuation/accountant-review·data-collection·draft-generation·final-preparation·evaluation-progress.html. 기존: userRole='admin' 위조 시 무검증 통과. 패치: 통과 시에도 Supabase getSession()+users.role 2차 검증(runVerify + readyState 가드), 불일치 시 차단+위조값 제거. 네트워크 오류 시 fail-open(데이터는 RLS 담당) 주석 명시
+3. **reviewer 검증**: 1차 Needs Fix(W-1 죽은변수, W-2 DOMContentLoaded 미발화 우회, W-3 의도주석, I-2 죽은변수) → 전수 수정 → 재검증 **Verified**
+4. **실브라우저 재검증**: 위조 차단 5/5 PASS(denied 표시+userRole cleared) + e2e 실로그인 정상 접근 3/3 PASS
+
+### 신규 테스트 파일
+- tests/echo-rename-error-check.js — 22파일 식별자 에러 검사
+- tests/verify-role-spoof-patch.js — 위조 공격 재현 차단 검증
+- tests/verify-role-legit-path.js — e2e 계정 실로그인 정상 접근 회귀 검증
+
+### SAL Grid
+- S2F4·S2F5·S5T1.json modification_history + updated_at 갱신 (루트 + Process 원본, scripts/update-grid-baekho.py)
+
+### 잔여 (PO 승인 대기)
+- **RLS 치유 SQL 실행** — Valuation_Company/valuation-platform/backend/database/rls_remediation_delta.sql. CRITICAL 3테이블(users/customers/projects anon 전체조회) 포함. 정책 교체(DROP POLICY)라 PO 승인 필요, 승인 시 Supabase SQL Editor 실행 + 사이트 회귀 확인 예정
+
+---
+
 ## 2026-06-12 데드링크 작전 최종 배포 검증 + 로그아웃 프리페치 회귀 수정 ✅
 
 ### 작업 상태: ✅ 완료 — reviewer Verified, 프로덕션 검증 8/8 PASS

@@ -363,15 +363,15 @@
         };
 
         // Supabase 초기화
-        const SUPABASE_URL = 'https://fdlbdmsjzqdfumqfblbh.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZkbGJkbXNqenFkZnVtcWZibGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3NDUxMjYsImV4cCI6MjA2NDMyMTEyNn0.75p4JJcRH3bVxQCb2E6PjYWnGX6gYrYmGSabNS1VKzk';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let allProjects = [];
 
         async function loadProjects() {
             try {
-                const { data: projects, error } = await supabase
+                const { data: projects, error } = await supabaseClient
                     .from('projects')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -417,7 +417,7 @@
                 return `
                     <a href="project-detail.html?id=${p.project_id}" class="project-card">
                         <div class="project-card-info">
-                            <div class="project-card-title">${p.company_name || p.project_name || '미입력'}</div>
+                            <div class="project-card-title">${p.company_name_kr || p.company_name || p.project_name || '미입력'}</div>
                             <div class="project-card-meta">
                                 <span>생성일: ${createdDate}</span>
                                 <span>평가목적: ${p.valuation_purpose || '-'}</span>
@@ -449,7 +449,7 @@
             }
             if (searchVal) {
                 filtered = filtered.filter(p =>
-                    (p.company_name || '').toLowerCase().includes(searchVal) ||
+                    (p.company_name_kr || p.company_name || '').toLowerCase().includes(searchVal) ||
                     (p.project_name || '').toLowerCase().includes(searchVal)
                 );
             }

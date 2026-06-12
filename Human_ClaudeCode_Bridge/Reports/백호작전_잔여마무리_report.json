@@ -1,0 +1,44 @@
+{
+  "report_name": "백호 작전 잔여 마무리 — 리네임 런타임 검증 + 역할위조 보안 패치",
+  "date": "2026-06-12",
+  "status": "완료 (RLS SQL 실행만 PO 승인 대기)",
+  "background": "이전 세션 한도 종료로 중단된 백호 작전 재개. 리네임 22파일(미커밋)과 RLS 감사 SQL은 완료 상태였음",
+  "work_items": [
+    {
+      "item": "Echo 실브라우저 런타임 검증",
+      "target": "supabase→supabaseClient 리네임 22개 HTML",
+      "method": "tests/echo-rename-error-check.js — 전 페이지 로드 + pageerror/console error 수집",
+      "result": "22/22 PASS — 식별자/supabase 참조 에러 0건"
+    },
+    {
+      "item": "localStorage 역할위조 보안 패치",
+      "target": "valuation/accountant-review, data-collection, draft-generation, final-preparation, evaluation-progress (5파일)",
+      "change": "localStorage userRole 통과 시에도 Supabase 세션+DB role 2차 검증 (runVerify + document.readyState 가드). 불일치 시 콘텐츠 숨김 + access-denied 표시 + 위조값 제거. 네트워크 오류 시 fail-open(데이터 보호는 RLS 담당)",
+      "result": "위조 차단 5/5 PASS + e2e 실로그인 정상 접근 3/3 PASS"
+    },
+    {
+      "item": "reviewer 서브에이전트 검증",
+      "result": "1차 Needs Fix (W-1/W-2/W-3/I-2) → 전수 수정 → 재검증 Verified (Critical 0)"
+    },
+    {
+      "item": "SAL Grid 기록",
+      "result": "S2F4, S2F5, S5T1 modification_history 갱신 (루트 + Process 원본 6파일)"
+    }
+  ],
+  "verification": {
+    "self_verification_prohibited": "준수 — reviewer 서브에이전트가 별도 검증",
+    "browser_click_test": "수행 — Playwright 실브라우저 (curl 검증 아님)",
+    "tests": [
+      "tests/echo-rename-error-check.js: 22/22 PASS",
+      "tests/verify-role-spoof-patch.js: 5/5 PASS",
+      "tests/verify-role-legit-path.js: 3/3 PASS",
+      "tests/echo-runtime-verification.spec.js: 12/15 (3건은 비로그인 게이팅으로 인한 테스트 셀렉터 오매칭, 실결함 아님)"
+    ]
+  },
+  "pending_po_approval": {
+    "item": "RLS 치유 SQL 실행",
+    "file": "Valuation_Company/valuation-platform/backend/database/rls_remediation_delta.sql",
+    "severity": "CRITICAL 3테이블 (users/customers/projects — anon 키로 전체 레코드 조회 가능) + HIGH 5테이블 (anon INSERT/UPDATE 가능)",
+    "reason_for_approval": "기존 정책 DROP 후 재생성 — 실서비스 동작에 영향 가능, 절대 규칙 6(파괴적 작업 사전 승인) 해당"
+  }
+}

@@ -1041,11 +1041,11 @@
 
     <script>
         // Supabase 클라이언트 초기화
-        let supabase = null;
+        let supabaseClient = null;
         try {
             const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
 
         // URL에서 프로젝트 ID 가져오기
@@ -1188,7 +1188,7 @@
                 // 1. Supabase Storage에 파일 업로드
                 const filePath = `${PROJECT_ID}/${storedName}`;
 
-                const { data: uploadData, error: uploadError } = await supabase.storage
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
                     .from('project-files')
                     .upload(filePath, file, {
                         cacheControl: '3600',
@@ -1288,7 +1288,7 @@
         // Supabase에서 프로젝트 데이터 로드
         async function loadProjectData() {
             try {
-                const { data: project, error } = await supabase
+                const { data: project, error } = await supabaseClient
                     .from('projects')
                     .select(`
                         *,
@@ -1342,7 +1342,7 @@
 
             try {
                 // 1. valuation_results 삭제
-                const { error: resultsError } = await supabase
+                const { error: resultsError } = await supabaseClient
                     .from('valuation_results')
                     .delete()
                     .eq('project_id', PROJECT_ID);
@@ -1350,7 +1350,7 @@
                 if (resultsError) throw resultsError;
 
                 // 2. projects 삭제
-                const { error: projectError } = await supabase
+                const { error: projectError } = await supabaseClient
                     .from('projects')
                     .delete()
                     .eq('project_id', PROJECT_ID);

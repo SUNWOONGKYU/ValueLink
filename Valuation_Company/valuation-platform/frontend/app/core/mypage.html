@@ -136,18 +136,18 @@
 
     <script>
         // Supabase 초기화
-        let supabase = null;
+        let supabaseClient = null;
         try {
             const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
             const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) { console.warn('Supabase 초기화 스킵 - 페이지 정상 작동'); }
 
         // 역할별 페이지 라우팅
         async function routeToRoleBasedPage() {
             try {
                 // 1. 로그인 확인
-                const { data: { user }, error: authError } = await supabase.auth.getUser();
+                const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
 
                 // 테스트용: 로그인 안 되어 있으면 회사 마이페이지로 바로 이동
                 if (authError || !user) {
@@ -159,7 +159,7 @@
                 console.log('User authenticated:', user.email);
 
                 // 2. users 테이블에서 role 조회
-                const { data: userData, error: userError } = await supabase
+                const { data: userData, error: userError } = await supabaseClient
                     .from('users')
                     .select('role, name, is_active')
                     .eq('user_id', user.id)

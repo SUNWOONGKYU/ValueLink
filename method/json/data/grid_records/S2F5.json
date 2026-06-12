@@ -30,5 +30,5 @@
     "Write"
   ],
   "execution_type": "AI-Only",
-  "modification_history": "2026-06-12: R-5 — step-1~12 전체 12개 페이지 Project.current_step nullable 전환 + currentStep={current_step ?? 1} 방어 (reviewer 1차 리뷰에서 누락 지적 → 전수 수정). reviewer 재검증 Verified."
+  "modification_history": "2026-06-12: R-5 — step-1~12 전체 12개 페이지 Project.current_step nullable 전환 + currentStep={current_step ?? 1} 방어 (reviewer 1차 리뷰에서 누락 지적 → 전수 수정). reviewer 재검증 Verified.\n2026-06-12: 백호 작전 보안 패치 — valuation 워크플로우 5페이지(accountant-review, data-collection, draft-generation, final-preparation, evaluation-progress) localStorage 역할위조 차단: 게이트 통과 시에도 Supabase 세션+DB role 2차 검증(runVerify + readyState 가드), 불일치 시 차단·위조값 제거. reviewer Verified. 위조차단 5/5 + 정상접근 3/3 PASS."
 }

@@ -829,7 +829,7 @@
         // Supabase 클라이언트
         const SUPABASE_URL = 'https://arxrfetgaitkgiiqabap.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDczNzIxNDMsImV4cCI6MjA2Mjk0ODE0M30.aGSJFVFW5P_E9l4sBz5_7MWJiN5YOhMJXBbLPi7bo0';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const METHOD_NAMES = {
             dcf: 'DCF평가법',
@@ -857,7 +857,7 @@
                 }
 
                 // 프로젝트 정보 조회
-                const { data: project, error } = await supabase
+                const { data: project, error } = await supabaseClient
                     .from('projects')
                     .select('*')
                     .eq('project_id', currentProjectId)
@@ -873,7 +873,7 @@
                 displayProjectInfo(project);
 
                 // draft_method_status에서 방법별 상태 확인
-                const { data: methodStatus } = await supabase
+                const { data: methodStatus } = await supabaseClient
                     .from('draft_method_status')
                     .select('draft_status')
                     .eq('project_id', currentProjectId)
@@ -930,7 +930,7 @@
         function displayProjectInfo(project) {
             document.getElementById('projectIdDisplay').textContent = project.project_id;
             document.getElementById('companyNameDisplay').textContent =
-                project.company_name || '-';
+                project.company_name_kr || project.company_name || '-';
             document.getElementById('methodDisplay').textContent = METHOD_NAMES[currentMethod] || currentMethod;
             document.getElementById('valuationDateDisplay').textContent =
                 project.valuation_date || '-';
@@ -943,7 +943,7 @@
 
         async function loadPreviousRequests() {
             try {
-                const { data: requests, error } = await supabase
+                const { data: requests, error } = await supabaseClient
                     .from('revision_requests')
                     .select('*')
                     .eq('project_id', currentProjectId)
@@ -1148,7 +1148,7 @@
                 let fileUrls = [];
                 for (const file of uploadedFiles) {
                     const filePath = `revisions/${currentProjectId}/${currentMethod}/${Date.now()}_${file.name}`;
-                    const { data: uploadData, error: uploadError } = await supabase.storage
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
                         .from('valuation-reports')
                         .upload(filePath, file);
                     if (!uploadError && uploadData) {
@@ -1157,7 +1157,7 @@
                 }
 
                 // revision_requests 테이블에 저장
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('revision_requests')
                     .insert({
                         project_id: currentProjectId,
@@ -1178,7 +1178,7 @@
                 }
 
                 // draft_method_status 테이블 draft_status 업데이트
-                await supabase.from('draft_method_status').upsert({
+                await supabaseClient.from('draft_method_status').upsert({
                     project_id: currentProjectId,
                     method: currentMethod,
                     draft_status: 'revision_requested',
