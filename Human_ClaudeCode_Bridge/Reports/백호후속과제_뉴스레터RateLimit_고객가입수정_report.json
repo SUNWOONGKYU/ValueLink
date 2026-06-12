@@ -1,0 +1,44 @@
+{
+  "report_name": "백호 후속과제 2건 — 뉴스레터 rate limiting + 고객가입 customers 저장 수정",
+  "date": "2026-06-12",
+  "status": "Completed",
+  "verification": "Verified (security 에이전트, 권고 M-1/M-3 즉시 반영 후)",
+  "tasks": [
+    {
+      "id": "FOLLOWUP-1",
+      "name": "뉴스레터 구독 스팸 방지 (IP rate limiting)",
+      "background": "RLS v3에서 newsletter_subscribers anon INSERT 무제한을 위험 수용하고 후속 과제로 기록",
+      "solution": "DB BEFORE INSERT 트리거 — 동일 IP 1시간 5회 초과 시 rate_limit_exceeded 예외. 시도 기록 테이블은 RLS 활성+정책 없음으로 외부 접근 차단. advisory lock으로 동시 요청 TOCTOU 차단(v1.1).",
+      "frontend": "deal.html submitSubscribe()에 P0001 에러 안내 추가",
+      "applied_to_production_db": true
+    },
+    {
+      "id": "FOLLOWUP-2",
+      "name": "고객 가입 시 회사 추가정보 저장 실패 수정",
+      "root_causes": [
+        "customers 테이블에 user_id 컬럼 없음 (alter_customers_table.sql 미적용)",
+        "company_name_en 컬럼 없음",
+        "customer_id PK(VARCHAR20) DEFAULT 없음",
+        "email NOT NULL인데 register.html 미전송",
+        "RLS v3에서 customers INSERT admin 전용 → 가입자 본인 INSERT 차단"
+      ],
+      "solution": "스키마 보강(전부 추가형: user_id+FK, company_name_en, customer_id DEFAULT, 부분 UNIQUE(user_id)) + customers_insert_own 정책(본인 행+customer 역할만) + register.html email 전달",
+      "security_note": "UPDATE/DELETE는 여전히 admin 전용 — v3의 M-2 보호 유지 확인됨",
+      "applied_to_production_db": true
+    }
+  ],
+  "test_results": {
+    "new_verification": "10/10 PASS (scripts/followup-verify.js — 가입 플로우 F1~F7 + rate limit G1~G3)",
+    "regression": "28/28 PASS (scripts/rls-verify.js)",
+    "security_agent": "Verified — M-1(복수 행 생성)·M-3(TOCTOU/정리 부하) 권고는 v1.1로 즉시 반영, M-2(NULL IP 내부 경로) 위험 수용, L-1(해시 충돌) 이론적 수준"
+  },
+  "generated_files": [
+    "Valuation_Company/valuation-platform/backend/database/followup_fixes_v1.sql",
+    "Valuation_Company/valuation-platform/backend/database/followup_fixes_v1_1.sql",
+    "Valuation_Company/valuation-platform/frontend/app/register.html (수정)",
+    "Valuation_Company/valuation-platform/frontend/app/deal.html (수정)",
+    "scripts/followup-verify.js",
+    "scripts/db-query.js"
+  ],
+  "rollback": "각 SQL 파일 하단에 롤백 구문 동봉 (데이터 무손실)"
+}

@@ -2319,6 +2319,8 @@
                 if (error) {
                     if (error.code === '23505') {
                         alert('이미 구독 중인 이메일입니다.');
+                    } else if (error.code === 'P0001' || (error.message && error.message.includes('rate_limit_exceeded'))) {
+                        alert('구독 시도가 너무 잦습니다. 잠시 후 다시 시도해주세요.');
                     } else {
                         throw error;
                     }

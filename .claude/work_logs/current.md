@@ -2,6 +2,40 @@
 
 ---
 
+## 2026-06-12 백호 후속과제 2건 완료 — 뉴스레터 rate limiting + 고객가입 customers 저장 수정 (security Verified) ✅
+
+### 작업 상태: ✅ 완료 — security 에이전트 Verified(권고 M-1/M-3 즉시 반영), API 신규 10/10 + 회귀 28/28 PASS
+
+### 과제 1: 뉴스레터 구독 스팸 방지 (v3에서 위험 수용했던 M-1)
+- **DB 트리거 기반 IP rate limiting** (`followup_fixes_v1.sql` + `v1_1.sql`, 실DB 적용 완료)
+  - `newsletter_subscribers` BEFORE INSERT 트리거: PostgREST request.headers에서 IP 추출, 동일 IP 1시간 5회 초과 시 `rate_limit_exceeded` 예외
+  - 시도 기록 테이블 `newsletter_subscribe_attempts`: RLS 활성+정책 없음 → 외부 접근 불가
+  - v1.1 보강: advisory lock으로 동시 요청 TOCTOU 차단 + 정리(DELETE) 경량화(본인 IP만 + 2% 확률 전체)
+- `deal.html` submitSubscribe(): P0001 에러 시 "구독 시도가 너무 잦습니다" 안내 추가
+
+### 과제 2: 고객 가입 시 회사 추가정보 저장 실패 (기존 버그)
+- **원인 진단 (실DB 스키마 조회로 확정)**: ① customers에 user_id 컬럼 없음 ② company_name_en 없음 ③ customer_id PK(VARCHAR20) DEFAULT 없음 ④ email NOT NULL인데 프론트 미전송 ⑤ RLS v3에서 INSERT admin 전용이라 가입자 차단
+- **수정**:
+  - 스키마 보강(전부 추가형): user_id UUID+FK, company_name_en, customer_id DEFAULT('C'+13hex), 부분 UNIQUE(user_id) — 실DB 적용 완료
+  - RLS: `customers_insert_own` 추가 — `user_id = auth.uid() AND get_my_role() = 'customer'`만 허용 (UPDATE/DELETE는 여전히 admin 전용, v3 보호 유지)
+  - `register.html`: saveCustomerData(userId, userEmail)로 email 전달, customers INSERT에 email 포함
+
+### 검증 결과
+- 신규 검증: **10/10 PASS** (scripts/followup-verify.js — 가입→customers 저장 플로우 F1~F7, rate limit G1~G3)
+  - F7: 동일 user_id 복수 행 차단(M-1 반영), F5: 타인 user_id 차단(42501), F6: 비customer 역할 차단
+  - G2: 6회째 구독 차단 확인, G3: IP 기록 외부 조회 차단
+- 기존 회귀: **28/28 PASS** (scripts/rls-verify.js)
+- security 에이전트: **Verified** — 권고 M-1(UNIQUE), M-3(TOCTOU+정리 부하)은 v1.1로 즉시 반영, M-2(NULL IP 내부 경로)는 service_role이 RLS 자체를 우회하는 신뢰 영역이라 위험 수용, L-1(customer_id 해시 충돌)은 이론적 수준으로 스키마 개편 시 UUID 전환 예정
+- 참고: /auth/v1/signup 직접 호출은 Supabase 플랫폼 자체 rate limit(429)에 걸려, 검증은 admin API 계정 생성+로그인으로 가입 직후 세션을 재현
+
+### 산출물
+- `Valuation_Company/valuation-platform/backend/database/followup_fixes_v1.sql` (+롤백 동봉)
+- `Valuation_Company/valuation-platform/backend/database/followup_fixes_v1_1.sql` (security 권고 반영, +롤백)
+- `Valuation_Company/valuation-platform/frontend/app/register.html`, `deal.html` 수정
+- `scripts/followup-verify.js` (신규 검증 10건), `scripts/db-query.js` (실DB 스키마 조회 유틸)
+
+---
+
 ## 2026-06-12 백호 작전 Phase 5 완결 — RLS v2 적용 확인 + v3 후속 치유 (security Verified) ✅
 
 ### 작업 상태: ✅ 완료 — security 에이전트 재검증 Verified, API 28/28 + 실브라우저 7/7 PASS

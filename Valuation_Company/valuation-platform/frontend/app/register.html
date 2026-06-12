@@ -841,7 +841,7 @@
 
                 // 3. 역할별 추가 정보 저장 (회계사/관리자는 자기가입 차단 — RLS v3)
                 if (selectedRole === 'customer') {
-                    await saveCustomerData(userId);
+                    await saveCustomerData(userId, userEmail);
                 }
 
                 // 성공
@@ -855,7 +855,7 @@
         }
 
         // Customer 데이터 저장
-        async function saveCustomerData(userId) {
+        async function saveCustomerData(userId, userEmail) {
             const companyName = document.getElementById('companyName').value.trim();
             const companyNameEn = document.getElementById('companyNameEn').value.trim();
             const businessNumber = document.getElementById('businessNumber').value.trim();
@@ -869,6 +869,7 @@
                 .from('customers')
                 .insert([{
                     user_id: userId,
+                    email: userEmail,
                     company_name: companyName,
                     company_name_en: companyNameEn,
                     business_number: businessNumber,
