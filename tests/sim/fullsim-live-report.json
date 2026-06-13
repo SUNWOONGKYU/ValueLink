@@ -1,0 +1,347 @@
+{
+  "timestamp": "2026-06-13T16:06:45.131Z",
+  "base": "https://valuelink-platform.vercel.app/app/valuation/results",
+  "records": [
+    {
+      "method": "dcf",
+      "scenario": "정상(기본값)",
+      "ok": true,
+      "issues": [],
+      "headline": "12,979원",
+      "expected": {
+        "value": 12979
+      }
+    },
+    {
+      "method": "dcf",
+      "scenario": "경계: 영구성장률≈WACC-0.1",
+      "ok": true,
+      "issues": [],
+      "headline": "22,824원",
+      "expected": {
+        "value": 22824
+      }
+    },
+    {
+      "method": "dcf",
+      "scenario": "극단: 대형 FCFF",
+      "ok": true,
+      "issues": [],
+      "headline": "122,811원",
+      "expected": {
+        "value": 122811
+      }
+    },
+    {
+      "method": "dcf",
+      "scenario": "음수 FCFF(적자기업)",
+      "ok": true,
+      "issues": [],
+      "headline": "-2,159원",
+      "expected": {
+        "value": -2159
+      }
+    },
+    {
+      "method": "dcf",
+      "scenario": "가드: 발행주식수 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "발행주식수"
+      },
+      "note": "가드 정상 발동: 발행주식수"
+    },
+    {
+      "method": "dcf",
+      "scenario": "가드: 영구성장률>WACC",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "영구성장률"
+      },
+      "note": "가드 정상 발동: 영구성장률"
+    },
+    {
+      "method": "tax",
+      "scenario": "정상",
+      "ok": true,
+      "issues": [],
+      "headline": "76,000",
+      "expected": {
+        "value": 76000
+      }
+    },
+    {
+      "method": "tax",
+      "scenario": "경계: 순자산80% 하한 발동(저수익)",
+      "ok": true,
+      "issues": [],
+      "headline": "24,000",
+      "expected": {
+        "value": 24000
+      }
+    },
+    {
+      "method": "tax",
+      "scenario": "적자연도+하한미발동(가중평균 손실반영 경로)",
+      "ok": true,
+      "issues": [],
+      "headline": "97,000",
+      "expected": {
+        "value": 97000
+      }
+    },
+    {
+      "method": "tax",
+      "scenario": "전연도 적자(가중평균 0 바닥)",
+      "ok": true,
+      "issues": [],
+      "headline": "24,000",
+      "expected": {
+        "value": 24000
+      }
+    },
+    {
+      "method": "tax",
+      "scenario": "극단: 대형 순이익",
+      "ok": true,
+      "issues": [],
+      "headline": "34,000,000",
+      "expected": {
+        "value": 34000000
+      }
+    },
+    {
+      "method": "tax",
+      "scenario": "가드: 주식수 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "발행주식총수"
+      },
+      "note": "가드 정상 발동: 발행주식총수"
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "정상(3개년)",
+      "ok": true,
+      "issues": [],
+      "headline": "39,000",
+      "expected": {
+        "value": 39000
+      }
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "극단: 고수익",
+      "ok": true,
+      "issues": [],
+      "headline": "2,712,000",
+      "expected": {
+        "value": 2712000
+      }
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "적자기업(수익가치 0 바닥)",
+      "ok": true,
+      "issues": [],
+      "headline": "12,000",
+      "expected": {
+        "value": 12000
+      }
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "경계: 낮은 자본환원율",
+      "ok": true,
+      "issues": [],
+      "headline": "282,000",
+      "expected": {
+        "value": 282000
+      }
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "가드: 주식수 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "발행주식수"
+      },
+      "note": "가드 정상 발동: 발행주식수"
+    },
+    {
+      "method": "intrinsic",
+      "scenario": "가드: NAV 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "순자산가치"
+      },
+      "note": "가드 정상 발동: 순자산가치"
+    },
+    {
+      "method": "relative",
+      "scenario": "정상(PER40/PBR30/EVEBITDA30)",
+      "ok": true,
+      "issues": [],
+      "headline": "13,296",
+      "expected": {
+        "value": 13296,
+        "discounted": 13296
+      }
+    },
+    {
+      "method": "relative",
+      "scenario": "비유동성할인 30%(할인적용값 검증)",
+      "ok": true,
+      "issues": [],
+      "headline": "13,296",
+      "expected": {
+        "value": 13296,
+        "discounted": 9307
+      },
+      "note": "할인적용 주당가치=9,307 ✓"
+    },
+    {
+      "method": "relative",
+      "scenario": "비유동성할인 클램프(>50→50)",
+      "ok": true,
+      "issues": [],
+      "headline": "13,296",
+      "expected": {
+        "value": 13296,
+        "discounted": 6648
+      },
+      "note": "할인적용 주당가치=6,648 ✓"
+    },
+    {
+      "method": "relative",
+      "scenario": "5개 멀티플 균등(20%×5)",
+      "ok": true,
+      "issues": [],
+      "headline": "14,051",
+      "expected": {
+        "value": 14051,
+        "discounted": 14051
+      }
+    },
+    {
+      "method": "relative",
+      "scenario": "극단: 대형 순이익/매출",
+      "ok": true,
+      "issues": [],
+      "headline": "1,889,660",
+      "expected": {
+        "value": 1889660,
+        "discounted": 1889660
+      }
+    },
+    {
+      "method": "relative",
+      "scenario": "적자기업(음수 순이익)",
+      "ok": true,
+      "issues": [],
+      "headline": "2,503",
+      "expected": {
+        "value": 2503,
+        "discounted": 2503
+      }
+    },
+    {
+      "method": "relative",
+      "scenario": "가드: 가중치합≠100",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "가중치"
+      },
+      "note": "가드 정상 발동: 가중치"
+    },
+    {
+      "method": "relative",
+      "scenario": "가드: 주식수 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "발행주식수"
+      },
+      "note": "가드 정상 발동: 발행주식수"
+    },
+    {
+      "method": "asset",
+      "scenario": "정상",
+      "ok": true,
+      "issues": [],
+      "headline": "4,760",
+      "expected": {
+        "value": 4760
+      }
+    },
+    {
+      "method": "asset",
+      "scenario": "할증 +20%",
+      "ok": true,
+      "issues": [],
+      "headline": "5,712",
+      "expected": {
+        "value": 5712
+      }
+    },
+    {
+      "method": "asset",
+      "scenario": "할인 -30%",
+      "ok": true,
+      "issues": [],
+      "headline": "3,332",
+      "expected": {
+        "value": 3332
+      }
+    },
+    {
+      "method": "asset",
+      "scenario": "극단: 대형 자산",
+      "ok": true,
+      "issues": [],
+      "headline": "1,999,960",
+      "expected": {
+        "value": 1999960
+      }
+    },
+    {
+      "method": "asset",
+      "scenario": "자본잠식(부채>자산, 음수 NAV)",
+      "ok": true,
+      "issues": [],
+      "headline": "-12,840",
+      "expected": {
+        "value": -12840
+      }
+    },
+    {
+      "method": "asset",
+      "scenario": "가드: 주식수 0",
+      "ok": true,
+      "issues": [],
+      "headline": "(guard)",
+      "expected": {
+        "guard": "발행주식수"
+      },
+      "note": "가드 정상 발동: 발행주식수"
+    }
+  ],
+  "summary": {
+    "total": 32,
+    "pass": 32,
+    "fail": 0
+  }
+}

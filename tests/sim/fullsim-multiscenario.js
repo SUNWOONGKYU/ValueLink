@@ -17,8 +17,11 @@ const fs = require('fs');
 
 const FRONTEND_ROOT = path.resolve(__dirname, '../../Valuation_Company/valuation-platform/frontend');
 const PORT = 8137;
-const BASE = `http://localhost:${PORT}/app/valuation/results`;
-const REPORT = path.join(__dirname, 'fullsim-multiscenario-report.json');
+// SIM_BASE 지정 시 라이브(Vercel) 배포를 직접 검증, 미지정 시 로컬 정적 서버
+// 예: SIM_BASE=https://valuelink-platform.vercel.app/app/valuation/results
+const LIVE_BASE = process.env.SIM_BASE;
+const BASE = LIVE_BASE || `http://localhost:${PORT}/app/valuation/results`;
+const REPORT = path.join(__dirname, LIVE_BASE ? 'fullsim-live-report.json' : 'fullsim-multiscenario-report.json');
 
 // ---------- 숫자 유틸 ----------
 const num = (s) => {
@@ -354,9 +357,14 @@ async function runMethod(browser, key, def, report) {
 }
 
 (async () => {
-  // 정적 서버 기동
-  const server = spawn('node', [path.join(__dirname, '..', 'static-server.js'), FRONTEND_ROOT, String(PORT)], { stdio: 'ignore' });
-  await new Promise((r) => setTimeout(r, 1200));
+  // 로컬 모드만 정적 서버 기동 (라이브 모드는 배포 URL 직접 검증)
+  let server = null;
+  if (!LIVE_BASE) {
+    server = spawn('node', [path.join(__dirname, '..', 'static-server.js'), FRONTEND_ROOT, String(PORT)], { stdio: 'ignore' });
+    await new Promise((r) => setTimeout(r, 1200));
+  } else {
+    console.log('🌐 LIVE 모드: ' + BASE);
+  }
 
   const report = { timestamp: new Date().toISOString(), base: BASE, records: [] };
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] });
@@ -367,7 +375,7 @@ async function runMethod(browser, key, def, report) {
     }
   } finally {
     await browser.close();
-    server.kill();
+    if (server) server.kill();
   }
 
   const pass = report.records.filter((r) => r.ok).length;
