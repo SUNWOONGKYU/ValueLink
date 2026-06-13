@@ -755,6 +755,19 @@
             flex: 1;
         }
 
+        /* 컨테이너 레이아웃 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+        .main-area {
+            flex: 1;
+            min-width: 0;
+        }
+
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
@@ -1010,7 +1023,7 @@
                 <div class="result-unit">원</div>
             </div>
         </section>
-    </div >
+    </div>
 
     </div>
 
@@ -1064,32 +1077,20 @@
             const rawProfit2 = income2 + nontax2 - tax2;
             const rawProfit1 = income1 + nontax1 - tax1;
 
-            // Apply 0 floor per 상증법 시행령 제54조 제1항 단서
-            const profit3 = Math.max(0, rawProfit3);
-            const profit2 = Math.max(0, rawProfit2);
-            const profit1 = Math.max(0, rawProfit1);
+            // Display raw profit per year (적자 연도 손실 그대로 표시)
+            document.getElementById('profit-3').textContent = formatNumber(rawProfit3);
+            document.getElementById('profit-2').textContent = formatNumber(rawProfit2);
+            document.getElementById('profit-1').textContent = formatNumber(rawProfit1);
 
-            // Check if any profits were negative and warn user
-            if (rawProfit3 < 0 || rawProfit2 < 0 || rawProfit1 < 0) {
-                const years = [];
-                if (rawProfit3 < 0) years.push('3년 전');
-                if (rawProfit2 < 0) years.push('2년 전');
-                if (rawProfit1 < 0) years.push('1년 전');
-                console.log('ℹ️ ' + years.join(', ') + ' 순손익이 음수로 0 처리되었습니다 (상증법 시행령 제54조 제1항 단서).');
-            }
-
-            // Display profit
-            document.getElementById('profit-3').textContent = formatNumber(profit3);
-            document.getElementById('profit-2').textContent = formatNumber(profit2);
-            document.getElementById('profit-1').textContent = formatNumber(profit1);
-
-            // Calculate weighted average (1:2:3)
-            const weightedProfit = (profit3 * 1 + profit2 * 2 + profit1 * 3) / 6;
+            // Calculate weighted average (1:2:3) using raw values (상증법 시행령 제54조)
+            // 0-floor는 가중평균 후 한 번만 적용 (적자 연도를 0으로 끌어올리면 가중평균 과대계상)
+            const rawWeightedProfit = (rawProfit3 * 1 + rawProfit2 * 2 + rawProfit1 * 3) / 6;
+            const weightedProfit = Math.max(0, rawWeightedProfit);
 
             // Update calculation display
-            document.getElementById('calc-profit-3').textContent = formatNumber(profit3);
-            document.getElementById('calc-profit-2').textContent = formatNumber(profit2);
-            document.getElementById('calc-profit-1').textContent = formatNumber(profit1);
+            document.getElementById('calc-profit-3').textContent = formatNumber(rawProfit3);
+            document.getElementById('calc-profit-2').textContent = formatNumber(rawProfit2);
+            document.getElementById('calc-profit-1').textContent = formatNumber(rawProfit1);
             document.getElementById('weighted-profit').textContent = formatNumber(weightedProfit);
             document.getElementById('calc-weighted').textContent = formatNumber(weightedProfit);
 
@@ -1144,8 +1145,9 @@
                 return;
             }
 
-            // Get company type
-            const isGeneral = document.querySelector('input[name="company-type"]:checked').value === 'general';
+            // Get company type (null guard: 체크된 값 없으면 일반법인으로 기본 처리)
+            const checkedType = document.querySelector('input[name="company-type"]:checked');
+            const isGeneral = !checkedType || checkedType.value === 'general';
 
             let finalValue, profitWeight, assetWeight;
 
@@ -1164,6 +1166,14 @@
             // Round down to nearest 원 (floor)
             finalValue = Math.floor(finalValue);
 
+            // 상증세법 시행령 제54조 제1항 단서: 순자산가치 80% 하한 적용
+            // 가중평균 평가액이 (1주당 순자산가치 × 80%)보다 낮으면 80%를 평가액으로 함
+            const assetFloor = assetValue * 0.8;
+            const floorApplied = finalValue < assetFloor;
+            if (floorApplied) {
+                finalValue = Math.floor(assetFloor);
+            }
+
             // Display results
             document.getElementById('result-profit-value').textContent = formatNumber(profitValue);
             document.getElementById('result-asset-value').textContent = formatNumber(assetValue);
@@ -1171,10 +1181,13 @@
             document.getElementById('result-weight').textContent = `순손익 ${profitWeight} : 순자산 ${assetWeight}`;
 
             // Display formula
+            const floorNote = floorApplied
+                ? `<br><small style="opacity:0.85">※ 순자산가치 80% 하한 적용 (${formatNumber(assetValue)} × 80% = ${formatNumber(assetFloor)})</small>`
+                : '';
             document.getElementById('result-formula').innerHTML = `
                 (${formatNumber(profitValue)}원 × ${profitWeight} + ${formatNumber(assetValue)}원 × ${assetWeight}) ÷ 5<br>
                 = (${formatNumber(profitValue * profitWeight)} + ${formatNumber(assetValue * assetWeight)}) ÷ 5<br>
-                = <strong>${formatNumber(finalValue)}원</strong>
+                = <strong>${formatNumber(finalValue)}원</strong>${floorNote}
             `;
 
             document.getElementById('result-final-value').textContent = formatNumber(finalValue);

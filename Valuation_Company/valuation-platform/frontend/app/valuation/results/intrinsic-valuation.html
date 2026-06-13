@@ -597,6 +597,19 @@
             flex: 1;
         }
 
+        /* 컨테이너 레이아웃 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+        .main-area {
+            flex: 1;
+            min-width: 0;
+        }
+
         /* 반응형 */
         @media (max-width: 1024px) {
             .container {
@@ -823,7 +836,7 @@
                 <div class="result-unit">원 = (자산가치 × 1 + 수익가치 × 1.5) ÷ 2.5</div>
             </div>
         </section>
-    </div >
+    </div>
 
     </div>
 
@@ -904,16 +917,21 @@
                 return;
             }
 
-            // Average net income (3-year simple average)
-            var avgIncome = (y1 + y2 + y3) / 3; // 백만원
+            // Average net income — 입력된 연도만 카운트 (calculateAvgIncome과 동일 규칙)
+            var incomeCount = 0;
+            var incomeSum = 0;
+            if (y1 !== 0 || document.getElementById('income-year1').value.trim() !== '') { incomeSum += y1; incomeCount++; }
+            if (y2 !== 0 || document.getElementById('income-year2').value.trim() !== '') { incomeSum += y2; incomeCount++; }
+            if (y3 !== 0 || document.getElementById('income-year3').value.trim() !== '') { incomeSum += y3; incomeCount++; }
+            var avgIncome = incomeCount > 0 ? incomeSum / incomeCount : 0; // 백만원
 
             // 음수 평균순이익 검증
             if (avgIncome <= 0) {
                 alert('⚠️ 주의: 평균순이익이 0 이하(' + formatNumber(avgIncome) + '백만원)입니다.\n수익가치가 0 또는 음수로 산출됩니다.\n\n적자 기업의 경우 자산가치 위주로 평가하시기 바랍니다.');
             }
 
-            // Income value (수익가치) = 평균순이익 / 자본환원율
-            var incomeValue = avgIncome / capRate; // 백만원
+            // Income value (수익가치) = 평균순이익 / 자본환원율 (음수 바닥처리: 적자 시 0)
+            var incomeValue = Math.max(0, avgIncome) / capRate; // 백만원
 
             // Per-share values (원)
             var perShareIncome = (incomeValue * 1000000) / totalShares;

@@ -646,6 +646,19 @@
                 margin-top: 20px;
             }
         }
+        /* 컨테이너 레이아웃 */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            gap: 40px;
+        }
+        .main-area {
+            flex: 1;
+            min-width: 0;
+        }
+
         /* 마이 페이지 버튼 */
         .btn-mypage {
             display: flex;
@@ -1060,7 +1073,7 @@
                 </div>
             </div>
         </section>
-    </div >
+    </div>
 
     </div>
 
@@ -1294,8 +1307,9 @@
                 mcEvEbitda * weightEvEbitda +
                 mcEvSales * weightEvSales;
 
-            // Apply liquidity discount
-            const liquidityDiscount = parseNumber(document.getElementById('liquidity-discount').value) / 100;
+            // Apply liquidity discount (클램프: 0~50%)
+            const rawDiscount = parseNumber(document.getElementById('liquidity-discount').value);
+            const liquidityDiscount = Math.min(Math.max(rawDiscount, 0), 50) / 100;
             const discountedPerShare = Math.round(weightedPerShare * (1 - liquidityDiscount));
             const discountedMarketCap = weightedMarketCap * (1 - liquidityDiscount);
 

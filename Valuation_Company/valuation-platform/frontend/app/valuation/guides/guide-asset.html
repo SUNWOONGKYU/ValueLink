@@ -721,7 +721,7 @@
                                 <p><strong>3단계: 부채 재평가:</strong> 단기부채는 장부가액을 유지하고, 장기차입금은 현재 시장이자율로 할인하여 65억원으로 조정합니다. 또한 계류 중인 소송에 따른 우발부채 10억원을 신규로 반영하여 조정 부채 총계는 155억원으로 증가합니다.</p>
                                 <p><strong>4단계: 순자산가치 계산:</strong> 조정된 자산 총계(431억원)에서 조정된 부채 총계(155억원)를 차감하여 최종 순자산가치(NAV) 276억원을 산출합니다. 이를 발행주식수(100만주)로 나누면 주당 순자산가치는 27,600원이 됩니다.</p>
                                 <p><strong>결과 해석:</strong> 이 사례에서는 장부가 대비 순자산가치가 84% 상승했으며, 이는 주로 토지 가치 상승과 보유 상장주식 평가이익에 기인합니다. 만약 이 회사의 시가총액이 200억원이라면, PBR 0.72배로 저평가된 상태로 해석할 수 있습니다.</p>
-                                <p><strong>[자산가치평가 시뮬레이터를 직접 사용해보세요](링크 추후 추가)</strong><br>
+                                <p><strong><a href="../results/asset-valuation.html" style="color: inherit;">자산가치평가 시뮬레이터를 직접 사용해보세요</a></strong><br>
                                 시뮬레이터에서는 자산 항목별 장부가액과 시장가액을 입력하면, 자동으로 순자산가치와 주당가치를 계산하고, 청산가치(할인율 적용)와 계속기업가치를 비교할 수 있습니다.</p>
                             </div>
                         </div>
@@ -796,6 +796,12 @@
                         * 이 값은 간단한 시뮬레이션 결과입니다. 정확한 평가를 위해서는 정식으로 평가를 신청하여 주십시오.
                     </p>
                 </div>
+
+                <div class="next-step-section">
+                    <a href="../portals/asset-portal.html" class="btn-next-step">
+                        자료 제출하러 가기 →
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -849,7 +855,8 @@
             }
 
             const netAssetValue = assetMarketValue - debtMarketValue;
-            const navPerShare = netAssetValue / sharesOutstanding;
+            // 단위 변환: 억원 ÷ 만주 × 10000 = 원/주
+            const navPerShare = (netAssetValue * 10000) / sharesOutstanding;
 
             document.getElementById('resultValue').textContent =
                 navPerShare.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원/주';
