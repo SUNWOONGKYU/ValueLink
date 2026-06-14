@@ -104,6 +104,33 @@ def normalize_stage(raw_stage):
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
 gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
+# Gemini 호출 레이트리밋 + 429 백오프 래퍼
+# 무료 티어 RPM 한도(약 10~15/min) 회피용: 호출 간 최소 간격 유지 + 429 시 지수 백오프 재시도
+_GEMINI_MIN_INTERVAL = float(os.getenv("GEMINI_MIN_INTERVAL", "5"))  # 초
+_gemini_last_call = [0.0]
+
+def gemini_generate(**kwargs):
+    """gemini_client.models.generate_content 래퍼 (레이트리밋 + 429 재시도)."""
+    for attempt in range(5):
+        # 최소 호출 간격 유지
+        elapsed = time.time() - _gemini_last_call[0]
+        if elapsed < _GEMINI_MIN_INTERVAL:
+            time.sleep(_GEMINI_MIN_INTERVAL - elapsed)
+        try:
+            resp = gemini_client.models.generate_content(**kwargs)
+            _gemini_last_call[0] = time.time()
+            return resp
+        except Exception as e:
+            _gemini_last_call[0] = time.time()
+            msg = str(e)
+            is_429 = '429' in msg or 'RESOURCE_EXHAUSTED' in msg or 'quota' in msg.lower()
+            if is_429 and attempt < 4:
+                backoff = _GEMINI_MIN_INTERVAL * (2 ** attempt)
+                log(f"      ⏳ Gemini 레이트리밋, {backoff:.0f}초 후 재시도 ({attempt+1}/4)", "WARN")
+                time.sleep(backoff)
+                continue
+            raise
+
 # 5대 언론기관
 MEDIA_SITES = [
     {
@@ -155,26 +182,67 @@ def log(message, level="INFO"):
     print(f"[{timestamp}] [{level}] {message}")
 
 
+def _normalize_date(s):
+    """다양한 날짜 문자열 → 'YYYY-MM-DD'. 실패 시 None."""
+    if not s:
+        return None
+    s = str(s).strip()
+    # ISO: 2026-06-13T10:02:15+09:00 / 2026-06-13
+    m = re.search(r'(\d{4})[-./](\d{1,2})[-./](\d{1,2})', s)
+    if m:
+        y, mo, d = m.group(1), int(m.group(2)), int(m.group(3))
+        if 1 <= mo <= 12 and 1 <= d <= 31:
+            return f"{y}-{mo:02d}-{d:02d}"
+    return None
+
+
 def extract_article_date(html_content, url):
-    """기사 HTML에서 발행일 추출"""
+    """기사 HTML에서 발행일 추출 (여러 소스 폴백)"""
     try:
         soup = BeautifulSoup(html_content, 'html.parser')
 
-        # 메타 태그에서 날짜 추출
-        date_meta = soup.find('meta', {'property': 'article:published_time'})
-        if date_meta:
-            date_str = date_meta.get('content', '')
-            return date_str.split('T')[0] if 'T' in date_str else date_str[:10]
+        # 1) 표준 메타 태그들 (언론사별 상이)
+        meta_candidates = [
+            ('meta', {'property': 'article:published_time'}),
+            ('meta', {'property': 'og:article:published_time'}),
+            ('meta', {'name': 'article:published_time'}),
+            ('meta', {'itemprop': 'datePublished'}),
+            ('meta', {'property': 'og:regDate'}),
+            ('meta', {'name': 'date'}),
+            ('meta', {'name': 'pubdate'}),
+            ('meta', {'property': 'nv:news:date'}),
+        ]
+        for tag, attrs in meta_candidates:
+            el = soup.find(tag, attrs)
+            if el:
+                norm = _normalize_date(el.get('content', ''))
+                if norm:
+                    return norm
 
-        # time 태그
+        # 2) 네이버 뉴스: 날짜 스탬프 span (data-date-time 또는 텍스트)
+        for span in soup.find_all('span', {'class': re.compile(r'media_end_head_info_datestamp_time|date')}):
+            norm = _normalize_date(span.get('data-date-time') or span.get_text())
+            if norm:
+                return norm
+
+        # 3) <time> 태그 (datetime 속성 또는 텍스트)
         time_tag = soup.find('time')
         if time_tag:
-            datetime_attr = time_tag.get('datetime')
-            if datetime_attr:
-                return datetime_attr.split('T')[0] if 'T' in datetime_attr else datetime_attr[:10]
+            norm = _normalize_date(time_tag.get('datetime') or time_tag.get_text())
+            if norm:
+                return norm
+
+        # 4) JSON-LD datePublished
+        for ld in soup.find_all('script', {'type': 'application/ld+json'}):
+            raw = ld.string or ''
+            m = re.search(r'"datePublished"\s*:\s*"([^"]+)"', raw)
+            if m:
+                norm = _normalize_date(m.group(1))
+                if norm:
+                    return norm
 
         return None
-    except:
+    except Exception:
         return None
 
 
@@ -198,7 +266,7 @@ JSON 형식으로만 답변:
 """
 
     try:
-        response = gemini_client.models.generate_content(
+        response = gemini_generate(
             model='gemini-2.5-flash',
             contents=prompt,
             config=types.GenerateContentConfig(
@@ -251,7 +319,7 @@ JSON 형식으로만 답변:
 """
 
     try:
-        response = gemini_client.models.generate_content(
+        response = gemini_generate(
             model='gemini-2.5-flash',
             contents=prompt,
             config=types.GenerateContentConfig(
@@ -431,7 +499,7 @@ def step1_5_google_search(target_date, existing_urls):
 """
 
         try:
-            response = gemini_client.models.generate_content(
+            response = gemini_generate(
                 model='gemini-2.5-flash',
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -767,7 +835,7 @@ JSON 형식으로만 답변:
 """
 
         try:
-            gemini_response = gemini_client.models.generate_content(
+            gemini_response = gemini_generate(
                 model='gemini-2.0-flash',
                 contents=prompt,
                 config=types.GenerateContentConfig(
@@ -906,7 +974,7 @@ JSON 형식으로만 답변:
     "amount": "투자금액 (억원 숫자만, 없으면 null)"
 }}
 """
-                    extract_response = gemini_client.models.generate_content(
+                    extract_response = gemini_generate(
                         model='gemini-2.5-flash',
                         contents=extract_prompt,
                         config=types.GenerateContentConfig(
