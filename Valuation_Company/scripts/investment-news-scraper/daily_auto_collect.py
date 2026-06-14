@@ -102,17 +102,42 @@ def normalize_stage(raw_stage):
 
 # Supabase & Gemini 클라이언트
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_SERVICE_KEY"))
-gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# ── Gemini 키 풀 로테이션 ──
+# env의 모든 GEMINI_API_KEY* 변수를 수집(고유 값, 순서 유지). 429 시 다음 키로 자동 전환.
+def _collect_gemini_keys():
+    keys, seen = [], set()
+    # 기본 키 우선
+    base = os.getenv("GEMINI_API_KEY")
+    if base and base not in seen:
+        keys.append(base); seen.add(base)
+    for name, val in os.environ.items():
+        if name.startswith("GEMINI_API_KEY") and val and val not in seen:
+            keys.append(val); seen.add(val)
+    return keys
 
-# Gemini 호출 레이트리밋 + 429 백오프 래퍼
-# 무료 티어 RPM 한도(약 10~15/min) 회피용: 호출 간 최소 간격 유지 + 429 시 지수 백오프 재시도
-_GEMINI_MIN_INTERVAL = float(os.getenv("GEMINI_MIN_INTERVAL", "5"))  # 초
+_GEMINI_KEYS = _collect_gemini_keys()
+_gemini_key_idx = [0]
+gemini_client = genai.Client(api_key=_GEMINI_KEYS[0] if _GEMINI_KEYS else os.getenv("GEMINI_API_KEY"))
+
+def _rotate_gemini_key():
+    """다음 키로 클라이언트 교체. 한 바퀴 다 돌면 False."""
+    global gemini_client
+    if len(_GEMINI_KEYS) <= 1:
+        return False
+    _gemini_key_idx[0] = (_gemini_key_idx[0] + 1) % len(_GEMINI_KEYS)
+    gemini_client = genai.Client(api_key=_GEMINI_KEYS[_gemini_key_idx[0]])
+    return True
+
+# 호출 간 최소 간격(같은 키 연속 호출 시 RPM 회피). 키가 많으면 짧게.
+_GEMINI_MIN_INTERVAL = float(os.getenv("GEMINI_MIN_INTERVAL", "1.5"))
 _gemini_last_call = [0.0]
 
 def gemini_generate(**kwargs):
-    """gemini_client.models.generate_content 래퍼 (레이트리밋 + 429 재시도)."""
-    for attempt in range(5):
-        # 최소 호출 간격 유지
+    """generate_content 래퍼 — 429 시 키 풀 로테이션(전 키 소진 시 백오프)."""
+    total = max(1, len(_GEMINI_KEYS))
+    rotations = 0
+    backoff_round = 0
+    while True:
         elapsed = time.time() - _gemini_last_call[0]
         if elapsed < _GEMINI_MIN_INTERVAL:
             time.sleep(_GEMINI_MIN_INTERVAL - elapsed)
@@ -124,10 +149,19 @@ def gemini_generate(**kwargs):
             _gemini_last_call[0] = time.time()
             msg = str(e)
             is_429 = '429' in msg or 'RESOURCE_EXHAUSTED' in msg or 'quota' in msg.lower()
-            if is_429 and attempt < 4:
-                backoff = _GEMINI_MIN_INTERVAL * (2 ** attempt)
-                log(f"      ⏳ Gemini 레이트리밋, {backoff:.0f}초 후 재시도 ({attempt+1}/4)", "WARN")
-                time.sleep(backoff)
+            if not is_429:
+                raise
+            # 429 → 다음 키로 전환
+            if rotations < total - 1 and _rotate_gemini_key():
+                rotations += 1
+                continue
+            # 모든 키 소진 → 백오프 후 풀 한 바퀴 재시도 (최대 3라운드)
+            if backoff_round < 3:
+                wait = 30 * (2 ** backoff_round)
+                log(f"      ⏳ 전 키 429, {wait}초 후 풀 재시도 ({backoff_round+1}/3)", "WARN")
+                time.sleep(wait)
+                backoff_round += 1
+                rotations = 0
                 continue
             raise
 
