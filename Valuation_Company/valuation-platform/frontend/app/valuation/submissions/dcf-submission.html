@@ -91,8 +91,11 @@
         .checklist-text { font-size: 14px; color: var(--text-primary); }
         .submit-actions { display: flex; justify-content: space-between; align-items: center; }
         .btn-save-draft { padding: 14px 28px; font-size: 15px; font-weight: 600; color: var(--text-secondary); background: var(--white); border: 1px solid #D1D5DB; border-radius: 10px; cursor: pointer; }
-        .btn-submit { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 10px; cursor: pointer; }
+        .btn-submit { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: #9CA3AF; border: none; border-radius: 10px; cursor: not-allowed; transition: background 0.2s ease; }
+        .btn-submit:not(:disabled) { background: var(--deep-blue); cursor: pointer; }
+        .btn-submit:not(:disabled):hover { background: #1e40af; }
         .btn-submit:disabled { background: #9CA3AF; cursor: not-allowed; }
+        .submit-hint { font-size: 13px; color: var(--text-muted); text-align: right; margin-bottom: 12px; }
         .notice-box { background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; }
         .notice-box.info { background: var(--deep-blue-pale); border-color: var(--deep-blue-light); }
         .notice-title { font-size: 14px; font-weight: 600; color: #92400E; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
@@ -593,6 +596,7 @@
                     <div class="checklist-text">필수 정보 입력 완료</div>
                 </div>
             </div>
+            <p class="submit-hint">위 필수 항목을 모두 체크하면 제출 버튼이 활성화됩니다.</p>
             <div class="submit-actions">
                 <button class="btn-save-draft">임시 저장</button>
                 <button class="btn-submit" disabled>자료 제출하기</button>

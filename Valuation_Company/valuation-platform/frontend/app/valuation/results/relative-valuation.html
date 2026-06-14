@@ -1009,10 +1009,12 @@
                 </div>
 
                 <div class="param-group" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #E5E7EB;">
-                    <label class="param-label" style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;">비상장 할인율 (%)</label>
-                    <div style="display: flex; align-items: center; gap: 8px;">
+                    <label class="param-label" style="font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block;">비유동성 할인율 (%)</label>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                         <input type="number" class="form-input" id="liquidity-discount" value="0" min="0" max="50" step="5" style="width: 100px;">
-                        <span style="font-size: 13px; color: #6B7280;">비상장기업은 통상 20~30% 적용</span>
+                        <span style="font-size: 13px; background: #FEF3C7; color: #92400E; padding: 6px 12px; border-radius: 6px; border: 1px solid #F59E0B; font-weight: 500;">
+                            &#9888; 비상장기업은 통상 <strong>20~30%</strong> 적용 권장
+                        </span>
                     </div>
                 </div>
             </div>
@@ -1027,28 +1029,28 @@
                 <span>&#127919;</span>
                 상대가치 평가 결과
             </h2>
-            <div class="result-grid">
-                <div class="result-card">
+            <div class="result-grid" id="result-grid">
+                <div class="result-card" id="result-card-per">
                     <div class="result-label">PER 기준 주당가치</div>
                     <div class="result-value" id="result-per-value">-</div>
                     <div class="result-unit">원</div>
                 </div>
-                <div class="result-card">
+                <div class="result-card" id="result-card-pbr">
                     <div class="result-label">PBR 기준 주당가치</div>
                     <div class="result-value" id="result-pbr-value">-</div>
                     <div class="result-unit">원</div>
                 </div>
-                <div class="result-card">
+                <div class="result-card" id="result-card-psr">
                     <div class="result-label">PSR 기준 주당가치</div>
                     <div class="result-value" id="result-psr-value">-</div>
                     <div class="result-unit">원</div>
                 </div>
-                <div class="result-card">
+                <div class="result-card" id="result-card-ev-ebitda">
                     <div class="result-label">EV/EBITDA 기준 주당가치</div>
                     <div class="result-value" id="result-ev-ebitda-value">-</div>
                     <div class="result-unit">원</div>
                 </div>
-                <div class="result-card">
+                <div class="result-card" id="result-card-ev-sales">
                     <div class="result-label">EV/Sales 기준 주당가치</div>
                     <div class="result-value" id="result-ev-sales-value">-</div>
                     <div class="result-unit">원</div>
@@ -1064,11 +1066,11 @@
                 <div class="result-value" id="result-final-value">-</div>
                 <div class="result-unit">원</div>
             </div>
-            <div class="result-final" id="result-discounted-section" style="margin-top: 16px; display: none;">
-                <div class="result-label">비상장 할인 적용 후 주당가치</div>
+            <div class="result-final" id="result-discounted-section" style="margin-top: 16px;">
+                <div class="result-label" id="result-discounted-label">비상장 할인 적용 후 주당가치</div>
                 <div class="result-value" id="result-discounted-value">-</div>
                 <div class="result-unit">원</div>
-                <div style="margin-top: 12px; font-size: 14px; opacity: 0.8;">
+                <div style="margin-top: 12px; font-size: 14px; opacity: 0.8;" id="result-discounted-detail">
                     할인율: <span id="discount-rate-display">-</span>% 적용 | 시가총액: <span id="discounted-marketcap">-</span>백만원
                 </div>
             </div>
@@ -1313,24 +1315,42 @@
             const discountedPerShare = Math.round(weightedPerShare * (1 - liquidityDiscount));
             const discountedMarketCap = weightedMarketCap * (1 - liquidityDiscount);
 
-            // Display results
-            document.getElementById('result-per-value').textContent = avgPer > 0 ? formatNumber(perPerShare) : '-';
-            document.getElementById('result-pbr-value').textContent = avgPbr > 0 ? formatNumber(pbrPerShare) : '-';
-            document.getElementById('result-psr-value').textContent = avgPsr > 0 ? formatNumber(psrPerShare) : '-';
-            document.getElementById('result-ev-ebitda-value').textContent = avgEvEbitda > 0 ? formatNumber(evEbitdaPerShare) : '-';
-            document.getElementById('result-ev-sales-value').textContent = avgEvSales > 0 ? formatNumber(evSalesPerShare) : '-';
+            // Display results — 가중치>0인 멀티플 카드만 표시, 0이면 숨김
+            const cardConfigs = [
+                { cardId: 'result-card-per',       valueId: 'result-per-value',       weight: weightPer,      avgVal: avgPer,      perShare: perPerShare },
+                { cardId: 'result-card-pbr',       valueId: 'result-pbr-value',       weight: weightPbr,      avgVal: avgPbr,      perShare: pbrPerShare },
+                { cardId: 'result-card-psr',       valueId: 'result-psr-value',       weight: weightPsr,      avgVal: avgPsr,      perShare: psrPerShare },
+                { cardId: 'result-card-ev-ebitda', valueId: 'result-ev-ebitda-value', weight: weightEvEbitda, avgVal: avgEvEbitda, perShare: evEbitdaPerShare },
+                { cardId: 'result-card-ev-sales',  valueId: 'result-ev-sales-value',  weight: weightEvSales,  avgVal: avgEvSales,  perShare: evSalesPerShare }
+            ];
+            cardConfigs.forEach(function(cfg) {
+                const card = document.getElementById(cfg.cardId);
+                const valEl = document.getElementById(cfg.valueId);
+                if (cfg.weight > 0) {
+                    // 선택된 멀티플: 정상 표시
+                    card.style.display = '';
+                    card.style.opacity = '1';
+                    valEl.textContent = cfg.avgVal > 0 ? formatNumber(cfg.perShare) : '-';
+                } else {
+                    // 선택 해제된 멀티플: 결과 카드 숨김
+                    card.style.display = 'none';
+                }
+            });
             document.getElementById('result-market-cap').textContent = formatNumber(Math.round(weightedMarketCap));
             document.getElementById('result-final-value').textContent = formatNumber(Math.round(weightedPerShare));
 
-            // Display discounted values if discount > 0
+            // 비유동성 할인 섹션: 항상 표시, 할인율 0이면 "할인 미적용" 안내
             const discountPercentage = parseNumber(document.getElementById('liquidity-discount').value);
+            document.getElementById('result-discounted-section').style.display = '';
+            document.getElementById('result-discounted-value').textContent = formatNumber(discountedPerShare);
             if (discountPercentage > 0) {
-                document.getElementById('result-discounted-section').style.display = 'block';
-                document.getElementById('result-discounted-value').textContent = formatNumber(discountedPerShare);
+                document.getElementById('result-discounted-label').textContent = '비유동성 할인 적용 후 주당가치';
+                document.getElementById('result-discounted-detail').style.display = '';
                 document.getElementById('discount-rate-display').textContent = discountPercentage;
                 document.getElementById('discounted-marketcap').textContent = formatNumber(Math.round(discountedMarketCap));
             } else {
-                document.getElementById('result-discounted-section').style.display = 'none';
+                document.getElementById('result-discounted-label').textContent = '비유동성 할인 적용 후 주당가치 (할인 미적용 — 0%)';
+                document.getElementById('result-discounted-detail').style.display = 'none';
             }
 
             document.getElementById('result-section').style.display = 'block';

@@ -944,7 +944,8 @@
             intrinsicValue = Math.round(intrinsicValue);
 
             // Update breakdown
-            document.getElementById('bd-avg-income').textContent = formatNumber(avgIncome);
+            // 표시용: 수익가치(bd-income-value)와 검산이 맞도록 소수점 2자리까지 표시
+            document.getElementById('bd-avg-income').textContent = avgIncome.toFixed(2);
             document.getElementById('bd-cap-rate').textContent = (capRate * 100).toFixed(1);
             document.getElementById('bd-income-value').textContent = formatNumber(incomeValue);
             document.getElementById('bd-asset-value').textContent = formatNumber(navMillions);

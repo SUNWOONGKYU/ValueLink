@@ -76,8 +76,11 @@
         .checklist-text { font-size: 14px; }
         .submit-actions { display: flex; justify-content: space-between; }
         .btn-save-draft { padding: 14px 28px; font-size: 15px; font-weight: 600; color: #374151; background: var(--white); border: 1px solid #D1D5DB; border-radius: 10px; cursor: pointer; }
-        .btn-submit { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: var(--deep-blue); border: none; border-radius: 10px; cursor: pointer; }
+        .btn-submit { padding: 14px 40px; font-size: 15px; font-weight: 600; color: var(--white); background: #9CA3AF; border: none; border-radius: 10px; cursor: not-allowed; transition: background 0.2s ease; }
+        .btn-submit:not(:disabled) { background: var(--deep-blue); cursor: pointer; }
+        .btn-submit:not(:disabled):hover { background: #1e40af; }
         .btn-submit:disabled { background: #9CA3AF; cursor: not-allowed; }
+        .submit-hint { font-size: 13px; color: var(--text-muted); text-align: right; margin-bottom: 12px; }
         footer { background: #1E3A5F; color: var(--white); padding: 32px 40px; margin-top: 60px; }
         .footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; }
         .footer-logo { font-size: 18px; font-weight: 700; }
@@ -315,7 +318,7 @@
             <div class="project-meta">
                 <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">상대가치 (멀티플)</div></div>
                 <div class="meta-item"><div class="meta-label">신청일</div><div class="meta-value">2025.01.19</div></div>
-                <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">박회계 회계사</div></div>
+                <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">선웅규 회계사</div></div>
                 <div class="meta-item"><div class="meta-label">자료 제출 기한</div><div class="meta-value" style="color: var(--error);">2025.01.26</div></div>
             </div>
         </section>
@@ -410,6 +413,7 @@
                 <div class="checklist-item"><div class="checklist-icon incomplete">&#10003;</div><div class="checklist-text">주주명부 업로드</div></div>
                 <div class="checklist-item"><div class="checklist-icon incomplete">&#10003;</div><div class="checklist-text">필수 정보 입력 완료</div></div>
             </div>
+            <p class="submit-hint">위 필수 항목을 모두 체크하면 제출 버튼이 활성화됩니다.</p>
             <div class="submit-actions">
                 <button class="btn-save-draft">임시 저장</button>
                 <button class="btn-submit" disabled>자료 제출하기</button>

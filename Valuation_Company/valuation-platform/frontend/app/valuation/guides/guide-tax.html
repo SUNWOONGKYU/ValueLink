@@ -668,7 +668,10 @@
                         </div>
                     </div>
                 </div>
-                <p style="text-align: center; margin-top: 30px; font-size: 15px; color: #6B7280;">* 본 학습 콘텐츠의 모든 YouTube 영상은 현재 준비 중입니다.</p>
+                <div style="margin-top: 30px; padding: 16px 20px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 10px; display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">🎬</span>
+                    <span style="font-size: 14px; color: #6B7280;">본 학습 콘텐츠의 YouTube 영상은 현재 제작 중입니다. 곧 공개될 예정입니다.</span>
+                </div>
             </div>
 
             <!-- 시뮬레이션 섹션 -->
@@ -789,6 +792,13 @@
             // 1주당 기본 평가액 (가중평균)
             let baseValuationPerShare = (netIncomeValuePerShare * 3 + netAssetValuePerShare * 2) / 5;
 
+            // 상증세법 시행령 제54조 제1항 단서: 순자산가치 80% 하한 적용
+            // 가중평균 평가액이 (1주당 순자산가치 × 80%)보다 낮으면 80%를 최종 평가액으로 사용
+            const assetFloor = netAssetValuePerShare * 0.8;
+            if (baseValuationPerShare < assetFloor) {
+                baseValuationPerShare = assetFloor;
+            }
+
             // 할인/할증 적용
             if (adjustment === 'premium') {
                 baseValuationPerShare *= 1.20;
@@ -797,7 +807,7 @@
             }
 
             document.getElementById('resultValue').textContent =
-                baseValuationPerShare.toLocaleString('ko-KR', { maximumFractionDigits: 0 }) + ' 원/주';
+                Math.floor(baseValuationPerShare).toLocaleString('ko-KR') + ' 원/주';
             document.getElementById('resultBox').classList.add('show');
         }
     </script>

@@ -289,24 +289,8 @@
     </style>
 </head>
 <body>
-    <header>
-        <div class="header-left">
-            <a href="../../../index.html" class="logo">
-                <svg class="logo-symbol" viewBox="0 0 100 100"><g transform="translate(15, 20)"><line x1="0" y1="0" x2="35" y2="50" stroke="#166534" stroke-width="11" stroke-linecap="round"/><line x1="70" y1="0" x2="35" y2="50" stroke="#1D4ED8" stroke-width="11" stroke-linecap="round"/><line x1="35" y1="50" x2="85" y2="50" stroke="#F59E0B" stroke-width="11" stroke-linecap="round"/></g></svg>
-                <span class="logo-text">ValueLink</span>
-            </a>
-            <nav class="main-nav">
-                <a href="../../valuation.html" class="nav-item">📚 평가방법</a>
-                <a href="../../projects/valuation-list.html" class="nav-item">📊 프로젝트 목록</a>
-                <a href="../../projects/project-create.html" class="nav-item">➕ 신규</a>
-                <a href="../../deal.html" class="nav-item">🤝 Deal</a>
-            </nav>
-        </div>
-        <div class="header-right">
-            <div class="user-info"><div class="user-avatar">김</div><div><div class="user-name">김철수</div><div class="user-company">삼성전자(주)</div></div></div>
-            <button class="btn-logout">로그아웃</button>
-        </div>
-    </header>
+    <!-- Header -->
+    <div id="header-container"></div>
 
     <!-- BREADCRUMB -->
     <div class="breadcrumb-container">
@@ -325,15 +309,15 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) 상증법 평가</h1>
-                    <span class="project-id">SAMSU-2501191430-TX</span>
+                    <h1 class="project-title">파인더월드 상증법 평가</h1>
+                    <span class="project-id">FINDE-2601270530-TX</span>
                 </div>
                 <div class="project-status"><span>&#128196;</span><span>자료 수집중</span></div>
             </div>
             <div class="project-meta">
                 <div class="meta-item"><div class="meta-label">평가 방법</div><div class="meta-value">상증법 (보충적 평가)</div></div>
                 <div class="meta-item"><div class="meta-label">신청일</div><div class="meta-value">2025.01.19</div></div>
-                <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">박회계 회계사</div></div>
+                <div class="meta-item"><div class="meta-label">담당 회계사</div><div class="meta-value">선웅규 회계사</div></div>
                 <div class="meta-item"><div class="meta-label">자료 제출 기한</div><div class="meta-value" style="color: var(--error);">2025.01.26</div></div>
             </div>
         </section>
@@ -423,7 +407,7 @@
         <section class="input-section">
             <h2 class="section-title"><span>&#128221;</span>상증법 평가 추가 정보</h2>
             <div class="form-grid">
-                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="삼성전자(주)" readonly></div>
+                <div class="form-group"><label class="form-label">회사명 <span class="required">*</span></label><input type="text" class="form-input" value="파인더월드" readonly></div>
                 <div class="form-group"><label class="form-label">평가기준일 <span class="required">*</span></label><input type="date" class="form-input"></div>
                 <div class="form-group"><label class="form-label">발행주식총수 <span class="required">*</span></label><input type="text" class="form-input" placeholder="예: 1,000,000"></div>
                 <div class="form-group"><label class="form-label">법인 유형 <span class="required">*</span></label>
@@ -506,6 +490,20 @@
                 window.location.href = '../../customer/customer-portal.html';
             }
         });
+    </script>
+    <script>
+        fetch('../../../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) { newScript.src = script.src; } else { newScript.textContent = script.textContent; }
+                    document.body.appendChild(newScript);
+                });
+            })
+            .catch(error => console.error('헤더 로드 실패:', error));
     </script>
 </body>
 </html>
