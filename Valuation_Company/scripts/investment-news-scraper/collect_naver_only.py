@@ -13,6 +13,7 @@ Naver 검색 API 전용 투자뉴스 수집기 (Gemini 불필요)
 import os
 import re
 import sys
+import time
 import argparse
 import codecs
 from datetime import datetime, timedelta, timezone
@@ -31,8 +32,10 @@ SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')
 NAVER_ID = os.getenv('NAVER_CLIENT_ID')
 NAVER_SECRET = os.getenv('NAVER_CLIENT_SECRET')
 
-SEARCH_KEYWORDS = ['투자 유치', '시리즈A 투자', '시리즈B 투자', '시드 투자', '프리A 투자',
-                   '벤처투자 유치', '스타트업 투자유치', '프리시리즈A']
+SEARCH_KEYWORDS = ['투자 유치', '시리즈A 투자', '시리즈B 투자', '시리즈C 투자', '시드 투자',
+                   '프리A 투자', '벤처투자 유치', '스타트업 투자유치', '프리시리즈A',
+                   '투자 유치 스타트업', '억원 투자 유치', '시리즈 투자', '투자금 유치',
+                   '벤처캐피탈 투자', '신규 투자 유치', '브릿지 투자']
 
 # ── 추출 헬퍼 (규칙 08 키워드) ──
 def strip_tags(s):
@@ -132,6 +135,7 @@ def extract_company(title):
                 t = tail
                 break
     t = t.strip().strip("'\"‘’“”")
+    t = re.sub(r'^(스타트업|AI|딥테크|바이오|핀테크|글로벌)\s+', '', t)  # 선행 수식어 제거
     # 첫 콤마 앞
     if ',' in t:
         cand = t.split(',')[0].strip()
@@ -150,7 +154,10 @@ NOISE_COMPANY = {
 }
 # 회사명에 들어가면 안 되는 조사/서술 어미·동사 흔적
 BAD_TOKENS = ('잡나', '노린다', '개발중', '도전', '나선', '성과', '의혹', '잇나', '뚫는', '쑥',
-              '한다', '했다', '된다', '울린', '맞은', '앞둔', '두고', '관련', '위해', '담은')
+              '한다', '했다', '된다', '울린', '맞은', '앞둔', '두고', '관련', '위해', '담은',
+              '참여', '유치', '확보', '돌입', '추진', '나서', '밝혀', '공개')
+EXTRA_NOISE2 = {'매출', '신규 자금', '젠슨 황', '양동', '신규', '자금', '투자사', '신규 투자',
+                '대규모', '누적', '추가', '기관', '복수', '국내외'}
 
 VC_SUFFIX = ('벤처스', '인베스트먼트', '캐피탈', '벤처투자', '파트너스', '자산운용', '벤처캐피탈', '인베스트')
 EXTRA_NOISE = {'미래에셋', 'MS', '캠코', '양보다 질', '직접', '동남권', '도면 AI', '네이버 D',
@@ -159,7 +166,7 @@ EXTRA_NOISE = {'미래에셋', 'MS', '캠코', '양보다 질', '직접', '동�
 def _valid_company(cand):
     if not cand or not (1 < len(cand) <= 20):
         return False
-    if cand in NOISE_COMPANY or cand in EXTRA_NOISE:
+    if cand in NOISE_COMPANY or cand in EXTRA_NOISE or cand in EXTRA_NOISE2:
         return False
     if cand.count(' ') >= 2:                 # 문장형 제외
         return False
@@ -207,59 +214,88 @@ def site_from_url(url):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--days', type=int, default=3)
+    ap.add_argument('--since', type=str, default=None, help='백필: 이 날짜(YYYY-MM-DD) 이후 전부 수집 (페이지네이션)')
     ap.add_argument('--dry', action='store_true')
     args = ap.parse_args()
 
     KST = timezone(timedelta(hours=9))
-    floor_date = (datetime.now(KST) - timedelta(days=args.days)).strftime('%Y-%m-%d')
-    print(f"📰 Naver 전용 수집 시작 (최근 {args.days}일, {floor_date} 이후){' [DRY]' if args.dry else ''}")
+    if args.since:
+        floor_date = args.since
+        backfill = True
+        print(f"📰 Naver 백필 수집 시작 ({floor_date} 이후, 페이지네이션){' [DRY]' if args.dry else ''}")
+    else:
+        floor_date = (datetime.now(KST) - timedelta(days=args.days)).strftime('%Y-%m-%d')
+        backfill = False
+        print(f"📰 Naver 전용 수집 시작 (최근 {args.days}일, {floor_date} 이후){' [DRY]' if args.dry else ''}")
 
     headers = {'X-Naver-Client-Id': NAVER_ID, 'X-Naver-Client-Secret': NAVER_SECRET}
     collected, seen_urls = [], set()
+    oldest_seen = None
+
+    # Naver API: display 최대 100, start 최대 1000 → 키워드당 최대 1000건. 백필 시 깊게 페이지네이션.
+    starts = list(range(1, 1001, 100)) if backfill else [1]
+    display = 100 if backfill else 50
+
+    def process_item(it):
+        nonlocal oldest_seen
+        link = it.get('originallink') or it.get('link', '')
+        if not link or link in seen_urls:
+            return None
+        pub = it.get('pubDate', '')
+        try:
+            d = datetime.strptime(pub[:25].strip(), "%a, %d %b %Y %H:%M:%S").strftime("%Y-%m-%d")
+        except Exception:
+            return None
+        if oldest_seen is None or d < oldest_seen:
+            oldest_seen = d
+        if d < floor_date:
+            return d
+        title = strip_tags(it.get('title', ''))
+        desc = strip_tags(it.get('description', ''))
+        text = f"{title} {desc}"
+        if not is_investment_news(text):
+            seen_urls.add(link)
+            return d
+        seen_urls.add(link)
+        company = extract_company(title)
+        if not company:
+            return d
+        info = {
+            'company_name': company,
+            'amount': extract_amount(text),
+            'stage': extract_stage(text),
+            'investors': extract_investors(text),
+            'industry': extract_industry(text),
+            'location': extract_location(text),
+            'news_title': title, 'news_url': link, 'news_date': d,
+            'site_name': site_from_url(link),
+        }
+        info['_score'] = calc_score(info)
+        collected.append(info)
+        return d
 
     for kw in SEARCH_KEYWORDS:
         try:
-            url = f"https://openapi.naver.com/v1/search/news.json?query={quote(kw)}&sort=date&display=50"
-            r = requests.get(url, headers=headers, timeout=10)
-            if r.status_code != 200:
-                print(f"  ⚠️ Naver {kw}: {r.status_code}")
-                continue
-            for it in r.json().get('items', []):
-                link = it.get('originallink') or it.get('link', '')
-                if not link or link in seen_urls:
-                    continue
-                pub = it.get('pubDate', '')
-                try:
-                    d = datetime.strptime(pub[:25].strip(), "%a, %d %b %Y %H:%M:%S").strftime("%Y-%m-%d")
-                except Exception:
-                    continue
-                if d < floor_date:
-                    continue
-                title = strip_tags(it.get('title', ''))
-                desc = strip_tags(it.get('description', ''))
-                text = f"{title} {desc}"
-                if not is_investment_news(text):
-                    continue
-                seen_urls.add(link)
-                company = extract_company(title)
-                if not company:
-                    continue
-                info = {
-                    'company_name': company,
-                    'amount': extract_amount(text),
-                    'stage': extract_stage(text),
-                    'investors': extract_investors(text),
-                    'industry': extract_industry(text),
-                    'location': extract_location(text),
-                    'news_title': title, 'news_url': link, 'news_date': d,
-                    'site_name': site_from_url(link),
-                }
-                info['_score'] = calc_score(info)
-                collected.append(info)
+            for st in starts:
+                url = f"https://openapi.naver.com/v1/search/news.json?query={quote(kw)}&sort=date&display={display}&start={st}"
+                r = requests.get(url, headers=headers, timeout=10)
+                if r.status_code != 200:
+                    print(f"  ⚠️ Naver {kw} start={st}: {r.status_code}")
+                    break
+                items = r.json().get('items', [])
+                if not items:
+                    break
+                page_dates = [process_item(it) for it in items]
+                page_dates = [d for d in page_dates if d]
+                # 이 페이지가 전부 floor_date 이전이면 더 과거이므로 중단(최신순 정렬)
+                if backfill and page_dates and all(d < floor_date for d in page_dates):
+                    break
+                if backfill:
+                    time.sleep(0.3)
         except Exception as e:
             print(f"  ⚠️ {kw} 오류: {str(e)[:80]}")
 
-    print(f"📊 투자뉴스 후보: {len(collected)}건")
+    print(f"📊 투자뉴스 후보: {len(collected)}건 (검색이 닿은 가장 과거 기사일: {oldest_seen})")
 
     # 회사별 최고 점수 1건
     best = {}
@@ -280,6 +316,7 @@ def main():
     supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
     existing = supabase.table('deals').select('news_url,company_name').execute()
     existing_urls = {d['news_url'] for d in existing.data if d.get('news_url')}
+    existing_companies = {d['company_name'] for d in existing.data if d.get('company_name')}
 
     # 신뢰도 게이트: 금액 또는 투자자(3점 항목) 중 하나 이상 있어야 저장
     confident = [c for c in best.values() if c.get('amount') or c.get('investors')]
@@ -287,7 +324,7 @@ def main():
 
     inserted = 0
     for c in confident:
-        if c['news_url'] in existing_urls:
+        if c['news_url'] in existing_urls or c['company_name'] in existing_companies:
             continue
         rec = {k: c[k] for k in ('company_name', 'amount', 'stage', 'investors', 'industry',
                                  'location', 'news_title', 'news_url', 'news_date', 'site_name')
