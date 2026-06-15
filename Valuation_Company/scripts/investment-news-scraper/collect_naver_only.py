@@ -238,6 +238,11 @@ def _valid_company(cand):
         return False
     if '(' in cand and ')' not in cand:      # 괄호 잘림 제외
         return False
+    # ③-b 투자자 나열(가운뎃점 2개 이상)·따옴표 조각 = 회사명 아님
+    if cand.count('·') >= 2:                  # 예: 삼성·SK·현대차·LG, 메타·피델리티·a
+        return False
+    if any(q in cand for q in ("'", "’", '"', '“', '”')):  # 예: 포털' 승부수, 포털 '다음
+        return False
     # ④ VC 접미사 차단 — 항상 차단 접미사
     if VC_SUFFIX_RE.search(cand):
         return False
@@ -282,7 +287,11 @@ EXCLUDE = ['과징금', '공모주', '공모가', '수요예측', '상장', 'IPO
            # 국가·기관 지원 (스타트업 딜 아님)
            '국가산단', '경제자유구역', '성장금융', '스케일업 펀드',
            # 대형 해외 빅테크 라운드 (국내 스타트업 아님)
-           'xAI', '머스크의', 'OpenAI', 'Anthropic', '데이터브릭스']
+           'xAI', '머스크의', 'OpenAI', 'Anthropic', '데이터브릭스',
+           # M&A 완료(투자 유치 아님) — '인수 제안 거절'은 매칭 안 되도록 '완료/확정/지분'만
+           '인수 완료', '인수 확정', '지분 인수', '지분 취득',
+           # 정부·지자체 예산/사업 (스타트업 딜 아님)
+           '국·도비', '국비·도비', '테스트베드 선정']
 
 def is_investment_news(text):
     if any(x in text for x in EXCLUDE):
@@ -292,8 +301,11 @@ def is_investment_news(text):
         return False
     has_invest = ('투자 유치' in text or '투자유치' in text or '유치' in text
                   or '펀딩' in text or '투자를 유치' in text or '조달' in text)
-    has_money_or_stage = bool(re.search(r'\d\s*억|\d\s*조|달러|시리즈|시드|프리\s*[A-Ea-e]|라운드', text))
-    return has_invest and has_money_or_stage
+    has_stage = bool(re.search(r'시리즈|시드|프리\s*시리즈|프리\s*[A-Ea-e]|라운드', text))
+    has_money = bool(re.search(r'\d\s*억|\d\s*조|달러', text))
+    # ① 유치/펀딩류면 금액 또는 단계 중 하나만 있어도 딜 (금액 미공개 라운드 포함)
+    # ② 유치어가 없어도 '단계+금액+투자' 동시 언급이면 딜 ("50억 시리즈A 마무리…투자")
+    return (has_invest and (has_money or has_stage)) or (has_stage and has_money and '투자' in text)
 
 def calc_score(info):
     s = 0
