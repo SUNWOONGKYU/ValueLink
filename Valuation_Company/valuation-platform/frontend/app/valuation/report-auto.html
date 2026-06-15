@@ -14,17 +14,16 @@
   .doc{max-width:820px;margin:24px auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08);}
   .cover{min-height:1000px;padding:120px 60px 60px;text-align:center;display:flex;flex-direction:column;background:linear-gradient(160deg,#1e3a8a,#1D4ED8 60%,#3B82F6);color:#fff;}
   .cover .logo{font-size:22px;font-weight:800;letter-spacing:2px;opacity:.9;}
-  .cover .ttl{font-size:42px;font-weight:800;margin-top:170px;}
+  .cover .ttl{font-size:42px;font-weight:800;margin-top:160px;}
   .cover .method{font-size:19px;margin-top:14px;opacity:.92;}
-  .cover .co{font-size:30px;font-weight:700;margin-top:54px;padding:14px 40px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);display:inline-block;align-self:center;}
+  .cover .co{font-size:30px;font-weight:700;margin-top:50px;padding:14px 40px;border-top:1px solid rgba(255,255,255,.3);border-bottom:1px solid rgba(255,255,255,.3);display:inline-block;align-self:center;}
   .cover .meta{margin-top:auto;font-size:14px;opacity:.92;display:grid;grid-template-columns:1fr 1fr;gap:8px 30px;max-width:480px;margin-left:auto;margin-right:auto;text-align:left;}
   .cover .meta b{opacity:.7;font-weight:500;margin-right:8px;}
   .cover .rno{margin-top:22px;font-size:12px;opacity:.6;}
   .opinion{padding:48px 60px;border-bottom:8px solid var(--bg);font-size:14px;}
   .opinion h2{font-size:17px;color:var(--blue);margin-bottom:16px;}
   .opinion p{margin:10px 0;color:#374151;}
-  .opinion .sign{margin-top:28px;text-align:right;font-size:14px;}
-  .opinion .sign b{font-size:16px;}
+  .opinion .sign{margin-top:28px;text-align:right;}.opinion .sign b{font-size:16px;}
   .body{padding:48px 60px;}
   .toc{border:1px solid var(--line);border-radius:10px;padding:24px 28px;margin-bottom:40px;}
   .toc h3{font-size:16px;margin-bottom:14px;}
@@ -36,36 +35,33 @@
   .sh h2{font-size:19px;}
   h4{font-size:15px;margin:20px 0 8px;color:#1e3a8a;border-left:3px solid var(--blue);padding-left:9px;}
   section p{font-size:13.5px;color:#374151;margin:8px 0;}
-  ul.bul{margin:8px 0 8px 18px;font-size:13.5px;color:#374151;}
-  ul.bul li{margin:5px 0;}
+  ul.bul{margin:8px 0 8px 18px;font-size:13.5px;color:#374151;}ul.bul li{margin:5px 0;}
   table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px;}
   th,td{border:1px solid var(--line);padding:7px 9px;text-align:right;}
   th{background:var(--bg);font-weight:600;text-align:center;}
   td:first-child,th:first-child{text-align:left;}
   tr.total td{background:var(--pale);font-weight:700;color:var(--blue);}
+  tr.sub td:first-child{padding-left:22px;color:var(--muted);}
   .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
   .card{background:var(--bg);border-radius:10px;padding:16px;text-align:center;}
   .card.hl{background:var(--blue);color:#fff;}
-  .card .l{font-size:12px;color:var(--muted);}
-  .card.hl .l{color:rgba(255,255,255,.8);}
+  .card .l{font-size:12px;color:var(--muted);}.card.hl .l{color:rgba(255,255,255,.8);}
   .card .v{font-size:19px;font-weight:800;margin-top:6px;}
   .kv td:first-child{background:var(--bg);font-weight:600;width:34%;}
   .kv td{text-align:left;}
   .src{font-size:11px;color:var(--muted);margin-top:4px;font-style:italic;}
+  .cap{font-size:12px;color:#6B7280;margin:6px 0 2px;}
   .disc{font-size:12px;color:var(--muted);background:#FAFAFA;border:1px solid var(--line);border-radius:8px;padding:16px;line-height:1.8;}
+  .badge{display:inline-block;background:#166534;color:#fff;font-size:11px;padding:3px 8px;border-radius:5px;margin-left:8px;vertical-align:middle;}
   @media print{body{background:#fff;}.toolbar{display:none;}.doc{box-shadow:none;margin:0;max-width:none;}
     .cover,.opinion{page-break-after:always;}@page{margin:14mm;}section{page-break-inside:avoid;}}
 </style>
 </head>
 <body>
 <div class="toolbar">
-  <label>평가방법
-  <select id="methodSel">
-    <option value="dcf">DCF (현금흐름할인법)</option>
-    <option value="tax">세무 (상증세법)</option>
-    <option value="intrinsic">본질가치</option>
-    <option value="relative">상대가치</option>
-    <option value="asset">자산가치 (NAV)</option>
+  <label>평가방법 <select id="methodSel">
+    <option value="dcf">DCF (현금흐름할인법)</option><option value="tax">세무 (상증세법)</option>
+    <option value="intrinsic">본질가치</option><option value="relative">상대가치</option><option value="asset">자산가치 (NAV)</option>
   </select></label>
   <button class="print" onclick="window.print()">🖨 인쇄 / PDF 저장</button>
 </div>
@@ -76,263 +72,244 @@ const eok=n=>(n/1e8).toFixed(1)+'억원';
 const M=n=>Math.round(n).toLocaleString('ko-KR');
 const pct=n=>n.toFixed(2)+'%';
 const today=()=>{const d=new Date();return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;};
+function tbl(head,rows){return `<table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;}
+// SVG 막대차트
+function barChart(items,unit){const max=Math.max(...items.map(i=>Math.abs(i.v)),1),W=640,gap=W/items.length;const bw=gap*0.5;
+ const bars=items.map((it,i)=>{const h=Math.abs(it.v)/max*110;const x=gap*i+gap*0.25;const y=it.v>=0?(130-h):130;
+  return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" fill="${it.c||'#1D4ED8'}"/>
+   <text x="${x+bw/2}" y="${it.v>=0?y-5:y+h+13}" font-size="11" fill="#374151" text-anchor="middle">${it.label}</text>
+   <text x="${x+bw/2}" y="150" font-size="10" fill="#6B7280" text-anchor="middle">${it.name}</text>`;}).join('');
+ return `<svg viewBox="0 0 ${W} 165" style="width:100%;height:auto;margin:8px 0;"><line x1="0" y1="130" x2="${W}" y2="130" stroke="#E5E7EB"/>${bars}<text x="2" y="12" font-size="10" fill="#9CA3AF">단위: ${unit}</text></svg>`;}
 
-// ===== 샘플 회사 (연혁·제품·산업분석·과거재무 포함) =====
+// ===== 샘플 (4개년 재무 + 풍부한 산업분석) =====
 const SAMPLE={
- dcf:{full:'DCF평가법 (현금흐름할인법)',sector:'클라우드 SaaS',
-  co:{name:'넥스트클라우드 주식회사',founded:'2018년 3월 12일',ceo:'김도현',addr:'경기도 성남시 분당구 판교역로 235',emp:'82명',
-   biz:'클라우드 기반 B2B SaaS 솔루션 개발·공급',industry:'응용 소프트웨어 개발 및 공급업',
-   summary:'평가대상회사는 2018년 설립된 B2B 클라우드 SaaS 기업으로, 중견·중소기업 대상 업무 자동화 및 데이터 분석 솔루션을 구독형으로 제공한다. 설립 이후 연평균 40% 이상의 매출 성장을 기록하며 2024년 흑자 전환에 성공하였다.',
+ dcf:{full:'DCF평가법 (현금흐름할인법)',
+  co:{name:'넥스트클라우드 주식회사',founded:'2018년 3월 12일',ceo:'김도현',addr:'경기도 성남시 분당구 판교역로 235',emp:'82명',biz:'클라우드 기반 B2B SaaS 솔루션 개발·공급',industry:'응용 소프트웨어 개발 및 공급업',
+   summary:'평가대상회사는 2018년 설립된 B2B 클라우드 SaaS 기업으로, 중견·중소기업 대상 업무 자동화 및 데이터 분석 솔루션을 구독형으로 제공한다. 설립 이후 연평균 40% 이상의 매출 성장을 기록하며 2024년 흑자 전환에 성공하였고, 구독 기반 매출 비중이 85%를 상회하여 높은 매출 가시성을 확보하고 있다.',
    history:[['2018.03','법인 설립, 시드 투자 15억원 유치'],['2020.06','클라우드 ERP 솔루션 정식 출시'],['2022.09','시리즈A 120억원 투자 유치, 누적 고객사 300개 돌파'],['2024.12','연결 영업흑자 전환, AI 분석 모듈 출시'],['2026.02','시리즈B 추진, 일본 시장 진출']],
    products:[['NEXT ERP','중소기업용 클라우드 전사자원관리(구독형 SaaS)'],['NEXT Analytics','AI 기반 경영 데이터 분석·예측 대시보드'],['NEXT Flow','업무 자동화(RPA) 워크플로우 빌더']],
    holders:[['김도현','대표이사','38.5%'],['에이스벤처스','FI','22.0%'],['우리사주조합','임직원','9.5%'],['기타','-','30.0%']]},
-  industry:{title:'국내 클라우드·SaaS 산업',points:[
-   '국내 퍼블릭 클라우드 시장은 2024년 약 7.6조원 규모로, 2028년까지 연평균 15% 내외 성장이 전망된다.',
-   'SaaS(서비스형 소프트웨어)는 구독형 매출 구조에 따른 높은 매출 가시성과 고객 락인 효과로 가치평가 프리미엄이 부여되는 영역이다.',
-   '정부의 공공부문 클라우드 전환(CSAP) 정책과 중소기업 디지털 전환 지원이 수요 확대 요인으로 작용한다.'],src:'출처: 한국SW산업협회, IDC Korea Cloud Tracker (2025)'},
+  industry:{title:'국내 클라우드·SaaS 산업',
+   overview:'클라우드 컴퓨팅은 IT 인프라의 소유에서 사용(구독)으로의 전환을 이끄는 핵심 패러다임으로, 특히 SaaS(서비스형 소프트웨어)는 초기 도입비용이 낮고 확장이 용이하여 중소·중견기업의 디지털 전환 수단으로 빠르게 확산되고 있다. 구독형 매출 구조는 높은 매출 가시성과 고객 락인(lock-in) 효과를 제공하여 자본시장에서 가치평가 프리미엄이 부여되는 영역이다.',
+   market:[['2024년 국내 퍼블릭 클라우드','약 7.6조원'],['2028년 전망','약 13.3조원'],['연평균 성장률(CAGR)','약 15%'],['국내 SaaS 시장 비중','지속 확대']],
+   drivers:['공공부문 클라우드 전환(CSAP) 의무화 및 중소기업 디지털 전환 정부지원 확대','구독형(MRR/ARR) 매출 구조에 따른 높은 매출 예측가능성과 이익 레버리지','생성형 AI 결합 SaaS 수요 증가로 객단가 상승 여력'],
+   risks:['글로벌 빅테크(MS·구글·AWS) 및 대형 SI의 시장 진입에 따른 경쟁 심화','경기 둔화 시 기업 IT 예산 축소 및 구독 해지율(Churn) 상승 위험'],
+   positioning:'평가대상회사는 중소·중견기업 버티컬에 특화된 솔루션과 85% 이상의 구독 매출 비중을 바탕으로 안정적 성장 궤도에 있으며, AI 분석 모듈을 통해 객단가 상승과 해외 진출을 추진하고 있다.',
+   src:'출처: 한국SW산업협회, IDC Korea Cloud Tracker (2025)'},
   baseDate:'2026년 6월 30일',
-  fs:{years:['2023.12','2024.12','2025.12'],
-   is:[['매출액',24000,34000,44000],['매출원가',7000,9500,12000],['매출총이익',17000,24500,32000],['판매관리비',16500,21000,25000],['영업이익',500,3500,7000],['당기순이익',300,2800,5500]],
-   bs:[['유동자산',8000,12000,18000],['비유동자산',6000,7500,9000],['자산총계',14000,19500,27000],['부채총계',9000,11000,13000],['자본총계',5000,8500,14000]]},
+  fs:{years:['2022.12','2023.12','2024.12','2025.12'],
+   is:[['매출액',17000,24000,34000,44000,0],['매출원가',5500,7000,9500,12000,1],['매출총이익',11500,17000,24500,32000,0],['판매비와관리비',11700,16500,21000,25000,1],['영업이익',-200,500,3500,7000,0],['영업외손익',-100,-120,-150,-180,1],['당기순이익',-280,300,2800,5500,0]],
+   bs:[['유동자산',5000,8000,12000,18000,1],['비유동자산',5500,6000,7500,9000,1],['자산총계',10500,14000,19500,27000,0],['유동부채',6500,8000,9500,11000,1],['비유동부채',2000,1000,1500,2000,1],['부채총계',8500,9000,11000,13000,0],['자본총계',2000,5000,8500,14000,0]]},
   inp:{shares:10000000,rf:3.5,mrp:7.0,beta:1.3,sizeP:2.0,kd:5.0,tax:22.0,eW:80,dW:20,tg:2.5,nonOp:5000000000,debt:3000000000,
    rev:[34000000000,44000000000,53000000000,60000000000,66000000000],ebit:[6000000000,7800000000,9500000000,11000000000,12000000000],
    dep:[600000000,750000000,900000000,1000000000,1100000000],capex:[900000000,1100000000,1300000000,1400000000,1500000000],wc:[500000000,550000000,600000000,500000000,400000000]}},
- tax:{full:'상증세법평가법 (상속세 및 증여세법 제54조)',sector:'식품 제조',
-  co:{name:'한울푸드 주식회사',founded:'2009년 7월 1일',ceo:'박상우',addr:'충청북도 청주시 흥덕구 산단로 58',emp:'45명',
-   biz:'전통식품 제조·가공 및 유통',industry:'기타 식품 제조업',
-   summary:'평가대상회사는 2009년 설립된 비상장 전통식품 제조기업으로, 장류·발효식품을 OEM 및 자체 브랜드로 생산한다. 안정적인 내수 기반과 대형 유통채널 납품을 통해 견조한 수익성을 유지하고 있다.',
+ tax:{full:'상증세법평가법 (상속세 및 증여세법 제54조)',
+  co:{name:'한울푸드 주식회사',founded:'2009년 7월 1일',ceo:'박상우',addr:'충청북도 청주시 흥덕구 산단로 58',emp:'45명',biz:'전통식품 제조·가공 및 유통',industry:'기타 식품 제조업',
+   summary:'평가대상회사는 2009년 설립된 비상장 전통식품 제조기업으로, 장류·발효식품을 OEM 및 자체 브랜드로 생산한다. 안정적인 내수 기반과 대형 유통채널 납품을 통해 견조한 수익성을 유지하고 있으며, 보유 토지·생산설비 등 유형자산 비중이 높다.',
    history:[['2009.07','법인 설립'],['2014.03','HACCP 인증 취득, 제2공장 준공'],['2019.11','대형마트 PB 납품 개시'],['2023.05','수출 시작(미주·동남아)']],
    products:[['전통 장류','된장·고추장·간장 등 발효 장류'],['간편식','즉석 발효식품 및 반찬류'],['B2B OEM','대형 유통사 PB 제조']],
    holders:[['박상우','대표이사','55.0%'],['박지민','특수관계인','20.0%'],['한울홀딩스','법인','15.0%'],['기타','-','10.0%']]},
-  industry:{title:'국내 식품 제조업',points:[
-   '국내 가공식품 시장은 성숙기에 진입하여 연 2~3%대의 완만한 성장을 보이나, 발효·건강식품은 상대적으로 높은 성장세를 유지한다.',
-   '비상장 중소 식품기업은 안정적 현금흐름과 부동산·설비 등 유형자산 비중이 높아 상증세법상 순자산가치 비중이 평가에 크게 작용한다.'],src:'출처: 식품산업통계정보(aT FIS), 2025'},
+  industry:{title:'국내 식품 제조업',
+   overview:'국내 가공식품 산업은 내수 중심의 성숙 산업으로, 전반적 성장률은 완만하나 발효·건강기능식품 및 간편식(HMR) 부문은 상대적으로 높은 성장세를 유지하고 있다. 비상장 중소 식품기업은 안정적 현금흐름과 부동산·설비 중심의 자산구조를 가져, 세무상 비상장주식 평가 시 순자산가치 비중이 크게 작용한다.',
+   market:[['국내 가공식품 시장','연 2~3% 성장(성숙기)'],['발효·건강식품','상대적 고성장'],['간편식(HMR)','두 자릿수 성장'],['수출 비중','확대 추세']],
+   drivers:['건강·발효식품에 대한 소비 트렌드 강화','대형 유통사 PB 및 수출 채널 확대','전통식품의 글로벌(K-Food) 수요 증가'],
+   risks:['원재료(농산물) 가격 변동에 따른 원가 부담','내수 성숙에 따른 가격 경쟁 심화'],
+   positioning:'평가대상회사는 HACCP 기반 생산역량과 대형 유통 납품처를 확보하여 안정적 수익성을 유지하고 있으며, 유형자산 비중이 높아 순자산가치가 평가의 핵심이 된다.',
+   src:'출처: 식품산업통계정보(aT FIS), 2025'},
   baseDate:'2026년 6월 30일',
-  fs:{years:['2023.12','2024.12','2025.12'],
-   is:[['매출액',8500,9200,9800],['영업이익',1100,1350,1550],['당기순이익',900,1200,1400]],
-   bs:[['유동자산',3200,3600,4100],['비유동자산',4800,5000,4900],['자산총계',8000,8600,9000],['부채총계',3800,3600,3500],['자본총계',4200,5000,5500]]},
+  fs:{years:['2022.12','2023.12','2024.12','2025.12'],
+   is:[['매출액',7800,8500,9200,9800,0],['매출원가',5400,5800,6100,6400,1],['매출총이익',2400,2700,3100,3400,0],['판매비와관리비',1450,1600,1750,1850,1],['영업이익',950,1100,1350,1550,0],['당기순이익',780,900,1200,1400,0]],
+   bs:[['유동자산',3000,3200,3600,4100,1],['비유동자산',4600,4800,5000,4900,1],['자산총계',7600,8000,8600,9000,0],['부채총계',3900,3800,3600,3500,0],['자본총계',3700,4200,5000,5500,0]]},
   inp:{shares:200000,disc:10,income:[1800,1500,1200],nontax:[0,0,0],tax:[0,0,0],assets:9000,liab:3500,general:true}},
- intrinsic:{full:'본질가치평가법 (자본시장법)',sector:'의료기기',
-  co:{name:'메디코어 주식회사',founded:'2015년 11월 9일',ceo:'정수민',addr:'서울특별시 강서구 마곡중앙로 161-8',emp:'120명',
-   biz:'의료기기 연구개발·제조 (AI 진단 솔루션)',industry:'의료용 기기 제조업',
-   summary:'평가대상회사는 2015년 설립된 의료기기 기업으로, AI 기반 영상진단 보조 솔루션과 진단 장비를 개발·공급한다. 식약처 인허가를 다수 보유하고 국내외 병원에 납품하며 코스닥 상장을 준비 중이다.',
+ intrinsic:{full:'본질가치평가법 (자본시장법)',
+  co:{name:'메디코어 주식회사',founded:'2015년 11월 9일',ceo:'정수민',addr:'서울특별시 강서구 마곡중앙로 161-8',emp:'120명',biz:'의료기기 연구개발·제조 (AI 진단 솔루션)',industry:'의료용 기기 제조업',
+   summary:'평가대상회사는 2015년 설립된 의료기기 기업으로, AI 기반 영상진단 보조 솔루션과 진단 장비를 개발·공급한다. 식약처 인허가를 다수 보유하고 국내외 병원에 납품하며 코스닥 상장을 준비 중으로, 연구개발 자산과 미래 수익성이 동시에 중요한 기업이다.',
    history:[['2015.11','법인 설립'],['2019.04','AI 영상진단 솔루션 식약처 인증'],['2021.08','시리즈B 200억원 유치'],['2024.10','유럽 CE 인증, 수출 본격화'],['2026.01','코스닥 상장 예비심사 준비']],
    products:[['MEDI-AI','AI 기반 흉부 X-ray 영상진단 보조 솔루션'],['MEDI-Scan','휴대형 디지털 진단 장비'],['MEDI-Cloud','의료영상 클라우드 판독 플랫폼']],
    holders:[['정수민','대표이사','30.2%'],['바이오넥스트','FI','25.8%'],['전략적투자자(SI)','법인','18.0%'],['기타','-','26.0%']]},
-  industry:{title:'AI 의료기기 산업',points:[
-   '글로벌 AI 의료영상 시장은 2025~2030년 연평균 30% 이상 성장이 전망되며, 국내도 식약처 인허가 가속화로 상용화가 본격화되고 있다.',
-   '의료기기 기업은 연구개발·인허가 자산과 미래 수익성이 동시에 중요하여, 자산가치와 수익가치를 가중하는 본질가치법이 상장 심사 실무에서 활용된다.'],src:'출처: 한국보건산업진흥원, MarketsandMarkets (2025)'},
+  industry:{title:'AI 의료기기 산업',
+   overview:'AI 의료영상 산업은 진단 정확도 향상과 의료진 업무부담 경감을 동인으로 빠르게 성장하는 영역이다. 식약처 인허가 가속화와 건강보험 수가 적용 확대로 국내 상용화가 본격화되고 있으며, 의료기기 기업은 인허가·연구개발 무형자산과 미래 수익성을 함께 평가해야 하므로 자산가치와 수익가치를 가중하는 본질가치법이 상장 심사 실무에서 활용된다.',
+   market:[['글로벌 AI 의료영상','연평균 30%+ 성장'],['국내 AI 의료기기','인허가 가속·상용화'],['건강보험 수가','적용 확대'],['수출(CE/FDA)','확대 단계']],
+   drivers:['고령화에 따른 영상진단 수요 증가 및 의료인력 부족','식약처 혁신의료기기·건강보험 수가 적용 확대','병원의 디지털 전환 및 클라우드 판독 수요'],
+   risks:['인허가 지연 및 규제 변동 리스크','글로벌 대형 의료기기사와의 경쟁 및 임상근거 확보 부담'],
+   positioning:'평가대상회사는 다수의 식약처 인증과 CE 인증을 확보하고 국내외 병원 납품 레퍼런스를 축적하여, 상장을 통한 본격 성장 단계에 진입하고 있다.',
+   src:'출처: 한국보건산업진흥원, MarketsandMarkets (2025)'},
   baseDate:'2026년 6월 30일',
-  fs:{years:['2023.12','2024.12','2025.12'],
-   is:[['매출액',18000,26000,34000],['영업이익',2800,4200,6000],['당기순이익',2200,3500,5200]],
-   bs:[['유동자산',15000,22000,30000],['비유동자산',20000,23000,25000],['자산총계',35000,45000,55000],['부채총계',12000,15000,18000],['자본총계',23000,30000,37000]]},
+  fs:{years:['2022.12','2023.12','2024.12','2025.12'],
+   is:[['매출액',12000,18000,26000,34000,0],['매출총이익',6500,9500,13500,17500,0],['판매비와관리비',4200,6700,9300,11500,1],['영업이익',1800,2800,4200,6000,0],['당기순이익',1400,2200,3500,5200,0]],
+   bs:[['유동자산',11000,15000,22000,30000,1],['비유동자산',17000,20000,23000,25000,1],['자산총계',28000,35000,45000,55000,0],['부채총계',10000,12000,15000,18000,0],['자본총계',18000,23000,30000,37000,0]]},
   inp:{shares:2000000,cap:10,nav:45000,income:[6000,5200,4500]}},
- relative:{full:'상대가치평가법 (유사기업비교법)',sector:'핀테크',
-  co:{name:'핀테크원 주식회사',founded:'2017년 2월 20일',ceo:'이재훈',addr:'서울특별시 영등포구 여의대로 108',emp:'95명',
-   biz:'간편결제·금융 데이터 플랫폼',industry:'그 외 기타 정보 서비스업',
-   summary:'평가대상회사는 2017년 설립된 핀테크 기업으로, 간편결제·정산 인프라와 금융 데이터 분석 서비스를 제공한다. 가맹점 네트워크 확대와 거래액 성장에 힘입어 외형이 빠르게 확대되고 있다.',
+ relative:{full:'상대가치평가법 (유사기업비교법)',
+  co:{name:'핀테크원 주식회사',founded:'2017년 2월 20일',ceo:'이재훈',addr:'서울특별시 영등포구 여의대로 108',emp:'95명',biz:'간편결제·금융 데이터 플랫폼',industry:'그 외 기타 정보 서비스업',
+   summary:'평가대상회사는 2017년 설립된 핀테크 기업으로, 간편결제·정산 인프라와 금융 데이터 분석 서비스를 제공한다. 가맹점 네트워크 확대와 거래액 성장에 힘입어 외형이 빠르게 확대되고 있으며, 상장·비상장 비교기업 풀이 풍부하다.',
    history:[['2017.02','법인 설립'],['2019.07','간편결제 라이선스 취득'],['2021.05','시리즈B 300억원 유치'],['2024.03','월 거래액 1조원 돌파']],
    products:[['ONE Pay','간편결제·정산 솔루션'],['ONE Data','가맹점 금융 데이터 분석'],['ONE Lending','데이터 기반 매출 연동 대출 중개']],
    holders:[['이재훈','대표이사','28.0%'],['캐피탈원','FI','24.0%'],['핀테크파트너스','FI','18.0%'],['기타','-','30.0%']]},
-  industry:{title:'국내 핀테크 산업',points:[
-   '국내 간편결제 시장은 일평균 거래액이 지속 증가하며 두 자릿수 성장을 이어가고 있고, 데이터 기반 금융서비스로 사업영역이 확장되고 있다.',
-   '핀테크는 상장·비상장 비교기업 풀이 풍부하여 PER·PBR·EV/EBITDA 등 시장배수를 적용하는 상대가치법의 적합성이 높다.'],src:'출처: 한국은행 지급결제동향, 2025'},
+  industry:{title:'국내 핀테크 산업',
+   overview:'국내 핀테크 산업은 간편결제를 중심으로 일평균 거래액이 지속 증가하며 두 자릿수 성장을 이어가고 있고, 단순 결제를 넘어 데이터 기반 신용평가·대출 중개·자산관리로 사업영역이 확장되고 있다. 상장·비상장 비교기업 풀이 풍부하여 시장배수(PER·PBR·EV/EBITDA)를 적용하는 상대가치법의 적합성이 높다.',
+   market:[['간편결제 일평균 거래액','지속 증가'],['핀테크 시장','두 자릿수 성장'],['데이터 금융서비스','신성장 영역'],['비교기업 풀','상장·비상장 풍부']],
+   drivers:['간편결제·정산 거래액 증가 및 가맹점 네트워크 확대','마이데이터·오픈뱅킹 등 데이터 금융 규제 환경 정비','데이터 기반 신용평가·대출중개로의 사업 확장'],
+   risks:['결제 수수료 인하 압력 및 규제 강화','대형 플랫폼(빅테크) 및 금융지주의 경쟁 심화'],
+   positioning:'평가대상회사는 월 거래액 1조원 규모의 결제 인프라와 가맹점 데이터를 기반으로 데이터 금융서비스로 확장하고 있어, 비교기업 대비 성장성 프리미엄이 기대된다.',
+   src:'출처: 한국은행 지급결제동향, 2025'},
   baseDate:'2026년 6월 30일',
-  fs:{years:['2023.12','2024.12','2025.12'],
-   is:[['매출액',28000,33000,38000],['영업이익',3800,5200,6800],['당기순이익',3000,3800,4500]],
-   bs:[['유동자산',25000,30000,36000],['비유동자산',12000,14000,16000],['자산총계',37000,44000,52000],['부채총계',6000,8000,10000],['자본총계',31000,36000,42000]]},
+  fs:{years:['2022.12','2023.12','2024.12','2025.12'],
+   is:[['매출액',22000,28000,33000,38000,0],['매출총이익',12000,15500,18500,21500,0],['판매비와관리비',9000,11700,13300,14700,1],['영업이익',3000,3800,5200,6800,0],['당기순이익',2400,3000,3800,4500,0]],
+   bs:[['유동자산',20000,25000,30000,36000,1],['비유동자산',10000,12000,14000,16000,1],['자산총계',30000,37000,44000,52000,0],['부채총계',5000,6000,8000,10000,0],['자본총계',25000,31000,36000,42000,0]]},
   inp:{shares:8000000,ni:4500,eq:42000,rev:38000,ebitda:6800,netDebt:2000,wPer:40,wPbr:30,wEvEbitda:30,liq:20,
    peers:[['핀크코리아',24.3,2.7,3.0,16.7],['데이터블',25.7,2.9,3.3,17.9],['와이즈핀',22.6,2.4,2.7,15.1]]}},
- asset:{full:'자산가치평가법 (순자산가치법)',sector:'부동산·제조',
-  co:{name:'대한실업 주식회사',founded:'1998년 5월 4일',ceo:'최영호',addr:'부산광역시 강서구 녹산산업중로 333',emp:'60명',
-   biz:'부동산 임대 및 제조설비 운영',industry:'기타 부동산 임대업',
-   summary:'평가대상회사는 1998년 설립된 자산보유형 기업으로, 산업단지 내 토지·건물을 보유·임대하고 제조설비를 운영한다. 보유 부동산의 시가가 장부가를 크게 상회하여 순자산가치가 평가의 핵심이 된다.',
+ asset:{full:'자산가치평가법 (순자산가치법)',
+  co:{name:'대한실업 주식회사',founded:'1998년 5월 4일',ceo:'최영호',addr:'부산광역시 강서구 녹산산업중로 333',emp:'60명',biz:'부동산 임대 및 제조설비 운영',industry:'기타 부동산 임대업',
+   summary:'평가대상회사는 1998년 설립된 자산보유형 기업으로, 산업단지 내 토지·건물을 보유·임대하고 제조설비를 운영한다. 보유 부동산의 시가가 장부가를 크게 상회하여 순자산가치가 평가의 핵심이 되며, 안정적 임대수익 기반의 현금흐름을 보유한다.',
    history:[['1998.05','법인 설립'],['2005.03','녹산산업단지 부지 매입'],['2012.09','제2공장 및 물류창고 준공'],['2020.11','보유 부동산 감정평가 재실시']],
    products:[['부동산 임대','산업단지 내 토지·건물 임대'],['제조설비 운영','금속 가공 임가공'],['창고·물류','보관·물류 서비스']],
    holders:[['최영호','대표이사','60.0%'],['대한홀딩스','법인','25.0%'],['기타','-','15.0%']]},
-  industry:{title:'자산보유형 기업 평가 환경',points:[
-   '부동산·설비 등 유형자산 비중이 높은 기업은 수익가치보다 보유자산의 공정가치가 기업가치를 더 잘 설명한다.',
-   '산업단지 부동산은 장부상 취득원가로 기록되어 시가와 괴리가 크므로, 감정평가를 통한 시가 조정이 순자산가치 평가의 관건이다.'],src:'출처: 한국감정원 지가동향, 2025'},
+  industry:{title:'자산보유형 기업 및 부동산 평가 환경',
+   overview:'부동산·설비 등 유형자산 비중이 높은 자산보유형 기업은 미래 수익가치보다 보유자산의 공정가치가 기업가치를 더 잘 설명한다. 특히 산업단지 부동산은 장부에 취득원가로 기록되어 시가와의 괴리가 크므로, 감정평가를 통한 시가 재평가가 순자산가치 산정의 관건이 된다.',
+   market:[['산업단지 지가','장기 상승 추세'],['임대수익률','안정적'],['장부가-시가 괴리','상당(취득원가 기록)'],['평가 방식','감정평가 기반 시가조정']],
+   drivers:['산업단지 부동산의 장기 지가 상승','안정적 임대수익 기반 현금흐름','보유 부동산 담보가치 활용 여력'],
+   risks:['부동산 경기 및 금리 변동에 따른 자산가치 변동','임차인 공실 및 산업 경기 둔화 위험'],
+   positioning:'평가대상회사는 산업단지 내 우량 부동산을 장기 보유하여 시가가 장부가를 크게 상회하며, 임대수익으로 안정적 현금흐름을 창출하고 있다.',
+   src:'출처: 한국부동산원 지가변동률, 2025'},
   baseDate:'2026년 6월 30일',
-  fs:{years:['2023.12','2024.12','2025.12'],
-   is:[['매출액(임대+제조)',3200,3400,3600],['영업이익',900,1000,1100],['당기순이익',700,800,850]],
-   bs:[['유동자산',14500,15000,15000],['비유동자산',32000,33000,33000],['자산총계',46500,48000,48000],['부채총계',24000,24000,24000],['자본총계',22500,24000,24000]]},
+  fs:{years:['2022.12','2023.12','2024.12','2025.12'],
+   is:[['매출액(임대+제조)',3000,3200,3400,3600,0],['영업이익',850,900,1000,1100,0],['당기순이익',650,700,800,850,0]],
+   bs:[['유동자산',14000,14500,15000,15000,1],['비유동자산(부동산·설비)',31000,32000,33000,33000,1],['자산총계',45000,46500,48000,48000,0],['부채총계',24000,24000,24000,24000,0],['자본총계',21000,22500,24000,24000,0]]},
   inp:{shares:5000000,discount:-10,
    assets:[['현금및현금성자산',4000,0],['매출채권',6000,-300],['재고자산',5000,-600],['토지',20000,12000],['건물',9000,1500],['기계장치',4000,-800]],
    liabs:[['매입채무',5000,0],['단기차입금',7000,0],['장기차입금',12000,0]]}},
 };
 
+// ===== 구조화: 계산기 라이브 입력 수신 =====
+const FIELD_MAP={
+ dcf:f=>({shares:+(f.sharesOutstanding||'').toString().replace(/,/g,''),rf:+f.riskFreeRate,mrp:+f.marketRiskPremium,beta:+f.leveredBeta,sizeP:+f.sizePremium,kd:+f.costOfDebt,tax:+f.taxRate,eW:+f.equityRatio,dW:+f.debtRatio,tg:+f.terminalGrowth,nonOp:+f.nonOperatingAssets||0,debt:+f.interestBearingDebt||0,rev:[1,2,3,4,5].map(i=>+f['revenue'+i]||0),ebit:[1,2,3,4,5].map(i=>+f['ebit'+i]||0),dep:[1,2,3,4,5].map(i=>+f['dep'+i]||0),capex:[1,2,3,4,5].map(i=>+f['capex'+i]||0),wc:[1,2,3,4,5].map(i=>+f['wc'+i]||0)}),
+ tax:f=>({shares:+(f['shares-outstanding']||'').toString().replace(/,/g,''),disc:+f['discount-rate'],income:[+f['income-1'],+f['income-2'],+f['income-3']],nontax:[+f['nontax-1']||0,+f['nontax-2']||0,+f['nontax-3']||0],tax:[+f['tax-1']||0,+f['tax-2']||0,+f['tax-3']||0],assets:+f['total-assets'],liab:+f['total-liabilities'],general:true}),
+ intrinsic:f=>({shares:+(f['total-shares']||'').toString().replace(/,/g,''),cap:+f['capitalization-rate'],nav:+f['nav-value'],income:[+f['income-year1'],+f['income-year2'],+f['income-year3']]}),
+ relative:f=>({shares:+(f['shares-outstanding']||'').toString().replace(/,/g,''),ni:+(f['net-income']||'').toString().replace(/,/g,''),eq:+(f.equity||'').toString().replace(/,/g,''),rev:+(f.revenue||'').toString().replace(/,/g,''),ebitda:+(f.ebitda||'').toString().replace(/,/g,''),netDebt:+(f['net-debt']||'').toString().replace(/,/g,''),wPer:+f['weight-per'],wPbr:+f['weight-pbr'],wEvEbitda:+f['weight-ev-ebitda'],liq:+f['liquidity-discount']||0,peers:SAMPLE.relative.inp.peers}),
+ asset:f=>{const cv=k=>+(f[k]||'0').toString().replace(/,/g,'');const A=[['현금및현금성자산','cash'],['매출채권','ar'],['재고자산','inventory'],['투자자산','investment'],['토지','land'],['건물','building'],['기계장치','equipment'],['무형자산','intangible']].map(([n,k])=>[n,cv(k+'-book'),cv(k+'-adj')]).filter(r=>r[1]||r[2]);const L=[['매입채무','ap'],['단기차입금','short-debt'],['장기차입금','long-debt'],['퇴직급여충당부채','pension']].map(([n,k])=>[n,cv(k+'-book'),cv(k+'-adj')]).filter(r=>r[1]||r[2]);return{shares:cv('shares-outstanding'),discount:+f['nav-discount']||0,assets:A.length?A:SAMPLE.asset.inp.assets,liabs:L.length?L:SAMPLE.asset.inp.liabs};}
+};
+function ingestLive(method){try{const raw=localStorage.getItem('vl_report_fields_'+method);if(!raw)return null;const f=JSON.parse(raw);const inp=FIELD_MAP[method](f);if(!inp||!inp.shares||isNaN(inp.shares))return null;return {inp,name:(f.companyName||f['company-name']||'').trim()};}catch(e){return null;}}
+
 // ===== 계산 =====
-function computeDCF(p){const ke=p.rf/100+p.beta*p.mrp/100+p.sizeP/100;const kdAt=p.kd/100*(1-p.tax/100);const sum=p.eW+p.dW,eW=p.eW/sum,dW=p.dW/sum;const wacc=eW*ke+dW*kdAt;const tg=p.tg/100;const rows=[];let pvSum=0,fcff=0;for(let i=0;i<5;i++){const nopat=p.ebit[i]*(1-p.tax/100);fcff=nopat+p.dep[i]-p.capex[i]-p.wc[i];const df=1/Math.pow(1+wacc,i+1);const pv=fcff*df;pvSum+=pv;rows.push({y:i+1,fcff,df,pv});}const tFcff=fcff*(1+tg),tv=tFcff/(wacc-tg),pvTv=tv/Math.pow(1+wacc,5);const op=pvSum+pvTv,ev=op+p.nonOp,eq=ev-p.debt,ps=eq/p.shares;return{ke,kdAt,eW,dW,wacc,tg,rows,tv,pvTv,pvSum,op,ev,eq,ps};}
+function computeDCF(p){const ke=p.rf/100+p.beta*p.mrp/100+p.sizeP/100;const kdAt=p.kd/100*(1-p.tax/100);const sum=p.eW+p.dW,eW=p.eW/sum,dW=p.dW/sum;const wacc=eW*ke+dW*kdAt;const tg=p.tg/100;const rows=[];let pvSum=0,fcff=0;for(let i=0;i<5;i++){const nopat=p.ebit[i]*(1-p.tax/100);fcff=nopat+p.dep[i]-p.capex[i]-p.wc[i];const df=1/Math.pow(1+wacc,i+1);const pv=fcff*df;pvSum+=pv;rows.push({y:i+1,nopat,fcff,df,pv});}const tFcff=fcff*(1+tg),tv=tFcff/(wacc-tg),pvTv=tv/Math.pow(1+wacc,5);const op=pvSum+pvTv,ev=op+p.nonOp,eq=ev-p.debt,ps=eq/p.shares;return{ke,kdAt,eW,dW,wacc,tg,rows,tv,pvTv,pvSum,op,ev,eq,ps};}
 function computeTax(p){const w=(p.income[2]+p.nontax[2]-p.tax[2])*1+(p.income[1]+p.nontax[1]-p.tax[1])*2+(p.income[0]+p.nontax[0]-p.tax[0])*3;const weighted=Math.max(0,w/6);const dr=p.disc/100;const profitPS=(weighted*1e6/dr)/p.shares;const net=p.assets-p.liab;const assetPS=net*1e6/p.shares;let fin=Math.floor((profitPS*(p.general?3:2)+assetPS*(p.general?2:3))/5);const floor=assetPS*0.8,floored=fin<floor;if(floored)fin=Math.floor(floor);return{weighted,profitPS,assetPS,net,fin,floor,floored};}
 function computeIntrinsic(p){const avg=(p.income[0]+p.income[1]+p.income[2])/3;const incomeVal=Math.max(0,avg)/(p.cap/100);const psInc=incomeVal*1e6/p.shares,psAsset=p.nav*1e6/p.shares;const intrinsic=Math.round((psAsset*1+psInc*1.5)/2.5);return{avg,incomeVal,psInc,psAsset,intrinsic};}
 function computeRelative(p){const m1=a=>parseFloat((a.reduce((x,y)=>x+y,0)/a.length).toFixed(1));const avgPer=m1(p.peers.map(r=>r[1])),avgPbr=m1(p.peers.map(r=>r[2])),avgEv=m1(p.peers.map(r=>r[4]));const ps=mc=>Math.round(mc*1e6/p.shares);const perPS=ps(p.ni*avgPer),pbrPS=ps(p.eq*avgPbr),evPS=ps(p.ebitda*avgEv-p.netDebt);const weighted=perPS*p.wPer/100+pbrPS*p.wPbr/100+evPS*p.wEvEbitda/100;const liq=Math.min(Math.max(p.liq,0),50)/100;const disc=Math.round(weighted*(1-liq));return{avgPer,avgPbr,avgEv,perPS,pbrPS,evPS,weighted:Math.round(weighted),disc,liq};}
 function computeAsset(p){const A=p.assets.map(r=>[r[0],r[1],r[2],r[1]+r[2]]);const L=p.liabs.map(r=>[r[0],r[1],r[2],r[1]+r[2]]);const aB=A.reduce((s,r)=>s+r[1],0),aM=A.reduce((s,r)=>s+r[3],0);const lB=L.reduce((s,r)=>s+r[1],0),lM=L.reduce((s,r)=>s+r[3],0);const navB=aB-lB,navM=aM-lM,navps=navM*1e6/p.shares;const adj=Math.round(navps*(1+p.discount/100));return{A,L,aB,aM,lB,lM,navB,navM,navps,adj};}
 
 // ===== 공통 섹션 =====
-function tbl(head,rows){return `<table><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table>`;}
-function companySection(s){const co=s.co;
+function companySection(s){const co=s.co,ind=s.industry;
  const hist=co.history.map(h=>`<tr><td>${h[0]}</td><td style="text-align:left">${h[1]}</td></tr>`).join('');
  const prod=co.products.map(p=>`<tr><td>${p[0]}</td><td style="text-align:left">${p[1]}</td></tr>`).join('');
  const hold=co.holders.map(h=>`<tr><td>${h[0]}</td><td style="text-align:center">${h[1]}</td><td>${h[2]}</td></tr>`).join('');
+ const mkt=ind.market.map(m=>`<tr><td>${m[0]}</td><td>${m[1]}</td></tr>`).join('');
  return `<h4>1. 회사 개요</h4><p>${co.summary}</p>
-  <table class="kv"><tr><td>회사명</td><td>${co.name}</td></tr><tr><td>설립일</td><td>${co.founded}</td></tr>
-  <tr><td>대표이사</td><td>${co.ceo}</td></tr><tr><td>본점 소재지</td><td>${co.addr}</td></tr>
-  <tr><td>임직원 수</td><td>${co.emp}</td></tr><tr><td>주요 사업</td><td>${co.biz}</td></tr>
-  <tr><td>표준산업분류</td><td>${co.industry}</td></tr></table>
+  <table class="kv"><tr><td>회사명</td><td>${co.name}</td></tr><tr><td>설립일</td><td>${co.founded}</td></tr><tr><td>대표이사</td><td>${co.ceo}</td></tr><tr><td>본점 소재지</td><td>${co.addr}</td></tr><tr><td>임직원 수</td><td>${co.emp}</td></tr><tr><td>주요 사업</td><td>${co.biz}</td></tr><tr><td>표준산업분류</td><td>${co.industry}</td></tr></table>
   <h4>2. 연혁</h4>${tbl(['시기','주요 내용'],hist)}
   <h4>3. 주요 제품·서비스</h4>${tbl(['제품/서비스','설명'],prod)}
   <h4>4. 주주 현황</h4>${tbl(['주주명','구분','지분율'],hold)}
-  <h4>5. 산업 및 시장 분석 — ${s.industry.title}</h4>
-  <ul class="bul">${s.industry.points.map(x=>`<li>${x}</li>`).join('')}</ul><p class="src">${s.industry.src}</p>`;
+  <h4>5. 산업 분석 — ${ind.title}</h4>
+  <p>${ind.overview}</p>
+  <p class="cap">[표] 주요 시장 지표</p>${tbl(['구분','내용'],mkt)}
+  <p class="cap" style="margin-top:14px"><b>가. 성장 동인</b></p><ul class="bul">${ind.drivers.map(x=>`<li>${x}</li>`).join('')}</ul>
+  <p class="cap"><b>나. 위험 요인</b></p><ul class="bul">${ind.risks.map(x=>`<li>${x}</li>`).join('')}</ul>
+  <p class="cap"><b>다. 평가대상회사의 시장 포지셔닝</b></p><p>${ind.positioning}</p>
+  <p class="src">${ind.src}</p>`;
 }
 function financialSection(s,extra){const f=s.fs;
- const isRows=f.is.map(r=>`<tr${/매출액|영업이익|순이익|순자산/.test(r[0])?' ':''}><td>${r[0]}</td>${r.slice(1).map(v=>`<td>${M(v)}</td>`).join('')}</tr>`).join('');
- const bsRows=f.bs.map(r=>`<tr${/총계/.test(r[0])?' class="total"':''}><td>${r[0]}</td>${r.slice(1).map(v=>`<td>${M(v)}</td>`).join('')}</tr>`).join('');
- // 주요 비율(최근연도)
- const li=f.is, lb=f.bs, n=f.years.length-1;
- const rev=li.find(r=>/매출/.test(r[0])), op=li.find(r=>/영업이익/.test(r[0])), ni=li.find(r=>/순이익/.test(r[0]));
- const asset=lb.find(r=>/자산총계/.test(r[0])), cap=lb.find(r=>/자본총계/.test(r[0]));
- const opm=op&&rev?(op[n+1]/rev[n+1]*100).toFixed(1):'-', roe=ni&&cap?(ni[n+1]/cap[n+1]*100).toFixed(1):'-';
- return `<p>최근 3개 사업연도 요약 재무제표는 다음과 같다. (단위: 백만원)</p>
-  <h4>1. 손익계산서</h4>${tbl(['구분',...f.years],isRows)}
-  <h4>2. 재무상태표</h4>${tbl(['구분',...f.years],bsRows)}
-  <h4>3. 주요 재무비율 (최근연도)</h4>
-  <table class="kv"><tr><td>영업이익률</td><td>${opm}%</td></tr><tr><td>자기자본이익률(ROE)</td><td>${roe}%</td></tr></table>
+ const r=(arr)=>arr.map(row=>`<tr${row[row.length-1]===0&&/매출액|총이익|영업이익|순이익|총계/.test(row[0])?'':row[row.length-1]===1?' class="sub"':''}${/총계|매출액$|영업이익|순이익|^매출총이익/.test(row[0])&&row[row.length-1]===0?' style="font-weight:600"':''}><td>${row[0]}</td>${row.slice(1,-1).map(v=>`<td>${M(v)}</td>`).join('')}</tr>`).join('');
+ // 재무비율 (최근연도)
+ const n=f.years.length;const get=(arr,kw)=>{const x=arr.find(r=>new RegExp(kw).test(r[0]));return x?x[n-1+1-1]:null;};
+ const li=f.is,lb=f.bs;const last=arr=>arr=>0;
+ const rev=(li.find(x=>/매출액/.test(x[0]))||[])[n], op=(li.find(x=>/영업이익/.test(x[0]))||[])[n], ni=(li.find(x=>/순이익/.test(x[0]))||[])[n];
+ const asset=(lb.find(x=>/자산총계/.test(x[0]))||[])[n], cap=(lb.find(x=>/자본총계/.test(x[0]))||[])[n], debt=(lb.find(x=>/부채총계/.test(x[0]))||[])[n];
+ const opm=op&&rev?(op/rev*100).toFixed(1):'-',npm=ni&&rev?(ni/rev*100).toFixed(1):'-',roe=ni&&cap?(ni/cap*100).toFixed(1):'-',der=debt&&cap?(debt/cap*100).toFixed(1):'-';
+ // 매출 성장 차트
+ const revRow=li.find(x=>/매출액/.test(x[0]));
+ const chart=revRow?barChart(f.years.map((y,i)=>({label:M(revRow[i+1]),name:y.slice(2),v:revRow[i+1]})),'백만원'):'';
+ return `<p>최근 4개 사업연도 요약 재무제표는 다음과 같다. (단위: 백만원)</p>
+  <h4>1. 손익계산서</h4>${tbl(['구분',...f.years],r(li))}
+  <p class="cap">[그림] 매출액 추이</p>${chart}
+  <h4>2. 재무상태표</h4>${tbl(['구분',...f.years],r(lb))}
+  <h4>3. 주요 재무비율 (최근 사업연도)</h4>
+  <table class="kv"><tr><td>영업이익률</td><td>${opm}%</td></tr><tr><td>순이익률</td><td>${npm}%</td></tr><tr><td>자기자본이익률(ROE)</td><td>${roe}%</td></tr><tr><td>부채비율</td><td>${der}%</td></tr></table>
   ${extra||''}`;
 }
 function overviewSection(s){return `<p>당 평가기관은 ${s.co.name}(이하 "평가대상회사")와 체결한 용역계약에 따라 평가기준일 현재 평가대상회사의 기업가치를 ${s.full}으로 평가하였다.</p>
-  <table class="kv"><tr><td>용역의 목적</td><td>${s.baseDate} 현재 ${s.co.name}의 기업가치 평가</td></tr>
-  <tr><td>평가 방법</td><td>${s.full}</td></tr><tr><td>평가 기준일</td><td>${s.baseDate}</td></tr>
-  <tr><td>평가 기관</td><td>ValueLink 자동평가엔진</td></tr><tr><td>작성일</td><td>${today()}</td></tr></table>
-  <h4>주요 가정 및 한계</h4>
-  <ul class="bul"><li>본 평가는 평가대상회사가 제시한 재무자료 및 사업계획을 기초로 하였으며, 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있다.</li>
-  <li>평가기준일 현재의 시장환경 및 가용정보를 반영하였으며, 향후 거시경제 변동·우발채무 발생 등 계량화되지 못한 위험요인에 따라 실제 결과와 달라질 수 있다.</li>
-  <li>본 보고서는 기업가치 평가 목적으로만 사용되어야 하며, 특정 거래의 권유나 투자 조언을 목적으로 하지 않는다.</li></ul>`;
+  <table class="kv"><tr><td>용역의 목적</td><td>${s.baseDate} 현재 ${s.co.name}의 기업가치 평가</td></tr><tr><td>평가 방법</td><td>${s.full}</td></tr><tr><td>평가 기준일</td><td>${s.baseDate}</td></tr><tr><td>평가 기관</td><td>ValueLink 자동평가엔진</td></tr><tr><td>작성일</td><td>${today()}</td></tr></table>
+  <h4>주요 가정 및 한계</h4><ul class="bul"><li>본 평가는 평가대상회사가 제시한 재무자료 및 사업계획을 기초로 하였으며, 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있다.</li><li>평가기준일 현재의 시장환경 및 가용정보를 반영하였으며, 향후 거시경제 변동·우발채무 발생 등 계량화되지 못한 위험요인에 따라 실제 결과와 달라질 수 있다.</li><li>본 보고서는 기업가치 평가 목적으로만 사용되어야 하며, 특정 거래의 권유나 투자 조언을 목적으로 하지 않는다.</li></ul>`;
 }
 const APPENDIX=`<div class="disc">본 보고서는 의뢰인이 제공한 자료와 공개 정보를 기초로 ValueLink 자동평가엔진이 작성하였으며, 제공된 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있습니다. 본 평가 결과는 평가기준일 현재의 시장 상황과 가용 정보를 기반으로 한 추정치로서, 특정 거래의 권유나 투자 조언을 목적으로 하지 않습니다. 실제 거래가격은 협상·시장상황·할인할증 요인에 따라 본 평가액과 달라질 수 있습니다. 본 보고서는 평가기관의 사전승인 없이 제3자에게 제공되거나 인용될 수 없습니다.</div>`;
 
-// ===== 방법별 =====
 const GEN={
  dcf(s){const p=s.inp,r=computeDCF(p);
-  const summary=`<div class="cards"><div class="card"><div class="l">영업가치</div><div class="v">${eok(r.op)}</div></div><div class="card"><div class="l">기업가치</div><div class="v">${eok(r.ev)}</div></div><div class="card"><div class="l">주식가치</div><div class="v">${eok(r.eq)}</div></div><div class="card hl"><div class="l">주당가치</div><div class="v">${won(r.ps)}</div></div></div>
-   <p>${s.co.name}의 ${s.baseDate} 기준 기업가치를 현금흐름할인법(DCF)으로 평가한 결과, 평가대상회사의 영업가치는 <b>${eok(r.op)}</b>, 비영업자산 가산 및 이자부부채 차감 후 주주가치는 <b>${eok(r.eq)}</b>로 산정되었다. 발행주식수 ${M(p.shares)}주 기준 <b>1주당 ${won(r.ps)}</b>이다. 본 평가는 가중평균자본비용(WACC) ${pct(r.wacc*100)}와 영구성장률 ${pct(p.tg)}를 적용하였다.</p>`;
-  const financial=financialSection(s,`<h4>4. 추정 잉여현금흐름(FCFF) — 5개년 (단위: 원)</h4>
-   ${tbl(['구분','1년차','2년차','3년차','4년차','5년차'],
-    `<tr><td>매출액</td>${p.rev.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>EBIT</td>${p.ebit.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>(+) 감가상각비</td>${p.dep.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>(-) CAPEX</td>${p.capex.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>(-) 운전자본증감</td>${p.wc.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr class="total"><td>FCFF</td>${r.rows.map(x=>`<td>${M(x.fcff)}</td>`).join('')}</tr>`)}
-   <p class="src">FCFF = EBIT×(1-법인세율) + 감가상각비 - CAPEX - 운전자본증감</p>`);
-  const methodology=`<p>현금흐름할인법(DCF; Discounted Cash Flow)은 수익접근법(Income Approach)에 속하는 평가방법으로, 기업이 미래에 창출할 잉여현금흐름(FCFF)을 가중평균자본비용(WACC)으로 할인하여 영업가치를 산정하고, 여기에 비영업자산을 가산하고 이자부부채를 차감하여 주주가치를 도출한다. 기업의 미래 수익창출능력을 직접 반영하므로 계속기업(Going-concern) 가치를 가장 잘 설명하는 방법으로 평가 실무에서 널리 사용된다.</p>
-   <h4>가. 잉여현금흐름(FCFF) 산정</h4><p>FCFF는 영업이익(EBIT)에서 법인세를 차감한 세후영업이익(NOPAT)에 비현금비용인 감가상각비를 가산하고, 자본적지출(CAPEX)과 운전자본 증감을 차감하여 산정한다.</p>
-   <h4>나. 할인율(WACC) 산정</h4><p>WACC는 자기자본비용(CAPM)과 세후 타인자본비용을 자본구조 비중으로 가중평균하여 산정한다.</p>
-   ${tbl(['항목','값'],
-    `<tr><td>무위험이자율(Rf)</td><td>${pct(p.rf)}</td></tr><tr><td>시장위험프리미엄(MRP)</td><td>${pct(p.mrp)}</td></tr><tr><td>베타(β)</td><td>${p.beta.toFixed(2)}</td></tr><tr><td>규모프리미엄</td><td>${pct(p.sizeP)}</td></tr><tr class="total"><td>자기자본비용 Ke = Rf+β·MRP+규모P</td><td>${pct(r.ke*100)}</td></tr><tr><td>세전 타인자본비용(Kd)</td><td>${pct(p.kd)}</td></tr><tr><td>세후 Kd = Kd·(1-법인세율 ${pct(p.tax)})</td><td>${pct(r.kdAt*100)}</td></tr><tr><td>자본구조(자기 : 타인)</td><td>${p.eW}% : ${p.dW}%</td></tr><tr class="total"><td>가중평균자본비용(WACC)</td><td>${pct(r.wacc*100)}</td></tr>`)}
-   <h4>다. 영구가치(Terminal Value)</h4><p>예측기간(5년) 이후의 가치는 영구성장모형(Gordon Growth)을 적용하여, 5년차 FCFF에 영구성장률 ${pct(p.tg)}를 반영한 후 (WACC - g)로 환원하여 산정하였다.</p>`;
-  const chart=barChart(r.rows.map(x=>({label:eok(x.pv),name:x.y+'년',v:x.pv})).concat([{label:eok(r.pvTv),name:'TV',v:r.pvTv,c:'#166534'}]),'억원');
-  const results=`<h4>1. 예측기간 FCFF 현재가치</h4>${tbl(['연도','FCFF','할인계수','현재가치'],r.rows.map(x=>`<tr><td>${x.y}년차</td><td>${M(x.fcff)}</td><td>${x.df.toFixed(4)}</td><td>${M(x.pv)}</td></tr>`).join('')+`<tr><td>Terminal</td><td>${M(r.tv)}</td><td>${(1/Math.pow(1+r.wacc,5)).toFixed(4)}</td><td>${M(r.pvTv)}</td></tr>`)}
-   <p style="font-size:12px;color:#6B7280">[그림] 연도별·영구가치(TV) 현재가치 구성</p>${chart}
+  const summary=`<div class="cards"><div class="card"><div class="l">영업가치</div><div class="v">${eok(r.op)}</div></div><div class="card"><div class="l">기업가치</div><div class="v">${eok(r.ev)}</div></div><div class="card"><div class="l">주식가치</div><div class="v">${eok(r.eq)}</div></div><div class="card hl"><div class="l">주당가치</div><div class="v">${won(r.ps)}</div></div></div><p>${s.co.name}의 ${s.baseDate} 기준 기업가치를 현금흐름할인법(DCF)으로 평가한 결과, 영업가치는 <b>${eok(r.op)}</b>, 비영업자산 가산 및 이자부부채 차감 후 주주가치는 <b>${eok(r.eq)}</b>로 산정되었다. 발행주식수 ${M(p.shares)}주 기준 <b>1주당 ${won(r.ps)}</b>이며, 가중평균자본비용(WACC) ${pct(r.wacc*100)}와 영구성장률 ${pct(p.tg)}를 적용하였다.</p>`;
+  const projChart=barChart(p.rev.map((v,i)=>({label:eok(v),name:(i+1)+'년',v})),'억원');
+  const financial=financialSection(s,`<h4>4. 추정 손익 및 잉여현금흐름 (5개년, 단위: 원)</h4><p>평가대상회사가 제시한 사업계획에 기초하여 매출 성장률, 영업이익률, 투자(CAPEX) 계획을 반영한 추정 손익 및 FCFF는 다음과 같다.</p>
+   ${tbl(['구분','1년차','2년차','3년차','4년차','5년차'],`<tr style="font-weight:600"><td>매출액</td>${p.rev.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr class="sub"><td>매출 성장률</td><td>-</td>${p.rev.slice(1).map((v,i)=>`<td>${((v/p.rev[i]-1)*100).toFixed(1)}%</td>`).join('')}</tr><tr><td>EBIT</td>${p.ebit.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr class="sub"><td>영업이익률</td>${p.ebit.map((v,i)=>`<td>${(v/p.rev[i]*100).toFixed(1)}%</td>`).join('')}</tr><tr><td>(-) 법인세(${pct(p.tax)})</td>${r.rows.map(x=>`<td>${M(x.fcff===0?0:p.ebit[x.y-1]*p.tax/100)}</td>`).join('')}</tr><tr><td>(+) 감가상각비</td>${p.dep.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>(-) CAPEX</td>${p.capex.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr><td>(-) 운전자본증감</td>${p.wc.map(v=>`<td>${M(v)}</td>`).join('')}</tr><tr class="total"><td>FCFF</td>${r.rows.map(x=>`<td>${M(x.fcff)}</td>`).join('')}</tr>`)}
+   <p class="cap">[그림] 추정 매출액 추이</p>${projChart}
+   <p class="src">추정 가정: 매출은 사업계획상 성장률, 영업이익률은 규모의 경제에 따른 점진적 개선을 반영. FCFF = EBIT×(1-법인세율) + 감가상각비 - CAPEX - 운전자본증감.</p>`);
+  const methodology=`<p>현금흐름할인법(DCF; Discounted Cash Flow)은 수익접근법(Income Approach)에 속하며, 기업이 미래에 창출할 잉여현금흐름(FCFF)을 가중평균자본비용(WACC)으로 할인하여 영업가치를 산정하고, 비영업자산을 가산하고 이자부부채를 차감하여 주주가치를 도출한다. 기업의 미래 수익창출능력을 직접 반영하므로 계속기업(Going-concern) 가치를 가장 잘 설명한다.</p>
+   <h4>가. 잉여현금흐름(FCFF)</h4><p>영업이익(EBIT)에서 법인세를 차감한 세후영업이익(NOPAT)에 비현금비용인 감가상각비를 가산하고 CAPEX와 운전자본 증감을 차감하여 산정한다.</p>
+   <h4>나. 할인율(WACC)</h4><p>자기자본비용(CAPM)과 세후 타인자본비용을 자본구조 비중으로 가중평균한다.</p>
+   ${tbl(['항목','값'],`<tr><td>무위험이자율(Rf)</td><td>${pct(p.rf)}</td></tr><tr><td>시장위험프리미엄(MRP)</td><td>${pct(p.mrp)}</td></tr><tr><td>베타(β)</td><td>${p.beta.toFixed(2)}</td></tr><tr><td>규모프리미엄</td><td>${pct(p.sizeP)}</td></tr><tr class="total"><td>자기자본비용 Ke=Rf+β·MRP+규모P</td><td>${pct(r.ke*100)}</td></tr><tr><td>세전 Kd</td><td>${pct(p.kd)}</td></tr><tr><td>세후 Kd=Kd·(1-${pct(p.tax)})</td><td>${pct(r.kdAt*100)}</td></tr><tr><td>자본구조(자기:타인)</td><td>${p.eW}% : ${p.dW}%</td></tr><tr class="total"><td>WACC</td><td>${pct(r.wacc*100)}</td></tr>`)}
+   <h4>다. 영구가치(Terminal Value)</h4><p>예측기간(5년) 이후는 영구성장모형을 적용하여 5년차 FCFF에 영구성장률 ${pct(p.tg)}를 반영 후 (WACC-g)로 환원한다.</p>`;
+  const pvChart=barChart(r.rows.map(x=>({label:eok(x.pv),name:x.y+'년',v:x.pv})).concat([{label:eok(r.pvTv),name:'TV',v:r.pvTv,c:'#166534'}]),'억원');
+  const results=`<h4>1. FCFF 현재가치</h4>${tbl(['연도','FCFF','할인계수','현재가치'],r.rows.map(x=>`<tr><td>${x.y}년차</td><td>${M(x.fcff)}</td><td>${x.df.toFixed(4)}</td><td>${M(x.pv)}</td></tr>`).join('')+`<tr><td>Terminal</td><td>${M(r.tv)}</td><td>${(1/Math.pow(1+r.wacc,5)).toFixed(4)}</td><td>${M(r.pvTv)}</td></tr>`)}
+   <p class="cap">[그림] 연도별·영구가치 현재가치 구성</p>${pvChart}
    <h4>2. 기업가치 산출</h4><table class="kv"><tr><td>예측기간 FCFF 현재가치 합계</td><td>${won(r.pvSum)}</td></tr><tr><td>영구가치(TV) 현재가치</td><td>${won(r.pvTv)}</td></tr><tr class="total"><td>영업가치</td><td>${won(r.op)}</td></tr><tr><td>(+) 비영업자산</td><td>${won(p.nonOp)}</td></tr><tr class="total"><td>기업가치</td><td>${won(r.ev)}</td></tr><tr><td>(-) 이자부부채</td><td>${won(p.debt)}</td></tr><tr class="total"><td>주주가치</td><td>${won(r.eq)}</td></tr><tr><td>발행주식수</td><td>${M(p.shares)}주</td></tr><tr class="total"><td>1주당 가치</td><td>${won(r.ps)}</td></tr></table>`;
   const ws=[r.wacc-0.005,r.wacc,r.wacc+0.005],gs=[r.tg-0.005,r.tg,r.tg+0.005],lastF=r.rows[4].fcff;
   const sens=(w,g)=>{let pv=0;for(let i=0;i<5;i++)pv+=r.rows[i].fcff/Math.pow(1+w,i+1);const tv=lastF*(1+g)/(w-g),ptv=tv/Math.pow(1+w,5);return Math.round((pv+ptv+p.nonOp-p.debt)/p.shares);};
   const sensitivity=`<p>핵심 변수인 할인율(WACC)과 영구성장률(g)의 변동에 따른 1주당 가치 민감도는 다음과 같다. (단위: 원)</p>${tbl(['WACC \\ g',...gs.map(g=>pct(g*100))],ws.map(w=>`<tr><td>${pct(w*100)}</td>${gs.map(g=>`<td${(Math.abs(w-r.wacc)<1e-9&&Math.abs(g-r.tg)<1e-9)?' style="background:#EEF2FF;font-weight:700;color:#1D4ED8"':''}>${won(sens(w,g))}</td>`).join('')}</tr>`).join(''))}`;
-  const conclusion=`<p>${s.co.name}의 ${s.baseDate} 기준 기업가치를 현금흐름할인법으로 평가한 결과, <b>주주가치 ${won(r.eq)}</b>, <b>1주당 ${won(r.ps)}</b>으로 산정되었다. 본 평가액은 회사가 제시한 사업계획(5개년 매출 연평균 성장 및 영업이익률 개선)의 달성을 전제로 하며, WACC ${pct(r.wacc*100)} 및 영구성장률 ${pct(p.tg)}의 변동에 민감하다. 상기 민감도 분석 결과 1주당 가치는 ${won(sens(ws[0],gs[0]))} ~ ${won(sens(ws[2],gs[2]))}의 범위에서 변동할 수 있다.</p>`;
+  const conclusion=`<p>${s.co.name}의 ${s.baseDate} 기준 기업가치를 현금흐름할인법으로 평가한 결과, <b>주주가치 ${won(r.eq)}</b>, <b>1주당 ${won(r.ps)}</b>으로 산정되었다. 본 평가액은 회사가 제시한 사업계획의 달성을 전제로 하며, WACC ${pct(r.wacc*100)} 및 영구성장률 ${pct(p.tg)}의 변동에 민감하다. 민감도 분석 결과 1주당 가치는 ${won(sens(ws[0],gs[0]))} ~ ${won(sens(ws[2],gs[2]))} 범위에서 변동할 수 있다.</p>`;
   return {summary,overview:overviewSection(s),company:companySection(s),financial,methodology,results,sensitivity,conclusion,appendix:APPENDIX};
  },
  tax(s){const p=s.inp,r=computeTax(p);
-  const summary=`<div class="cards"><div class="card"><div class="l">1주당 순손익가치</div><div class="v">${won(r.profitPS)}</div></div><div class="card"><div class="l">1주당 순자산가치</div><div class="v">${won(r.assetPS)}</div></div><div class="card"><div class="l">가중치</div><div class="v" style="font-size:15px">${p.general?'3 : 2':'2 : 3'}</div></div><div class="card hl"><div class="l">1주당 평가액</div><div class="v">${won(r.fin)}</div></div></div>
-   <p>상속세 및 증여세법 제54조 및 동법 시행령에 따라 비상장법인인 ${s.co.name}의 1주당 가치를 평가한 결과 <b>${won(r.fin)}</b>으로 산정되었다.${r.floored?' 가중평균 평가액이 1주당 순자산가치의 80%에 미달하여 하한 규정이 적용되었다.':''}</p>`;
-  const financial=financialSection(s,`<h4>4. 순손익액 및 순자산 (평가기준 단위: 백만원)</h4>
-   ${tbl(['구분','3년 전','2년 전','직전'],`<tr><td>각사업연도소득</td><td>${M(p.income[2])}</td><td>${M(p.income[1])}</td><td>${M(p.income[0])}</td></tr><tr class="total"><td>순손익액 가중평균(1:2:3)</td><td colspan="3">${M(r.weighted)} 백만원</td></tr>`)}
-   <table class="kv"><tr><td>총자산</td><td>${M(p.assets)} 백만원</td></tr><tr><td>총부채</td><td>${M(p.liab)} 백만원</td></tr><tr><td>순자산</td><td>${M(r.net)} 백만원</td></tr></table>`);
-  const methodology=`<p>상속세 및 증여세법 시행령 제54조에 따른 비상장주식 평가는 <b>1주당 순손익가치</b>와 <b>1주당 순자산가치</b>를 가중평균하여 산정한다. 이는 기업의 수익력(순손익)과 자산보유 실질(순자산)을 함께 반영하기 위함이다.</p>
-   <h4>가. 1주당 순손익가치</h4><p>최근 3개 사업연도의 1주당 순손익액을 1:2:3(가까운 연도일수록 높은 가중치)으로 가중평균한 후, 기획재정부장관이 고시하는 순손익가치 환원율(${pct(p.disc)})로 환원하여 산정한다.</p>
-   <h4>나. 1주당 순자산가치</h4><p>평가기준일 현재의 순자산가액(총자산 - 총부채)을 발행주식총수로 나누어 산정한다.</p>
-   <h4>다. 가중평균 및 하한</h4><p>일반법인은 순손익가치와 순자산가치를 3:2로, 부동산과다보유법인은 2:3으로 가중평균한다. 단, 가중평균액이 1주당 순자산가치의 80%에 미달하는 경우 그 80%를 평가액으로 한다(시행령 제54조 제1항 단서).</p>
-   ${tbl(['항목','값'],`<tr><td>법인 구분</td><td>${p.general?'일반법인 (3:2)':'부동산과다보유법인 (2:3)'}</td></tr><tr><td>순손익가치 환원율</td><td>${pct(p.disc)}</td></tr><tr><td>1주당 순손익가치</td><td>${won(r.profitPS)}</td></tr><tr><td>1주당 순자산가치</td><td>${won(r.assetPS)}</td></tr><tr class="total"><td>순자산 80% 하한</td><td>${won(r.floor)}</td></tr>`)}`;
-  const results=`<table class="kv"><tr><td>가중평균 산식</td><td>(${won(r.profitPS)}×${p.general?3:2} + ${won(r.assetPS)}×${p.general?2:3}) ÷ 5</td></tr><tr><td>80% 하한 적용</td><td>${r.floored?'적용 (가중평균 < 순자산 80%)':'미적용'}</td></tr><tr class="total"><td>1주당 평가액</td><td>${won(r.fin)}</td></tr><tr><td>발행주식총수</td><td>${M(p.shares)}주</td></tr><tr><td>평가 총액</td><td>${won(r.fin*p.shares)}</td></tr></table>`;
-  const sensitivity=`<p>순손익가치 환원율 변동에 따른 1주당 평가액 민감도는 다음과 같다.</p>${tbl(['환원율',...[p.disc-2,p.disc,p.disc+2].map(d=>pct(d))],`<tr><td>1주당 평가액</td>${[p.disc-2,p.disc,p.disc+2].map(d=>`<td>${won(computeTax({...p,disc:d}).fin)}</td>`).join('')}</tr>`)}`;
-  const conclusion=`<p>${s.co.name}의 1주당 가치는 상속세 및 증여세법 제54조에 따라 <b>${won(r.fin)}</b>으로 평가되었다. 본 평가액은 세무상 비상장주식 평가를 목적으로 하며, 거래목적의 공정가치와는 차이가 있을 수 있다.</p>`;
+  const summary=`<div class="cards"><div class="card"><div class="l">1주당 순손익가치</div><div class="v">${won(r.profitPS)}</div></div><div class="card"><div class="l">1주당 순자산가치</div><div class="v">${won(r.assetPS)}</div></div><div class="card"><div class="l">가중치</div><div class="v" style="font-size:15px">${p.general?'3 : 2':'2 : 3'}</div></div><div class="card hl"><div class="l">1주당 평가액</div><div class="v">${won(r.fin)}</div></div></div><p>상속세 및 증여세법 제54조에 따라 비상장법인인 ${s.co.name}의 1주당 가치를 평가한 결과 <b>${won(r.fin)}</b>으로 산정되었다.${r.floored?' 가중평균 평가액이 1주당 순자산가치의 80%에 미달하여 하한 규정이 적용되었다.':''}</p>`;
+  const chart=barChart([{label:won(r.profitPS),name:'순손익가치',v:r.profitPS},{label:won(r.assetPS),name:'순자산가치',v:r.assetPS},{label:won(r.fin),name:'평가액',v:r.fin,c:'#166534'}],'원');
+  const financial=financialSection(s,`<h4>4. 순손익액 및 순자산 (단위: 백만원)</h4>${tbl(['구분','3년 전','2년 전','직전'],`<tr><td>각사업연도소득</td><td>${M(p.income[2])}</td><td>${M(p.income[1])}</td><td>${M(p.income[0])}</td></tr><tr class="total"><td>순손익액 가중평균(1:2:3)</td><td colspan="3">${M(r.weighted)} 백만원</td></tr>`)}<table class="kv"><tr><td>총자산</td><td>${M(p.assets)} 백만원</td></tr><tr><td>총부채</td><td>${M(p.liab)} 백만원</td></tr><tr><td>순자산</td><td>${M(r.net)} 백만원</td></tr></table><p class="cap">[그림] 순손익가치·순자산가치·최종 평가액</p>${chart}`);
+  const methodology=`<p>상속세 및 증여세법 시행령 제54조에 따른 비상장주식 평가는 <b>1주당 순손익가치</b>와 <b>1주당 순자산가치</b>를 가중평균하여 산정한다. 이는 기업의 수익력과 자산보유 실질을 함께 반영하기 위함이다.</p><h4>가. 1주당 순손익가치</h4><p>최근 3개 사업연도의 1주당 순손익액을 1:2:3으로 가중평균한 후 순손익가치 환원율(${pct(p.disc)})로 환원한다.</p><h4>나. 1주당 순자산가치</h4><p>평가기준일 현재 순자산가액(총자산-총부채)을 발행주식총수로 나눈다.</p><h4>다. 가중평균 및 하한</h4><p>일반법인 3:2, 부동산과다보유법인 2:3으로 가중평균하되, 가중평균액이 순자산가치의 80% 미만이면 80%를 평가액으로 한다.</p>${tbl(['항목','값'],`<tr><td>법인 구분</td><td>${p.general?'일반법인 (3:2)':'부동산과다보유 (2:3)'}</td></tr><tr><td>순손익가치 환원율</td><td>${pct(p.disc)}</td></tr><tr><td>1주당 순손익가치</td><td>${won(r.profitPS)}</td></tr><tr><td>1주당 순자산가치</td><td>${won(r.assetPS)}</td></tr><tr class="total"><td>순자산 80% 하한</td><td>${won(r.floor)}</td></tr>`)}`;
+  const results=`<table class="kv"><tr><td>가중평균 산식</td><td>(${won(r.profitPS)}×${p.general?3:2} + ${won(r.assetPS)}×${p.general?2:3}) ÷ 5</td></tr><tr><td>80% 하한 적용</td><td>${r.floored?'적용':'미적용'}</td></tr><tr class="total"><td>1주당 평가액</td><td>${won(r.fin)}</td></tr><tr><td>발행주식총수</td><td>${M(p.shares)}주</td></tr><tr><td>평가 총액</td><td>${won(r.fin*p.shares)}</td></tr></table>`;
+  const sensitivity=`<p>순손익가치 환원율 변동에 따른 1주당 평가액 민감도이다.</p>${tbl(['환원율',...[p.disc-2,p.disc,p.disc+2].map(d=>pct(d))],`<tr><td>1주당 평가액</td>${[p.disc-2,p.disc,p.disc+2].map(d=>`<td>${won(computeTax({...p,disc:d}).fin)}</td>`).join('')}</tr>`)}`;
+  const conclusion=`<p>${s.co.name}의 1주당 가치는 상속세 및 증여세법 제54조에 따라 <b>${won(r.fin)}</b>으로 평가되었다. 본 평가액은 세무 목적의 비상장주식 평가이며 거래 목적의 공정가치와 차이가 있을 수 있다.</p>`;
   return {summary,overview:overviewSection(s),company:companySection(s),financial,methodology,results,sensitivity,conclusion,appendix:APPENDIX};
  },
  intrinsic(s){const p=s.inp,r=computeIntrinsic(p);
-  const summary=`<div class="cards"><div class="card"><div class="l">1주당 수익가치</div><div class="v">${won(r.psInc)}</div></div><div class="card"><div class="l">1주당 자산가치</div><div class="v">${won(r.psAsset)}</div></div><div class="card"><div class="l">가중(자산1:수익1.5)</div><div class="v" style="font-size:14px">÷ 2.5</div></div><div class="card hl"><div class="l">1주당 본질가치</div><div class="v">${won(r.intrinsic)}</div></div></div>
-   <p>자본시장법상 본질가치평가법(증권의 발행 및 공시 등에 관한 규정 시행세칙)에 따라 ${s.co.name}의 1주당 가치를 평가한 결과 <b>${won(r.intrinsic)}</b>으로 산정되었다.</p>`;
-  const financial=financialSection(s,`<h4>4. 본질가치 산정 기초자료 (단위: 백만원)</h4>${tbl(['구분','1년차','2년차','3년차'],`<tr><td>순이익</td><td>${M(p.income[0])}</td><td>${M(p.income[1])}</td><td>${M(p.income[2])}</td></tr><tr class="total"><td>3년 평균 순이익</td><td colspan="3">${M(r.avg)} 백만원</td></tr>`)}<table class="kv"><tr><td>순자산가치(NAV)</td><td>${M(p.nav)} 백만원</td></tr></table>`);
-  const methodology=`<p>본질가치평가법은 기업이 보유한 <b>자산가치</b>와 미래 수익력을 반영한 <b>수익가치</b>를 가중평균하여 1주당 본질가치를 산정하는 방법으로, 합병·영업양수도·코스닥 상장 등 자본시장법상 평가에서 사용된다.</p>
-   <h4>가. 수익가치</h4><p>최근 사업연도 추정 순이익을 자본환원율(${pct(p.cap)})로 환원하여 수익가치 총액을 산정하고, 발행주식수로 나누어 1주당 수익가치를 도출한다.</p>
-   <h4>나. 자산가치</h4><p>평가기준일 현재의 순자산가치(NAV)를 발행주식수로 나누어 1주당 자산가치를 산정한다.</p>
-   <h4>다. 가중평균</h4><p>1주당 자산가치와 수익가치를 <b>1 : 1.5</b>의 비율로 가중평균하여 본질가치를 산정한다. 이는 계속기업의 미래 수익력에 보다 큰 비중을 부여하는 규정상의 가중치이다.</p>
-   ${tbl(['항목','값'],`<tr><td>3년 평균 순이익</td><td>${M(r.avg)} 백만원</td></tr><tr><td>자본환원율</td><td>${pct(p.cap)}</td></tr><tr><td>수익가치 총액</td><td>${M(r.incomeVal)} 백만원</td></tr><tr><td>1주당 수익가치</td><td>${won(r.psInc)}</td></tr><tr><td>1주당 자산가치</td><td>${won(r.psAsset)}</td></tr>`)}`;
+  const summary=`<div class="cards"><div class="card"><div class="l">1주당 수익가치</div><div class="v">${won(r.psInc)}</div></div><div class="card"><div class="l">1주당 자산가치</div><div class="v">${won(r.psAsset)}</div></div><div class="card"><div class="l">가중(자산1:수익1.5)</div><div class="v" style="font-size:14px">÷ 2.5</div></div><div class="card hl"><div class="l">1주당 본질가치</div><div class="v">${won(r.intrinsic)}</div></div></div><p>자본시장법상 본질가치평가법에 따라 ${s.co.name}의 1주당 가치를 평가한 결과 <b>${won(r.intrinsic)}</b>으로 산정되었다.</p>`;
+  const chart=barChart([{label:won(r.psAsset),name:'자산가치',v:r.psAsset},{label:won(r.psInc),name:'수익가치',v:r.psInc},{label:won(r.intrinsic),name:'본질가치',v:r.intrinsic,c:'#166534'}],'원');
+  const financial=financialSection(s,`<h4>4. 본질가치 산정 기초 (단위: 백만원)</h4>${tbl(['구분','1년차','2년차','3년차'],`<tr><td>순이익</td><td>${M(p.income[0])}</td><td>${M(p.income[1])}</td><td>${M(p.income[2])}</td></tr><tr class="total"><td>3년 평균 순이익</td><td colspan="3">${M(r.avg)} 백만원</td></tr>`)}<table class="kv"><tr><td>순자산가치(NAV)</td><td>${M(p.nav)} 백만원</td></tr></table><p class="cap">[그림] 자산가치·수익가치·본질가치</p>${chart}`);
+  const methodology=`<p>본질가치평가법은 기업이 보유한 <b>자산가치</b>와 미래 수익력을 반영한 <b>수익가치</b>를 가중평균하여 1주당 본질가치를 산정하는 방법으로, 합병·영업양수도·코스닥 상장 심사 등에서 사용된다.</p><h4>가. 수익가치</h4><p>추정 순이익을 자본환원율(${pct(p.cap)})로 환원하여 산정한다.</p><h4>나. 자산가치</h4><p>평가기준일 순자산가치(NAV)를 발행주식수로 나눈다.</p><h4>다. 가중평균</h4><p>자산가치와 수익가치를 <b>1 : 1.5</b>로 가중하여 미래 수익력에 더 큰 비중을 부여한다.</p>${tbl(['항목','값'],`<tr><td>3년 평균 순이익</td><td>${M(r.avg)} 백만원</td></tr><tr><td>자본환원율</td><td>${pct(p.cap)}</td></tr><tr><td>수익가치 총액</td><td>${M(r.incomeVal)} 백만원</td></tr><tr><td>1주당 수익가치</td><td>${won(r.psInc)}</td></tr><tr><td>1주당 자산가치</td><td>${won(r.psAsset)}</td></tr>`)}`;
   const results=`<table class="kv"><tr><td>본질가치 산식</td><td>(자산가치×1 + 수익가치×1.5) ÷ 2.5</td></tr><tr><td>대입</td><td>(${won(r.psAsset)} + ${won(r.psInc)}×1.5) ÷ 2.5</td></tr><tr class="total"><td>1주당 본질가치</td><td>${won(r.intrinsic)}</td></tr><tr><td>발행주식수</td><td>${M(p.shares)}주</td></tr></table>`;
-  const sensitivity=`<p>자본환원율 변동에 따른 1주당 본질가치 민감도는 다음과 같다.</p>${tbl(['자본환원율',...[p.cap-2,p.cap,p.cap+2].map(c=>pct(c))],`<tr><td>본질가치</td>${[p.cap-2,p.cap,p.cap+2].map(c=>`<td>${won(computeIntrinsic({...p,cap:c}).intrinsic)}</td>`).join('')}</tr>`)}`;
+  const sensitivity=`<p>자본환원율 변동에 따른 1주당 본질가치 민감도이다.</p>${tbl(['자본환원율',...[p.cap-2,p.cap,p.cap+2].map(c=>pct(c))],`<tr><td>본질가치</td>${[p.cap-2,p.cap,p.cap+2].map(c=>`<td>${won(computeIntrinsic({...p,cap:c}).intrinsic)}</td>`).join('')}</tr>`)}`;
   const conclusion=`<p>${s.co.name}의 1주당 본질가치는 자산가치와 수익가치를 1:1.5로 가중하여 <b>${won(r.intrinsic)}</b>으로 평가되었다. 수익가치가 자산가치를 ${r.psInc>r.psAsset?'상회':'하회'}하여 미래 수익력이 평가에 ${r.psInc>r.psAsset?'긍정적으로':'제한적으로'} 반영되었다.</p>`;
   return {summary,overview:overviewSection(s),company:companySection(s),financial,methodology,results,sensitivity,conclusion,appendix:APPENDIX};
  },
  relative(s){const p=s.inp,r=computeRelative(p);
-  const summary=`<div class="cards"><div class="card"><div class="l">PER 기준</div><div class="v">${won(r.perPS)}</div></div><div class="card"><div class="l">PBR 기준</div><div class="v">${won(r.pbrPS)}</div></div><div class="card"><div class="l">EV/EBITDA 기준</div><div class="v">${won(r.evPS)}</div></div><div class="card hl"><div class="l">할인 적용 주당가치</div><div class="v">${won(r.disc)}</div></div></div>
-   <p>유사기업비교법(시장접근법)에 따라 ${s.co.name}의 1주당 가치를 평가한 결과, 가중평균 ${won(r.weighted)}, 비유동성 할인 ${p.liq}% 적용 후 <b>${won(r.disc)}</b>으로 산정되었다.</p>`;
-  const financial=financialSection(s,`<h4>4. 평가대상회사 주요 재무지표 (단위: 백만원)</h4><table class="kv"><tr><td>당기순이익</td><td>${M(p.ni)}</td></tr><tr><td>자기자본</td><td>${M(p.eq)}</td></tr><tr><td>매출액</td><td>${M(p.rev)}</td></tr><tr><td>EBITDA</td><td>${M(p.ebitda)}</td></tr><tr><td>순차입금</td><td>${M(p.netDebt)}</td></tr></table>`);
-  const methodology=`<p>유사기업비교법(Guideline Public Company Method)은 시장접근법(Market Approach)에 속하며, 평가대상회사와 사업·규모가 유사한 상장 비교기업의 시장배수(Multiple)를 평가대상회사의 재무지표에 적용하여 가치를 산정한다. 시장에서 형성된 가격을 기준으로 하므로 객관성이 높다.</p>
-   <h4>가. 비교기업 선정 및 배수 산정</h4><p>사업 영역·수익구조가 유사한 비교기업을 선정하고, 각 사의 PER·PBR·EV/EBITDA 배수의 평균을 적용배수로 산정하였다.</p>
-   ${tbl(['비교기업','PER','PBR','PSR','EV/EBITDA'],p.peers.map(r2=>`<tr><td>${r2[0]}</td><td>${r2[1]}</td><td>${r2[2]}</td><td>${r2[3]}</td><td>${r2[4]}</td></tr>`).join('')+`<tr class="total"><td>적용 평균배수</td><td>${r.avgPer}</td><td>${r.avgPbr}</td><td>-</td><td>${r.avgEv}</td></tr>`)}
-   <h4>나. 비유동성 할인</h4><p>평가대상회사는 비상장기업으로 즉시 환금이 어려우므로, 시장성 결여에 따른 비유동성 할인(${p.liq}%)을 적용하였다. 비상장주식은 통상 20~30%의 할인이 적용된다.</p>`;
-  const results=`<table class="kv"><tr><td>PER 기준 (당기순이익 × PER)</td><td>${won(r.perPS)}</td></tr><tr><td>PBR 기준 (자기자본 × PBR)</td><td>${won(r.pbrPS)}</td></tr><tr><td>EV/EBITDA 기준 (EV - 순차입금)</td><td>${won(r.evPS)}</td></tr><tr><td>가중치 (PER:PBR:EV/EBITDA)</td><td>${p.wPer} : ${p.wPbr} : ${p.wEvEbitda}</td></tr><tr class="total"><td>가중평균 주당가치 (할인 전)</td><td>${won(r.weighted)}</td></tr><tr><td>비유동성 할인율</td><td>${p.liq}%</td></tr><tr class="total"><td>할인 적용 주당가치</td><td>${won(r.disc)}</td></tr></table>`;
-  const sensitivity=`<p>비유동성 할인율 변동에 따른 1주당 가치 민감도는 다음과 같다.</p>${tbl(['할인율',...[0,p.liq,Math.min(p.liq+10,50)].map(l=>l+'%')],`<tr><td>주당가치</td>${[0,p.liq,Math.min(p.liq+10,50)].map(l=>`<td>${won(Math.round(r.weighted*(1-l/100)))}</td>`).join('')}</tr>`)}`;
-  const conclusion=`<p>${s.co.name}의 1주당 가치는 유사기업비교법에 따라 가중평균 ${won(r.weighted)}, 비상장 비유동성 할인 ${p.liq}% 적용 후 <b>${won(r.disc)}</b>으로 평가되었다. 본 평가는 비교기업의 시장배수에 기초하므로 시장 변동에 따라 결과가 달라질 수 있다.</p>`;
+  const summary=`<div class="cards"><div class="card"><div class="l">PER 기준</div><div class="v">${won(r.perPS)}</div></div><div class="card"><div class="l">PBR 기준</div><div class="v">${won(r.pbrPS)}</div></div><div class="card"><div class="l">EV/EBITDA 기준</div><div class="v">${won(r.evPS)}</div></div><div class="card hl"><div class="l">할인 적용 주당가치</div><div class="v">${won(r.disc)}</div></div></div><p>유사기업비교법에 따라 ${s.co.name}의 1주당 가치를 평가한 결과, 가중평균 ${won(r.weighted)}, 비유동성 할인 ${p.liq}% 적용 후 <b>${won(r.disc)}</b>으로 산정되었다.</p>`;
+  const chart=barChart([{label:won(r.perPS),name:'PER',v:r.perPS},{label:won(r.pbrPS),name:'PBR',v:r.pbrPS},{label:won(r.evPS),name:'EV/EBITDA',v:r.evPS},{label:won(r.disc),name:'할인후',v:r.disc,c:'#166534'}],'원');
+  const financial=financialSection(s,`<h4>4. 평가대상회사 주요 지표 (단위: 백만원)</h4><table class="kv"><tr><td>당기순이익</td><td>${M(p.ni)}</td></tr><tr><td>자기자본</td><td>${M(p.eq)}</td></tr><tr><td>매출액</td><td>${M(p.rev)}</td></tr><tr><td>EBITDA</td><td>${M(p.ebitda)}</td></tr><tr><td>순차입금</td><td>${M(p.netDebt)}</td></tr></table>`);
+  const methodology=`<p>유사기업비교법(시장접근법)은 평가대상회사와 사업·규모가 유사한 비교기업의 시장배수(Multiple)를 평가대상회사 재무지표에 적용하여 가치를 산정한다.</p><h4>가. 비교기업 및 배수</h4><p>사업 영역이 유사한 비교기업의 PER·PBR·EV/EBITDA 평균을 적용배수로 산정하였다.</p>${tbl(['비교기업','PER','PBR','PSR','EV/EBITDA'],p.peers.map(r2=>`<tr><td>${r2[0]}</td><td>${r2[1]}</td><td>${r2[2]}</td><td>${r2[3]}</td><td>${r2[4]}</td></tr>`).join('')+`<tr class="total"><td>적용 평균</td><td>${r.avgPer}</td><td>${r.avgPbr}</td><td>-</td><td>${r.avgEv}</td></tr>`)}<h4>나. 비유동성 할인</h4><p>평가대상회사는 비상장기업으로 즉시 환금이 어려우므로 비유동성 할인(${p.liq}%)을 적용하였다(통상 20~30%).</p>${chart}`;
+  const results=`<table class="kv"><tr><td>PER 기준 (당기순이익×PER)</td><td>${won(r.perPS)}</td></tr><tr><td>PBR 기준 (자기자본×PBR)</td><td>${won(r.pbrPS)}</td></tr><tr><td>EV/EBITDA 기준</td><td>${won(r.evPS)}</td></tr><tr><td>가중치</td><td>${p.wPer}:${p.wPbr}:${p.wEvEbitda}</td></tr><tr class="total"><td>가중평균 (할인 전)</td><td>${won(r.weighted)}</td></tr><tr><td>비유동성 할인율</td><td>${p.liq}%</td></tr><tr class="total"><td>할인 적용 주당가치</td><td>${won(r.disc)}</td></tr></table>`;
+  const sensitivity=`<p>비유동성 할인율 변동에 따른 1주당 가치 민감도이다.</p>${tbl(['할인율',...[0,p.liq,Math.min(p.liq+10,50)].map(l=>l+'%')],`<tr><td>주당가치</td>${[0,p.liq,Math.min(p.liq+10,50)].map(l=>`<td>${won(Math.round(r.weighted*(1-l/100)))}</td>`).join('')}</tr>`)}`;
+  const conclusion=`<p>${s.co.name}의 1주당 가치는 유사기업비교법에 따라 가중평균 ${won(r.weighted)}, 비유동성 할인 ${p.liq}% 적용 후 <b>${won(r.disc)}</b>으로 평가되었다. 비교기업 시장배수에 기초하므로 시장 변동에 따라 결과가 달라질 수 있다.</p>`;
   return {summary,overview:overviewSection(s),company:companySection(s),financial,methodology,results,sensitivity,conclusion,appendix:APPENDIX};
  },
  asset(s){const p=s.inp,r=computeAsset(p);const rowsT=rows=>rows.map(x=>`<tr><td>${x[0]}</td><td>${M(x[1])}</td><td>${M(x[2])}</td><td>${M(x[3])}</td></tr>`).join('');
-  const summary=`<div class="cards"><div class="card"><div class="l">장부 순자산</div><div class="v">${M(r.navB)}백만</div></div><div class="card"><div class="l">시가 조정액</div><div class="v">${M((r.aM-r.aB)-(r.lM-r.lB))}백만</div></div><div class="card"><div class="l">시가 순자산</div><div class="v">${M(r.navM)}백만</div></div><div class="card hl"><div class="l">조정 후 주당가치</div><div class="v">${won(r.adj)}</div></div></div>
-   <p>순자산가치법(자산접근법, 공정가치법)에 따라 ${s.co.name}의 자산·부채를 시가로 재평가한 결과, 시가 순자산가치는 <b>${M(r.navM)}백만원</b>, 할인/할증 ${p.discount}% 적용 후 <b>1주당 ${won(r.adj)}</b>으로 산정되었다.</p>`;
-  const financial=financialSection(s,`<h4>4. 자산·부채 시가 재평가 (단위: 백만원)</h4>${tbl(['자산','장부가액','시가조정','시가'],rowsT(r.A)+`<tr class="total"><td>자산 합계</td><td>${M(r.aB)}</td><td>${M(r.aM-r.aB)}</td><td>${M(r.aM)}</td></tr>`)}${tbl(['부채','장부가액','시가조정','시가'],rowsT(r.L)+`<tr class="total"><td>부채 합계</td><td>${M(r.lB)}</td><td>${M(r.lM-r.lB)}</td><td>${M(r.lM)}</td></tr>`)}`);
-  const methodology=`<p>순자산가치법(Net Asset Value Method)은 자산접근법(Asset Approach)에 속하며, 평가대상회사가 보유한 총자산에서 총부채를 차감한 순자산가치를 기업가치로 산정한다. 본 평가는 그 중 공정가치법(Fair Value)을 적용하였다.</p>
-   <h4>가. 평가 절차</h4><ul class="bul"><li>① 평가기준일 재무상태표 입수</li><li>② 취득원가로 기록된 자산·부채를 공정가치(시가)로 조정 (특히 부동산은 감정평가 반영)</li><li>③ 누락·부외 자산·부채 반영</li><li>④ 시가 총자산 - 시가 총부채 = 시가 순자산가치</li><li>⑤ 순자산가치 ÷ 발행주식수 = 1주당 가치</li></ul>
-   <h4>나. 장단점</h4><p>객관적이고 이해가 쉬우나, 미래 수익창출능력이 반영되지 않는 한계가 있어 자산보유형·청산가정 기업에 적합하다.</p>`;
-  const results=`<table class="kv"><tr><td>시가 총자산</td><td>${M(r.aM)} 백만원</td></tr><tr><td>시가 총부채</td><td>${M(r.lM)} 백만원</td></tr><tr class="total"><td>시가 순자산가치(NAV)</td><td>${M(r.navM)} 백만원</td></tr><tr><td>발행주식수</td><td>${M(p.shares)}주</td></tr><tr><td>조정 전 1주당 가치</td><td>${won(r.navps)}</td></tr><tr><td>할인/할증율</td><td>${p.discount}%</td></tr><tr class="total"><td>조정 후 1주당 가치</td><td>${won(r.adj)}</td></tr></table>`;
-  const sensitivity=`<p>할인/할증율 변동에 따른 1주당 가치 민감도는 다음과 같다.</p>${tbl(['할인/할증율',...[-20,-10,0,10].map(d=>d+'%')],`<tr><td>주당가치</td>${[-20,-10,0,10].map(d=>`<td>${won(Math.round(r.navps*(1+d/100)))}</td>`).join('')}</tr>`)}`;
-  const conclusion=`<p>${s.co.name}의 1주당 가치는 순자산가치법에 따라 시가 순자산 ${M(r.navM)}백만원을 기준으로 할인율 ${p.discount}% 적용 후 <b>${won(r.adj)}</b>으로 평가되었다. 보유 부동산의 시가 상승으로 시가 순자산이 장부 순자산(${M(r.navB)}백만원)을 상회하였다.</p>`;
+  const summary=`<div class="cards"><div class="card"><div class="l">장부 순자산</div><div class="v">${M(r.navB)}백만</div></div><div class="card"><div class="l">시가 조정액</div><div class="v">${M((r.aM-r.aB)-(r.lM-r.lB))}백만</div></div><div class="card"><div class="l">시가 순자산</div><div class="v">${M(r.navM)}백만</div></div><div class="card hl"><div class="l">조정 후 주당가치</div><div class="v">${won(r.adj)}</div></div></div><p>순자산가치법에 따라 ${s.co.name}의 자산·부채를 시가로 재평가한 결과, 시가 순자산가치는 <b>${M(r.navM)}백만원</b>, 할인/할증 ${p.discount}% 적용 후 <b>1주당 ${won(r.adj)}</b>으로 산정되었다.</p>`;
+  const chart=barChart([{label:M(r.navB)+'백만',name:'장부NAV',v:r.navB},{label:M(r.navM)+'백만',name:'시가NAV',v:r.navM,c:'#166534'}],'백만원');
+  const financial=financialSection(s,`<h4>4. 자산·부채 시가 재평가 (단위: 백만원)</h4>${tbl(['자산','장부가액','시가조정','시가'],rowsT(r.A)+`<tr class="total"><td>자산 합계</td><td>${M(r.aB)}</td><td>${M(r.aM-r.aB)}</td><td>${M(r.aM)}</td></tr>`)}${tbl(['부채','장부가액','시가조정','시가'],rowsT(r.L)+`<tr class="total"><td>부채 합계</td><td>${M(r.lB)}</td><td>${M(r.lM-r.lB)}</td><td>${M(r.lM)}</td></tr>`)}<p class="cap">[그림] 장부 순자산 vs 시가 순자산</p>${chart}`);
+  const methodology=`<p>순자산가치법(자산접근법)은 평가대상회사가 보유한 총자산에서 총부채를 차감한 순자산가치를 기업가치로 산정한다. 본 평가는 공정가치법(Fair Value)을 적용하였다.</p><h4>가. 평가 절차</h4><ul class="bul"><li>① 평가기준일 재무상태표 입수</li><li>② 취득원가 자산·부채를 공정가치로 조정(부동산은 감정평가 반영)</li><li>③ 누락·부외 자산·부채 반영</li><li>④ 시가 총자산 - 시가 총부채 = 시가 순자산</li><li>⑤ ÷ 발행주식수 = 1주당 가치</li></ul><h4>나. 장단점</h4><p>객관적이고 이해가 쉬우나 미래 수익창출능력이 반영되지 않아, 자산보유형·청산가정 기업에 적합하다.</p>`;
+  const results=`<table class="kv"><tr><td>시가 총자산</td><td>${M(r.aM)} 백만원</td></tr><tr><td>시가 총부채</td><td>${M(r.lM)} 백만원</td></tr><tr class="total"><td>시가 순자산가치</td><td>${M(r.navM)} 백만원</td></tr><tr><td>발행주식수</td><td>${M(p.shares)}주</td></tr><tr><td>조정 전 1주당</td><td>${won(r.navps)}</td></tr><tr><td>할인/할증율</td><td>${p.discount}%</td></tr><tr class="total"><td>조정 후 1주당</td><td>${won(r.adj)}</td></tr></table>`;
+  const sensitivity=`<p>할인/할증율 변동에 따른 1주당 가치 민감도이다.</p>${tbl(['할인/할증율',...[-20,-10,0,10].map(d=>d+'%')],`<tr><td>주당가치</td>${[-20,-10,0,10].map(d=>`<td>${won(Math.round(r.navps*(1+d/100)))}</td>`).join('')}</tr>`)}`;
+  const conclusion=`<p>${s.co.name}의 1주당 가치는 순자산가치법에 따라 시가 순자산 ${M(r.navM)}백만원 기준 할인율 ${p.discount}% 적용 후 <b>${won(r.adj)}</b>으로 평가되었다. 보유 부동산의 시가 상승으로 시가 순자산이 장부 순자산(${M(r.navB)}백만원)을 상회하였다.</p>`;
   return {summary,overview:overviewSection(s),company:companySection(s),financial,methodology,results,sensitivity,conclusion,appendix:APPENDIX};
  },
 };
-
-// ===== 구조화: 계산기 라이브 입력 수신 (하드코딩 X) =====
-// 계산기의 "보고서 생성" 버튼이 sessionStorage에 모든 입력 필드값(id→value)을 저장 → 여기서 inp로 매핑
-const FIELD_MAP={
- dcf:f=>({shares:+f.sharesOutstanding||+f['shares-outstanding'],rf:+f.riskFreeRate,mrp:+f.marketRiskPremium,beta:+f.leveredBeta,sizeP:+f.sizePremium,kd:+f.costOfDebt,tax:+f.taxRate,eW:+f.equityRatio,dW:+f.debtRatio,tg:+f.terminalGrowth,nonOp:+f.nonOperatingAssets||0,debt:+f.interestBearingDebt||0,
-   rev:[1,2,3,4,5].map(i=>+f['revenue'+i]||0),ebit:[1,2,3,4,5].map(i=>+f['ebit'+i]||0),dep:[1,2,3,4,5].map(i=>+f['dep'+i]||0),capex:[1,2,3,4,5].map(i=>+f['capex'+i]||0),wc:[1,2,3,4,5].map(i=>+f['wc'+i]||0)}),
- tax:f=>({shares:+(f['shares-outstanding']||'').toString().replace(/,/g,''),disc:+f['discount-rate'],income:[+f['income-1'],+f['income-2'],+f['income-3']],nontax:[+f['nontax-1']||0,+f['nontax-2']||0,+f['nontax-3']||0],tax:[+f['tax-1']||0,+f['tax-2']||0,+f['tax-3']||0],assets:+f['total-assets'],liab:+f['total-liabilities'],general:true}),
- intrinsic:f=>({shares:+f['total-shares'],cap:+f['capitalization-rate'],nav:+f['nav-value'],income:[+f['income-year1'],+f['income-year2'],+f['income-year3']]}),
- relative:f=>({shares:+(f['shares-outstanding']||'').toString().replace(/,/g,''),ni:+(f['net-income']||'').toString().replace(/,/g,''),eq:+(f.equity||'').toString().replace(/,/g,''),rev:+(f.revenue||'').toString().replace(/,/g,''),ebitda:+(f.ebitda||'').toString().replace(/,/g,''),netDebt:+(f['net-debt']||'').toString().replace(/,/g,''),wPer:+f['weight-per'],wPbr:+f['weight-pbr'],wEvEbitda:+f['weight-ev-ebitda'],liq:+f['liquidity-discount']||0,peers:SAMPLE.relative.inp.peers}),
- asset:f=>{const cv=k=>+(f[k]||'0').toString().replace(/,/g,'');const A=[['현금및현금성자산','cash'],['매출채권','ar'],['재고자산','inventory'],['투자자산','investment'],['토지','land'],['건물','building'],['기계장치','equipment'],['무형자산','intangible']].map(([n,k])=>[n,cv(k+'-book'),cv(k+'-adj')]).filter(r=>r[1]||r[2]);const L=[['매입채무','ap'],['단기차입금','short-debt'],['장기차입금','long-debt'],['퇴직급여충당부채','pension']].map(([n,k])=>[n,cv(k+'-book'),cv(k+'-adj')]).filter(r=>r[1]||r[2]);return{shares:cv('shares-outstanding'),discount:+f['nav-discount']||0,assets:A.length?A:SAMPLE.asset.inp.assets,liabs:L.length?L:SAMPLE.asset.inp.liabs};},
-};
-function ingestLive(method){
- try{const raw=localStorage.getItem('vl_report_fields_'+method);if(!raw)return null;
-  const f=JSON.parse(raw);const inp=FIELD_MAP[method](f);
-  // 유효성: 핵심값 없으면 무시(샘플 사용)
-  if(!inp||!inp.shares||isNaN(inp.shares))return null;
-  const name=(f.companyName||f['company-name']||'').trim();
-  return {inp,name};
- }catch(e){return null;}
-}
-// ===== 차트 (SVG, 라이브러리 없이) =====
-function barChart(items,unit){
- const max=Math.max(...items.map(i=>Math.abs(i.v)),1),W=620,H=180,bw=W/items.length*0.55,gap=W/items.length;
- const bars=items.map((it,i)=>{const h=Math.abs(it.v)/max*120;const x=gap*i+gap*0.22;const y=it.v>=0?(140-h):140;
-  return `<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="3" fill="${it.c||'#1D4ED8'}"/>
-   <text x="${x+bw/2}" y="${it.v>=0?y-5:y+h+13}" font-size="11" fill="#374151" text-anchor="middle">${it.label}</text>
-   <text x="${x+bw/2}" y="160" font-size="10" fill="#6B7280" text-anchor="middle">${it.name}</text>`;}).join('');
- return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;margin:10px 0;"><line x1="0" y1="140" x2="${W}" y2="140" stroke="#E5E7EB"/>${bars}<text x="0" y="14" font-size="10" fill="#9CA3AF">단위: ${unit}</text></svg>`;
-}
-
 const SEC=[['summary','요약 (Executive Summary)'],['overview','평가 개요'],['company','회사 개요 및 산업 분석'],['financial','재무 분석'],['methodology','평가 방법론 및 가정'],['results','평가 결과'],['sensitivity','민감도 분석'],['conclusion','결론'],['appendix','부록 — 면책 및 주의사항']];
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX'];
-
 function render(method){
- let s=SAMPLE[method];
- const live=ingestLive(method);
- if(live){ // 구조화: 계산기 실입력값으로 덮어쓰기 (프로필·산업분석·과거재무는 의뢰인 제공 자료 또는 업종 템플릿 사용)
-   s={...s,co:{...s.co,name:live.name||s.co.name},inp:{...s.inp,...live.inp}};
-   s._live=true;
- }
+ let s=SAMPLE[method];const live=ingestLive(method);let liveBadge='';
+ if(live){s={...s,co:{...s.co,name:live.name||s.co.name},inp:{...s.inp,...live.inp}};liveBadge='<span class="badge">계산기 입력값 반영</span>';}
  const c=GEN[method](s);
  const toc=SEC.map((t,i)=>`<li><b>${ROMAN[i]}.</b>${t[1]}</li>`).join('');
  const secs=SEC.map((t,i)=>`<section><div class="sh"><div class="n">${ROMAN[i]}</div><h2>${t[1]}</h2></div>${c[t[0]]}</section>`).join('');
@@ -340,10 +317,10 @@ function render(method){
   <div class="cover"><div class="logo">VALUELINK</div><div class="ttl">기업가치 평가보고서</div><div class="method">${s.full}</div><div class="co">${s.co.name}</div>
    <div class="meta"><div><b>평가기준일</b>${s.baseDate}</div><div><b>평가기관</b>ValueLink</div><div><b>작성일</b>${today()}</div><div><b>평가방법</b>${s.full.split(' ')[0]}</div></div>
    <div class="rno">Report No. VL-${method.toUpperCase()}-${new Date().getFullYear()}</div></div>
-  <div class="opinion"><h2>평가 의견서</h2>
+  <div class="opinion"><h2>평가 의견서 ${liveBadge}</h2>
    <p>당 평가기관(ValueLink)은 ${s.co.name}(이하 "평가대상회사")와 체결한 용역계약에 따라, 평가대상회사의 ${s.baseDate}(이하 "평가기준일") 현재 기업가치를 ${s.full}으로 평가하여 그 결과를 보고합니다.</p>
-   <p>본 보고서는 평가대상회사 및 의뢰인이 제공한 산업정보·경영정보·재무정보에 기초한 것으로, 당 평가기관은 제시된 자료의 완전성에 대하여 책임을 부담하지 아니합니다. 본 보고서에 포함된 미래 추정정보에는 향후 사업계획 및 현금흐름에 대한 일정한 가정이 포함되어 있으며, 거시경제지표 변동 등 예상하지 못한 요인에 의해 실제 결과와 일치하지 않을 수 있습니다.</p>
-   <p>본 보고서는 기업가치 평가 목적으로 작성된 것이므로 그 외의 목적으로 이용될 수 없으며, 당 평가기관의 사전승인 없이 제3자에게 제공되거나 인용될 수 없습니다.</p>
+   <p>본 보고서는 평가대상회사 및 의뢰인이 제공한 산업정보·경영정보·재무정보에 기초한 것으로, 당 평가기관은 제시된 자료의 완전성에 대하여 책임을 부담하지 아니합니다. 미래 추정정보에는 향후 사업계획 및 현금흐름에 대한 가정이 포함되어 있으며, 거시경제지표 변동 등 예상하지 못한 요인에 의해 실제 결과와 일치하지 않을 수 있습니다.</p>
+   <p>본 보고서는 기업가치 평가 목적으로 작성되었으므로 그 외의 목적으로 이용될 수 없으며, 당 평가기관의 사전승인 없이 제3자에게 제공되거나 인용될 수 없습니다.</p>
    <div class="sign">${today()}<br><b>ValueLink 자동평가엔진</b></div></div>
   <div class="body"><div class="toc"><h3>목 차</h3><ul>${toc}</ul></div>${secs}</div>`;
  window.scrollTo(0,0);
