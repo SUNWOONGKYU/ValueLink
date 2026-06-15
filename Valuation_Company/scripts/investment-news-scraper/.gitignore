@@ -1,5 +1,9 @@
-# 환경변수 파일 (Supabase 접속 정보 포함)
+# 환경변수 파일 (Supabase 접속 정보 포함) — 백업/변형 전부 차단
 .env
+.env.*
+.env.bak*
+*.bak
+*.bak_*
 
 # Python 캐시
 __pycache__/
