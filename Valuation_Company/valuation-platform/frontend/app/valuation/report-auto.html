@@ -71,7 +71,7 @@
 <body>
 <div class="toolbar">
   <label>평가방법 <select id="methodSel">
-    <option value="dcf">DCF (현금흐름할인법)</option><option value="tax">세무 (상증세법)</option>
+    <option value="dcf">DCF (현금흐름할인법)</option><option value="tax">상증세법 (상속세및증여세법)</option>
     <option value="intrinsic">본질가치</option><option value="relative">상대가치</option><option value="asset">자산가치 (NAV)</option>
   </select></label>
   <button id="editBtn" onclick="toggleEdit()" style="background:#fff;border:1px solid #E5E7EB;">📝 회사 데이터 편집</button>
@@ -279,7 +279,7 @@ function overviewSection(s){return `<p>당 평가기관은 ${s.co.name}(이하 "
 }
 const APPENDIX=`<h4>1. 평가 기준 및 근거</h4>
   <ul class="bul"><li>본 평가는 「감정평가 및 감정평가사에 관한 법률」 및 일반적으로 인정되는 기업가치평가 실무기준에 따라 수행되었다.</li>
-  <li>평가 방법별 근거: DCF·본질가치(수익접근법), 상대가치(시장접근법), 자산가치(자산접근법), 세무평가(상속세 및 증여세법 제54조 및 동법 시행령).</li>
+  <li>평가 방법별 근거: DCF·본질가치(수익접근법), 상대가치(시장접근법), 자산가치(자산접근법), 상증세법평가(상속세 및 증여세법 제54조 및 동법 시행령).</li>
   <li>적용 할인율·성장률·배수 등 주요 가정은 평가기준일 현재의 시장 데이터 및 의뢰인 제시 사업계획을 근거로 한다.</li></ul>
   <h4>2. 평가자 및 평가기관</h4>
   <table class="kv"><tr><td>평가기관</td><td>선명회계법인</td></tr><tr><td>평가 기준일</td><td>본문 표지 참조</td></tr></table>
