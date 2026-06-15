@@ -53,7 +53,12 @@
   .cap{font-size:12px;color:#6B7280;margin:6px 0 2px;}
   .disc{font-size:12px;color:var(--muted);background:#FAFAFA;border:1px solid var(--line);border-radius:8px;padding:16px;line-height:1.8;}
   .badge{display:inline-block;background:#166534;color:#fff;font-size:11px;padding:3px 8px;border-radius:5px;margin-left:8px;vertical-align:middle;}
-  @media print{body{background:#fff;}.toolbar{display:none;}.doc{box-shadow:none;margin:0;max-width:none;}
+  #editPanel label{display:block;font-size:12px;color:#374151;font-weight:600;}
+  #editPanel small{font-weight:400;color:#9CA3AF;}
+  .ei,.et{width:100%;padding:7px 9px;font-size:13px;border:1px solid #E5E7EB;border-radius:6px;margin:3px 0 8px;font-family:inherit;}
+  .egrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin:10px 0;}
+  .egrid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+  @media print{body{background:#fff;}.toolbar,#editPanel{display:none!important;}.doc{box-shadow:none;margin:0;max-width:none;}
     .cover,.opinion{page-break-after:always;}@page{margin:14mm;}section{page-break-inside:avoid;}}
 </style>
 </head>
@@ -63,10 +68,36 @@
     <option value="dcf">DCF (현금흐름할인법)</option><option value="tax">세무 (상증세법)</option>
     <option value="intrinsic">본질가치</option><option value="relative">상대가치</option><option value="asset">자산가치 (NAV)</option>
   </select></label>
+  <button id="editBtn" onclick="toggleEdit()" style="background:#fff;border:1px solid #E5E7EB;">📝 회사 데이터 편집</button>
   <button class="print" onclick="window.print()">🖨 인쇄 / PDF 저장</button>
+</div>
+<div id="editPanel" style="display:none;max-width:820px;margin:16px auto;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px 24px;font-size:13px;">
+  <h3 style="font-size:16px;margin-bottom:4px;">회사 데이터 입력 <span style="font-size:12px;color:#6B7280;font-weight:400">— 실제 회사 정보를 넣으면 보고서가 그 데이터로 작성·저장됩니다</span></h3>
+  <div class="egrid">
+    <label>회사명<input id="e_name" class="ei"></label><label>평가기준일<input id="e_base" class="ei"></label>
+    <label>설립일<input id="e_founded" class="ei"></label><label>대표이사<input id="e_ceo" class="ei"></label>
+    <label>본점 소재지<input id="e_addr" class="ei"></label><label>임직원 수<input id="e_emp" class="ei"></label>
+    <label>주요 사업<input id="e_biz" class="ei"></label><label>표준산업분류<input id="e_ind" class="ei"></label>
+  </div>
+  <label>회사 개요<textarea id="e_summary" class="et" rows="2"></textarea></label>
+  <div class="egrid2">
+    <label>주주현황 <small>(줄당: 이름 | 구분 | 지분율)</small><textarea id="e_holders" class="et" rows="4"></textarea></label>
+    <label>연혁 <small>(줄당: 시기 | 내용)</small><textarea id="e_history" class="et" rows="4"></textarea></label>
+  </div>
+  <label>산업분석 개요<textarea id="e_industry" class="et" rows="3"></textarea></label>
+  <div class="egrid2">
+    <label>손익계산서 <small>(줄당: 계정 | 연도1 | 연도2 | 연도3 | 연도4, 단위 백만원)</small><textarea id="e_is" class="et" rows="5"></textarea></label>
+    <label>재무상태표 <small>(줄당: 계정 | 연도1..4)</small><textarea id="e_bs" class="et" rows="5"></textarea></label>
+  </div>
+  <label>재무 연도 <small>(쉼표 구분: 2022.12,2023.12,2024.12,2025.12)</small><input id="e_years" class="ei"></label>
+  <div style="margin-top:14px;display:flex;gap:10px;">
+    <button onclick="applyEdit()" style="padding:10px 20px;background:#1D4ED8;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer;">보고서에 반영 (저장)</button>
+    <button onclick="resetEdit()" style="padding:10px 20px;background:#fff;border:1px solid #E5E7EB;border-radius:8px;cursor:pointer;">샘플로 초기화</button>
+  </div>
 </div>
 <div class="doc" id="doc"></div>
 <script>
+const $=id=>document.getElementById(id);
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
 const eok=n=>(n/1e8).toFixed(1)+'억원';
 const M=n=>Math.round(n).toLocaleString('ko-KR');
@@ -239,7 +270,16 @@ function overviewSection(s){return `<p>당 평가기관은 ${s.co.name}(이하 "
   <table class="kv"><tr><td>용역의 목적</td><td>${s.baseDate} 현재 ${s.co.name}의 기업가치 평가</td></tr><tr><td>평가 방법</td><td>${s.full}</td></tr><tr><td>평가 기준일</td><td>${s.baseDate}</td></tr><tr><td>평가 기관</td><td>선명회계법인</td></tr><tr><td>작성일</td><td>${today()}</td></tr></table>
   <h4>주요 가정 및 한계</h4><ul class="bul"><li>본 평가는 평가대상회사가 제시한 재무자료 및 사업계획을 기초로 하였으며, 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있다.</li><li>평가기준일 현재의 시장환경 및 가용정보를 반영하였으며, 향후 거시경제 변동·우발채무 발생 등 계량화되지 못한 위험요인에 따라 실제 결과와 달라질 수 있다.</li><li>본 보고서는 기업가치 평가 목적으로만 사용되어야 하며, 특정 거래의 권유나 투자 조언을 목적으로 하지 않는다.</li></ul>`;
 }
-const APPENDIX=`<div class="disc">본 보고서는 의뢰인이 제공한 자료와 공개 정보를 기초로 선명회계법인이 작성하였으며, 제공된 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있습니다. 본 평가 결과는 평가기준일 현재의 시장 상황과 가용 정보를 기반으로 한 추정치로서, 특정 거래의 권유나 투자 조언을 목적으로 하지 않습니다. 실제 거래가격은 협상·시장상황·할인할증 요인에 따라 본 평가액과 달라질 수 있습니다. 본 보고서는 평가기관의 사전승인 없이 제3자에게 제공되거나 인용될 수 없습니다.</div>`;
+const APPENDIX=`<h4>1. 평가 기준 및 근거</h4>
+  <ul class="bul"><li>본 평가는 「감정평가 및 감정평가사에 관한 법률」 및 일반적으로 인정되는 기업가치평가 실무기준에 따라 수행되었다.</li>
+  <li>평가 방법별 근거: DCF·본질가치(수익접근법), 상대가치(시장접근법), 자산가치(자산접근법), 세무평가(상속세 및 증여세법 제54조 및 동법 시행령).</li>
+  <li>적용 할인율·성장률·배수 등 주요 가정은 평가기준일 현재의 시장 데이터 및 의뢰인 제시 사업계획을 근거로 한다.</li></ul>
+  <h4>2. 평가자 및 평가기관</h4>
+  <table class="kv"><tr><td>평가기관</td><td>선명회계법인</td></tr><tr><td>평가 기준일</td><td>본문 표지 참조</td></tr></table>
+  <h4>3. 참고 문헌</h4>
+  <ul class="bul"><li>한국공인회계사회, 가치평가서비스 수행기준</li><li>삼일회계법인·삼정KPMG, M&A 및 기업가치평가 가이드북</li><li>금융감독원 전자공시시스템(DART) 합병·분할 외부평가보고서</li><li>각 산업 시장조사기관 보고서(본문 산업분석 출처 참조)</li></ul>
+  <h4>4. 면책 및 주의사항</h4>
+  <div class="disc">본 보고서는 의뢰인이 제공한 자료와 공개 정보를 기초로 선명회계법인이 작성하였으며, 제공된 자료의 정확성·완전성에 대한 책임은 의뢰인에게 있습니다. 본 평가 결과는 평가기준일 현재의 시장 상황과 가용 정보를 기반으로 한 추정치로서, 특정 거래의 권유나 투자 조언을 목적으로 하지 않습니다. 실제 거래가격은 협상·시장상황·할인할증 요인에 따라 본 평가액과 달라질 수 있습니다. 본 보고서는 평가기관의 사전승인 없이 제3자에게 제공되거나 인용될 수 없습니다.</div>`;
 
 const GEN={
  dcf(s){const p=s.inp,r=computeDCF(p);
@@ -307,9 +347,41 @@ const GEN={
 };
 const SEC=[['summary','요약 (Executive Summary)'],['overview','평가 개요'],['company','회사 개요 및 산업 분석'],['financial','재무 분석'],['methodology','평가 방법론 및 가정'],['results','평가 결과'],['sensitivity','민감도 분석'],['conclusion','결론'],['appendix','부록 — 면책 및 주의사항']];
 const ROMAN=['I','II','III','IV','V','VI','VII','VIII','IX'];
+// ===== 구조화 B: 회사 데이터 입력/편집 (실데이터 반영) =====
+let curMethod='dcf';
+const coKey=m=>'vl_report_co_'+m;
+function loadCo(m){try{return JSON.parse(localStorage.getItem(coKey(m))||'null');}catch(e){return null;}}
+function parseLines(t){return (t||'').split('\n').map(l=>l.split('|').map(x=>x.trim())).filter(a=>a[0]);}
+function mergeCo(s,m){const d=loadCo(m);if(!d)return s;
+ const co={...s.co};['name','founded','ceo','addr','emp','biz','industry','summary'].forEach(k=>{if(d[k])co[k]=d[k];});
+ if(d.holders&&d.holders.length)co.holders=d.holders.map(a=>[a[0]||'',a[1]||'-',a[2]||'-']);
+ if(d.history&&d.history.length)co.history=d.history.map(a=>[a[0]||'',a[1]||'']);
+ const ind={...s.industry};if(d.industryOverview)ind.overview=d.industryOverview;
+ const fs={...s.fs};if(d.years&&d.years.length)fs.years=d.years;
+ if(d.is&&d.is.length)fs.is=d.is.map(a=>[a[0],...a.slice(1).map(v=>+v||0),0]);
+ if(d.bs&&d.bs.length)fs.bs=d.bs.map(a=>[a[0],...a.slice(1).map(v=>+v||0),0]);
+ return {...s,co,industry:ind,fs,baseDate:d.base||s.baseDate};}
+function fillForm(m){const s=mergeCo(SAMPLE[m],m);
+ $('e_name').value=s.co.name;$('e_base').value=s.baseDate;$('e_founded').value=s.co.founded;$('e_ceo').value=s.co.ceo;
+ $('e_addr').value=s.co.addr;$('e_emp').value=s.co.emp;$('e_biz').value=s.co.biz;$('e_ind').value=s.co.industry;$('e_summary').value=s.co.summary;
+ $('e_holders').value=s.co.holders.map(h=>h.join(' | ')).join('\n');
+ $('e_history').value=s.co.history.map(h=>h.join(' | ')).join('\n');
+ $('e_industry').value=s.industry.overview;$('e_years').value=s.fs.years.join(',');
+ $('e_is').value=s.fs.is.map(r=>[r[0],...r.slice(1,-1)].join(' | ')).join('\n');
+ $('e_bs').value=s.fs.bs.map(r=>[r[0],...r.slice(1,-1)].join(' | ')).join('\n');}
+function toggleEdit(){const p=$('editPanel');if(p.style.display==='none'){fillForm(curMethod);p.style.display='block';}else p.style.display='none';}
+function applyEdit(){const m=curMethod;const g=id=>$(id).value.trim();
+ const d={name:g('e_name'),base:g('e_base'),founded:g('e_founded'),ceo:g('e_ceo'),addr:g('e_addr'),emp:g('e_emp'),biz:g('e_biz'),industry:g('e_ind'),summary:g('e_summary'),
+  industryOverview:g('e_industry'),holders:parseLines($('e_holders').value),history:parseLines($('e_history').value),
+  years:g('e_years').split(',').map(x=>x.trim()).filter(Boolean),is:parseLines($('e_is').value),bs:parseLines($('e_bs').value)};
+ localStorage.setItem(coKey(m),JSON.stringify(d));$('editPanel').style.display='none';render(m);}
+function resetEdit(){localStorage.removeItem(coKey(curMethod));fillForm(curMethod);render(curMethod);}
+
 function render(method){
- let s=SAMPLE[method];const live=ingestLive(method);let liveBadge='';
+ curMethod=method;
+ let s=mergeCo(SAMPLE[method],method);const live=ingestLive(method);let liveBadge='';
  if(live){s={...s,co:{...s.co,name:live.name||s.co.name},inp:{...s.inp,...live.inp}};liveBadge='<span class="badge">계산기 입력값 반영</span>';}
+ if(loadCo(method))liveBadge=(liveBadge||'')+'<span class="badge" style="background:#1D4ED8">회사 데이터 반영</span>';
  const c=GEN[method](s);
  const toc=SEC.map((t,i)=>`<li><b>${ROMAN[i]}.</b>${t[1]}</li>`).join('');
  const secs=SEC.map((t,i)=>`<section><div class="sh"><div class="n">${ROMAN[i]}</div><h2>${t[1]}</h2></div>${c[t[0]]}</section>`).join('');
