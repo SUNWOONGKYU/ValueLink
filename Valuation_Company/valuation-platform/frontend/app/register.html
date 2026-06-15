@@ -808,7 +808,9 @@
         // → 프로필을 localStorage에 보류 저장하고, 메일 확인 후 첫 로그인 시 login.html이 저장한다.
         async function submitRegistration() {
             try {
-                const selectedRole = document.querySelector('input[name="role"]:checked').value;
+                const roleEl = document.querySelector('input[name="role"]:checked');
+                if (!roleEl) { alert('가입 유형(역할)을 선택해 주세요.'); return; }
+                const selectedRole = roleEl.value;
 
                 // Step 1 데이터
                 const userName = document.getElementById('userName').value.trim();
