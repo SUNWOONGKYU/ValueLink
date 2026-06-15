@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>기업가치 평가보고서 | 선명회계법인</title>
 <style>
-  :root{--blue:#1D4ED8;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;--bg:#F3F4F6;--pale:#EEF2FF;}
+  :root{--blue:#1D4ED8;--navy:#1a2a5e;--cream:#FBF3D9;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;--bg:#F3F4F6;--pale:#EEF2FF;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{font-family:'Pretendard','Malgun Gothic',-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7;}
   .toolbar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);padding:12px 20px;display:flex;gap:12px;align-items:center;justify-content:center;}
@@ -24,7 +24,8 @@
   .cover .foot{margin-top:auto;border-top:1px solid #e0e0e0;padding:14px 56px;display:flex;justify-content:space-between;font-size:12px;color:#9aa0a6;}
   .cover .foot .conf{font-style:italic;}
   .opinion{padding:48px 60px;border-bottom:8px solid var(--bg);font-size:14px;}
-  .opinion h2{font-size:17px;color:var(--blue);margin-bottom:16px;}
+  .opinion h2{font-size:17px;color:var(--navy);margin-bottom:16px;}
+  .pfoot{display:none;}
   .opinion p{margin:10px 0;color:#374151;}
   .opinion .sign{margin-top:28px;text-align:right;}.opinion .sign b{font-size:16px;}
   .body{padding:48px 60px;}
@@ -33,21 +34,22 @@
   .toc li{list-style:none;padding:6px 0;color:#374151;font-size:14px;border-bottom:1px dashed #eee;}
   .toc li b{color:var(--blue);margin-right:10px;}
   section{margin-bottom:42px;page-break-inside:avoid;}
-  .sh{display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--blue);padding-bottom:8px;margin-bottom:16px;}
-  .sh .n{width:30px;height:30px;border-radius:6px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
-  .sh h2{font-size:19px;}
-  h4{font-size:15px;margin:20px 0 8px;color:#1e3a8a;border-left:3px solid var(--blue);padding-left:9px;}
+  .sh{display:flex;align-items:baseline;gap:10px;border-bottom:1.5px solid var(--navy);padding-bottom:7px;margin-bottom:18px;}
+  .sh .n{color:var(--navy);font-weight:800;font-size:21px;}
+  .sh h2{font-size:21px;font-weight:800;color:var(--navy);}
+  h4{font-size:14px;margin:22px 0 10px;color:#fff;background:var(--navy);padding:8px 14px;font-weight:700;letter-spacing:.3px;}
   section p{font-size:13.5px;color:#374151;margin:8px 0;}
   ul.bul{margin:8px 0 8px 18px;font-size:13.5px;color:#374151;}ul.bul li{margin:5px 0;}
   table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px;}
-  th,td{border:1px solid var(--line);padding:7px 9px;text-align:right;}
-  th{background:var(--bg);font-weight:600;text-align:center;}
+  th,td{border:1px solid #d7dbe0;padding:7px 9px;text-align:right;}
+  th{background:var(--navy);color:#fff;font-weight:600;text-align:center;}
   td:first-child,th:first-child{text-align:left;}
-  tr.total td{background:var(--pale);font-weight:700;color:var(--blue);}
-  tr.sub td:first-child{padding-left:22px;color:var(--muted);}
+  tr.total td{background:var(--cream);font-weight:700;color:var(--navy);}
+  tr.sub td{background:#fafafa;color:var(--muted);font-style:italic;}
+  tr.sub td:first-child{padding-left:22px;}
   .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0;}
   .card{background:var(--bg);border-radius:10px;padding:16px;text-align:center;}
-  .card.hl{background:var(--blue);color:#fff;}
+  .card.hl{background:var(--navy);color:#fff;}
   .card .l{font-size:12px;color:var(--muted);}.card.hl .l{color:rgba(255,255,255,.8);}
   .card .v{font-size:19px;font-weight:800;margin-top:6px;}
   .kv td:first-child{background:var(--bg);font-weight:600;width:34%;}
@@ -62,6 +64,7 @@
   .egrid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin:10px 0;}
   .egrid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
   @media print{body{background:#fff;}.toolbar,#editPanel{display:none!important;}.doc{box-shadow:none;margin:0;max-width:none;}
+    .pfoot{display:flex!important;position:fixed;bottom:0;left:0;right:0;justify-content:space-between;font-size:9.5px;color:#9aa0a6;border-top:1px solid #e0e0e0;padding:4px 14px;background:#fff;}.pfoot .c{font-style:italic;}
     .cover,.opinion{page-break-after:always;}@page{margin:14mm;}section{page-break-inside:avoid;}}
 </style>
 </head>
@@ -99,6 +102,7 @@
   </div>
 </div>
 <div class="doc" id="doc"></div>
+<div class="pfoot"><span>선명회계법인 (SEONMYEONG Accounting Corporation)</span><span class="c">Strictly Private &amp; Confidential</span></div>
 <script>
 const $=id=>document.getElementById(id);
 const won=n=>Math.round(n).toLocaleString('ko-KR')+'원';
