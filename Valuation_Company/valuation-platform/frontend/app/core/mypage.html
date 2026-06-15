@@ -263,8 +263,9 @@
             return roleNames[role] || role;
         }
 
-        // 페이지 로드 시 즉시 회사 마이페이지로 이동 (테스트용)
-        window.location.href = 'mypage-company.html';
-    </script>
+        // 페이지 로드 시 로그인/역할을 확인해 역할별 마이페이지로 라우팅
+        // (미인증 시 routeToRoleBasedPage 내부에서 login.html로 보냄)
+        routeToRoleBasedPage();
+</script>
 </body>
 </html>
