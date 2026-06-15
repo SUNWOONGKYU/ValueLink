@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>페이지를 찾을 수 없습니다 | ValueLink</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Pretendard','Malgun Gothic',-apple-system,sans-serif;background:#f3f4f6;color:#111827;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+  .box{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,.08);max-width:520px;width:100%;padding:44px 36px;text-align:center;}
+  .code{font-size:64px;font-weight:800;color:#1D4ED8;letter-spacing:2px;}
+  h1{font-size:22px;margin:8px 0 6px;}
+  p{color:#6B7280;font-size:14px;line-height:1.7;margin-bottom:24px;}
+  .links{display:grid;gap:10px;}
+  .links a{display:block;padding:13px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;}
+  .links a.primary{background:#1D4ED8;color:#fff;}
+  .links a.sub{background:#f3f4f6;color:#374151;}
+  .count{margin-top:18px;font-size:12px;color:#9CA3AF;}
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="code">404</div>
+    <h1>페이지를 찾을 수 없습니다</h1>
+    <p>주소가 잘못되었거나 이동·삭제된 페이지입니다.<br>아래에서 원하는 페이지로 이동하세요. <span id="cd"></span></p>
+    <div class="links">
+      <a class="primary" href="/index.html">🏠 홈으로</a>
+      <a class="sub" href="/app/valuation.html">📊 기업가치 평가</a>
+      <a class="sub" href="/app/valuation/report-auto.html?method=dcf">📄 평가보고서</a>
+      <a class="sub" href="/app/deal.html">🤝 투자 뉴스(Deal)</a>
+      <a class="sub" href="/app/login.html">🔑 로그인 / 회원가입</a>
+    </div>
+    <div class="count">3초 후 홈으로 자동 이동합니다…</div>
+  </div>
+<script>
+  // 잘못된 경로로 들어와도 막다른 404가 되지 않도록 홈으로 자동 이동
+  var n=3;var el=document.querySelector('.count');
+  var t=setInterval(function(){n--;if(el)el.textContent=n+'초 후 홈으로 자동 이동합니다…';if(n<=0){clearInterval(t);location.href='/index.html';}},1000);
+</script>
+</body>
+</html>
