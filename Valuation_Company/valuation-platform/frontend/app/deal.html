@@ -1627,7 +1627,7 @@
                     if (statYearTotal) statYearTotal.textContent = yearTotalCount;
 
                     console.log('🎨 테이블 렌더링 시작...');
-                    renderDealsTable(deals);
+                    renderDealsTable(validDeals);
                     console.log('✨ 테이블 렌더링 완료!');
                 } else {
                     console.warn('⚠️ DB에 Deal이 없음');
@@ -1744,7 +1744,7 @@
 
                 if (response.ok) {
                     const deals = await response.json();
-                    renderDealsTable(deals);
+                    renderDealsTable(deals.filter(d => d.company_name && d.company_name.trim().length >= 2));
                 }
             } catch (err) {
                 console.error('필터링 오류:', err);
@@ -1762,8 +1762,9 @@
             console.log('📋 renderDealsTable 호출, deals 개수:', deals.length);
 
             // 최초 호출 시에만 currentDeals 갱신 (goToPage에서 재호출 시는 이미 설정됨)
+            // 노이즈 행(company_name 없거나 1글자 이하) 제거 후 저장
             if (deals !== currentDeals) {
-                currentDeals = deals;
+                currentDeals = deals.filter(d => d.company_name && d.company_name.trim().length >= 2);
             }
 
             const totalPages = Math.ceil(currentDeals.length / PAGE_SIZE);

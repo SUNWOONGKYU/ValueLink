@@ -1,10 +1,14 @@
-name: Daily Investment News Scraper
+name: Daily Investment News Scraper (DISABLED)
 
+# ⚠️ 비활성화됨 (2026-06-15)
+# 사유: 이 워크플로는 무필터 Gemini 기반 daily_auto_collect.py 를 호출 →
+#       금액 오파싱('1조' 등)·회사명 노이즈로 프로덕션 deals 테이블을 재오염시킴.
+# 실제 운영 경로: 로컬 Windows 스케줄러 'ValueLink-DealNews' → collect_naver_only.py (노이즈 필터 적용).
+# 재활성화하려면 아래 schedule 주석을 해제하되, 반드시 필터링된 수집기로 교체할 것.
 on:
-  schedule:
-    # 매일 오전 8시 (KST = UTC+9, 즉 UTC 23:00 전날)
-    - cron: '0 23 * * *'
-  workflow_dispatch:  # 수동 실행 가능
+  # schedule:
+  #   - cron: '0 23 * * *'   # 비활성화: 무필터 재오염 방지
+  workflow_dispatch:  # 수동 실행만 가능
     inputs:
       target_date:
         description: '수집 대상 날짜 (YYYY-MM-DD)'

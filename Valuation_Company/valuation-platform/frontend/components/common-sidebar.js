@@ -9,11 +9,11 @@
  */
 
 /**
- * 관리자 이메일 목록 (하드코딩)
+ * 관리자 이메일 목록
+ * ⚠️ 클라이언트에 관리자 이메일을 하드코딩하지 않는다(PII 노출 + 클라이언트 역할 판별 금지).
+ * 역할은 DB(users.role)와 로그인 시 저장된 localStorage('userRole')로만 결정한다.
  */
-const ADMIN_EMAILS = [
-    'wksun999@gmail.com'
-];
+const ADMIN_EMAILS = [];
 
 /**
  * 회계사 이메일 목록 (하드코딩)
@@ -382,7 +382,7 @@ function renderAccountantSection(basePath) {
             <div class="sidebar-title">담당 공인회계사</div>
             <a href="${basePath}accountant-profile.html" class="accountant-link">
                 <span class="accountant-icon">👤</span>
-                <span class="accountant-name">선웅규 회계사</span>
+                <span class="accountant-name">이지훈 회계사</span>
                 <span class="arrow">→</span>
             </a>
         </div>

@@ -682,10 +682,16 @@
 
         // ── 비밀번호 재설정: 새 비밀번호 입력 모달 ──────────────────────────────
         // Supabase recovery 링크는 URL fragment(#)에 access_token 등을 담아 돌아온다.
-        // supabase-js v2는 onAuthStateChange로 SIGNED_IN + url의 type=recovery를 알린다.
+        // detectSessionInUrl:true(기본값)가 해시를 소비/제거하므로 checkAuth() 실행 시점에
+        // window.location.hash가 이미 없을 수 있다. 양쪽(hash OR 플래그)으로 감지되게
+        // 모듈 스코프 플래그 + sessionStorage를 함께 사용한다.
+        var isRecoveryFlow = false;
+
         supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
-                // recovery 세션이 수립됨 → 새 비밀번호 입력 모달 표시
+                // recovery 세션이 수립됨 → 플래그 세팅 후 새 비밀번호 입력 모달 표시
+                isRecoveryFlow = true;
+                sessionStorage.setItem('vl_pw_recovery', '1');
                 document.getElementById('pwNewOverlay').classList.add('active');
             }
         });
@@ -726,6 +732,9 @@
                     document.getElementById('pwNewPassword').value = '';
                     document.getElementById('pwNewPasswordConfirm').value = '';
                     msgEl.className = 'pw-new-msg';
+                    // recovery 플래그 정리
+                    isRecoveryFlow = false;
+                    sessionStorage.removeItem('vl_pw_recovery');
                     // recovery 세션 종료 후 로그인 유도
                     supabaseClient.auth.signOut();
                 }, 2000);
@@ -744,8 +753,10 @@
             if (!user) return;
 
             // recovery 링크로 돌아온 경우: onAuthStateChange가 PASSWORD_RECOVERY 처리하므로 여기서는 리다이렉트하지 않음
+            // detectSessionInUrl:true가 해시를 소비하면 hash가 이미 없을 수 있으므로
+            // 모듈 스코프 플래그(isRecoveryFlow)와 sessionStorage 양쪽을 함께 검사한다.
             const hash = window.location.hash;
-            if (hash && hash.includes('type=recovery')) return;
+            if (isRecoveryFlow || sessionStorage.getItem('vl_pw_recovery') || (hash && hash.includes('type=recovery'))) return;
 
             try {
                 const { error: rowError } = await supabaseClient
