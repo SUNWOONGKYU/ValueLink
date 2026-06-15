@@ -683,9 +683,17 @@
         // ── 비밀번호 재설정: 새 비밀번호 입력 모달 ──────────────────────────────
         // Supabase recovery 링크는 URL fragment(#)에 access_token 등을 담아 돌아온다.
         // detectSessionInUrl:true(기본값)가 해시를 소비/제거하므로 checkAuth() 실행 시점에
-        // window.location.hash가 이미 없을 수 있다. 양쪽(hash OR 플래그)으로 감지되게
-        // 모듈 스코프 플래그 + sessionStorage를 함께 사용한다.
+        // window.location.hash가 이미 없을 수 있다.
+        //
+        // Race 방지 설계:
+        //   - onAuthStateChange의 첫 번째 콜백(INITIAL_SESSION 또는 PASSWORD_RECOVERY)이
+        //     resolve될 때까지 checkAuth의 리다이렉트를 보류한다.
+        //   - authStateReady Promise를 공유하고 checkAuth는 이 Promise를 await한 뒤
+        //     isRecoveryFlow를 확인한다.
         var isRecoveryFlow = false;
+        var authStateReady; // onAuthStateChange 첫 콜백 이후 resolve
+        var resolveAuthReady;
+        authStateReady = new Promise(function(resolve) { resolveAuthReady = resolve; });
 
         supabaseClient.auth.onAuthStateChange(async (event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
@@ -693,6 +701,11 @@
                 isRecoveryFlow = true;
                 sessionStorage.setItem('vl_pw_recovery', '1');
                 document.getElementById('pwNewOverlay').classList.add('active');
+            }
+            // 첫 번째 콜백(INITIAL_SESSION 포함)이 도착했음을 checkAuth에 알린다
+            if (resolveAuthReady) {
+                resolveAuthReady();
+                resolveAuthReady = null;
             }
         });
 
@@ -749,12 +762,16 @@
         // 이미 로그인된 경우 리다이렉트
         // (확인 메일 링크로 돌아와 세션이 자동 생성된 경우, 보류 프로필 저장을 먼저 완료)
         (async function checkAuth() {
+            // onAuthStateChange 첫 콜백을 기다린 뒤 isRecoveryFlow를 확인한다.
+            // 이 대기가 없으면 PASSWORD_RECOVERY 이벤트가 오기 전에 getUser()가 먼저
+            // 완료되어 recovery 세션을 일반 로그인으로 오인하고 mypage로 리다이렉트할 수 있다.
+            await authStateReady;
+
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
 
             // recovery 링크로 돌아온 경우: onAuthStateChange가 PASSWORD_RECOVERY 처리하므로 여기서는 리다이렉트하지 않음
-            // detectSessionInUrl:true가 해시를 소비하면 hash가 이미 없을 수 있으므로
-            // 모듈 스코프 플래그(isRecoveryFlow)와 sessionStorage 양쪽을 함께 검사한다.
+            // isRecoveryFlow는 위의 await 이후 확인하므로 race가 없다.
             const hash = window.location.hash;
             if (isRecoveryFlow || sessionStorage.getItem('vl_pw_recovery') || (hash && hash.includes('type=recovery'))) return;
 
