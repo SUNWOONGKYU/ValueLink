@@ -4,9 +4,12 @@
 일일 뉴스 이메일 발송 (월-토 9am)
 - 어제 수집된 투자 뉴스 발송
 - Gmail SMTP 사용
+- --notify-error <msg> : 운영 실패 알림을 본인 메일로 발송 (구독자 발송 없음)
 """
 
 import os
+import sys
+import argparse
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -220,8 +223,37 @@ def send_email_to_subscribers(html_content, deals):
     print(f"\n[RESULT] Sent: {sent}, Failed: {failed}")
 
 
+def send_error_notification(error_msg):
+    """운영 실패 시 GMAIL_ADDRESS 본인에게 알림 이메일 발송."""
+    if not GMAIL_ADDRESS or not GMAIL_APP_PASSWORD:
+        print("[ERROR-NOTIFY] Gmail 설정 없음 — 알림 발송 불가")
+        return
+    KST = timezone(timedelta(hours=9))
+    now_str = datetime.now(KST).strftime('%Y-%m-%d %H:%M KST')
+    subject = f"[ValueLink 운영알림] 파이프라인 오류 — {now_str}"
+    body = f"""<pre>ValueLink 딜뉴스 파이프라인 오류가 발생했습니다.
+
+시각: {now_str}
+오류: {error_msg}
+
+scheduler.log를 확인하세요:
+C:\\ValueLink\\Valuation_Company\\scripts\\investment-news-scraper\\scheduler.log
+</pre>"""
+    success = send_email_via_gmail(GMAIL_ADDRESS, subject, body)
+    if success:
+        print(f"[ERROR-NOTIFY] 오류 알림 발송 완료 → {GMAIL_ADDRESS}")
+    else:
+        print(f"[ERROR-NOTIFY] 오류 알림 발송 실패")
+
+
 def main():
     """메인 실행"""
+    # 결함3: --notify-error 옵션 파싱
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--notify-error', dest='notify_error', default=None,
+                    help='운영 실패 시 본인 메일 알림 발송 (구독자 발송 없음)')
+    args = ap.parse_args()
+
     print("="*60)
     print("Daily Investment News Email (Gmail SMTP)")
     print("="*60)
@@ -230,6 +262,11 @@ def main():
     # Gmail 설정 확인
     if not GMAIL_ADDRESS or not GMAIL_APP_PASSWORD:
         print("\n[ERROR] GMAIL_ADDRESS or GMAIL_APP_PASSWORD not set in .env")
+        sys.exit(1)
+
+    # --notify-error 모드: 구독자 발송 없이 본인 알림만
+    if args.notify_error:
+        send_error_notification(args.notify_error)
         return
 
     # 어제 Deal 조회

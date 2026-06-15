@@ -427,7 +427,7 @@
                             const { data: userData } = await supabase
                                 .from('users').select('role').eq('user_id', session.user.id).single();
                             const detectedRole = (userData && userData.role) ? userData.role
-                                : (${JSON.stringify(['wksun999@gmail.com'])}.includes(email) ? 'admin' : 'customer');
+                                : (${JSON.stringify([])}.includes(email) ? 'admin' : 'customer');
                             if (detectedRole === 'admin' || detectedRole === 'accountant') {
                                 localStorage.setItem('userRole', detectedRole);
                                 localStorage.setItem('userEmail', email);

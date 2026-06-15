@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ValuationAI - 기업가치평가 플랫폼 목업</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            line-height: 1.6;
+            color: #111827;
+            background: #FFFFFF;
+        }
+
+        /* 헤더 */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2563EB;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #2563EB;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #2563EB;
+            border: 2px solid #2563EB;
+        }
+
+        .btn-secondary:hover {
+            background: #2563EB;
+            color: white;
+        }
+
+        /* 히어로 섹션 */
+        .hero {
+            margin-top: 80px;
+            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+            color: white;
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            animation: slideUp 0.7s ease-out;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 2rem auto 0;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* 프로세스 섹션 */
+        .process {
+            padding: 6rem 2rem;
+            background: #F9FAFB;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #111827;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2563EB;
+        }
+
+        .step-description {
+            color: #6B7280;
+            margin-bottom: 1rem;
+        }
+
+        .step-time {
+            color: #7C3AED;
+            font-weight: bold;
+        }
+
+        /* 5가지 평가법 섹션 */
+        .methods {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .method-card {
+            background: #F9FAFB;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .method-card:hover {
+            border-color: #2563EB;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+        }
+
+        .method-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .method-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .method-subtitle {
+            color: #6B7280;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 가격 섹션 */
+        .pricing {
+            padding: 6rem 2rem;
+            background: #F9FAFB;
+        }
+
+        .pricing-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .price-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .price-card.featured {
+            border: 3px solid #2563EB;
+            transform: scale(1.05);
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .price-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #2563EB;
+            margin-bottom: 1rem;
+        }
+
+        .price-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .price-features li {
+            padding: 0.5rem 0;
+            color: #374151;
+        }
+
+        .price-features li:before {
+            content: "✓ ";
+            color: #10B981;
+            font-weight: bold;
+        }
+
+        /* 푸터 */
+        footer {
+            background: #111827;
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #7C3AED;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            padding: 0.5rem 0;
+        }
+
+        .footer-section a {
+            color: #9CA3AF;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9CA3AF;
+        }
+
+        /* 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 페이지 네비게이션 */
+        .page-nav {
+            position: fixed;
+            top: 50%;
+            right: 2rem;
+            transform: translateY(-50%);
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+        }
+
+        .page-nav a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #6B7280;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .page-nav a:hover {
+            color: #2563EB;
+            border-left-color: #2563EB;
+        }
+
+        /* 시뮬레이터 프리뷰 */
+        .simulator-preview {
+            padding: 6rem 2rem;
+            background: white;
+        }
+
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .simulator-card {
+            background: linear-gradient(135deg, #F9FAFB 0%, #FFFFFF 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 2px solid #E5E7EB;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .simulator-card:hover {
+            border-color: #2563EB;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .simulator-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        .simulator-desc {
+            color: #6B7280;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .header-container {
+                padding: 1rem 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logo-symbol {
+                width: 36px;
+                height: 36px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .auth-buttons {
+                gap: 8px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .page-nav {
+                display: none;
+            }
+
+            .hero {
+                padding: 4rem 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.75rem;
+                line-height: 1.3;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 16px;
+            }
+
+            .features {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                font-size: 13px;
+            }
+
+            .feature-item {
+                font-size: 13px;
+            }
+
+            .process,
+            .methods,
+            .pricing,
+            .simulator-preview {
+                padding: 3rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+                margin-bottom: 2rem;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .step-card {
+                padding: 1.5rem;
+            }
+
+            .step-icon {
+                font-size: 2.5rem;
+            }
+
+            .step-title {
+                font-size: 1.25rem;
+            }
+
+            .step-description {
+                font-size: 14px;
+            }
+
+            .methods-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .method-card {
+                padding: 1.5rem;
+            }
+
+            .method-icon {
+                font-size: 2rem;
+            }
+
+            .method-title {
+                font-size: 1.1rem;
+            }
+
+            .method-subtitle,
+            .method-desc {
+                font-size: 14px;
+            }
+
+            .simulator-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .simulator-card {
+                padding: 1.5rem;
+            }
+
+            .simulator-title {
+                font-size: 1.1rem;
+            }
+
+            .simulator-desc {
+                font-size: 14px;
+            }
+
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .price-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .price-card.featured {
+                transform: scale(1);
+            }
+
+            .price-card:hover {
+                transform: translateY(-5px) scale(1);
+            }
+
+            .price-title {
+                font-size: 1.25rem;
+            }
+
+            .price-amount {
+                font-size: 2rem;
+            }
+
+            .price-features {
+                font-size: 14px;
+                margin-bottom: 1.5rem;
+            }
+
+            .price-features li {
+                padding: 0.4rem 0;
+            }
+
+            footer {
+                padding: 3rem 1rem 2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-section h3 {
+                font-size: 1.1rem;
+            }
+
+            .footer-section {
+                font-size: 14px;
+            }
+
+            section[style*="padding: 6rem"] {
+                padding: 3rem 1rem !important;
+            }
+
+            section[style*="padding: 6rem"] h2 {
+                font-size: 1.75rem !important;
+            }
+
+            section[style*="padding: 6rem"] p {
+                font-size: 1rem !important;
+            }
+
+            section[style*="padding: 6rem"] .btn {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 16px;
+            }
+
+            .highlight {
+                font-size: 14px;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        <div class="header-container">
+            <div class="logo">💼 ValuationAI</div>
+            <nav>
+                <a href="#home">홈</a>
+                <a href="#education">교육센터</a>
+                <a href="#simulator">시뮬레이터</a>
+                <a href="#apply">평가신청</a>
+                <a href="#pricing">가격</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-secondary">로그인</a>
+                <a href="#" class="btn btn-primary">회원가입</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 페이지 네비게이션 -->
+    <div class="page-nav">
+        <a href="#home">홈</a>
+        <a href="#process">프로세스</a>
+        <a href="#methods">평가법</a>
+        <a href="#simulator">시뮬레이터</a>
+        <a href="#pricing">가격</a>
+    </div>
+
+    <!-- 히어로 섹션 -->
+    <section id="home" class="hero">
+        <h1>AI가 60분 만에 만드는<br>전문가 수준의 기업가치평가 보고서</h1>
+        <p>문서만 업로드하면 5가지 방법으로 평가한<br>80페이지 종합 보고서가 이메일로 발송됩니다</p>
+
+        <div class="hero-buttons">
+            <a href="#simulator" class="btn btn-secondary" style="color: white; border-color: white;">🧮 무료 체험하기 (시뮬레이터)</a>
+            <a href="#apply" class="btn btn-primary" style="background: white; color: #2563EB;">📊 평가 신청하기</a>
+        </div>
+
+        <div class="features">
+            <div class="feature-item">✓ 60분 자동 생성</div>
+            <div class="feature-item">✓ 5가지 평가법</div>
+            <div class="feature-item">✓ 전문가 검증</div>
+            <div class="feature-item">✓ 이메일 즉시 발송</div>
+            <div class="feature-item">✓ 80페이지 보고서</div>
+            <div class="feature-item">✓ 무제한 수정</div>
+        </div>
+    </section>
+
+    <!-- 프로세스 섹션 -->
+    <section id="process" class="process">
+        <h2 class="section-title">이렇게 간단합니다</h2>
+
+        <div class="process-steps">
+            <div class="step-card">
+                <div class="step-icon">📤</div>
+                <div class="step-title">STEP 1</div>
+                <h3>문서 업로드</h3>
+                <ul class="step-description">
+                    <li>• 사업자등록증</li>
+                    <li>• 재무제표 (3개년)</li>
+                    <li>• 사업계획서</li>
+                    <li>• 차입금 명세서</li>
+                </ul>
+                <div class="step-time">⏱️ 10분 소요</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-icon">🤖</div>
+                <div class="step-title">STEP 2</div>
+                <h3>AI 자동 분석</h3>
+                <ul class="step-description">
+                    <li>• 데이터 자동 추출</li>
+                    <li>• 5가지 평가법 적용</li>
+                    <li>• 보고서 자동 작성</li>
+                    <li>• 평가자 최종 검토</li>
+                </ul>
+                <div class="step-time">⏱️ 50분 자동</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-icon">📧</div>
+                <div class="step-title">STEP 3</div>
+                <h3>이메일 수신</h3>
+                <ul class="step-description">
+                    <li>• 80페이지 PDF</li>
+                    <li>• 즉시 발송</li>
+                    <li>• 무제한 다운로드</li>
+                    <li>• 수정 요청 가능</li>
+                </ul>
+                <div class="step-time">⏱️ 즉시</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5가지 평가법 섹션 -->
+    <section id="methods" class="methods">
+        <h2 class="section-title">5가지 전문 평가법을 한 번에</h2>
+
+        <div class="methods-grid">
+            <div class="method-card">
+                <div class="method-icon">💰</div>
+                <div class="method-title">DCF 평가법</div>
+                <div class="method-subtitle">미래현금흐름할인</div>
+                <p class="method-desc">미래에 벌어들일 현금흐름을 현재가치로 할인하여 기업가치 산정</p>
+                <a href="#" class="btn btn-secondary" style="font-size: 0.9rem;">자세히 보기</a>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">📊</div>
+                <div class="method-title">상대가치평가법</div>
+                <div class="method-subtitle">시장배수 PER/PBR</div>
+                <p class="method-desc">유사 상장기업 배수를 적용하여 시장 관점의 가치 산정</p>
+                <a href="#" class="btn btn-secondary" style="font-size: 0.9rem;">자세히 보기</a>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">🏢</div>
+                <div class="method-title">자산가치평가법</div>
+                <div class="method-subtitle">순자산 시가평가</div>
+                <p class="method-desc">모든 자산을 시장가치로 재평가하여 순자산가치(NAV) 산정</p>
+                <a href="#" class="btn btn-secondary" style="font-size: 0.9rem;">자세히 보기</a>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">⚖️</div>
+                <div class="method-title">자본시장법 평가</div>
+                <div class="method-subtitle">법정평가 (합병용)</div>
+                <p class="method-desc">자본시장법에 따른 법정 평가 방식 (합병, 분할 시 필수)</p>
+                <a href="#" class="btn btn-secondary" style="font-size: 0.9rem;">자세히 보기</a>
+            </div>
+
+            <div class="method-card">
+                <div class="method-icon">📜</div>
+                <div class="method-title">상증세법 평가</div>
+                <div class="method-subtitle">세무평가 (상속용)</div>
+                <p class="method-desc">상속세 및 증여세법에 따른 세무 평가 (상속, 증여 시 필수)</p>
+                <a href="#" class="btn btn-secondary" style="font-size: 0.9rem;">자세히 보기</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem; font-size: 1.1rem; color: #7C3AED;">
+            💡 <span class="highlight">종합 평가 시 모든 방법을 한번에 적용</span>하여 교차 검증합니다
+        </div>
+    </section>
+
+    <!-- 시뮬레이터 섹션 -->
+    <section id="simulator" class="simulator-preview">
+        <h2 class="section-title">🧮 무료 시뮬레이터</h2>
+        <p style="text-align: center; color: #6B7280; margin-bottom: 3rem;">실제 평가 신청 전, 무료로 체험해보세요!</p>
+
+        <div class="simulator-grid">
+            <div class="simulator-card">
+                <div class="simulator-title">💰 DCF 계산기 ⭐</div>
+                <p class="simulator-desc">5개 입력만으로 기업가치 즉시 계산</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+
+            <div class="simulator-card">
+                <div class="simulator-title">📊 WACC 계산기</div>
+                <p class="simulator-desc">자본비용 자동 계산</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+
+            <div class="simulator-card">
+                <div class="simulator-title">📈 PER/PBR 계산기</div>
+                <p class="simulator-desc">상대가치평가 시뮬레이션</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+
+            <div class="simulator-card">
+                <div class="simulator-title">🏢 NAV 계산기</div>
+                <p class="simulator-desc">순자산가치 즉시 산출</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+
+            <div class="simulator-card">
+                <div class="simulator-title">⚖️ 자본시장법 계산기</div>
+                <p class="simulator-desc">합병 평가액 즉시 확인</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+
+            <div class="simulator-card">
+                <div class="simulator-title">📜 상증세법 계산기</div>
+                <p class="simulator-desc">상속/증여 평가액 산출</p>
+                <a href="#" class="btn btn-primary">시작하기</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <p style="color: #6B7280; margin-bottom: 1rem;">💡 더 정확한 평가가 필요하신가요?</p>
+            <a href="#pricing" class="btn btn-primary">전문 평가 보고서 신청하기 →</a>
+        </div>
+    </section>
+
+    <!-- 가격 섹션 -->
+    <section id="pricing" class="pricing">
+        <h2 class="section-title">합리적인 가격</h2>
+
+        <div class="pricing-cards">
+            <div class="price-card">
+                <div class="price-title">스타터</div>
+                <div class="price-amount">50만원</div>
+                <ul class="price-features">
+                    <li>단일 평가법 선택</li>
+                    <li>1회 평가</li>
+                    <li>35페이지 보고서</li>
+                    <li>1회 수정 가능</li>
+                    <li>이메일 지원</li>
+                </ul>
+                <a href="#" class="btn btn-secondary" style="width: 100%; text-align: center;">선택하기</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="price-badge">⭐ 추천</div>
+                <div class="price-title">프로</div>
+                <div class="price-amount">150만원</div>
+                <ul class="price-features">
+                    <li><strong>종합 평가 (5가지 방법)</strong></li>
+                    <li>80페이지 종합 보고서</li>
+                    <li>교차 검증 포함</li>
+                    <li>무제한 수정</li>
+                    <li>전화 지원</li>
+                    <li>평가자 직통 상담</li>
+                </ul>
+                <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;">선택하기</a>
+            </div>
+
+            <div class="price-card">
+                <div class="price-title">기업</div>
+                <div class="price-amount">맞춤형</div>
+                <ul class="price-features">
+                    <li>전담팀 배정</li>
+                    <li>무제한 평가</li>
+                    <li>컨설팅 서비스</li>
+                    <li>맞춤 개발</li>
+                    <li>24/7 지원</li>
+                    <li>전문가 미팅</li>
+                </ul>
+                <a href="#" class="btn btn-secondary" style="width: 100%; text-align: center;">문의하기</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <p style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); padding: 1rem 2rem; border-radius: 8px; display: inline-block; font-weight: bold; color: #92400E;">
+                🎉 첫 고객 50% 할인 이벤트 (선착순 100명)
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA 섹션 -->
+    <section style="background: linear-gradient(135deg, #1E3A8A 0%, #6B21A8 100%); padding: 6rem 2rem; text-align: center; color: white;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">지금 바로 기업가치를 확인해보세요</h2>
+        <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9;">60분 만에 전문가 수준의 평가 보고서를 받아보실 수 있습니다</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="#simulator" class="btn btn-primary" style="background: white; color: #2563EB;">📊 무료 시뮬레이터 체험하기</a>
+            <a href="#pricing" class="btn btn-secondary" style="color: white; border-color: white;">전문 평가 신청하기 →</a>
+        </div>
+    </section>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>💼 ValuationAI</h3>
+                <p>기업가치평가 자동화 플랫폼</p>
+                <p style="margin-top: 1rem; color: #9CA3AF;">AI 기술로 60분 만에<br>전문가 수준의 평가 보고서 제공</p>
+            </div>
+
+            <div class="footer-section">
+                <h3>서비스</h3>
+                <ul>
+                    <li><a href="#education">교육센터</a></li>
+                    <li><a href="#simulator">시뮬레이터</a></li>
+                    <li><a href="#apply">평가 신청</a></li>
+                    <li><a href="#pricing">가격 안내</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>지원</h3>
+                <ul>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">이용 가이드</a></li>
+                    <li><a href="#">문의하기</a></li>
+                    <li><a href="#">블로그</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>회사 정보</h3>
+                <ul>
+                    <li><a href="#">회사 소개</a></li>
+                    <li><a href="#">이용약관</a></li>
+                    <li><a href="#">개인정보처리방침</a></li>
+                </ul>
+                <p style="margin-top: 1rem;">고객센터: 1234-5678</p>
+                <p>이메일: contact@valuationai.com</p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>ⓒ 2025 ValuationAI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 스크롤 시 헤더 투명도 조정
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                header.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

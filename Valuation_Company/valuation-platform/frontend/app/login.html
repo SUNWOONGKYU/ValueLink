@@ -293,6 +293,60 @@
             display: block;
         }
 
+        /* 비밀번호 재설정 입력 모달 */
+        .pw-new-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .pw-new-overlay.active { display: flex; }
+        .pw-new-box {
+            background: white;
+            border-radius: 16px;
+            padding: 36px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .pw-new-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .pw-new-box p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .pw-new-box input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+        .pw-new-box input:focus {
+            outline: none;
+            border-color: var(--deep-blue);
+        }
+        .pw-new-msg {
+            font-size: 13px;
+            margin-top: 8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: none;
+        }
+        .pw-new-msg.success { background: #DCFCE7; color: #059669; display: block; }
+        .pw-new-msg.error { background: #FEE2E2; color: #DC2626; display: block; }
+
         @media (max-width: 768px) {
             .login-header {
                 padding: 30px 20px;
@@ -336,10 +390,7 @@
                 </div>
 
                 <div class="form-options">
-                    <label class="checkbox-label">
-                        <input type="checkbox" id="rememberMe">
-                        <span>로그인 상태 유지</span>
-                    </label>
+                    <span></span>
                     <a href="#" class="forgot-password" onclick="openPwReset(event)">비밀번호 찾기</a>
                 </div>
 
@@ -368,6 +419,20 @@
                 <button class="btn-pw-send" onclick="sendPwReset()">이메일 전송</button>
             </div>
             <div class="pw-reset-msg" id="pwResetMsg"></div>
+        </div>
+    </div>
+
+    <!-- 새 비밀번호 입력 모달 (recovery 링크로 돌아왔을 때 표시) -->
+    <div class="pw-new-overlay" id="pwNewOverlay">
+        <div class="pw-new-box">
+            <h2>새 비밀번호 설정</h2>
+            <p>새로 사용할 비밀번호를 입력해주세요.<br>8자 이상, 영문과 숫자를 포함해야 합니다.</p>
+            <input type="password" id="pwNewPassword" placeholder="새 비밀번호 (8자 이상, 영문+숫자)" autocomplete="new-password">
+            <input type="password" id="pwNewPasswordConfirm" placeholder="새 비밀번호 확인" autocomplete="new-password">
+            <div class="pw-reset-actions">
+                <button class="btn-pw-send" onclick="submitNewPassword()">비밀번호 변경</button>
+            </div>
+            <div class="pw-new-msg" id="pwNewMsg"></div>
         </div>
     </div>
 
@@ -615,11 +680,72 @@
             if (e.target === this) closePwReset();
         });
 
+        // ── 비밀번호 재설정: 새 비밀번호 입력 모달 ──────────────────────────────
+        // Supabase recovery 링크는 URL fragment(#)에 access_token 등을 담아 돌아온다.
+        // supabase-js v2는 onAuthStateChange로 SIGNED_IN + url의 type=recovery를 알린다.
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                // recovery 세션이 수립됨 → 새 비밀번호 입력 모달 표시
+                document.getElementById('pwNewOverlay').classList.add('active');
+            }
+        });
+
+        async function submitNewPassword() {
+            const pw = document.getElementById('pwNewPassword').value;
+            const pw2 = document.getElementById('pwNewPasswordConfirm').value;
+            const msgEl = document.getElementById('pwNewMsg');
+            msgEl.className = 'pw-new-msg';
+
+            const hasLetter = /[a-zA-Z]/.test(pw);
+            const hasDigit = /[0-9]/.test(pw);
+
+            if (pw.length < 8 || !hasLetter || !hasDigit) {
+                msgEl.textContent = '비밀번호는 8자 이상, 영문과 숫자를 포함해야 합니다.';
+                msgEl.classList.add('error');
+                return;
+            }
+            if (pw !== pw2) {
+                msgEl.textContent = '비밀번호가 일치하지 않습니다.';
+                msgEl.classList.add('error');
+                return;
+            }
+
+            const btn = document.querySelector('#pwNewOverlay .btn-pw-send');
+            btn.disabled = true;
+            btn.textContent = '변경 중...';
+
+            try {
+                const { error } = await supabaseClient.auth.updateUser({ password: pw });
+                if (error) throw error;
+                msgEl.textContent = '비밀번호가 변경되었습니다. 새 비밀번호로 로그인해주세요.';
+                msgEl.classList.add('success');
+                btn.textContent = '완료';
+                // 2초 후 모달 닫고 폼 초기화
+                setTimeout(() => {
+                    document.getElementById('pwNewOverlay').classList.remove('active');
+                    document.getElementById('pwNewPassword').value = '';
+                    document.getElementById('pwNewPasswordConfirm').value = '';
+                    msgEl.className = 'pw-new-msg';
+                    // recovery 세션 종료 후 로그인 유도
+                    supabaseClient.auth.signOut();
+                }, 2000);
+            } catch (err) {
+                msgEl.textContent = '변경 실패: ' + (err.message || '다시 시도해주세요.');
+                msgEl.classList.add('error');
+                btn.disabled = false;
+                btn.textContent = '비밀번호 변경';
+            }
+        }
+
         // 이미 로그인된 경우 리다이렉트
         // (확인 메일 링크로 돌아와 세션이 자동 생성된 경우, 보류 프로필 저장을 먼저 완료)
         (async function checkAuth() {
             const { data: { user } } = await supabaseClient.auth.getUser();
             if (!user) return;
+
+            // recovery 링크로 돌아온 경우: onAuthStateChange가 PASSWORD_RECOVERY 처리하므로 여기서는 리다이렉트하지 않음
+            const hash = window.location.hash;
+            if (hash && hash.includes('type=recovery')) return;
 
             try {
                 const { error: rowError } = await supabaseClient

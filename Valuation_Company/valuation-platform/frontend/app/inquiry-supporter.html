@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>서포터 문의 | ValueLink</title>
+    <style>
+        :root {
+            --deep-blue: #1D4ED8;
+            --deep-green: #166534;
+            --amber: #F59E0B;
+            --purple: #7C3AED;
+            --text-primary: #111827;
+            --text-secondary: #6B7280;
+            --white: #FFFFFF;
+            --border: #E5E7EB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #F9FAFB;
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header-container { min-height: 90px; }
+
+        .hero {
+            background: linear-gradient(135deg, var(--purple) 0%, #8B5CF6 100%);
+            padding: 40px 40px 50px 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-icon { font-size: 48px; margin-bottom: 16px; }
+        .hero-title { font-size: 36px; font-weight: 700; margin-bottom: 12px; }
+        .hero-description { font-size: 16px; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            flex: 1;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .form-section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--purple);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #EF4444;
+            margin-left: 4px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            transition: border-color 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--purple);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #F9FAFB;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--purple);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--purple);
+        }
+
+        .checkbox-item label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .company-info-box {
+            background: #EDE9FE;
+            border: 2px solid var(--purple);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+
+        .company-info-box h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 12px;
+        }
+
+        .company-info-box p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .company-info-box .company-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .support-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .support-type-card {
+            background: #F9FAFB;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .support-type-card:hover {
+            border-color: var(--purple);
+        }
+
+        .support-type-card.selected {
+            border-color: var(--purple);
+            background: #EDE9FE;
+        }
+
+        .support-type-card input {
+            display: none;
+        }
+
+        .support-type-card .icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .support-type-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .support-type-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            background: var(--purple);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-submit:hover {
+            background: #6D28D9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 24px;
+            transition: color 0.2s ease;
+        }
+
+        .btn-back:hover {
+            color: var(--purple);
+        }
+
+        footer {
+            background: #1E3A5F;
+            color: var(--white);
+            padding: 32px 40px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo { font-size: 18px; font-weight: 700; }
+        .footer-text { font-size: 13px; opacity: 0.7; }
+
+        @media (max-width: 768px) {
+            .hero { padding: 24px 20px 32px 20px; }
+            .hero-icon { font-size: 36px; }
+            .hero-title { font-size: 28px; }
+            .hero-description { font-size: 14px; }
+            .container { padding: 32px 20px; }
+            .form-card { padding: 24px; }
+            .form-row { grid-template-columns: 1fr; }
+            .support-types { grid-template-columns: 1fr; }
+            .checkbox-group { flex-direction: column; }
+            .checkbox-item { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-container"></div>
+
+    <section class="hero">
+        <div class="hero-icon">🌟</div>
+        <h1 class="hero-title">서포터 문의</h1>
+        <p class="hero-description">
+            기업의 성장을 돕고 싶으신 분들을 위한 서포터 참여 신청입니다
+        </p>
+    </section>
+
+    <div class="container">
+        <a href="link.html" class="btn-back">← 목록으로 돌아가기</a>
+
+        <div class="company-info-box" id="companyInfoBox">
+            <h3>문의 대상 기업</h3>
+            <p class="company-name" id="targetCompany">-</p>
+            <p id="companyDetails">기업가치: - | 평가방법: -</p>
+        </div>
+
+        <div class="form-card">
+            <form id="supporterForm">
+                <div class="form-section">
+                    <h3 class="form-section-title">서포터 정보</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">이름<span class="required">*</span></label>
+                            <input type="text" class="form-input" name="name" required placeholder="홍길동">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">소속/직함</label>
+                            <input type="text" class="form-input" name="title" placeholder="ABC 대학교 교수 / 前 삼성전자 이사">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">이메일<span class="required">*</span></label>
+                            <input type="email" class="form-input" name="email" required placeholder="email@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">연락처<span class="required">*</span></label>
+                            <input type="tel" class="form-input" name="phone" required placeholder="010-1234-5678">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">전문 분야/경력</label>
+                        <textarea class="form-textarea" name="expertise" placeholder="보유하신 전문 지식, 경력, 네트워크 등을 소개해 주세요"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">지원 희망 유형</h3>
+
+                    <div class="support-types">
+                        <label class="support-type-card">
+                            <input type="checkbox" name="supportType" value="mentor">
+                            <div class="icon">🎓</div>
+                            <h4>멘토링</h4>
+                            <p>경영, 기술, 마케팅 등 전문 분야에서 조언 제공</p>
+                        </label>
+                        <label class="support-type-card">
+                            <input type="checkbox" name="supportType" value="network">
+                            <div class="icon">🔗</div>
+                            <h4>네트워크 연결</h4>
+                            <p>잠재 고객, 파트너, 투자자 등 인맥 소개</p>
+                        </label>
+                        <label class="support-type-card">
+                            <input type="checkbox" name="supportType" value="advisor">
+                            <div class="icon">💼</div>
+                            <h4>자문위원</h4>
+                            <p>정기적인 자문위원으로 참여하여 의사결정 지원</p>
+                        </label>
+                        <label class="support-type-card">
+                            <input type="checkbox" name="supportType" value="promotion">
+                            <div class="icon">📢</div>
+                            <h4>홍보/마케팅</h4>
+                            <p>SNS, 커뮤니티 등을 통한 기업 홍보 지원</p>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">지원 상세</h3>
+
+                    <div class="form-group">
+                        <label class="form-label">지원 가능 시간</label>
+                        <select class="form-select" name="availability">
+                            <option value="">선택해주세요</option>
+                            <option value="weekly">주 1회 이상</option>
+                            <option value="biweekly">격주 1회</option>
+                            <option value="monthly">월 1회</option>
+                            <option value="asneeded">필요시 수시로</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">지원 동기<span class="required">*</span></label>
+                        <textarea class="form-textarea" name="motivation" required placeholder="해당 기업을 지원하고 싶은 이유를 작성해 주세요"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">구체적으로 도움 줄 수 있는 내용</label>
+                        <textarea class="form-textarea" name="helpOffer" placeholder="기업에 구체적으로 제공할 수 있는 도움을 설명해 주세요&#10;예: 해외 시장 진출 경험 공유, 특정 기술 자문, 잠재 고객사 소개 등"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">기타 문의 사항</label>
+                        <textarea class="form-textarea" name="additionalNotes" placeholder="추가로 문의하거나 전달하고 싶은 내용이 있으면 작성해 주세요"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">서포터 신청하기</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">ValueLink</div>
+            <div class="footer-text">© 2026 ValueLink. All rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        // 헤더 로드
+        fetch('../components/header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                const scripts = document.getElementById('header-container').querySelectorAll('script');
+                scripts.forEach(script => {
+                    const newScript = document.createElement('script');
+                    if (script.src) newScript.src = script.src;
+                    else newScript.textContent = script.textContent;
+                    document.body.appendChild(newScript);
+                });
+            });
+
+        // URL 파라미터에서 기업 정보 가져오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const companyId = urlParams.get('company');
+        const companyName = urlParams.get('name') || '-';
+        const companyValue = urlParams.get('value') || '-';
+        const companyMethod = urlParams.get('method') || '-';
+
+        document.getElementById('targetCompany').textContent = decodeURIComponent(companyName);
+        document.getElementById('companyDetails').textContent = `기업가치: ${decodeURIComponent(companyValue)} | 평가방법: ${decodeURIComponent(companyMethod)}`;
+
+        // 카드 선택 효과
+        document.querySelectorAll('.support-type-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+
+        // 폼 제출
+        document.getElementById('supporterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('서포터 신청이 접수되었습니다.\n담당자가 확인 후 연락드리겠습니다.');
+            window.location.href = 'link.html';
+        });
+    </script>
+</body>
+</html>

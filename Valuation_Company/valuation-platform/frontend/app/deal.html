@@ -1602,16 +1602,18 @@
                 console.log('✅ Deal 데이터 로드 성공:', deals.length, '개');
 
                 if (deals && deals.length > 0) {
-                    // 통계 계산
+                    // 통계 계산 — company_name이 없거나 1글자 이하인 노이즈 행 제외
+                    const validDeals = deals.filter(d => d.company_name && d.company_name.trim().length >= 2);
+
                     const now = new Date();
                     const today = now.toISOString().split('T')[0];
                     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
                     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-                    const yearStart = `${now.getFullYear()}-01-01`;
+                    const yearStart = `${new Date().getFullYear()}-01-01`;
 
-                    const yesterdayCount = deals.filter(d => d.news_date === yesterday).length;
-                    const lastWeekCount = deals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
-                    const yearTotalCount = deals.length;
+                    const yesterdayCount = validDeals.filter(d => d.news_date === yesterday).length;
+                    const lastWeekCount = validDeals.filter(d => d.news_date >= oneWeekAgo && d.news_date <= today).length;
+                    const yearTotalCount = validDeals.filter(d => d.news_date >= yearStart).length;
 
                     console.log('📈 통계:', { 어제: yesterdayCount, 이번주: lastWeekCount, 전체: yearTotalCount });
 
@@ -1779,7 +1781,7 @@
                 const amount = deal.amount ? `${deal.amount}억원` : '비공개';
                 const investors = deal.investors || '-';
                 const location = deal.location || '-';
-                const newsUrl = deal.news_url || '#';
+                const newsUrl = deal.news_url && deal.news_url.trim() ? deal.news_url.trim() : null;
                 const newsDate = deal.news_date || '-';
                 let siteName = deal.site_name || '-';
 
@@ -1828,7 +1830,7 @@
                         <td data-label="투자단계"><span class="deal-stage ${getStageClass(stage)}">${escapeHtml(stage)}</span></td>
                         <td data-label="투자자" class="deal-investors">${investorList}</td>
                         <td data-label="투자금액" class="deal-amount">${escapeHtml(amount)}</td>
-                        <td data-label="뉴스"><a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">뉴스 보기</a></td>
+                        <td data-label="뉴스">${newsUrl ? `<a href="${escapeHtml(newsUrl)}" target="_blank" class="link-btn link-news" onclick="event.stopPropagation();">뉴스 보기</a>` : `<span class="link-btn" style="opacity:0.35;cursor:default;" title="URL 없음">뉴스 보기</span>`}</td>
                     </tr>
                 `;
             }).join('');

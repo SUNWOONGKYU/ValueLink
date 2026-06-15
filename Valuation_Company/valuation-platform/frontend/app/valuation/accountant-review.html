@@ -483,7 +483,7 @@
                             const { data: userData } = await supabase
                                 .from('users').select('role').eq('user_id', session.user.id).single();
                             const detectedRole = (userData && userData.role) ? userData.role
-                                : (['wksun999@gmail.com'].includes(email) ? 'admin' : 'customer');
+                                : ([].includes(email) ? 'admin' : 'customer');
                             if (detectedRole === 'admin' || detectedRole === 'accountant') {
                                 localStorage.setItem('userRole', detectedRole);
                                 localStorage.setItem('userEmail', email);
@@ -543,7 +543,7 @@
                 <div class="profile-content">
                     <div class="profile-photo">👨‍💼</div>
                     <div class="profile-details">
-                        <div class="accountant-name">선웅규 회계사</div>
+                        <div class="accountant-name">이지훈 회계사</div>
                         <div class="accountant-certification">공인회계사 자격증 번호: 12345</div>
                         <div class="profile-info-grid">
                             <div class="profile-info-item">

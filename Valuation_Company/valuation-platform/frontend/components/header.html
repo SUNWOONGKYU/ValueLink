@@ -494,7 +494,7 @@
             <a href="app/deal.html" class="menu-item" id="menu-deal">
                 Deals
             </a>
-            <a href="app/core/mypage.html" class="menu-item" id="menu-mypage">
+            <a href="app/core/mypage-company.html" class="menu-item" id="menu-mypage">
                 My Page
             </a>
         </nav>
@@ -512,10 +512,10 @@
         </div>
         <div id="user-logged-in" style="display:none;">
             <div class="user-profile-area">
-                <div class="user-avatar" id="userAvatarText">선</div>
+                <div class="user-avatar" id="userAvatarText">U</div>
                 <div class="user-info">
-                    <span class="user-name" id="userNameDisplay">선웅규</span>
-                    <span class="user-role-badge" id="userRoleBadge">관리자</span>
+                    <span class="user-name" id="userNameDisplay">사용자</span>
+                    <span class="user-role-badge" id="userRoleBadge"></span>
                 </div>
             </div>
             <button class="btn-logout" id="btnLogout">로그아웃</button>
@@ -589,16 +589,9 @@
 
 // ─── 로그인 상태 관리 ───
 (function initAuthState() {
-    // 관리자 자동 로그인 초기화 (로그아웃 전까지 유지)
-    // loggedOut 플래그가 없으면 관리자로 자동 설정
-    if (!localStorage.getItem('loggedOut')) {
-        if (!localStorage.getItem('userRole')) {
-            localStorage.setItem('userRole', 'admin');
-            localStorage.setItem('userEmail', 'wksun999@gmail.com');
-            localStorage.setItem('userName', '선웅규');
-        }
-    }
-
+    // 실제 로그인(login.html)에서만 userRole/userName/userEmail 을 설정한다.
+    // 익명 방문자는 비로그인 상태(로그인/회원가입 버튼)로 표시한다.
+    // (이전 버전의 '기본 관리자 자동 로그인' 시딩은 보안/프라이버시 문제로 제거됨)
     var role = localStorage.getItem('userRole');
     var userName = localStorage.getItem('userName');
     var authButtons = document.getElementById('auth-buttons');
