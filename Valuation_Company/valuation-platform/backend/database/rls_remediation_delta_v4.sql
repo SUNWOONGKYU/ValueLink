@@ -18,12 +18,12 @@ CREATE POLICY "users_insert_signup" ON users
     );
 -- users_insert_admin (admin 임의 생성)은 v2 그대로 유지.
 
--- ── [H1] accountants 공개 조회: 배정가능(is_available) 회계사로 범위 축소 ──
--- 공개 디렉터리 성격은 유지하되, 비활성/비공개 회계사 행 노출을 줄인다.
--- (RLS는 행 단위이므로 컬럼 제한은 별도 GRANT 검토 — 프론트 호환 위해 본 델타에선 컬럼 유지)
+-- ── [H1] accountants 공개 조회: 활성(is_active) 회계사로 범위 축소 ──
+-- 공개 디렉터리 성격은 유지하되, 비활성 회계사 행 노출을 줄인다.
+-- (라이브 accountants 테이블 실제 컬럼은 is_active — is_available 아님. 2026-06-15 적용 완료)
 DROP POLICY IF EXISTS "accountants_select_public" ON accountants;
 CREATE POLICY "accountants_select_public" ON accountants
-    FOR SELECT USING (is_available = true);
+    FOR SELECT USING (is_active = true);
 
 -- ============================================================
 -- 롤백 (이전 v3 상태로 복원하려면 아래 실행)
@@ -34,3 +34,7 @@ CREATE POLICY "accountants_select_public" ON accountants
 -- DROP POLICY IF EXISTS "accountants_select_public" ON accountants;
 -- CREATE POLICY "accountants_select_public" ON accountants
 --     FOR SELECT USING (true);
+
+-- ============================================================
+-- ✅ 적용 완료: 2026-06-15 (Supabase SQL Editor, "Success. No rows returned")
+-- ============================================================
