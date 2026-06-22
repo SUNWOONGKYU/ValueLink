@@ -12,7 +12,8 @@
 - 산출: `Valuation_Company/valuation-platform/backend/database/rls_valuation_reports_hardening.sql`
   - admin 전용 INS/UPD/DEL 명시정책(get_my_role 재사용) + 공개읽기 유지·정규화 + 멱등 DROP + 롤백 + COMMENT
 - 검증: security 에이전트 **Verified** (의도 정확·멱등·service_role 우회·시그니처 일치)
-- ⚠️ **적용 게이트**: 프로덕션 DDL → 절대규칙6 PO 사전승인 + DB 인증 필요(과거 비번 3종 실패). 데이터 무손실(정책만). PO 승인+적용 대기
+- ✅ **실DB 적용 완료** (2026-06-23, PO 승인+PAT 제공): Supabase Management API로 적용. 정책 4개 검증(공개읽기1+admin쓰기3), RLS=true, 데이터 3행 무손실. 실동작 검증 anon 읽기200/쓰기401(RLS 차단) PASS
+- 잔여 권고: run-sql.js 평문 비번(stale) 환경변수화 + .env DB_PASSWORD 갱신 — PO 판단 대기
 
 ### Task 2: 딜 추출기 달러환산 버그 수정 (collect_naver_only.py)
 - 버그1: 달러 환산계수 10배 오차 — 만달러 1.35→0.135(=135/1000 정수연산), 억달러 135→1350 (환율 1,350원/달러)
