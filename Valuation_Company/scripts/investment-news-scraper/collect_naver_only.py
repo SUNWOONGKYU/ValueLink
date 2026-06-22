@@ -71,18 +71,24 @@ def extract_amount(text):
         val = int(jo * 10000 + eok)
     if val is None:
         # 억 단위 (콤마 천단위만 허용 — '160000' 같은 비정상 연속숫자 배제)
-        m = re.search(r'(\d{1,3}(?:,\d{3})*|\d{1,5})\s*억\s*원?', text)
+        # 부정 선읽기: "1억 달러"·"1억원 달러"가 "1억"으로 오파싱되지 않도록 → 달러 분기로 넘김
+        m = re.search(r'(\d{1,3}(?:,\d{3})*|\d{1,5})\s*억\s*원?(?!\s*(?:원\s*)?달러)', text)
         if m:
             val = int(float(m.group(1).replace(',', '')))
     if val is None:
-        # 만 달러 / 달러
-        m = re.search(r'(\d[\d,]*\.?\d*)\s*만\s*달러', text)
+        # 달러 환산 (환율 ≈ 1,350원/달러 기준)
+        #  · 백만 달러(1M USD) ≈ 13.5억원
+        #  · 만 달러(1만 USD = 0.01M)  → ×0.135억
+        #  · 억 달러(1억 USD = 100M)   → ×1,350억
+        # 주의: '억 달러'가 '만 달러'의 부분일치가 되지 않도록 억 달러를 먼저 검사
+        m = re.search(r'(\d[\d,]*\.?\d*)\s*억\s*달러', text)
         if m:
-            val = int(float(m.group(1).replace(',', '')) * 1.35)  # 만달러 → 억(≈1.35억/백만달러*0.01)
+            val = round(float(m.group(1).replace(',', '')) * 1350)        # 억달러 → 억원
         else:
-            m = re.search(r'(\d[\d,]*\.?\d*)\s*억\s*달러', text)
+            m = re.search(r'(\d[\d,]*\.?\d*)\s*만\s*달러', text)
             if m:
-                val = int(float(m.group(1).replace(',', '')) * 135)
+                # 만달러 ×0.135억. 0.135 리터럴의 부동소수 오차를 피해 135/1000 정수연산으로 결정론화
+                val = round(float(m.group(1).replace(',', '')) * 135 / 1000)
     if val is not None and (val <= 0 or val > AMOUNT_CAP):
         return None
     return val

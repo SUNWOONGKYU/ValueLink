@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-06-22 후속과제 2건 — valuation_reports 보안분리 SQL + 딜 추출기 달러환산 버그 수정 ✅
+
+### 작업 상태: ✅ 완료 (Task2 코드/테스트 완결, Task1 SQL은 PO 적용 게이트)
+
+### Task 1: valuation_reports 보안분리 (RLS 후속)
+- 진단: 현재 RLS 활성 + 공개읽기(SELECT USING true)만 존재, 쓰기(INS/UPD/DEL) 명시정책 없음(암묵 default-deny 의존)
+- 선행 근거: rls_remediation_delta_v2.sql 202-208행 "범위 외 — 후속 판단 필요" + 0615 결함수정 51행 [~] 미완결
+- 산출: `Valuation_Company/valuation-platform/backend/database/rls_valuation_reports_hardening.sql`
+  - admin 전용 INS/UPD/DEL 명시정책(get_my_role 재사용) + 공개읽기 유지·정규화 + 멱등 DROP + 롤백 + COMMENT
+- 검증: security 에이전트 **Verified** (의도 정확·멱등·service_role 우회·시그니처 일치)
+- ⚠️ **적용 게이트**: 프로덕션 DDL → 절대규칙6 PO 사전승인 + DB 인증 필요(과거 비번 3종 실패). 데이터 무손실(정책만). PO 승인+적용 대기
+
+### Task 2: 딜 추출기 달러환산 버그 수정 (collect_naver_only.py)
+- 버그1: 달러 환산계수 10배 오차 — 만달러 1.35→0.135(=135/1000 정수연산), 억달러 135→1350 (환율 1,350원/달러)
+- 버그2: "1억 달러"가 억원 정규식에 선매칭되어 "1억(원)"으로 오파싱 → 부정선읽기 `(?!\s*(?:원\s*)?달러)` 추가
+- 테스트: test_company_validation.py에 AMOUNT 13케이스 추가 → **97/97 PASS** (19/56/5/4/13, 회귀 무손실)
+- 검증: reviewer 에이전트 **Verified with Warning** → W1/W2 즉시 반영(부동소수 결정론화·백트래킹 방어)
+
+### 생성/수정 파일
+1. `Valuation_Company/valuation-platform/backend/database/rls_valuation_reports_hardening.sql` (신규)
+2. `Valuation_Company/scripts/investment-news-scraper/collect_naver_only.py` (extract_amount 수정)
+3. `Valuation_Company/scripts/investment-news-scraper/test_company_validation.py` (AMOUNT 테스트 추가)
+4. `_WorkLog/2026_06_22__23.58_PHASE_후속과제_2건_RLS분리_딜추출기보강.md`
+
+---
+
 ## 2026-06-14 5개 방식 전체 여정 스크린샷 분석 + UI/UX·표시 일괄 수정 (분석 5 + 수정 5 + 검증 에이전트) ✅
 
 ### 작업 상태: ✅ 완료 — 30컷 캡처·분석 → 18개 product 파일 수정 → fullsim 32/32 유지 + 직접 이미지 재확인

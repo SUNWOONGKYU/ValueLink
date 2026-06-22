@@ -146,6 +146,31 @@ INV_PASS = [
 ]
 
 # ──────────────────────────────────────────────────────────
+# AMOUNT: extract_amount() — 금액 추출/환산 검증 (억원 단위)
+#   (text, expected) — expected None이면 추출 안 됨이 정답
+#   환율 ≈ 1,350원/달러 기준: 만달러×0.135, 억달러×1350
+# ──────────────────────────────────────────────────────────
+AMOUNT_CASES = [
+    # 억원 직접
+    ("100억원 규모 시리즈A 투자 유치",   100,   '억원 직접'),
+    ("약 50억 투자 유치",               50,    '억 직접'),
+    ("1,000억원 투자",                  1000,  '천단위 콤마'),
+    # 달러 환산 (이번 수정 핵심 회귀 방지)
+    ("500만 달러 투자 유치",            68,    '만달러→억(500*0.135≈67.5)'),
+    ("5000만 달러 시리즈B",             675,   '만달러→억(5000*0.135)'),
+    ("1억 달러 투자 유치",              1350,  '억달러→억(1*1350)'),
+    ("5억 달러 투자 라운드",            6750,  '억달러→억(5*1350)'),
+    # 상한/오파싱 차단
+    ("3조원 펀드 결성",                 None,  '조단위+펀드결성 노이즈'),
+    ("기업가치 5000억 평가",            None,  '기업가치 노이즈 컨텍스트'),
+    ("8억 달러 메가 투자",              None,  '억달러 환산>9999 상한 컷'),
+    # 경계값
+    ("1만 달러 시드 투자",              None,  '소액 만달러 round0→val<=0 None'),
+    ("1조원 투자 유치",                 None,  '1조=10000억 상한(>9999) 컷'),
+    ("100억원 시리즈B 투자",            100,   '억원+원? 정상(달러 부정선읽기 무영향)'),
+]
+
+# ──────────────────────────────────────────────────────────
 def run():
     total_fail = 0
 
@@ -234,6 +259,24 @@ def run():
             ip_fail.append(reason)
     total_fail += len(ip_fail)
 
+    # 6) AMOUNT
+    print()
+    print("=" * 65)
+    print(f"[ AMOUNT {len(AMOUNT_CASES)}개 — extract_amount() 환산/상한 검증 ]")
+    print("=" * 65)
+    am_ok = 0
+    am_fail = []
+    for text, expected, reason in AMOUNT_CASES:
+        result = cn.extract_amount(text)
+        ok = (result == expected)
+        sym = "✓" if ok else "✗"
+        print(f"  {sym} [{result}=={expected}] '{text}'  ({reason})")
+        if ok:
+            am_ok += 1
+        else:
+            am_fail.append((text, result, expected))
+    total_fail += len(am_fail)
+
     # 요약
     print()
     print("=" * 65)
@@ -243,6 +286,7 @@ def run():
     print(f"  REGRESSION:   {rg_ok}/{len(REGRESSION)}  {'✓ ALL OK' if not rg_fail else '✗ FAIL: ' + str(rg_fail)}")
     print(f"  INV_REJECT:   {ir_ok}/{len(INV_REJECT)}  {'✓ ALL OK' if not ir_fail else '✗ FAIL: ' + str(ir_fail)}")
     print(f"  INV_PASS:     {ip_ok}/{len(INV_PASS)}  {'✓ ALL OK' if not ip_fail else '✗ FAIL: ' + str(ip_fail)}")
+    print(f"  AMOUNT:       {am_ok}/{len(AMOUNT_CASES)}  {'✓ ALL OK' if not am_fail else '✗ FAIL: ' + str(am_fail)}")
     print()
     if total_fail == 0:
         print("  ALL REQUIRED TESTS PASSED")
