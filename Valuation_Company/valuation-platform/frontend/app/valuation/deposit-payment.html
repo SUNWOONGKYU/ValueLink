@@ -497,18 +497,18 @@
                 <div class="bank-info">
                     <div class="bank-row">
                         <span class="bank-label">은행명</span>
-                        <span class="bank-value">국민은행</span>
+                        <span class="bank-value">하나은행</span>
                     </div>
                     <div class="bank-row">
                         <span class="bank-label">계좌번호</span>
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="bank-value" id="accountNumber">123-456-789012</span>
+                            <span class="bank-value" id="accountNumber">28791092140507</span>
                             <button class="copy-button" onclick="copyAccountNumber()">복사</button>
                         </div>
                     </div>
                     <div class="bank-row">
                         <span class="bank-label">예금주</span>
-                        <span class="bank-value">(주)밸류링크</span>
+                        <span class="bank-value">파인더월드</span>
                     </div>
                     <div class="bank-row" style="margin-top: 16px; padding-top: 16px; border-top: 2px solid var(--deep-blue);">
                         <span class="bank-label" style="font-size: 16px; color: var(--deep-blue);">계약금 입금 금액 (50%)</span>
@@ -562,7 +562,7 @@
                     <div class="security-icon">🔒</div>
                     <p class="security-text">SSL 보안 결제로 안전하게 보호됩니다</p>
                     <div class="pg-logos">
-                        <span class="pg-logo">국민은행</span>
+                        <span class="pg-logo">하나은행</span>
                         <span class="pg-logo">안심 입금</span>
                         <span class="pg-logo">무통장 입금</span>
                     </div>
@@ -733,9 +733,9 @@
             alert(`계약금 입금이 접수되었습니다.
 
 📋 입금 정보
-• 은행: 국민은행
-• 계좌번호: 123-456-789012
-• 예금주: (주)밸류링크
+• 은행: 하나은행
+• 계좌번호: 28791092140507
+• 예금주: 파인더월드
 • 계약금 (50%): ${formatCurrency(depositPaymentAmount)}
 
 관리자가 입금 확인 후 평가를 시작합니다.
@@ -775,7 +775,7 @@
 
             const contents = {
                 payment: '결제 대행 서비스는 무통장 입금 방식으로 제공됩니다. 계약금 50% 입금 후 평가가 시작되며, 잔금은 평가 완료 후 최종 보고서 다운로드 전에 납부하시면 됩니다...',
-                privacy: '결제 처리를 위해 귀하의 개인정보가 은행 및 PG사에 제공됩니다...',
+                privacy: '입금 확인 및 세금계산서 발행을 위해 입금자명·연락처 등 개인정보가 수집·이용됩니다...',
                 refund: '계약금 입금 후 평가 시작 전에는 100% 환불이 가능합니다. 평가 시작 후에는 환불이 제한될 수 있습니다. 자세한 사항은 고객센터로 문의해주세요...'
             };
 

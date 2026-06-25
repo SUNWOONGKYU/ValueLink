@@ -590,18 +590,18 @@
                 <div class="bank-info" style="background: #F9FAFB; padding: 24px; border-radius: 12px; border: 2px solid var(--border);">
                     <div class="bank-row">
                         <span class="bank-label">은행명</span>
-                        <span class="bank-value">국민은행</span>
+                        <span class="bank-value">하나은행</span>
                     </div>
                     <div class="bank-row">
                         <span class="bank-label">계좌번호</span>
                         <div style="display: flex; gap: 8px; align-items: center;">
-                            <span class="bank-value" id="accountNumber">123-456-789012</span>
+                            <span class="bank-value" id="accountNumber">28791092140507</span>
                             <button class="copy-button" onclick="copyAccountNumber()">복사</button>
                         </div>
                     </div>
                     <div class="bank-row">
                         <span class="bank-label">예금주</span>
-                        <span class="bank-value">(주)밸류링크</span>
+                        <span class="bank-value">파인더월드</span>
                     </div>
                     <div class="bank-row">
                         <span class="bank-label">입금 금액</span>
@@ -625,7 +625,7 @@
                         <div class="checkbox-item">
                             <input type="checkbox" id="termsPayment" required>
                             <label for="termsPayment" class="checkbox-label required">
-                                결제 대행 서비스 약관 동의
+                                무통장 입금 서비스 약관 동의
                                 <a href="#" class="terms-link" onclick="showTerms('payment'); return false;">(전문보기)</a>
                             </label>
                         </div>
@@ -652,11 +652,11 @@
                 <!-- 보안 안내 -->
                 <div class="security-notice">
                     <div class="security-icon">🔒</div>
-                    <p class="security-text">SSL 보안 결제로 안전하게 보호됩니다</p>
+                    <p class="security-text">안전한 무통장 입금으로 진행됩니다</p>
                     <div class="pg-logos">
-                        <span class="pg-logo">KG이니시스</span>
-                        <span class="pg-logo">토스페이먼츠</span>
-                        <span class="pg-logo">NICE페이먼츠</span>
+                        <span class="pg-logo">하나은행</span>
+                        <span class="pg-logo">안심 입금</span>
+                        <span class="pg-logo">무통장 입금</span>
                     </div>
                 </div>
             </div>
@@ -830,9 +830,9 @@
             alert(`입금 신청이 접수되었습니다.
 
 📋 입금 정보
-• 은행: 국민은행
-• 계좌번호: 123-456-789012
-• 예금주: (주)밸류링크
+• 은행: 하나은행
+• 계좌번호: 28791092140507
+• 예금주: 파인더월드
 • 금액: ${formatCurrency(totalPaymentAmount)}
 
 입금 확인 후 이메일로 알려드리겠습니다.
@@ -861,14 +861,14 @@
         // 약관 전문 보기
         function showTerms(type) {
             const titles = {
-                payment: '결제 대행 서비스 약관',
+                payment: '무통장 입금 서비스 약관',
                 privacy: '개인정보 제3자 제공 동의',
                 refund: '환불 규정'
             };
 
             const contents = {
-                payment: '결제 대행 서비스는 KG이니시스, 토스페이먼츠 등의 PG사를 통해 제공됩니다...',
-                privacy: '결제 처리를 위해 귀하의 개인정보가 PG사에 제공됩니다...',
+                payment: '결제는 무통장 입금 방식으로만 제공됩니다. 안내된 계좌로 입금하시면 관리자가 입금을 확인한 후 평가가 진행됩니다...',
+                privacy: '입금 확인 및 세금계산서 발행을 위해 입금자명·연락처 등 개인정보가 수집·이용됩니다...',
                 refund: '평가보고서 수령 전에는 100% 환불이 가능합니다. 수령 후에는 환불이 불가능합니다...'
             };
 
