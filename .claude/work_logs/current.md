@@ -2,6 +2,30 @@
 
 ---
 
+## 2026-06-26 딜뉴스 일괄 수리 (자동수집 복구 + 노이즈 필터 + 백필) ✅
+
+### 작업 상태: ✅ 완료 (PHASE 5단계, 테스트 140/140, DB 클린 복구)
+
+### 진단
+- 자동수집 06-15 이후 11일 중단. 스케줄러 ValueLink-DealNews LastResult=255, scheduler.log도 06-15 08:37 이후 미기록.
+- **근본원인**: `run_daily.bat`이 06-15경 **UTF-8 BOM/한글 인코딩**으로 저장돼 cmd가 파싱 불가('이메일' is not recognized 등) → 그날부터 bat 본문 실행 실패. + 이메일 단계 실패가 작업 전체를 255로 만드는 구조.
+- 추출기 노이즈 심각(대학·대기업·투자사·언론·기사조각).
+
+### 수정 (5 Phase)
+1. **노이즈 필터 강화** (collect_naver_only.py): 대학약칭('대'접미)·대기업set·투자사/펀드/VC/美·언론(머니투데이/헤드라인)·기사조각(겨냥/인정/가속/잠재력)·직함/기관/운용사(군수/회장/그룹/공단/운용/PEF/ETF)·조사(에서/으로)·인베(VC약칭) 거부. 단위테스트 **140/140 PASS**(MUST_REJECT 50, REGRESSION 68 회귀무손실).
+2. **deals.created_at DEFAULT now()** 적용(Management API) — 신규행 NULL 방지.
+3. **클린 백필**: 얕은 --days 12로 13건 저장(전부 실딜), DB 401→414. (깊은 --since는 공공기관 노이즈 과다라 미사용)
+4. **스케줄러 수리**: run_daily.bat **순수 ASCII 재작성**(BOM 제거) + 이메일 실패가 작업을 망치지 않게 분리 + 즉시 로깅 + nomail 검증모드. `run_daily.bat nomail` EXIT 0 검증.
+5. 검증: DB 414건 최신 전부 클린(오소고널·이노바이드·엑스큐어스 등), 노이즈 0.
+
+### 잔여 안내
+- 작업 LogonType=Interactive(로그온 시 실행). PC가 08:00에 꺼져있으면 미실행 — "로그온 무관 실행"은 Windows 비번 필요(PO 결정사항).
+
+### 생성/수정 파일
+- collect_naver_only.py, test_company_validation.py, run_daily.bat
+
+---
+
 ## 2026-06-26 결제 무통장 입금 전용 통일 + 배포 ✅
 
 ### 작업 상태: ✅ 완료 (커밋 396873f, Vercel 프로덕션 배포, 라이브 3페이지 검증)

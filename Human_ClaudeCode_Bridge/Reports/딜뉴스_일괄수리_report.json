@@ -1,0 +1,45 @@
+{
+  "report_id": "딜뉴스_일괄수리",
+  "date": "2026-06-26",
+  "po_instruction": "딜뉴스 수리 전체를 일괄로 진행해",
+  "overall_status": "완료 (자동수집 복구 + 노이즈 필터 + 백필 + DDL)",
+  "diagnosis": {
+    "auto_collection": "06-15 이후 11일 중단. 스케줄러 LastResult=255, scheduler.log 06-15 08:37 이후 미기록",
+    "root_cause": "run_daily.bat이 06-15경 UTF-8 BOM/한글 인코딩으로 저장돼 cmd 파싱 불가 → bat 본문 실행 실패. + 이메일 실패가 작업 전체를 255로 만드는 구조",
+    "extractor_noise": "대학·대기업·투자사·언론·기사조각이 회사명으로 다수 통과(방금 40건 중 절반)"
+  },
+  "fixes": [
+    {
+      "phase": 1,
+      "title": "추출기 노이즈 필터 강화",
+      "file": "collect_naver_only.py",
+      "rules_added": "대학약칭('대'접미), 대기업set(삼성전자/두산밥캣/넥슨/혼다/CATL/크래프톤), 투자사/펀드/VC/美, 언론(머니투데이/헤드라인), 기사조각(겨냥/인정/가속/잠재력), 직함/기관/운용사(군수/회장/그룹/공단/운용/PEF/ETF/AUM), 조사(에서/으로/부터/까지/에게), VC약칭 인베",
+      "test": "test_company_validation.py 140/140 PASS (MUST_REJECT 50, REGRESSION 68 회귀무손실)"
+    },
+    {
+      "phase": 2,
+      "title": "deals.created_at DEFAULT now()",
+      "method": "Supabase Management API (PAT)",
+      "verify": "column_default = now()"
+    },
+    {
+      "phase": 3,
+      "title": "클린 백필",
+      "detail": "얕은 --days 12 수집. DRY 17건 중 16건 실딜 확인 후 실저장 13건(전부 실딜: 오소고널·런팟·엑스큐어스·와이젯·코트라스·이노바이드·모먼트에너지·에즈큐리스·메가존클라우드·아리스토·스토리카·제이앤피메디·달파). DB 401→414",
+      "note": "깊은 --since는 공공기관/운용사 노이즈 과다 → 미사용"
+    },
+    {
+      "phase": 4,
+      "title": "스케줄러 255 수리",
+      "file": "run_daily.bat",
+      "change": "순수 ASCII 재작성(BOM 제거 — cmd가 BOM-prefixed .bat 파싱 불가), 이메일 실패가 작업을 255로 만들지 않게 분리(수집 성공 시 exit 0), 즉시 로깅, nomail 검증모드 추가",
+      "verify": "run_daily.bat nomail → EXIT 0, scheduler.log RUN/END 마커 정상"
+    }
+  ],
+  "final_state": {
+    "deals_total": 414,
+    "latest_clean": "오소고널·런팟·이노바이드·메가존클라우드·아리스토·스토리카·제이앤피메디·엑스큐어스 (노이즈 0)",
+    "noise_injected_during_diagnosis": "진단 중 구필터로 저장된 40건 노이즈는 즉시 전량 삭제·복원했음"
+  },
+  "po_action_needed": "스케줄러 작업 LogonType=Interactive — PC가 매일 08:00에 켜지고 로그온돼 있어야 자동수집됨. '로그온 무관 실행'으로 바꾸려면 Windows 계정 비밀번호 필요(PO 결정)."
+}
