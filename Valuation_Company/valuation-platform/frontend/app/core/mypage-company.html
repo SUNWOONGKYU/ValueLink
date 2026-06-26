@@ -7,6 +7,7 @@
     
     <!-- 모바일 최적화 CSS -->
     <link rel="stylesheet" href="../styles/mobile-optimize.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             margin: 0;
@@ -312,15 +313,15 @@
             <div class="info-grid">
                 <div class="info-item">
                     <div class="info-label">계정 이메일</div>
-                    <div class="info-value">user@example.com</div>
+                    <div class="info-value" id="acctEmail">—</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">가입일</div>
-                    <div class="info-value">2025년 1월 20일</div>
+                    <div class="info-value" id="acctJoined">—</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">마지막 로그인</div>
-                    <div class="info-value">2025년 1월 21일 18:30</div>
+                    <div class="info-value" id="acctLastLogin">—</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">계정 상태</div>
@@ -475,6 +476,26 @@
             document.getElementById('phone').value = data.phone || '';
             document.getElementById('fax').value = data.fax || '';
         });
+    </script>
+    <script>
+    // 계정 정보 — 로그인 사용자값으로 바인딩 (실패 시 '—' 유지, 페이지 정상 작동)
+    (async function(){
+        try {
+            if (!window.supabase) return;
+            const sb = window.supabase.createClient(
+                'https://arxrfetgaitkgiiqabap.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+            );
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) return;
+            const fmtD = function(iso){ try { var d=new Date(iso); return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일'; } catch(e){ return null; } };
+            const fmtDT = function(iso){ try { var d=new Date(iso); var t=fmtD(iso); return t? t+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0') : null; } catch(e){ return null; } };
+            const setT = function(id,v){ var el=document.getElementById(id); if(el&&v) el.textContent=v; };
+            setT('acctEmail', user.email);
+            setT('acctJoined', fmtD(user.created_at));
+            setT('acctLastLogin', fmtDT(user.last_sign_in_at));
+        } catch(e) { console.warn('계정정보 로드 스킵:', e); }
+    })();
     </script>
 </body>
 </html>

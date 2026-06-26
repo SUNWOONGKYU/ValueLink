@@ -807,7 +807,7 @@
             area.innerHTML = `
                 <div class="upload-icon">&#8987;</div>
                 <div class="upload-title">업로드 중...</div>
-                <div class="upload-subtitle">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</div>
+                <div class="upload-subtitle">${String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')} (${(file.size / 1024 / 1024).toFixed(2)} MB)</div>
             `;
 
             try {
@@ -827,7 +827,7 @@
                     <div class="uploaded-file">
                         <div class="uploaded-file-icon">&#128196;</div>
                         <div class="uploaded-file-info">
-                            <div class="uploaded-file-name">${file.name}</div>
+                            <div class="uploaded-file-name">${String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}</div>
                             <div class="uploaded-file-size">${(file.size / 1024 / 1024).toFixed(2)} MB - 업로드 완료</div>
                         </div>
                         <button class="uploaded-file-remove" onclick="removeUploadedFile()">제거</button>

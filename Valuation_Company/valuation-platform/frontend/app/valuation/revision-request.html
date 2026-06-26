@@ -1072,7 +1072,7 @@
             uploadedFilesDiv.innerHTML = uploadedFiles.map((file, index) => `
                 <div class="uploaded-file">
                     <div class="file-info">
-                        <span class="file-name">📎 ${file.name}</span>
+                        <span class="file-name">📎 ${String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}</span>
                         <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
                     </div>
                     <button type="button" class="btn-remove-file" onclick="removeFile(${index})">

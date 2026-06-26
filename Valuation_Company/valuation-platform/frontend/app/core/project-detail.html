@@ -730,7 +730,7 @@
                     <div class="file-info">
                         <span class="file-icon">${getFileIcon(file.name)}</span>
                         <div>
-                            <div class="file-name">${file.name}</div>
+                            <div class="file-name">${String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}</div>
                             <div class="file-size">${formatFileSize(file.size)}</div>
                         </div>
                     </div>

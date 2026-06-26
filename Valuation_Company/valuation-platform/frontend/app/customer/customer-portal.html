@@ -1246,12 +1246,12 @@
                 <div class="file-info">
                     <span class="file-icon">${icon}</span>
                     <div>
-                        <div class="file-name">${file.name}</div>
+                        <div class="file-name">${String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}</div>
                         <div class="file-size">${size}</div>
                     </div>
                 </div>
                 <div class="file-actions">
-                    <button class="btn-file-action delete" onclick="removeFile('${category}', '${file.name}', this)">삭제</button>
+                    <button class="btn-file-action delete" data-fn="${encodeURIComponent(file.name)}" data-cat="${category}">삭제</button>
                 </div>
             `;
 
@@ -1284,6 +1284,12 @@
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
+
+        document.addEventListener('click', function(ev){
+            var b = ev.target.closest && ev.target.closest('.btn-file-action.delete[data-fn]');
+            if(!b) return; var __delegateDelete=1;
+            try{ removeFile(b.getAttribute('data-cat'), decodeURIComponent(b.getAttribute('data-fn')), b); }catch(e){}
+        });
 
         // Remove file
         function removeFile(category, fileName, button) {

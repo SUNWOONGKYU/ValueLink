@@ -468,7 +468,7 @@
             <div class="profile-avatar" id="profile-avatar">김</div>
             <div class="profile-info">
                 <h2 id="accountant-name">김회계</h2>
-                <p>공인회계사 | valuelink@example.com</p>
+                <p>공인회계사 | <span id="acctEmail">—</span></p>
             </div>
             <div class="profile-badge">인증됨</div>
         </div>
@@ -730,6 +730,29 @@
 
         // 페이지 로드
         renderProjects();
+    </script>
+    <script>
+    // 회계사 프로필 — 로그인 사용자값으로 바인딩 (실패 시 기존값 유지)
+    (async function(){
+        try {
+            if (!window.supabase) return;
+            const sb = window.supabase.createClient(
+                'https://arxrfetgaitkgiiqabap.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+            );
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) return;
+            const setT = function(id,v){ var el=document.getElementById(id); if(el&&v) el.textContent=v; };
+            setT('acctEmail', user.email);
+            var displayName = null;
+            try { var r = await sb.from('users').select('name').eq('user_id', user.id).single(); if (r.data && r.data.name) displayName = r.data.name; } catch(e){}
+            if (!displayName && user.email) displayName = user.email.split('@')[0];
+            if (displayName) {
+                setT('accountant-name', displayName);
+                var av = document.getElementById('profile-avatar'); if (av) av.textContent = displayName.charAt(0).toUpperCase();
+            }
+        } catch(e) { console.warn('회계사 정보 로드 스킵:', e); }
+    })();
     </script>
 </body>
 </html>

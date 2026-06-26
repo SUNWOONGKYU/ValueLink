@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>고객 포털 - 자료 제출 | ValueLink</title>
@@ -702,10 +703,10 @@
         </div>
         <div class="header-right">
             <div class="user-info">
-                <div class="user-avatar">김</div>
+                <div class="user-avatar" id="cpAvatar">·</div>
                 <div>
-                    <div class="user-name">김철수</div>
-                    <div class="user-company">삼성전자(주)</div>
+                    <div class="user-name" id="cpName">—</div>
+                    <div class="user-company" id="cpCompany"></div>
                 </div>
             </div>
             <button class="btn-logout">로그아웃</button>
@@ -718,7 +719,7 @@
         <section class="project-info-card">
             <div class="project-header">
                 <div>
-                    <h1 class="project-title">삼성전자(주) 기업가치평가</h1>
+                    <h1 class="project-title"><span id="cpProjCompany"></span> 기업가치평가</h1>
                     <span class="project-id">SAMSU-2501191430-DC</span>
                 </div>
                 <div class="project-status collecting">
@@ -909,7 +910,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label class="form-label">회사명 <span class="required">*</span></label>
-                    <input type="text" class="form-input" value="삼성전자(주)" readonly>
+                    <input type="text" class="form-input" id="cpCompanyInput" value="" readonly>
                 </div>
                 <div class="form-group">
                     <label class="form-label">사업자등록번호 <span class="required">*</span></label>
@@ -1135,19 +1136,20 @@
             const icon = getFileIcon(ext);
             const size = formatFileSize(file.size);
 
+            const safeName = String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
             fileItem.innerHTML = `
                 <div class="file-info">
                     <span class="file-icon">${icon}</span>
                     <div>
-                        <div class="file-name">${file.name}</div>
+                        <div class="file-name">${safeName}</div>
                         <div class="file-size">${size}</div>
                     </div>
                 </div>
                 <div class="file-actions">
-                    <button class="btn-file-action delete" onclick="removeFile('${category}', '${file.name}', this)">삭제</button>
+                    <button class="btn-file-action delete">삭제</button>
                 </div>
             `;
-
+            fileItem.querySelector('.btn-file-action').addEventListener('click', function(){ removeFile(category, file.name, this); });
             container.appendChild(fileItem);
         }
 
@@ -1258,6 +1260,30 @@
                 statusBadge.innerHTML = '<span>&#128269;</span><span>자료 검토중</span>';
             }
         });
+    </script>
+    <script>
+    // 포털 사용자/회사 정보 — 로그인값 바인딩 (실패 시 빈값/—, 페이지 정상 작동)
+    (async function(){
+        try {
+            if (!window.supabase) return;
+            const sb = window.supabase.createClient(
+                'https://arxrfetgaitkgiiqabap.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0'
+            );
+            const { data: { user } } = await sb.auth.getUser();
+            if (!user) return;
+            const setT = function(id,v){ var el=document.getElementById(id); if(el&&v) el.textContent=v; };
+            var name=null, company=null;
+            try { var ru=await sb.from('users').select('name').eq('user_id',user.id).single(); if(ru.data&&ru.data.name) name=ru.data.name; } catch(e){}
+            try { var rc=await sb.from('customers').select('company_name').eq('email',user.email).single(); if(rc.data&&rc.data.company_name) company=rc.data.company_name; } catch(e){}
+            if(!name && user.email) name=user.email.split('@')[0];
+            setT('cpName', name);
+            setT('cpCompany', company);
+            setT('cpProjCompany', company);
+            var ci=document.getElementById('cpCompanyInput'); if(ci&&company) ci.value=company;
+            if(name){ var av=document.getElementById('cpAvatar'); if(av) av.textContent=name.charAt(0).toUpperCase(); }
+        } catch(e) { console.warn('포털 사용자정보 로드 스킵:', e); }
+    })();
     </script>
 </body>
 </html>
