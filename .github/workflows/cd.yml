@@ -1,16 +1,32 @@
 name: CD Pipeline (Vercel Deploy)
 
+# 프론트엔드(정적 사이트)는 Valuation_Company/valuation-platform/frontend 에 있고
+# Vercel 프로젝트도 그 디렉터리에 링크되어 있다(.vercel/project.json).
+# 따라서 모든 vercel 명령은 그 디렉터리에서 실행해야 한다(working-directory).
+#
+# ⚙️ 활성화 사전조건 (PO, 1회):
+#   1) GitHub 저장소 Settings > Actions 에서 Actions 활성화
+#   2) Settings > Secrets and variables > Actions 에 시크릿 3개 추가:
+#        VERCEL_TOKEN       (Vercel > Account Settings > Tokens 에서 생성)
+#        VERCEL_ORG_ID      = team_FawbxqCQiznT1C5BMaOOsmGz
+#        VERCEL_PROJECT_ID  = prj_rP9r5qycfC6mDb9aDN3CT9iZfiNH
+#   설정 후에는 frontend 변경 push 시 자동 배포되어 수동 `vercel --prod` 불필요.
+
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main, master]
+    paths:
+      - 'Valuation_Company/valuation-platform/frontend/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: Valuation_Company/valuation-platform/frontend
 
 jobs:
   deploy:
-    name: Deploy to Vercel
+    name: Deploy to Vercel (production)
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,43 +35,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull Vercel Environment Information
+      - name: Pull Vercel environment
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Build Project Artifacts
+      - name: Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Deploy to Vercel
-        id: deploy
-        run: |
-          DEPLOYMENT_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deployment_url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+      - name: Deploy (prebuilt, prod)
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Deployment Success Notification
-        if: success()
-        run: |
-          echo "✅ Deployment successful!"
-          echo "🔗 URL: ${{ steps.deploy.outputs.deployment_url }}"
-
-      - name: Deployment Failure Notification
-        if: failure()
-        run: |
-          echo "❌ Deployment failed!"
-          echo "Check the logs above for details."
