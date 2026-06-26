@@ -714,14 +714,14 @@
             <div class="project-info">
                 <div class="project-id-box">
                     <label>프로젝트 번호</label>
-                    <div class="id">SAMSU-2501191430-DC</div>
+                    <div class="id">—</div>
                 </div>
                 <div class="project-meta">
-                    <h1>삼성전자 DCF 평가</h1>
+                    <h1 class="project-title-text">기업가치평가</h1>
                     <div class="details">
-                        <span>📅 평가기준일: 2025.01.01</span>
+                        <span id="projBaseDate">📅 평가기준일: —</span>
                         <span>👤 담당 회계사</span>
-                        <span>🎯 목적: 투자 유치</span>
+                        <span id="projPurpose">🎯 목적: —</span>
                     </div>
                 </div>
             </div>
@@ -1300,9 +1300,15 @@
                 if (error) throw error;
 
                 if (project) {
-                    // 프로젝트 정보 업데이트
-                    document.querySelector('.project-id-box').textContent = project.project_id;
-                    document.querySelector('.project-title-text').textContent = `${project.company_name_kr} 기업가치평가`;
+                    // 프로젝트 정보 업데이트 (요소 없으면 건너뜀 — 예외로 정적폴백되지 않도록 가드)
+                    const idEl = document.querySelector('.project-id-box .id');
+                    if (idEl && project.project_id) idEl.textContent = project.project_id;
+                    const titleEl = document.querySelector('.project-title-text');
+                    if (titleEl) titleEl.textContent = `${project.company_name_kr || '기업'} 기업가치평가`;
+                    const dateEl = document.getElementById('projBaseDate');
+                    if (dateEl && project.target_date) dateEl.textContent = `📅 평가기준일: ${project.target_date}`;
+                    const purpEl = document.getElementById('projPurpose');
+                    if (purpEl && project.valuation_purpose) purpEl.textContent = `🎯 목적: ${project.valuation_purpose}`;
 
                     // 평가 결과 정보가 있으면 업데이트
                     const result = project.valuation_results?.[0];
