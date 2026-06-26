@@ -492,7 +492,9 @@
                 const list = document.getElementById(`list-${category}`);
                 const item = document.createElement('div');
                 item.className = 'file-item';
-                item.innerHTML = `<div class="file-info"><span>&#128196;</span><div><div class="file-name">${file.name}</div><div class="file-size">${(file.size/1024/1024).toFixed(1)} MB</div></div></div><button class="btn-file-action" onclick="this.parentElement.remove(); uploadedFiles['${category}'] = uploadedFiles['${category}'].filter(f=>f.name!=='${file.name}'); updateStatus('${category}'); updateChecklist();">삭제</button>`;
+                const safeName = String(file.name).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+                item.innerHTML = `<div class="file-info"><span>&#128196;</span><div><div class="file-name">${safeName}</div><div class="file-size">${(file.size/1024/1024).toFixed(1)} MB</div></div></div><button class="btn-file-action">삭제</button>`;
+                item.querySelector('.btn-file-action').addEventListener('click', function(){ item.remove(); uploadedFiles[category] = uploadedFiles[category].filter(function(f){return f.name!==file.name;}); updateStatus(category); updateChecklist(); });
                 list.appendChild(item);
                 updateStatus(category);
                 updateChecklist();

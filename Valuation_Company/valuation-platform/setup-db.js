@@ -9,8 +9,13 @@ const path = require('path');
 
 const { Client } = pg;
 
-// Supabase PostgreSQL 연결 정보
-const DB_URL = 'postgresql://postgres.arxrfetgaitkgiiqabap:ValueLink2025!@aws-0-ap-northeast-2.pooler.supabase.com:6543/postgres';
+// Supabase PostgreSQL 연결 정보 — 환경변수에서 주입 (평문 하드코딩 금지)
+// 사용: DATABASE_URL="postgresql://postgres.<ref>:<password>@<pooler-host>:6543/postgres" node setup-db.js
+const DB_URL = process.env.DATABASE_URL;
+if (!DB_URL) {
+    console.error('❌ DATABASE_URL 환경변수가 필요합니다 (평문 비밀번호 하드코딩 금지).');
+    process.exit(1);
+}
 
 async function runSQL() {
     const client = new Client({

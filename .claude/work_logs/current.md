@@ -2,6 +2,27 @@
 
 ---
 
+## 2026-06-26 완성도 점검 후속 — 보안 수리 (XSS + 평문비번 + 데드링크) ✅
+
+### 작업 상태: ✅ 완료 (안전 4건 수리, RLS·더미 2건 보류)
+
+### 배경
+- 사이트 완성도 점검 결과 약 84/100. 보안 68/100 등에서 핵심 결함 도출. PO "수리해".
+
+### 수리 (안전·확실 4건)
+1. **XSS (HIGH)**: 파일 업로드 시 파일명(file.name)을 innerHTML/onclick에 무이스케이프 삽입(submission5+portal5=10파일). → 표시 이름 HTML 이스케이프(safeName) + 인라인 onclick 제거 후 addEventListener(클로저로 실 file.name 전달). 위험패턴 0, 변형A/B 코드 직접검증.
+2. **평문 DB비번 (CRITICAL)**: run-sql.js + setup-db.js 하드코딩(ValueLink2025!) → DATABASE_URL 환경변수화. 커밋파일에서 0건(git 이력 잔존은 별개·값 stale).
+3. **데드링크**: 고아 project-dashboard.html 내부 링크 3종 경로보정.
+
+### 보류 (위험·별도작업)
+- **RLS 범위(customers/projects)**: 작동 중인 회계사조회·프로젝트 흐름이 의존 가능 → 깨질 위험. 정밀분석 후 별도.
+- **마이페이지 더미(김철수·user@example.com)**: 해당 페이지에 Supabase 세션 훅 전무 → 계정정보 통째 정적. 제대로 고치려면 페이지별 인증·데이터 로딩 신규 wiring 필요(작동 페이지 깨질 위험) → 별도.
+
+### 생성/수정 파일
+- submissions/portals 10개 .html (XSS), run-sql.js, setup-db.js, core/project-dashboard.html
+
+---
+
 ## 2026-06-26 딜뉴스 일괄 수리 (자동수집 복구 + 노이즈 필터 + 백필) ✅
 
 ### 작업 상태: ✅ 완료 (PHASE 5단계, 테스트 140/140, DB 클린 복구)
