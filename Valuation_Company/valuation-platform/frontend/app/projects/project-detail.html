@@ -907,27 +907,27 @@
                     <div class="input-grid">
                         <div class="input-item">
                             <span class="label">회사명</span>
-                            <span class="value">삼성전자</span>
+                            <span class="value" id="pdCompany">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">사업자번호</span>
-                            <span class="value">124-81-00998</span>
+                            <span class="value" id="pdBizno">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">대표자</span>
-                            <span class="value">이재용</span>
+                            <span class="value" id="pdRep">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">설립일</span>
-                            <span class="value">1969.01.13</span>
+                            <span class="value" id="pdFounded">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">업종</span>
-                            <span class="value">전자제품 제조업</span>
+                            <span class="value" id="pdIndustry">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">임직원 수</span>
-                            <span class="value">267,937명</span>
+                            <span class="value" id="pdEmployees">—</span>
                         </div>
                     </div>
                 </div>
@@ -937,19 +937,19 @@
                     <div class="input-grid">
                         <div class="input-item">
                             <span class="label">매출액</span>
-                            <span class="value">302조원</span>
+                            <span class="value" id="pdRevenue">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">영업이익</span>
-                            <span class="value">36조원</span>
+                            <span class="value">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">총자산</span>
-                            <span class="value">448조원</span>
+                            <span class="value">—</span>
                         </div>
                         <div class="input-item">
                             <span class="label">발행주식수</span>
-                            <span class="value">5,969,782,550주</span>
+                            <span class="value">—</span>
                         </div>
                     </div>
                 </div>
@@ -1050,7 +1050,7 @@
 
         // URL에서 프로젝트 ID 가져오기
         const urlParams = new URLSearchParams(window.location.search);
-        const PROJECT_ID = urlParams.get('id') || 'SAMSU-2501191430-DC';
+        const PROJECT_ID = urlParams.get('id') || '';
 
         // 상수
         const MAX_OTHER_FILES = 5;
@@ -1065,10 +1065,7 @@
         const CONVERT_REQUIRED = ['.hwp'];
 
         // 상태
-        let otherFiles = [
-            { seq: 1, name: 'SAMSU-2501191430-DC_ETC1.pdf', desc: '핵심 기술 관련 특허등록증', size: 2500000 },
-            { seq: 2, name: 'SAMSU-2501191430-DC_ETC2.pdf', desc: '대형 고객사 장기 공급 계약서', size: 5000000 }
-        ];
+        let otherFiles = [];
         let pendingFile = null;
 
         // 드래그 앤 드롭
@@ -1309,6 +1306,15 @@
                     if (dateEl && project.target_date) dateEl.textContent = `📅 평가기준일: ${project.target_date}`;
                     const purpEl = document.getElementById('projPurpose');
                     if (purpEl && project.valuation_purpose) purpEl.textContent = `🎯 목적: ${project.valuation_purpose}`;
+                    // 고객 기본정보 — projects 컬럼 바인딩 (값 없으면 '—' 유지)
+                    const setV = function(id, v){ var e=document.getElementById(id); if(e && v!=null && v!=='') e.textContent=v; };
+                    setV('pdCompany', project.company_name_kr);
+                    setV('pdBizno', project.business_registration_number);
+                    setV('pdRep', project.representative_name);
+                    setV('pdFounded', project.founded_date);
+                    setV('pdIndustry', project.industry);
+                    setV('pdEmployees', project.employees ? project.employees.toLocaleString() + '명' : null);
+                    setV('pdRevenue', project.revenue ? Math.round(project.revenue / 100000000).toLocaleString() + '억원' : null);
 
                     // 평가 결과 정보가 있으면 업데이트
                     const result = project.valuation_results?.[0];
