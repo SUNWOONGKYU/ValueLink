@@ -35,8 +35,10 @@
 - 번호 재정렬 421건, 노이즈 잔존 0
 - 라이브 검증: deal.html에서 4건 미노출 + 정상 딜(캐노피·안다르) 유지 확인
 
-### PO 승인 대기 (파괴적 작업 — 미실행)
-1. **untracked 실험/임시 파일 물리 삭제**: 현재는 .gitignore로 숨김만. 실제 삭제 원하면 승인 필요
+### 임시·구버전 파일 물리 삭제 완료 (PO 승인 "진행", 2026-06-28)
+- 삭제: 루트 임시 5개(browser_test_tmp 등), tests/screenshots, tests/sim/screenshots(20M), test-results, 딜뉴스 구버전 scrape_*.py(15)·debug_*.py(3)·thevc 덤프·셀레니움로그
+- **보존(삭제 제외)**: collect_naver_only.py(운영), scheduler.log(운영로그), 루트 sessions/·tests/sessions/(세션 데이터 195+files), 백업 JSON
+- 와일드카드가 운영 파일 미포함 사전 확인 후 실행, 삭제 후 보존 대상 전수 검증
 
 ### 생성/수정 파일
 - Valuation_Company/scripts/investment-news-scraper/collect_naver_only.py (필터)
