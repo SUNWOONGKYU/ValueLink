@@ -116,3 +116,26 @@ P1_사업계획/Patent/
 # SAL Grid: data 폴더는 method 안에만 허용
 # method/csv/data/ 또는 method/database/data/ 안에서만 사용
 S0_Project-SAL-Grid_생성/data/
+
+# audit trail (do not commit - prevents post-commit recursion)
+_audit/
+
+# ── 06-28 잔여물 정리: 테스트 생성물·임시 스크립트 (재현 가능, 추적 불필요) ──
+# 스크린샷/세션/결과물 (테스트 실행 시 재생성됨)
+tests/screenshots/
+tests/sessions/
+tests/sim/screenshots/
+test-results/
+sessions/
+# 일회성 임시 검증 스크립트
+browser_test_tmp.js
+browser_test_tmp.ps1
+prod_verify_tmp.js
+live_journey.mjs
+test-page.html
+# 딜뉴스 구버전 스크래퍼·디버그·덤프 (현재는 collect_naver_only.py만 사용)
+Valuation_Company/scripts/investment-news-scraper/scrape_*.py
+Valuation_Company/scripts/investment-news-scraper/debug_*.py
+Valuation_Company/scripts/investment-news-scraper/*.log
+Valuation_Company/scripts/investment-news-scraper/thevc_page_source.html
+Valuation_Company/scripts/investment-news-scraper/scraping_selenium_log.txt
