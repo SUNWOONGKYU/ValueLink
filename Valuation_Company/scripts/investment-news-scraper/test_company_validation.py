@@ -253,6 +253,18 @@ AMOUNT_CASES = [
     ("100억원 시리즈B 투자",            100,   '억원+원? 정상(달러 부정선읽기 무영향)'),
 ]
 
+# REASON: extract_reason() — 투자이유(자금 사용 목적) 추출 검증
+# 원칙: 목적 명확 시 추출, 불확실 시 None (틀린 사유 표시 방지)
+REASON_CASES = [
+    ("해외 진출을 위해 100억 시리즈A 유치",   '해외 진출',  '목적 키워드'),
+    ("R&D 자금 50억 확보",                  'R&D',       '목적 키워드'),
+    ("인재 채용과 마케팅 강화를 위해 투자",     '인재 채용',  '키워드 우선순위'),
+    ("시리즈B 300억 투자 유치 성공",          None,        '목적 불명 → None'),
+    ("안다르, 베인캐피탈 105억 펀드 업고 日 정조준", None,    '명확목적 없음 → None'),
+    ("경남 양산시 소재 스타트업 50억 유치",     None,        "'양산시'(지명) 오탐 방지 — 감사 8a4101ed"),
+    ("양산 체제 구축 위해 200억 유치",         '양산',      "대량생산 '양산'은 인정"),
+]
+
 # ──────────────────────────────────────────────────────────
 def run():
     total_fail = 0
@@ -360,6 +372,24 @@ def run():
             am_fail.append((text, result, expected))
     total_fail += len(am_fail)
 
+    # 7) REASON
+    print()
+    print("=" * 65)
+    print(f"[ REASON {len(REASON_CASES)}개 — extract_reason() 투자이유 추출 검증 ]")
+    print("=" * 65)
+    rs_ok = 0
+    rs_fail = []
+    for text, expected, note in REASON_CASES:
+        result = cn.extract_reason(text)
+        ok = (result == expected)
+        sym = "✓" if ok else "✗"
+        print(f"  {sym} [{result}=={expected}] '{text}'  ({note})")
+        if ok:
+            rs_ok += 1
+        else:
+            rs_fail.append((text, result, expected))
+    total_fail += len(rs_fail)
+
     # 요약
     print()
     print("=" * 65)
@@ -370,6 +400,7 @@ def run():
     print(f"  INV_REJECT:   {ir_ok}/{len(INV_REJECT)}  {'✓ ALL OK' if not ir_fail else '✗ FAIL: ' + str(ir_fail)}")
     print(f"  INV_PASS:     {ip_ok}/{len(INV_PASS)}  {'✓ ALL OK' if not ip_fail else '✗ FAIL: ' + str(ip_fail)}")
     print(f"  AMOUNT:       {am_ok}/{len(AMOUNT_CASES)}  {'✓ ALL OK' if not am_fail else '✗ FAIL: ' + str(am_fail)}")
+    print(f"  REASON:       {rs_ok}/{len(REASON_CASES)}  {'✓ ALL OK' if not rs_fail else '✗ FAIL: ' + str(rs_fail)}")
     print()
     if total_fail == 0:
         print("  ALL REQUIRED TESTS PASSED")

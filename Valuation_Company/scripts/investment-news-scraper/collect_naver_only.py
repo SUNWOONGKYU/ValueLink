@@ -162,6 +162,11 @@ def extract_reason(text):
         return None
     # 1) 명확한 목적 키워드 직접 포함 (가장 신뢰도 높음)
     for kw in PURPOSE_KEYWORDS:
+        if kw == '양산':
+            # '양산시'(지명) 오탐 방지 — 대량생산 '양산'만 인정 (감사 8a4101ed 지적①)
+            if re.search(r'양산(?!\s*시)', text):
+                return '양산'
+            continue
         if kw in text:
             return kw
     # 2) 'OO 위해/위한' 명사구 (투자/유치/금액 단어가 섞이면 제외)
