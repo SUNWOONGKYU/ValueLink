@@ -145,6 +145,33 @@ def extract_location(text):
             return loc
     return None
 
+# 투자금(자금)의 사용 목적 = 투자이유. 명확한 목적 구절만 보수적으로 추출(불확실하면 None).
+PURPOSE_KEYWORDS = [
+    '해외 진출', '글로벌 진출', '글로벌 확장', '해외 시장', '시장 진출', '시장 확대',
+    '연구개발', 'R&D', '기술 개발', '기술 고도화', '제품 개발', '신제품 개발', '신제품 출시',
+    '서비스 고도화', '플랫폼 고도화', '서비스 확장', '사업 확장', '사업 확대',
+    '생산 확대', '생산시설', '생산 시설', '공장 증설', '설비 투자', '시설 투자',
+    '인재 채용', '인력 채용', '인력 충원', '채용 확대',
+    '마케팅 강화', '마케팅 확대', '브랜드 강화',
+    '상용화', '양산', '임상', '임상시험', '인수합병', 'M&A',
+]
+# 'OO을 위해/위한' 명사구 — 단 투자/금액 관련 단어가 끼면 버림(노이즈)
+_PURPOSE_RE = re.compile(r'([가-힣A-Za-z0-9·\s]{3,30}?)(?:을|를|에|으로)?\s*위(?:해|한)\b')
+def extract_reason(text):
+    if not text:
+        return None
+    # 1) 명확한 목적 키워드 직접 포함 (가장 신뢰도 높음)
+    for kw in PURPOSE_KEYWORDS:
+        if kw in text:
+            return kw
+    # 2) 'OO 위해/위한' 명사구 (투자/유치/금액 단어가 섞이면 제외)
+    m = _PURPOSE_RE.search(text)
+    if m:
+        cand = m.group(1).strip(' ,·')
+        if 3 <= len(cand) <= 30 and not re.search(r'투자|유치|라운드|펀딩|조달|억|조|달러|펀드|확보', cand):
+            return cand + ' 위해'
+    return None
+
 def extract_company(title):
     t = title.strip()
     # 선행 태그/꼭지 제거: [단독], 현장 줌인] 처럼 ']'로 끝나는 선행 꼭지
@@ -454,6 +481,7 @@ def main():
             'investors': extract_investors(text),
             'industry': extract_industry(text),
             'location': extract_location(text),
+            'investment_reason': extract_reason(text),
             'news_title': title, 'news_url': link, 'news_date': d,
             'site_name': site_from_url(link),
         }
@@ -514,7 +542,7 @@ def main():
         if c['news_url'] in existing_urls or c['company_name'] in existing_companies:
             continue
         rec = {k: c[k] for k in ('company_name', 'amount', 'stage', 'investors', 'industry',
-                                 'location', 'news_title', 'news_url', 'news_date', 'site_name')
+                                 'location', 'investment_reason', 'news_title', 'news_url', 'news_date', 'site_name')
                if c.get(k) is not None}
         if c.get('industry'):
             from_cat = c['industry']
