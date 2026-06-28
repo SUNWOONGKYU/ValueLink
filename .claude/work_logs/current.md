@@ -29,9 +29,14 @@
 - 단위테스트 4건 영구등록 → 75/75 PASS (REGRESSION 75 실회사 무손실)
 - 커밋 c07a123
 
+### DB 노이즈 4건 삭제 완료 (PO 승인 후, 2026-06-28)
+- 백업: inbox/deals_noise_backup_20260628.json (4건, 복구 가능)
+- 삭제: id 1529(복부암)/1530(로봇 스타트업에만)/1531(한국 기공사 실력)/1533(뉴욕 메츠), deals 425→421
+- 번호 재정렬 421건, 노이즈 잔존 0
+- 라이브 검증: deal.html에서 4건 미노출 + 정상 딜(캐노피·안다르) 유지 확인
+
 ### PO 승인 대기 (파괴적 작업 — 미실행)
-1. **DB deals 노이즈 4건 삭제**: 필터로 향후 유입은 차단됨. 기존 화면 노출 행 제거는 DELETE라 승인 필요(백업 후 실행 권장)
-2. **untracked 실험/임시 파일 물리 삭제**: 현재는 .gitignore로 숨김만. 실제 삭제 원하면 승인 필요
+1. **untracked 실험/임시 파일 물리 삭제**: 현재는 .gitignore로 숨김만. 실제 삭제 원하면 승인 필요
 
 ### 생성/수정 파일
 - Valuation_Company/scripts/investment-news-scraper/collect_naver_only.py (필터)
