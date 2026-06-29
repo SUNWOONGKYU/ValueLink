@@ -2,6 +2,23 @@
 
 ---
 
+## 2026-06-29 평가→Link 공개등록 실고객 라이브 E2E (PO 지시·승인) ✅전구간 통과/정리완료
+
+### 작업 상태: ✅ 라이브 끝까지 검증 + 테스트 아티팩트 전량 정리
+
+### 절차 (PO 승인: 생성→정리까지)
+1. 서비스권한으로 임시 고객계정 생성(email_confirm=true, role=customer): e2e_*@valuelink-e2e.test
+2. 라이브 UI(valuelink-platform.vercel.app/app): login.html 로그인 → report-auto.html
+   - 역할게이트: 고객이라 등록버튼 활성(disabled=false) 확인
+   - 회사데이터 편집(ZZ_E2E테스트_삭제예정) → "🔗 Link 공개등록" 클릭 → 공개동의 confirm → "✅ 등록완료 725.9억원" → link.html 이동
+3. 검증: DB 행 id 68 user_id=임시고객(소유자 일치 ✅) / 익명 공개 REST 노출 ✅ / report-summary 공개 상세 정상 렌더(title 일치, 콘솔에러 0) ✅
+4. 정리(삭제 승인됨): valuation_reports id68 + public.users + auth 사용자 삭제(200). 사후검증 잔존 0/공개조회 빈배열/users 0. 임시 스크립트·자격파일 삭제
+
+### 결론
+- 평가→로그인 고객 본인 공개등록 전 구간(권한·등록·공개노출·상세) 라이브 정상. RLS·트리거·역할게이트 실계정으로 최종 확인. 프로덕션 무잔재
+
+---
+
 ## 2026-06-29 등록버튼 역할 사전게이트 (보안검토 Low #6) ✅완료/검증통과
 
 ### 작업 상태: ✅ 구현 + tester 3/3 PASS
