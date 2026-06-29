@@ -265,6 +265,19 @@ REASON_CASES = [
     ("양산 체제 구축 위해 200억 유치",         '양산',      "대량생산 '양산'은 인정"),
 ]
 
+# FOREIGN: _is_foreign_company() — 국내 기업 한정 (PO 방침 2026-06-30)
+# 원칙: '회사명 바로 앞'이 '○○국 …기업/스타트업'일 때만 해외. 해외 투자자·해외확장은 국내 유지.
+FOREIGN_CASES = [
+    ("빅무브벤처스, 인도 핀테크 스타트업 어피닛에 투자", '어피닛',        True,  '인도 스타트업=해외'),
+    ("독일 로봇 AI 스타트업 세리액트, 1억1000만달러 유치", '세리액트',     True,  '독일 스타트업=해외'),
+    ("美 스타트업 노바, 500억 투자 유치",                '노바',          True,  '美 스타트업=해외'),
+    ("구하다 '케이글로잉', 싱가포르서 20억 투자 유치",     '구하다',        False, '국내사 해외진출=유지'),
+    ("내일테크놀로지, 일본 글로벌 소재기업 덴카 투자 유치", '내일테크놀로지', False, '국내사가 일본기업서 투자=유지'),
+    ("하이퍼칼, 美 VC가 반한 K-핀테크 시드투자 유치",     '하이퍼칼',      False, '해외 투자자≠해외 기업=유지'),
+    ("에니아이, 1900만 달러 누적 투자 달성",             '에니아이',      False, '국내사=유지'),
+    ("스패너, 한투파·KB인베에 256억 투자 유치",          '스패너',        False, '국내사=유지'),
+]
+
 # ──────────────────────────────────────────────────────────
 def run():
     total_fail = 0
@@ -390,6 +403,24 @@ def run():
             rs_fail.append((text, result, expected))
     total_fail += len(rs_fail)
 
+    # 8) FOREIGN
+    print()
+    print("=" * 65)
+    print(f"[ FOREIGN {len(FOREIGN_CASES)}개 — _is_foreign_company() 국내 한정 검증 ]")
+    print("=" * 65)
+    fg_ok = 0
+    fg_fail = []
+    for title, company, expected, note in FOREIGN_CASES:
+        result = cn._is_foreign_company(title, company)
+        ok = (result == expected)
+        sym = "✓" if ok else "✗"
+        print(f"  {sym} [{result}=={expected}] '{company}'  ({note})")
+        if ok:
+            fg_ok += 1
+        else:
+            fg_fail.append((company, result, expected))
+    total_fail += len(fg_fail)
+
     # 요약
     print()
     print("=" * 65)
@@ -401,6 +432,7 @@ def run():
     print(f"  INV_PASS:     {ip_ok}/{len(INV_PASS)}  {'✓ ALL OK' if not ip_fail else '✗ FAIL: ' + str(ip_fail)}")
     print(f"  AMOUNT:       {am_ok}/{len(AMOUNT_CASES)}  {'✓ ALL OK' if not am_fail else '✗ FAIL: ' + str(am_fail)}")
     print(f"  REASON:       {rs_ok}/{len(REASON_CASES)}  {'✓ ALL OK' if not rs_fail else '✗ FAIL: ' + str(rs_fail)}")
+    print(f"  FOREIGN:      {fg_ok}/{len(FOREIGN_CASES)}  {'✓ ALL OK' if not fg_fail else '✗ FAIL: ' + str(fg_fail)}")
     print()
     if total_fail == 0:
         print("  ALL REQUIRED TESTS PASSED")

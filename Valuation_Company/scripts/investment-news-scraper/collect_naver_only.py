@@ -200,6 +200,30 @@ def extract_company(title):
     cand = cand.strip("'\"‘’“”()[]…· ")
     return cand if _valid_company(cand) else None
 
+
+# 국내 기업 한정 — 해외 기업이 투자받은 기사 배제 (PO 방침 2026-06-30)
+# best-effort: '회사명 바로 앞'이 '○○국 … 스타트업/기업'일 때만 해외로 판정.
+#   → 주체(투자받는 회사)가 해외인 경우만 배제. '美 VC 투자'(해외 투자자)·'美 진출'(국내사
+#     해외확장)은 회사명 앞 수식이 아니므로 통과 → 국내사 오제거 방지.
+#   'VC'는 회사유형이 아니라 투자자 표현이라 제외.
+_FOREIGN_NATIONS = ('인도', '베트남', '독일', '프랑스', '이스라엘', '싱가포르', '인도네시아',
+                    '네덜란드', '스페인', '이탈리아', '캐나다', '호주', '대만', '홍콩', '태국',
+                    '말레이시아', '필리핀', '멕시코', '브라질', '스위스', '스웨덴', '핀란드')
+_FOREIGN_CO_RE = re.compile(
+    r'(?:' + '|'.join(_FOREIGN_NATIONS) + r')[^,\.]{0,12}?(?:스타트업|기업|업체|회사|핀테크|테크)\s*$')
+_FOREIGN_ABBR_RE = re.compile(r'(?:美|日|中|英|獨|佛)\s*\S{0,8}?(?:스타트업|기업|업체|핀테크)\s*$')
+
+def _is_foreign_company(title, company):
+    """회사명 바로 앞 수식이 '○○국 …기업/스타트업'이면 해외 기업으로 판정."""
+    if not title or not company:
+        return False
+    idx = title.find(company)
+    if idx <= 0:               # 회사명이 제목 맨 앞이거나 못 찾으면 = 주체가 국내(또는 불명) → 통과
+        return False
+    pre = title[:idx].rstrip(" '\"‘’“”]")      # 회사명 직전까지 (따옴표 등 제거)
+    tail = pre[-25:]
+    return bool(_FOREIGN_CO_RE.search(tail) or _FOREIGN_ABBR_RE.search(tail))
+
 # 일반명사/기관/기사용어 — 회사명 아님 (완전 일치만. 부분 포함은 BAD_TOKENS·NON_COMPANY_KEYWORDS로)
 NOISE_COMPANY = {
     'AI', '서울시', '정부', '삼성', '쿠팡', '스페이스X', '미국', '국내', '스타트업', '벤처',
@@ -479,6 +503,13 @@ def main():
         company = extract_company(title)
         if not company:
             return d
+        # 국내 기업 한정 — 해외 기업이 투자받은 기사 배제 (PO 방침 2026-06-30)
+        if _is_foreign_company(title, company):
+            return d
+        # 투자이유 필수 — 못 채우면 목록에 넣지 않음 (PO 방침 2026-06-30)
+        reason = extract_reason(text)
+        if not reason:
+            return d
         info = {
             'company_name': company,
             'amount': extract_amount(text),
@@ -486,7 +517,7 @@ def main():
             'investors': extract_investors(text),
             'industry': extract_industry(text),
             'location': extract_location(text),
-            'investment_reason': extract_reason(text),
+            'investment_reason': reason,
             'news_title': title, 'news_url': link, 'news_date': d,
             'site_name': site_from_url(link),
         }
