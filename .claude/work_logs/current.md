@@ -2,6 +2,32 @@
 
 ---
 
+## 2026-06-29 평가↔Link 공개 등록 프론트 연동 + 저장형 XSS 일괄 수정 ✅완료/검증통과
+
+### 작업 상태: ✅ 구현 + 검증(tester 2회·security 1회) 완료
+
+### 1) 평가보고서 → Link 공개 등록 (report-auto.html)
+- 툴바에 "🔗 Link에 공개 등록" 버튼 추가 (옵트인 — 자동 노출 아님)
+- registerToLink(): 샘플 가드(실데이터 없으면 차단) → 로그인 확인(getUser) → 공개 동의 confirm → 메서드별 기업가치(원) 산출 → valuation_reports upsert(user_id=auth.uid())
+- 메서드 매핑: report-auto(dcf/tax/intrinsic/relative/asset) → DB(dcf/inheritance_tax/intrinsic/relative/asset)
+- 중복 방지: user_id+company_name+method 동일하면 UPDATE, 아니면 INSERT
+- 스팸 1차 가드: 본인 등록 20건 상한(프론트). 견고한 차단은 DB트리거=PO 승인 필요(미적용)
+- 검증(tester): 버튼 렌더/샘플가드 차단/비로그인 게이트 3건 PASS. 풀 INSERT e2e는 공개 프로덕션 오염 방지로 의도적 미실행
+
+### 2) 저장형 XSS 일괄 수정 (security 에이전트 발견 Critical 2 + High 1)
+- **원인**: link.html·report-summary.html이 valuation_reports 필드를 이스케이프 없이 innerHTML 삽입. 종전 admin 전용이라 신뢰됐으나, (1)로 고객 임의입력이 공개 페이지에 렌더되며 저장형 XSS 경로 개통
+- **link.html**: escapeHtml() 추가, company_name/ceo_name/industry/founded_year/location/value/methodName 전부 이스케이프
+- **report-summary.html**: escapeHtml() + safeUrl() 추가, 헤더/요약/개요/방법론/key_metrics/결과/결론 전 필드 이스케이프, report_url은 http(s)만 허용(javascript: 차단)+rel=noopener
+- 출력 인코딩이라 admin·API 등 모든 입력 경로 동시 방어
+- 검증(tester, 스텁 주입): `<img onerror>`/`<script>`/`<svg onload>`/`javascript:` href 6/6 무력화 PASS (window.__xss 미설정, 텍스트로만 렌더)
+- user_id 위조는 RLS WITH CHECK가 차단(안전 확인)
+
+### 잔여 권고 (PO 결정)
+- 스팸 견고차단: valuation_reports user_id당 등록수 제한 DB 트리거/정책(DDL=승인 필요)
+- 검증 스크립트: tests/sim/report-link-register-verify.js, xss-fix-verify.js
+
+---
+
 ## 2026-06-29 RLS PAT 대기 건 적용 — valuation_reports 고객 본인 등록 정책 ✅완료/검증통과
 
 ### 작업 상태: ✅ DDL 적용 + 실동작 검증 완료

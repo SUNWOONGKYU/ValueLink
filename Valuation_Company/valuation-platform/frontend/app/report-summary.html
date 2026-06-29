@@ -390,6 +390,18 @@
             }
         }
 
+        // HTML 이스케이프 (저장형 XSS 방지 — 공개 보고서는 사용자 등록 데이터 포함)
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+        // http(s) 만 허용 (javascript: 등 스킴 주입 차단)
+        function safeUrl(u) {
+            const v = String(u || '').trim();
+            return /^https?:\/\//i.test(v) ? v : '';
+        }
+
         function displayReport(report) {
             // 로딩 숨김
             document.getElementById('loadingState').style.display = 'none';
@@ -397,48 +409,49 @@
 
             // 기업 헤더
             const companyHeader = document.getElementById('companyHeader');
+            const reportUrl = safeUrl(report.report_url);
             companyHeader.innerHTML = `
-                <h1 class="company-title">${report.company_name}</h1>
+                <h1 class="company-title">${escapeHtml(report.company_name)}</h1>
                 <div class="company-meta">
                     ${report.industry ? `
                     <div class="meta-item">
                         <span class="meta-label">업종</span>
-                        <span class="meta-value">${report.industry}</span>
+                        <span class="meta-value">${escapeHtml(report.industry)}</span>
                     </div>
                     ` : ''}
                     ${report.ceo_name ? `
                     <div class="meta-item">
                         <span class="meta-label">대표자</span>
-                        <span class="meta-value">${report.ceo_name}</span>
+                        <span class="meta-value">${escapeHtml(report.ceo_name)}</span>
                     </div>
                     ` : ''}
                     ${report.location ? `
                     <div class="meta-item">
                         <span class="meta-label">지역</span>
-                        <span class="meta-value">${report.location}</span>
+                        <span class="meta-value">${escapeHtml(report.location)}</span>
                     </div>
                     ` : ''}
                     <div class="meta-item">
                         <span class="meta-label">평가방법</span>
-                        <span class="meta-value">${METHOD_NAMES[report.valuation_method] || report.valuation_method}</span>
+                        <span class="meta-value">${escapeHtml(METHOD_NAMES[report.valuation_method] || report.valuation_method)}</span>
                     </div>
                     ${report.valuation_date ? `
                     <div class="meta-item">
                         <span class="meta-label">평가기준일</span>
-                        <span class="meta-value">${report.valuation_date}</span>
+                        <span class="meta-value">${escapeHtml(report.valuation_date)}</span>
                     </div>
                     ` : ''}
                 </div>
                 <div class="valuation-badge">
-                    💰 ${report.valuation_amount_display || formatCurrency(report.valuation_amount_krw)}
+                    💰 ${escapeHtml(report.valuation_amount_display || formatCurrency(report.valuation_amount_krw))}
                 </div>
                 ${report.tags && report.tags.length > 0 ? `
                 <div class="tags">
-                    ${report.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                    ${report.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
                 </div>
                 ` : ''}
-                ${report.report_url ? `
-                <a href="${report.report_url}" target="_blank" class="external-link">
+                ${reportUrl ? `
+                <a href="${escapeHtml(reportUrl)}" target="_blank" rel="noopener noreferrer" class="external-link">
                     📄 원본 공시 보기 →
                 </a>
                 ` : ''}
@@ -449,7 +462,7 @@
                 const summary = document.getElementById('executiveSummary');
                 summary.innerHTML = `
                     <h2 class="section-title"><span class="section-title-icon">📋</span>요약</h2>
-                    <div class="section-content">${report.executive_summary}</div>
+                    <div class="section-content">${escapeHtml(report.executive_summary)}</div>
                 `;
             }
 
@@ -458,7 +471,7 @@
                 const overview = document.getElementById('evaluationOverview');
                 overview.innerHTML = `
                     <h2 class="section-title"><span class="section-title-icon">🎯</span>평가 개요</h2>
-                    <div class="section-content">${report.evaluation_overview}</div>
+                    <div class="section-content">${escapeHtml(report.evaluation_overview)}</div>
                 `;
             }
 
@@ -467,13 +480,13 @@
                 const methodology = document.getElementById('methodology');
                 methodology.innerHTML = `
                     <h2 class="section-title"><span class="section-title-icon">🔬</span>평가 방법론 및 가정</h2>
-                    <div class="section-content">${report.methodology}</div>
+                    <div class="section-content">${escapeHtml(report.methodology)}</div>
                     ${report.key_metrics ? `
                     <div class="key-metrics">
                         ${Object.entries(report.key_metrics).map(([key, value]) => `
                             <div class="metric-card">
-                                <div class="metric-label">${key}</div>
-                                <div class="metric-value">${value}</div>
+                                <div class="metric-label">${escapeHtml(key)}</div>
+                                <div class="metric-value">${escapeHtml(value)}</div>
                             </div>
                         `).join('')}
                     </div>
@@ -486,7 +499,7 @@
                 const results = document.getElementById('valuationResults');
                 results.innerHTML = `
                     <h2 class="section-title"><span class="section-title-icon">💵</span>평가 결과</h2>
-                    <div class="section-content">${report.valuation_results}</div>
+                    <div class="section-content">${escapeHtml(report.valuation_results)}</div>
                 `;
             }
 
@@ -495,7 +508,7 @@
                 const conclusion = document.getElementById('conclusion');
                 conclusion.innerHTML = `
                     <h2 class="section-title"><span class="section-title-icon">✅</span>결론</h2>
-                    <div class="section-content">${report.conclusion}</div>
+                    <div class="section-content">${escapeHtml(report.conclusion)}</div>
                 `;
             }
         }

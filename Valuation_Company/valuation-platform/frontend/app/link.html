@@ -847,6 +847,13 @@
             return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
         }
 
+        // HTML 이스케이프 (저장형 XSS 방지 — 공개 목록은 사용자 등록 데이터 포함)
+        function escapeHtml(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
+
         // 기업 목록 로드
         async function loadCompanies() {
             const tbody = document.getElementById('company-tbody');
@@ -880,13 +887,13 @@
                     return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><a href="report-summary.html?company=${encodedName}" class="company-link">${company.company_name}</a></td>
-                            <td>${company.ceo_name || '-'}</td>
-                            <td>${company.industry || '-'}</td>
-                            <td>${company.founded_year || '-'}</td>
-                            <td>${company.location || '-'}</td>
-                            <td>${value}</td>
-                            <td>${methodName}</td>
+                            <td><a href="report-summary.html?company=${encodedName}" class="company-link">${escapeHtml(company.company_name)}</a></td>
+                            <td>${escapeHtml(company.ceo_name || '-')}</td>
+                            <td>${escapeHtml(company.industry || '-')}</td>
+                            <td>${escapeHtml(company.founded_year || '-')}</td>
+                            <td>${escapeHtml(company.location || '-')}</td>
+                            <td>${escapeHtml(value)}</td>
+                            <td>${escapeHtml(methodName)}</td>
                             <td>${formatDate(company.valuation_date)}</td>
                             <td>
                                 <a href="inquiry-invest.html?name=${encodedName}&value=${encodedValue}&method=${encodedMethod}" class="need-tag invest">투자</a>

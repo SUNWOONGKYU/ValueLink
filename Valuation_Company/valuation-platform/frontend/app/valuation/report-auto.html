@@ -68,6 +68,7 @@
     .pfoot{display:flex!important;position:fixed;bottom:0;left:0;right:0;justify-content:space-between;font-size:9.5px;color:#9aa0a6;border-top:1px solid #e0e0e0;padding:4px 14px;background:#fff;}.pfoot .c{font-style:italic;}
     .cover,.opinion{page-break-after:always;}@page{margin:14mm;}section{page-break-inside:avoid;}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="toolbar">
@@ -77,6 +78,7 @@
   </select></label>
   <button id="editBtn" onclick="toggleEdit()" style="background:#fff;border:1px solid #E5E7EB;">📝 회사 데이터 편집</button>
   <button class="print" onclick="window.print()">🖨 인쇄 / PDF 저장</button>
+  <button id="regBtn" onclick="registerToLink()" style="background:#166534;color:#fff;border:none;font-weight:600;">🔗 Link에 공개 등록</button>
 </div>
 <div id="editPanel" style="display:none;max-width:820px;margin:16px auto;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:20px 24px;font-size:13px;">
   <h3 style="font-size:16px;margin-bottom:4px;">회사 데이터 입력 <span style="font-size:12px;color:#6B7280;font-weight:400">— 실제 회사 정보를 넣으면 보고서가 그 데이터로 작성·저장됩니다</span></h3>
@@ -421,6 +423,8 @@ function render(method){
  if(hasEditedCo)liveBadge=(liveBadge||'')+'<span class="badge" style="background:#1D4ED8">회사 데이터 반영</span>';
  /* isSample: 편집 패널로 회사·재무 데이터를 입력하지 않은 경우 경고 표시 */
  s._isSample=!hasEditedCo;
+ /* Link 공개 등록용 컨텍스트 저장 (실데이터 = 편집 or 계산기 입력) */
+ __reg={method,s,hasReal:(hasEditedCo||!!live)};
  const c=GEN[method](s);
  const toc=SEC.map((t,i)=>`<li><b>${ROMAN[i]}.</b>${t[1]}</li>`).join('');
  const secs=SEC.map((t,i)=>`<section><div class="sh"><div class="n">${ROMAN[i]}</div><h2>${t[1]}</h2></div>${c[t[0]]}</section>`).join('');
@@ -439,6 +443,99 @@ function render(method){
   <div class="body"><div class="toc"><h3>목 차</h3><ul>${toc}</ul></div>${secs}</div>`;
  window.scrollTo(0,0);
 }
+// ===== Link 공개 등록 (로그인 고객 → valuation_reports) =====
+let __reg=null;
+const SUPABASE_URL='https://arxrfetgaitkgiiqabap.supabase.co';
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFyeHJmZXRnYWl0a2dpaXFhYmFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg3ODk1OTgsImV4cCI6MjA4NDM2NTU5OH0.BTnuv0sYr2MGe1c-gk8PWCviwkFyIiymfKp5Jhzwbo0';
+let __sb=null;
+function sb(){if(!__sb&&window.supabase)__sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);return __sb;}
+// report-auto 메서드 코드 → DB(valuation_reports.valuation_method) 코드
+const DB_METHOD={dcf:'dcf',tax:'inheritance_tax',intrinsic:'intrinsic',relative:'relative',asset:'asset'};
+// 메서드별 최종 기업가치(원) 산출
+function valuationKRW(method,inp){
+ try{
+  if(method==='dcf')return Math.round(computeDCF(inp).eq);
+  if(method==='tax')return Math.round(computeTax(inp).fin*inp.shares);
+  if(method==='intrinsic')return Math.round(computeIntrinsic(inp).intrinsic*inp.shares);
+  if(method==='relative')return Math.round(computeRelative(inp).disc*inp.shares);
+  if(method==='asset')return Math.round(computeAsset(inp).adj*inp.shares);
+ }catch(e){return null;}
+ return null;
+}
+const onlyYear=s=>{const m=(s||'').match(/(19|20)\d{2}/);return m?m[0]:(s||null);};
+
+async function registerToLink(){
+ const btn=document.getElementById('regBtn');
+ const r=__reg;
+ if(!r){alert('보고서를 먼저 불러와 주세요.');return;}
+ // 1) 샘플(템플릿) 가드 — 실제 회사 데이터 없으면 등록 차단
+ if(!r.hasReal){
+  alert('예시(템플릿) 데이터는 공개 등록할 수 없습니다.\n\n상단 "📝 회사 데이터 편집" 또는 평가 계산기에서 실제 회사 정보를 입력한 뒤 등록해 주세요.');
+  return;
+ }
+ const client=sb();
+ if(!client){alert('네트워크 오류로 등록 모듈을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.');return;}
+ // 2) 로그인 확인 (RLS: 로그인 고객 본인만 등록 가능)
+ const {data:{user}}=await client.auth.getUser();
+ if(!user){
+  if(confirm('Link 공개 등록은 로그인한 고객만 이용할 수 있습니다.\n로그인 페이지로 이동할까요?'))
+   location.href='../login.html';
+  return;
+ }
+ // 스팸/대량 등록 1차 가드 (본인 등록 총건수 상한 — 견고한 차단은 DB측 별도)
+ try{
+  const {count}=await client.from('valuation_reports').select('id',{count:'exact',head:true}).eq('user_id',user.id);
+  if(typeof count==='number'&&count>=20){
+   alert('등록 가능한 회사 수(20건)를 초과했습니다.\n기존 등록을 정리한 뒤 다시 시도해 주세요.');
+   return;
+  }
+ }catch(_){/* 카운트 실패 시 등록은 계속 — RLS가 최종 권한 통제 */}
+ const s=r.s, co=s.co, method=r.method;
+ const amount=valuationKRW(method,s.inp);
+ if(!amount||amount<=0){alert('평가액을 계산할 수 없습니다. 입력값을 확인해 주세요.');return;}
+ const display=eok(amount); // "163.0억원" 형식
+ // 3) 공개 동의
+ if(!confirm(`다음 내용을 공개 Link 페이지에 등록합니다. (투자·제휴 대상으로 노출)\n\n· 회사명: ${co.name}\n· 평가방법: ${s.full.split(' ')[0]}\n· 평가액: ${display}\n\n공개에 동의하십니까?`))
+  return;
+ btn.disabled=true; const orig=btn.textContent; btn.textContent='등록 중…';
+ try{
+  const row={
+   company_name:co.name,
+   industry:co.industry||null,
+   ceo_name:co.ceo||null,
+   founded_year:onlyYear(co.founded),
+   location:co.addr||null,
+   employee_count:co.emp||null,
+   valuation_method:DB_METHOD[method]||method,
+   valuation_amount_krw:amount,
+   valuation_amount_display:display,
+   valuation_date:new Date().toISOString().slice(0,10),
+   evaluator:'선명회계법인',
+   executive_summary:(co.summary||'').slice(0,2000),
+   user_id:user.id,
+   updated_at:new Date().toISOString()
+  };
+  // 4) 본인이 같은 회사·방법으로 이미 등록했으면 UPDATE, 아니면 INSERT (중복 방지)
+  const {data:existing}=await client.from('valuation_reports')
+   .select('id').eq('user_id',user.id).eq('company_name',co.name)
+   .eq('valuation_method',row.valuation_method).limit(1);
+  let error;
+  if(existing&&existing.length){
+   ({error}=await client.from('valuation_reports').update(row).eq('id',existing[0].id));
+  }else{
+   ({error}=await client.from('valuation_reports').insert(row));
+  }
+  if(error)throw error;
+  if(confirm(`✅ 등록 완료!\n\n${co.name} (${display})이(가) Link 페이지에 공개되었습니다.\n\nLink 페이지로 이동할까요?`))
+   location.href='../link.html';
+ }catch(e){
+  console.error('Link 등록 실패:',e);
+  alert('등록에 실패했습니다.\n\n사유: '+(e.message||e)+'\n\n(로그인 계정이 고객 권한인지 확인해 주세요.)');
+ }finally{
+  btn.disabled=false; btn.textContent=orig;
+ }
+}
+
 const params=new URLSearchParams(location.search);
 const initMethod=(params.get('method')&&SAMPLE[params.get('method')])?params.get('method'):'dcf';
 document.getElementById('methodSel').value=initMethod;
