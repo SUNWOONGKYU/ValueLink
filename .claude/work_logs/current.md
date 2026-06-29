@@ -2,6 +2,18 @@
 
 ---
 
+## 2026-06-29 등록버튼 역할 사전게이트 (보안검토 Low #6) ✅완료/검증통과
+
+### 작업 상태: ✅ 구현 + tester 3/3 PASS
+
+### 내용 (report-auto.html)
+- 로그인했지만 role≠customer(회계사/관리자 등) 계정은 "🔗 Link에 공개 등록" 버튼 사전 비활성화(disabled+title 안내)
+- 패턴: from('users').select('role').eq('user_id',uid).single() (login.html 동일 패턴)
+- 비로그인=버튼 유지(클릭 시 로그인 안내), 고객=활성. RLS가 최종 통제, 이건 UX 개선
+- 검증(tester, 스텁): 비로그인/고객=활성, 회계사=비활성+title 3/3 PASS
+
+---
+
 ## 2026-06-29 스팸 견고차단 — valuation_reports 사용자당 등록 상한 트리거 ✅완료/검증통과
 
 ### 작업 상태: ✅ DB 트리거 적용 + 기능검증(롤백 테스트, 무오염)
