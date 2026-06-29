@@ -2,6 +2,67 @@
 
 ---
 
+## 2026-06-29 RLS PAT 대기 건 적용 — valuation_reports 고객 본인 등록 정책 ✅완료/검증통과
+
+### 작업 상태: ✅ DDL 적용 + 실동작 검증 완료
+
+### 배경
+- 직전 세션 막힌 지점: valuation_reports에 고객 본인 INSERT RLS 적용하려 했으나 Supabase PAT 부재로 대기
+- PO가 PAT 제공 → Management API 경로로 적용
+
+### 적용 내용 (valuation_reports_customer_register.sql)
+- `user_id` UUID 컬럼 ADD (비파괴, nullable — 기존 샘플행 무영향) → 확인됨(uuid)
+- `valuation_reports_insert_customer`: 로그인 + role='customer' + user_id=auth.uid()만 INSERT 허용
+- `valuation_reports_update_own`: 본인 행만 UPDATE
+- 공개 SELECT(select_public)·admin 정책 3종 그대로 유지
+- 적용 경로: Management API `POST /v1/projects/arxrfetgaitkgiiqabap/database/query` + PAT (검증된 길)
+- 적용 도구: backend/database/apply-ddl-management-api.js (신규, PAT은 env로만 — 파일/커밋에 미포함)
+
+### 검증 (적대적 실동작 테스트, 별도 REST 호출)
+- 익명 INSERT → HTTP 401 "violates row-level security policy" ✅ 차단
+- 공개 SELECT → HTTP 200 ✅ 유지 (Link 공개 읽기 무손상)
+- 정책 6종 확인: select_public / insert_admin / insert_customer / update_admin / update_own / delete_admin
+
+### ⚠️ 보안 후속 (PO 조치 필요)
+- 제공된 PAT가 채팅 기록에 노출됨 → **Supabase 대시보드에서 해당 토큰 폐기(revoke) 권장**
+  (https://supabase.com/dashboard/account/tokens)
+
+### 남은 작업 (이번 건 범위 밖)
+- 평가↔Link 자동등록 프론트 구현(report-auto.html이 valuation_reports에 INSERT) — 제품정책 결정 후 진행
+- DB 권한(정책)은 이제 준비됨. 프론트에서 로그인 고객의 user_id 담아 INSERT하면 동작
+
+---
+
+## 2026-06-29 실측: 평가액 Link등록 + 딜뉴스 4요소 + 5평가법 (PO 지시) ✅실측완료/결함2건
+
+### 작업 상태: ✅ 실측 완료 — 결함 2건 발견(수정은 PO 결정 대기), 5평가법 정상
+
+### Phase 1: 평가액 → Link 등록 ❌ 미작동
+- link.html은 valuation_reports를 SELECT만(읽기 전용). 평가보고서(report-auto.html)는 localStorage에만 저장
+- valuation_reports INSERT 경로 = insert_sample SQL(샘플 시딩)뿐 — 사용자 평가 자동등록 코드 없음
+- 라이브: Link 3건(엔키노163억/클래시스2835억/비상장495억) 전부 샘플
+- **판정: 평가↔Link 자동등록 미구현. 평가해도 Link에 안 쌓임**
+
+### Phase 2: 딜뉴스 4요소 + 투자이유 ❌ 투자이유 누락
+- deal.html: 투자사유 표시 자리 O, select=*로 가져옴. 그러나 collect_naver_only.py에 investment_reason 추출코드 0건
+- 라이브: 딜 10건 중 투자사유 0건(전부 '-'), 투자자도 2/10건만 표시
+- 추가 노이즈: "이번엔 유니콘브릿지 선정"(기사조각), "신한·키움"(조각)
+- **판정: 투자이유 미수집·미표시. 투자자 부분누락**
+
+### Phase 3: 5평가법 프로세스 ✅ 정상
+- 라이브 headed 5개(DCF/상증세/본질/상대/자산) 입력→계산→보고서: 5/5 PASS
+
+### 수정 방향 (PO 결정 대기 — 추측 구현 금지)
+- ① 평가액 Link 자동등록: 제품정책 결정 필요(익명평가 공개? 인증? RLS? 중복) → 보류
+- ② 투자이유 수집: 추출 휴리스틱 추가 가능(정확도 한계) → 대기
+- ③ 노이즈 2건: 필터 강화(안전)+DB삭제(승인 필요) → 대기
+
+### 도구 (시연용, 재현 가능)
+- tests/sim/s2-live-headed.js, link-deal-headed.js (신규 headed 실측)
+- tests/sim/journey-report-issue.js (SIM_HEADED=1 토글 추가)
+
+---
+
 ## 2026-06-28 안정화 점검 + 잔여물 정리 + 딜뉴스 점검 (3건 일괄) ✅
 
 ### 작업 상태: ✅ 완료 (DB 노이즈 삭제만 PO 승인 보류)
