@@ -2,6 +2,26 @@
 
 ---
 
+## 2026-06-29 스팸 견고차단 — valuation_reports 사용자당 등록 상한 트리거 ✅완료/검증통과
+
+### 작업 상태: ✅ DB 트리거 적용 + 기능검증(롤백 테스트, 무오염)
+
+### 배경
+- 앞선 작업의 잔여 권고(스팸 견고차단) PO 승인 "저거 해" → DB측 적용
+- 프론트 20건 가드는 API 직접호출로 우회 가능 → DB 트리거로 최종 강제
+
+### 적용 (valuation_reports_user_limit.sql)
+- `enforce_valuation_reports_user_limit()` BEFORE INSERT 트리거: user_id별 총 등록수 20 초과 시 EXCEPTION(check_violation)
+- user_id IS NULL(관리자·샘플)은 제한 없음 → 기존 데이터 무영향. 멱등+롤백 동봉. SECURITY DEFINER + search_path 고정
+- 적용 경로: Management API (PAT, 기적용 apply-ddl-management-api.js 재사용)
+
+### 검증 (롤백 트랜잭션 — 프로덕션 미오염)
+- 트리거 존재 확인: trg_valuation_reports_user_limit
+- BEGIN…25건 INSERT…ROLLBACK: 21건째에서 "등록 가능한 회사 수(20)를 초과했습니다" 차단(23514)
+- 사후검증: 테스트행 잔존 0건 (롤백 정상, 무오염)
+
+---
+
 ## 2026-06-29 평가↔Link 공개 등록 프론트 연동 + 저장형 XSS 일괄 수정 ✅완료/검증통과
 
 ### 작업 상태: ✅ 구현 + 검증(tester 2회·security 1회) 완료
