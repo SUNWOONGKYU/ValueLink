@@ -14,8 +14,11 @@ import os
 import re
 import sys
 import time
+import json
 import argparse
 import codecs
+import subprocess
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, urlparse
 from dotenv import load_dotenv
@@ -199,6 +202,89 @@ def extract_reason(text):
                 and not _PARTICLE_START.match(cand)):
             return cand + ' 위해'
     return None
+
+# ── AI 상세 투자이유 추출 (claude CLI) ─────────────────────────────
+# 규칙기반 extract_reason()은 제목+요약의 짧은 구절만 잡는다. 실제 등록 대상(신규·고신뢰)
+# 딜에 한해 기사 '본문'을 fetch해 claude로 상세 서술형 투자이유를 뽑고, 동시에 비딜/해외/
+# 조각 기사는 REMOVE로 걸러낸다. (임시 스크립트 _ai_extract.py·_ai_nulls.py 흡수)
+# claude 사용 불가/실패 시 호출측이 규칙기반 reason으로 폴백한다 → 안전 열화.
+_UA = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/124 Safari/537.36'}
+AI_BATCH = 8
+
+def _fetch_body(url):
+    """기사 URL → (og/description 요약, 본문 텍스트 앞부분). 실패 시 ('', '')."""
+    try:
+        r = requests.get(url, headers=_UA, timeout=8)
+        r.encoding = r.apparent_encoding
+        h = r.text
+        og = re.search(r'<meta[^>]+(?:property|name)=["\'](?:og:description|description)["\'][^>]+content=["\']([^"\']+)["\']', h, re.I)
+        h2 = re.sub(r'<(script|style|nav|header|footer|aside)[^>]*>.*?</\1>', ' ', h, flags=re.S | re.I)
+        body = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', h2))
+        return (og.group(1) if og else ''), body[:1600]
+    except Exception:
+        return '', ''
+
+def _claude_json(prompt, tries=2):
+    """claude CLI 호출 → 응답에서 JSON 객체 추출. 실패 시 {} (호출측 규칙기반 폴백)."""
+    for _ in range(tries):
+        try:
+            out = subprocess.run('claude -p', input=prompt, shell=True, capture_output=True,
+                                 text=True, timeout=200, encoding='utf-8')
+            m = re.search(r'\{.*\}', out.stdout or '', re.S)
+            if m:
+                return json.loads(m.group(0))
+        except Exception as e:
+            print(f"    ⚠️ claude 재시도: {str(e)[:80]}")
+            time.sleep(2)
+    return {}
+
+def _clean_name(s):
+    """회사명 정규화 — BOM·제로폭·따옴표·양끝 공백 제거."""
+    if not s:
+        return s
+    return s.replace('﻿', '').replace('​', '').strip().strip("'\"‘’“”").strip()
+
+def ai_extract_reasons(deals):
+    """deals(list of info dict) 각각에 대해 상세 투자이유 + 정식 회사명을 추출.
+    반환: {index: {'reason': str, 'company': str} | 'REMOVE' | None}.
+    - dict     : 기사 본문 기반 서술형 투자이유 + AI가 판정한 정식 회사명(변형/영문/수식어 제거)
+    - 'REMOVE' : 비딜/해외/조각 등 등재 부적합
+    - None     : claude 미응답 (호출측이 규칙기반 reason·이름으로 폴백)
+    정식 회사명을 함께 받아 '스토리게임 딥그로브'·'AB180' 같은 변형이 중복 등록되는 것을 막는다.
+    """
+    results = {}
+    for i in range(0, len(deals), AI_BATCH):
+        chunk = deals[i:i + AI_BATCH]
+        with ThreadPoolExecutor(max_workers=AI_BATCH) as ex:
+            texts = list(ex.map(lambda d: _fetch_body(d['news_url']), chunk))
+        arts = []
+        for j, (d, (og, body)) in enumerate(zip(chunk, texts)):
+            gi = i + j
+            arts.append(f"[id={gi}] 후보회사명:{d['company_name']}\n제목:{d['news_title']}\n요약:{og}\n본문:{body[:1400]}")
+        prompt = (
+            "아래는 국내(한국) 기업 투자유치 후보 기사들이다(해외기업 여부는 이미 선별됨). "
+            "각 기사에서 ① 투자받은 기업의 '정식 회사명'과 ② 그 자금의 사용 목적=투자이유를 추출하라.\n"
+            "규칙:\n"
+            "- company: 법인/회사 정식명 하나로 정규화. 수식어(‘스토리게임 딥그로브’→‘딥그로브’), 영문 병기(‘AB180’와 ‘에이비일팔공’이면 한글 정식명), 앞의 업종·출신 설명을 제거한 순수 회사명만.\n"
+            "- reason: 기사에 나온 만큼 상세하게 자연스러운 한국어 서술로(최대 120자). 회사 일반 소개·투자금액·투자자 이름·기자/매체명·푸터 제외, 오직 '자금 사용 목적'만. 명시 안 됐으면 사업내용 근거로 짧게(최대 30자) 추정 가능.\n"
+            "- 달러(USD)로 투자받아도 국내 기업이면 유지(통화≠해외기업). 애매하면 REMOVE 말고 목적이라도 추출하라.\n"
+            "- 다음만 'REMOVE': 정책/행사/수상/지원사업 선정/실적·순위 기사, 그 회사가 (피투자가 아니라) 투자한 경우,\n"
+            "  파산·매각·정리·협상결렬 등 부정 기사, 회사명이 문장조각·일반명사·정부부처·지자체인 경우.\n"
+            "출력은 JSON 객체 하나만(설명 금지): {\"id\": {\"company\": \"정식회사명\", \"reason\": \"투자이유\"} 또는 \"id\": \"REMOVE\"}\n\n"
+            + "\n---\n".join(arts))
+        res = _claude_json(prompt)
+        for j in range(len(chunk)):
+            gi = i + j
+            v = res.get(str(gi))
+            if isinstance(v, dict):
+                v = {'company': _clean_name(v.get('company')), 'reason': (v.get('reason') or '').strip()}
+                if not v['reason']:
+                    v = None
+            results[gi] = v
+        got = sum(1 for j in range(len(chunk)) if isinstance(results.get(i + j), dict))
+        print(f"  🤖 AI 배치 {i + 1}-{i + len(chunk)}: 추출 {got} / 삭제·미응답 {len(chunk) - got}")
+    return results
+
 
 def extract_company(title):
     t = title.strip()
@@ -529,10 +615,10 @@ def main():
         # 국내 기업 한정 — 해외 기업이 투자받은 기사 배제 (PO 방침 2026-06-30)
         if _is_foreign_company(title, company):
             return d
-        # 투자이유 필수 — 못 채우면 목록에 넣지 않음 (PO 방침 2026-06-30)
+        # 투자이유: 규칙기반으로 선추출(폴백용). 여기서 하드 게이트하지 않는다 —
+        # 실제 등록 대상(신규·고신뢰)은 뒤에서 claude로 상세 추출하고, AI가 못 뽑으면
+        # 이 규칙기반 reason으로 폴백, 그마저 없으면 그때 제외한다. (PO 방침 2026-06-30/07-01)
         reason = extract_reason(text)
-        if not reason:
-            return d
         info = {
             'company_name': company,
             'amount': extract_amount(text),
@@ -540,7 +626,7 @@ def main():
             'investors': extract_investors(text),
             'industry': extract_industry(text),
             'location': extract_location(text),
-            'investment_reason': reason,
+            'investment_reason': reason,   # None 가능 — AI 단계에서 채움
             'news_title': title, 'news_url': link, 'news_date': d,
             'site_name': site_from_url(link),
         }
@@ -596,10 +682,38 @@ def main():
     confident = [c for c in best.values() if c.get('amount') or c.get('investors')]
     print(f"📊 고신뢰(금액/투자자 보유): {len(confident)}건")
 
+    # 신규(기존 DB에 없는)만 추림 → 여기에만 claude AI 상세 추출 (하루 소수 호출)
+    new_deals = [c for c in confident
+                 if c['news_url'] not in existing_urls and c['company_name'] not in existing_companies]
+    print(f"📊 신규 등록 대상: {len(new_deals)}건 — AI 상세 투자이유 추출 시작")
+    ai_reasons = ai_extract_reasons(new_deals) if new_deals else {}
+
+    # AI 정식 회사명 기준으로 최종 중복 차단 (변형·영문·BOM 이름이 별건으로 들어가는 것 방지)
+    seen_names = set(existing_companies)
     inserted = 0
-    for c in confident:
-        if c['news_url'] in existing_urls or c['company_name'] in existing_companies:
+    for idx, c in enumerate(new_deals):
+        ai_r = ai_reasons.get(idx)
+        if ai_r == 'REMOVE':
+            print(f"  🚫 제외(AI 비딜 판정): {c['company_name']}")
             continue
+        # AI 성공 시: 정식 회사명 + 상세이유. 미응답(None)이면 규칙기반으로 폴백.
+        if isinstance(ai_r, dict):
+            name = ai_r.get('company') or _clean_name(c['company_name'])
+            reason = ai_r['reason']
+            src = 'AI'
+        else:
+            name = _clean_name(c['company_name'])
+            reason = c.get('investment_reason')
+            src = '규칙'
+        if not reason:
+            print(f"  ⚠️ 투자이유 없음 제외: {c['company_name']}")
+            continue
+        if name in seen_names:
+            print(f"  🔁 중복 제외(정식명 {name}): 원후보 {c['company_name']}")
+            continue
+        seen_names.add(name)
+        c['company_name'] = name
+        c['investment_reason'] = reason
         rec = {k: c[k] for k in ('company_name', 'amount', 'stage', 'investors', 'industry',
                                  'location', 'investment_reason', 'news_title', 'news_url', 'news_date', 'site_name')
                if c.get(k) is not None}
@@ -609,9 +723,9 @@ def main():
         try:
             supabase.table('deals').insert(rec).execute()
             inserted += 1
-            print(f"  ✅ [{inserted}] {c['news_date']} | {c['company_name']} | {c.get('amount')}억 | {c.get('stage')} | 점수{c['_score']}")
+            print(f"  ✅ [{inserted}] {c['news_date']} | {name} | {c.get('amount')}억 | {c.get('stage')} | 점수{c['_score']} | 이유:{src}")
         except Exception as e:
-            print(f"  ⚠️ 저장 실패({c['company_name']}): {str(e)[:120]}")
+            print(f"  ⚠️ 저장 실패({name}): {str(e)[:120]}")
 
     print(f"\n📊 완료! 신규 {inserted}건 등록")
 
