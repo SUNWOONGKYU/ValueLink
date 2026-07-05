@@ -219,7 +219,8 @@ async function runJourney(browser, method, def, report) {
     console.log('🌐 LIVE 모드: ' + BASE);
   }
   const report = { timestamp: new Date().toISOString(), base: BASE, records: [] };
-  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] });
+  const HEADED = process.env.SIM_HEADED === '1';
+  const browser = await chromium.launch({ headless: !HEADED, slowMo: HEADED ? 250 : 0, args: ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'].concat(HEADED ? ['--start-maximized'] : []) });
   try {
     for (const m of ['dcf', 'tax', 'intrinsic', 'relative', 'asset']) {
       console.log(`\n===== ${m.toUpperCase()} =====`);
