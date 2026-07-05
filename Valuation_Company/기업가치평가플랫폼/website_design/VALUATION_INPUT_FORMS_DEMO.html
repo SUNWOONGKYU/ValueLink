@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업가치평가 플랫폼 - 5가지 평가법 입력 폼 데모</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f7f9fc;
+            border-bottom: 2px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 150px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f7f9fc;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8fafc;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+        }
+
+        .form-section h2 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 15px;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .result-box h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #92400e;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table th {
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .step.active .step-circle {
+            background: #667eea;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .step.active .step-label {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: #f8fafc;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .form-row,
+            .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💼 기업가치평가 플랫폼</h1>
+            <p>5가지 평가법 입력 폼 인터랙티브 데모</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dcf')">
+                📊 DCF법
+            </button>
+            <button class="tab" onclick="showTab('relative')">
+                📈 상대가치평가
+            </button>
+            <button class="tab" onclick="showTab('asset')">
+                💎 자산가치평가
+            </button>
+            <button class="tab" onclick="showTab('ddm')">
+                💰 배당할인모형
+            </button>
+            <button class="tab" onclick="showTab('liquidation')">
+                ⚖️ 청산가치평가
+            </button>
+        </div>
+
+        <!-- DCF 평가법 -->
+        <div id="dcf" class="tab-content active">
+            <div class="progress-steps">
+                <div class="step active">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">기본정보</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">재무예측</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">평가변수</div>
+                </div>
+                <div class="step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">완료</div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>🏢 회사 기본 정보</h2>
+                <div class="form-group">
+                    <label>회사명 *</label>
+                    <input type="text" placeholder="예: 엔키노에이아이" value="엔키노에이아이">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>평가 기준일 *</label>
+                        <input type="date" value="2025-06-30">
+                    </div>
+                    <div class="form-group">
+                        <label>발행주식수 *</label>
+                        <input type="number" placeholder="주" value="7350000">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>📊 FCFF 예측 (2025-2029)</h2>
+                <div class="info-box">
+                    💡 FCFF = NOPAT + 감가상각비 - CAPEX - 운전자본변동
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>구분</th>
+                                <th>2025.06F</th>
+                                <th>2026.12</th>
+                                <th>2027.12</th>
+                                <th>2028.12</th>
+                                <th>2029.12</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>EBIT</strong></td>
+                                <td><input type="text" value="306,057,598"></td>
+                                <td><input type="text" value="1,249,424,517"></td>
+                                <td><input type="text" value="2,702,544,486"></td>
+                                <td><input type="text" value="2,749,590,973"></td>
+                                <td><input type="text" value="2,826,951,271"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>감가상각비</strong></td>
+                                <td><input type="text" value="52,435,785"></td>
+                                <td><input type="text" value="127,894,459"></td>
+                                <td><input type="text" value="155,828,047"></td>
+                                <td><input type="text" value="169,202,676"></td>
+                                <td><input type="text" value="157,504,010"></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CAPEX</strong></td>
+                                <td><input type="text" value="50,836,751"></td>
+                                <td><input type="text" value="199,729,533"></td>
+                                <td><input type="text" value="171,137,071"></td>
+                                <td><input type="text" value="181,546,054"></td>
+                                <td><input type="text" value="158,307,815"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💹 WACC 계산</h2>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>무위험수익률 (Rf)</label>
+                        <input type="number" step="0.01" value="2.81" placeholder="%">
+                    </div>
+                    <div class="form-group">
+                        <label>베타 (β)</label>
+                        <input type="number" step="0.001" value="0.911">
+                    </div>
+                    <div class="form-group">
+                        <label>시장위험프리미엄 (MRP)</label>
+                        <input type="number" step="0.01" value="9.00" placeholder="%">
+                    </div>
+                </div>
+                <div class="result-box">
+                    <h3>✅ 계산 결과</h3>
+                    <div class="result-item">
+                        <span>자기자본비용 (Ke)</span>
+                        <span class="result-value">14.76%</span>
+                    </div>
+                    <div class="result-item">
+                        <span>WACC</span>
+                        <span class="result-value">13.81%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>🎯 DCF 평가 결과 미리보기</h3>
+                <div class="result-item">
+                    <span>영업가치</span>
+                    <span class="result-value">16,328,112,964원</span>
+                </div>
+                <div class="result-item">
+                    <span>주식가치</span>
+                    <span class="result-value">15,840,854,096원</span>
+                </div>
+                <div class="result-item">
+                    <span>주당가치</span>
+                    <span class="result-value">2,155원</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary">← 이전</button>
+                <button class="btn btn-secondary">임시저장</button>
+                <button class="btn btn-primary">다음 단계 →</button>
+            </div>
+        </div>
+
+        <!-- 상대가치평가법 -->
+        <div id="relative" class="tab-content">
+            <div class="form-section">
+                <h2>🏢 대상 기업 정보</h2>
+                <div class="form-group">
+                    <label>회사명 *</label>
+                    <input type="text" placeholder="회사명 입력" value="엔키노에이아이">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>당기순이익</label>
+                        <input type="text" value="2,258,118,456" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>자기자본</label>
+                        <input type="text" value="5,234,567,890" placeholder="원">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>매출</label>
+                        <input type="text" value="4,136,244,441" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>EBITDA</label>
+                        <input type="text" value="2,984,455,281" placeholder="원">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>🔍 유사 기업 선택</h2>
+                <div class="info-box">
+                    💡 추천 유사 기업 (자동 추천)
+                </div>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <div>
+                            <strong>네이버 (035420)</strong><br>
+                            <small>P/E: 18.5 | P/B: 2.3 | EV/EBITDA: 12.4</small>
+                        </div>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <div>
+                            <strong>카카오 (035720)</strong><br>
+                            <small>P/E: 22.1 | P/B: 1.8 | EV/EBITDA: 14.7</small>
+                        </div>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <div>
+                            <strong>엔씨소프트 (036570)</strong><br>
+                            <small>P/E: 15.3 | P/B: 2.1 | EV/EBITDA: 11.2</small>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>🎯 상대가치평가 결과</h3>
+                <div class="result-item">
+                    <span>P/E 방법</span>
+                    <span class="result-value">5,719원</span>
+                </div>
+                <div class="result-item">
+                    <span>P/B 방법</span>
+                    <span class="result-value">1,474원</span>
+                </div>
+                <div class="result-item">
+                    <span>P/S 방법</span>
+                    <span class="result-value">1,925원</span>
+                </div>
+                <div class="result-item">
+                    <span>EV/EBITDA 방법</span>
+                    <span class="result-value">5,119원</span>
+                </div>
+                <div class="result-item" style="border-top: 2px solid white; margin-top: 15px; padding-top: 20px;">
+                    <span><strong>가중평균 주당가치</strong></span>
+                    <span class="result-value">3,932원</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary">← 이전</button>
+                <button class="btn btn-primary">PDF 보고서 생성</button>
+            </div>
+        </div>
+
+        <!-- 자산가치평가법 -->
+        <div id="asset" class="tab-content">
+            <div class="form-section">
+                <h2>💎 자산 항목</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>현금 및 현금성 자산</label>
+                        <input type="text" value="129,670,466" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>매출채권</label>
+                        <input type="text" value="450,000,000" placeholder="원">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>유형자산 (장부가액)</label>
+                        <input type="text" value="1,200,000,000" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>공정가치 (감정평가액)</label>
+                        <input type="text" placeholder="원">
+                    </div>
+                </div>
+                <div class="info-box">
+                    💡 감정평가 보고서를 업로드하면 자동으로 공정가치가 입력됩니다
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>📊 부채 항목</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>단기차입금</label>
+                        <input type="text" value="455,231,104" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>장기차입금</label>
+                        <input type="text" value="0" placeholder="원">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>매입채무</label>
+                        <input type="text" value="180,000,000" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>기타 부채</label>
+                        <input type="text" value="436,698,230" placeholder="원">
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>🎯 순자산가치 (NAV) 계산 결과</h3>
+                <div class="result-item">
+                    <span>총자산 (공정가치)</span>
+                    <span class="result-value">3,029,670,466원</span>
+                </div>
+                <div class="result-item">
+                    <span>총부채</span>
+                    <span class="result-value">1,071,929,334원</span>
+                </div>
+                <div class="result-item" style="border-top: 2px solid white; margin-top: 15px; padding-top: 20px;">
+                    <span><strong>순자산가치</strong></span>
+                    <span class="result-value">1,957,741,132원</span>
+                </div>
+                <div class="result-item">
+                    <span><strong>주당 순자산가치</strong></span>
+                    <span class="result-value">266원</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary">← 수정하기</button>
+                <button class="btn btn-primary">PDF 보고서 생성</button>
+            </div>
+        </div>
+
+        <!-- 배당할인모형 -->
+        <div id="ddm" class="tab-content">
+            <div class="form-section">
+                <h2>💰 배당 정보</h2>
+                <div class="form-group">
+                    <label>회사명 *</label>
+                    <input type="text" value="엔키노에이아이">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>발행주식수</label>
+                        <input type="number" value="7350000">
+                    </div>
+                    <div class="form-group">
+                        <label>최근 배당금 (주당)</label>
+                        <input type="number" value="50" placeholder="원">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>📈 과거 배당 이력</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>연도</th>
+                                <th>주당 배당금</th>
+                                <th>성장률</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024</td>
+                                <td><input type="text" value="50원"></td>
+                                <td>+11.1%</td>
+                            </tr>
+                            <tr>
+                                <td>2023</td>
+                                <td><input type="text" value="45원"></td>
+                                <td>+12.5%</td>
+                            </tr>
+                            <tr>
+                                <td>2022</td>
+                                <td><input type="text" value="40원"></td>
+                                <td>+5.3%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="info-box">
+                    💡 평균 배당 성장률 (CAGR): 9.3%
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💹 Gordon Growth Model</h2>
+                <div class="form-row-3">
+                    <div class="form-group">
+                        <label>배당 성장률 (g)</label>
+                        <input type="number" step="0.01" value="8.0" placeholder="%">
+                    </div>
+                    <div class="form-group">
+                        <label>할인율 (Ke)</label>
+                        <input type="number" step="0.01" value="14.76" placeholder="%">
+                    </div>
+                    <div class="form-group">
+                        <label>예상 차기 배당 (D1)</label>
+                        <input type="number" value="54" placeholder="원" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>🎯 배당할인모형 평가 결과</h3>
+                <div class="result-item">
+                    <span>주당가치 (P0)</span>
+                    <span class="result-value">799원</span>
+                </div>
+                <div class="result-item">
+                    <span>총 주식가치</span>
+                    <span class="result-value">5,872,650,000원</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary">← 수정하기</button>
+                <button class="btn btn-primary">PDF 보고서 생성</button>
+            </div>
+        </div>
+
+        <!-- 청산가치평가법 -->
+        <div id="liquidation" class="tab-content">
+            <div class="form-section">
+                <h2>⚖️ 청산 시나리오</h2>
+                <div class="form-group">
+                    <label>청산 유형 선택 *</label>
+                    <select>
+                        <option value="forced">⏰ 강제청산 (30-50% 할인)</option>
+                        <option value="orderly">📅 정상청산 (10-20% 할인)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>청산 기간 (예상)</label>
+                        <input type="number" value="3" placeholder="개월">
+                    </div>
+                    <div class="form-group">
+                        <label>청산 사유</label>
+                        <select>
+                            <option>부실 / 파산</option>
+                            <option>구조조정</option>
+                            <option>사업 종료</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💰 자산 처분가 추정</h2>
+                <div class="info-box">
+                    💡 강제청산 자동 회수율: 현금 100%, 채권 75%, 재고 40%, 유형자산 65%, 무형자산 30%
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>자산 항목</th>
+                                <th>장부가액</th>
+                                <th>회수율</th>
+                                <th>처분가능액</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>현금</td>
+                                <td>129,670,466원</td>
+                                <td>100%</td>
+                                <td><strong>129,670,466원</strong></td>
+                            </tr>
+                            <tr>
+                                <td>매출채권</td>
+                                <td>450,000,000원</td>
+                                <td>75%</td>
+                                <td><strong>337,500,000원</strong></td>
+                            </tr>
+                            <tr>
+                                <td>유형자산</td>
+                                <td>1,200,000,000원</td>
+                                <td>65%</td>
+                                <td><strong>780,000,000원</strong></td>
+                            </tr>
+                            <tr>
+                                <td>무형자산</td>
+                                <td>800,000,000원</td>
+                                <td>30%</td>
+                                <td><strong>240,000,000원</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💸 청산 비용</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>변호사/회계사 비용</label>
+                        <input type="text" value="50,000,000" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>감정평가 비용</label>
+                        <input type="text" value="15,000,000" placeholder="원">
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>🎯 청산가치 계산 결과</h3>
+                <div class="result-item">
+                    <span>총 처분가능액</span>
+                    <span class="result-value">1,847,170,466원</span>
+                </div>
+                <div class="result-item">
+                    <span>청산비용</span>
+                    <span class="result-value">125,000,000원</span>
+                </div>
+                <div class="result-item">
+                    <span>총부채</span>
+                    <span class="result-value">1,071,929,334원</span>
+                </div>
+                <div class="result-item" style="border-top: 2px solid white; margin-top: 15px; padding-top: 20px;">
+                    <span><strong>청산가치</strong></span>
+                    <span class="result-value">650,241,132원</span>
+                </div>
+                <div class="result-item">
+                    <span><strong>주당 청산가치</strong></span>
+                    <span class="result-value">88원</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary">← 수정하기</button>
+                <button class="btn btn-primary">PDF 보고서 생성</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Auto-format number inputs with commas
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberInputs = document.querySelectorAll('input[type="text"]');
+            numberInputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value && !isNaN(this.value.replace(/,/g, ''))) {
+                        const num = parseFloat(this.value.replace(/,/g, ''));
+                        this.value = num.toLocaleString('ko-KR');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
