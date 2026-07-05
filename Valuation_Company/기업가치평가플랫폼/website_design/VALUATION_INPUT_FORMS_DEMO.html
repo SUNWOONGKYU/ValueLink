@@ -373,16 +373,16 @@
                 📊 DCF법
             </button>
             <button class="tab" onclick="showTab('relative')">
-                📈 상대가치평가
+                📈 상대가치법
             </button>
             <button class="tab" onclick="showTab('asset')">
-                💎 자산가치평가
+                💎 자산가치법
             </button>
-            <button class="tab" onclick="showTab('ddm')">
-                💰 배당할인모형
+            <button class="tab" onclick="showTab('intrinsic')">
+                🎯 본질가치법
             </button>
-            <button class="tab" onclick="showTab('liquidation')">
-                ⚖️ 청산가치평가
+            <button class="tab" onclick="showTab('inheritance')">
+                📜 상증세법
             </button>
         </div>
 
@@ -693,88 +693,86 @@
             </div>
         </div>
 
-        <!-- 배당할인모형 -->
-        <div id="ddm" class="tab-content">
+        <!-- 본질가치법 (자본시장법) -->
+        <div id="intrinsic" class="tab-content">
             <div class="form-section">
-                <h2>💰 배당 정보</h2>
+                <h2>🏢 회사 기본 정보</h2>
                 <div class="form-group">
                     <label>회사명 *</label>
                     <input type="text" value="엔키노에이아이">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>발행주식수</label>
-                        <input type="number" value="7350000">
+                        <label>발행주식수 *</label>
+                        <input type="number" value="7350000" placeholder="주">
                     </div>
                     <div class="form-group">
-                        <label>최근 배당금 (주당)</label>
-                        <input type="number" value="50" placeholder="원">
+                        <label>자본환원율 *</label>
+                        <input type="number" step="0.01" value="10.00" placeholder="%">
+                    </div>
+                </div>
+                <div class="info-box">
+                    💡 자본시장법 본질가치 = (자산가치 × 1 + 수익가치 × 1.5) ÷ 2.5
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>💎 자산가치</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>순자산 (자기자본)</label>
+                        <input type="text" value="1,957,741,132" placeholder="원">
+                    </div>
+                    <div class="form-group">
+                        <label>주당 자산가치 (자동)</label>
+                        <input type="number" value="266" placeholder="원" readonly>
                     </div>
                 </div>
             </div>
 
             <div class="form-section">
-                <h2>📈 과거 배당 이력</h2>
+                <h2>📈 수익가치 (추정 주당순이익)</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>연도</th>
-                                <th>주당 배당금</th>
-                                <th>성장률</th>
+                                <th>구분</th>
+                                <th>추정 주당순이익</th>
+                                <th>가중치</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>2024</td>
-                                <td><input type="text" value="50원"></td>
-                                <td>+11.1%</td>
+                                <td>1차연도 (2026F)</td>
+                                <td><input type="text" value="350원"></td>
+                                <td>3</td>
                             </tr>
                             <tr>
-                                <td>2023</td>
-                                <td><input type="text" value="45원"></td>
-                                <td>+12.5%</td>
-                            </tr>
-                            <tr>
-                                <td>2022</td>
-                                <td><input type="text" value="40원"></td>
-                                <td>+5.3%</td>
+                                <td>2차연도 (2027F)</td>
+                                <td><input type="text" value="450원"></td>
+                                <td>2</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="info-box">
-                    💡 평균 배당 성장률 (CAGR): 9.3%
-                </div>
-            </div>
-
-            <div class="form-section">
-                <h2>💹 Gordon Growth Model</h2>
-                <div class="form-row-3">
-                    <div class="form-group">
-                        <label>배당 성장률 (g)</label>
-                        <input type="number" step="0.01" value="8.0" placeholder="%">
-                    </div>
-                    <div class="form-group">
-                        <label>할인율 (Ke)</label>
-                        <input type="number" step="0.01" value="14.76" placeholder="%">
-                    </div>
-                    <div class="form-group">
-                        <label>예상 차기 배당 (D1)</label>
-                        <input type="number" value="54" placeholder="원" readonly>
-                    </div>
+                    💡 가중평균 주당순이익 = (350×3 + 450×2) ÷ 5 = 390원 · 수익가치 = 390 ÷ 10% = 3,900원
                 </div>
             </div>
 
             <div class="result-box">
-                <h3>🎯 배당할인모형 평가 결과</h3>
+                <h3>🎯 본질가치법 평가 결과</h3>
                 <div class="result-item">
-                    <span>주당가치 (P0)</span>
-                    <span class="result-value">799원</span>
+                    <span>주당 자산가치</span>
+                    <span class="result-value">266원</span>
                 </div>
                 <div class="result-item">
-                    <span>총 주식가치</span>
-                    <span class="result-value">5,872,650,000원</span>
+                    <span>주당 수익가치</span>
+                    <span class="result-value">3,900원</span>
+                </div>
+                <div class="result-item" style="border-top: 2px solid white; margin-top: 15px; padding-top: 20px;">
+                    <span><strong>주당 본질가치 (1 : 1.5)</strong></span>
+                    <span class="result-value">2,446원</span>
                 </div>
             </div>
 
@@ -784,113 +782,91 @@
             </div>
         </div>
 
-        <!-- 청산가치평가법 -->
-        <div id="liquidation" class="tab-content">
+        <!-- 상증세법 (상속세 및 증여세법 보충적 평가) -->
+        <div id="inheritance" class="tab-content">
             <div class="form-section">
-                <h2>⚖️ 청산 시나리오</h2>
+                <h2>🏢 회사 기본 정보</h2>
                 <div class="form-group">
-                    <label>청산 유형 선택 *</label>
-                    <select>
-                        <option value="forced">⏰ 강제청산 (30-50% 할인)</option>
-                        <option value="orderly">📅 정상청산 (10-20% 할인)</option>
-                    </select>
+                    <label>회사명 *</label>
+                    <input type="text" value="엔키노에이아이">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>청산 기간 (예상)</label>
-                        <input type="number" value="3" placeholder="개월">
+                        <label>발행주식수 *</label>
+                        <input type="number" value="7350000" placeholder="주">
                     </div>
                     <div class="form-group">
-                        <label>청산 사유</label>
-                        <select>
-                            <option>부실 / 파산</option>
-                            <option>구조조정</option>
-                            <option>사업 종료</option>
-                        </select>
+                        <label>순손익가치 환원율 *</label>
+                        <input type="number" step="0.01" value="10.00" placeholder="%">
                     </div>
+                </div>
+                <div class="info-box">
+                    💡 상증세법 1주당 평가액 = (순손익가치 × 3 + 순자산가치 × 2) ÷ 5
                 </div>
             </div>
 
             <div class="form-section">
-                <h2>💰 자산 처분가 추정</h2>
-                <div class="info-box">
-                    💡 강제청산 자동 회수율: 현금 100%, 채권 75%, 재고 40%, 유형자산 65%, 무형자산 30%
-                </div>
+                <h2>📈 최근 3년 순손익 (가중평균)</h2>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>자산 항목</th>
-                                <th>장부가액</th>
-                                <th>회수율</th>
-                                <th>처분가능액</th>
+                                <th>사업연도</th>
+                                <th>순손익액</th>
+                                <th>가중치</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>현금</td>
-                                <td>129,670,466원</td>
-                                <td>100%</td>
-                                <td><strong>129,670,466원</strong></td>
+                                <td>직전연도 (2024)</td>
+                                <td><input type="text" value="2,258,118,456"></td>
+                                <td>3</td>
                             </tr>
                             <tr>
-                                <td>매출채권</td>
-                                <td>450,000,000원</td>
-                                <td>75%</td>
-                                <td><strong>337,500,000원</strong></td>
+                                <td>2년전 (2023)</td>
+                                <td><input type="text" value="1,800,000,000"></td>
+                                <td>2</td>
                             </tr>
                             <tr>
-                                <td>유형자산</td>
-                                <td>1,200,000,000원</td>
-                                <td>65%</td>
-                                <td><strong>780,000,000원</strong></td>
-                            </tr>
-                            <tr>
-                                <td>무형자산</td>
-                                <td>800,000,000원</td>
-                                <td>30%</td>
-                                <td><strong>240,000,000원</strong></td>
+                                <td>3년전 (2022)</td>
+                                <td><input type="text" value="1,400,000,000"></td>
+                                <td>1</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+                <div class="info-box">
+                    💡 가중평균 순손익 = (2024×3 + 2023×2 + 2022×1) ÷ 6 = 1,962,392,561원 · 주당 267원
+                </div>
             </div>
 
             <div class="form-section">
-                <h2>💸 청산 비용</h2>
+                <h2>💎 순자산가치</h2>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>변호사/회계사 비용</label>
-                        <input type="text" value="50,000,000" placeholder="원">
+                        <label>순자산 (자기자본)</label>
+                        <input type="text" value="1,957,741,132" placeholder="원">
                     </div>
                     <div class="form-group">
-                        <label>감정평가 비용</label>
-                        <input type="text" value="15,000,000" placeholder="원">
+                        <label>주당 순자산가치 (자동)</label>
+                        <input type="number" value="266" placeholder="원" readonly>
                     </div>
                 </div>
             </div>
 
             <div class="result-box">
-                <h3>🎯 청산가치 계산 결과</h3>
+                <h3>🎯 상증세법 평가 결과</h3>
                 <div class="result-item">
-                    <span>총 처분가능액</span>
-                    <span class="result-value">1,847,170,466원</span>
+                    <span>주당 순손익가치 (267 ÷ 10%)</span>
+                    <span class="result-value">2,670원</span>
                 </div>
                 <div class="result-item">
-                    <span>청산비용</span>
-                    <span class="result-value">125,000,000원</span>
-                </div>
-                <div class="result-item">
-                    <span>총부채</span>
-                    <span class="result-value">1,071,929,334원</span>
+                    <span>주당 순자산가치</span>
+                    <span class="result-value">266원</span>
                 </div>
                 <div class="result-item" style="border-top: 2px solid white; margin-top: 15px; padding-top: 20px;">
-                    <span><strong>청산가치</strong></span>
-                    <span class="result-value">650,241,132원</span>
-                </div>
-                <div class="result-item">
-                    <span><strong>주당 청산가치</strong></span>
-                    <span class="result-value">88원</span>
+                    <span><strong>1주당 평가액 (3 : 2)</strong></span>
+                    <span class="result-value">1,708원</span>
                 </div>
             </div>
 
