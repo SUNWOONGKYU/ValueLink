@@ -307,73 +307,83 @@ class InheritanceTaxLawEngine:
 
 if __name__ == "__main__":
     # 한국어 Windows 기본 콘솔(cp949)에서 summary의 박스 문자('╔' 등)가
-    # UnicodeEncodeError를 일으키는 것을 방지 (reconfigure 미지원 환경 대비 try/except)
+    # UnicodeEncodeError를 일으키는 것을 방지하는 2중 방어.
+    # 1) reconfigure로 stdout/stderr 자체를 UTF-8로 전환 시도 (미지원 환경 대비 try/except)
     try:
         sys.stdout.reconfigure(encoding='utf-8', errors='replace')
         sys.stderr.reconfigure(encoding='utf-8', errors='replace')
     except (AttributeError, ValueError):
         pass
 
-    print("=" * 60)
-    print("상증세법 평가 테스트 (법령 교정판)")
-    print("=" * 60)
+    # 2) reconfigure가 통하지 않는 환경(레거시 콘솔 등)에 대비해, 개별 print 호출도
+    #    UnicodeEncodeError를 잡아 현재 stdout 인코딩 기준으로 대체 문자 처리 후 재출력
+    def _safe_print(text=""):
+        try:
+            print(text)
+        except UnicodeEncodeError:
+            enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+            print(str(text).encode(enc, errors="replace").decode(enc, errors="replace"))
+
+    _safe_print("=" * 60)
+    _safe_print("상증세법 평가 테스트 (법령 교정판)")
+    _safe_print("=" * 60)
 
     engine = InheritanceTaxLawEngine()
 
-    print("\n[Case 1: 일반법인, 지배주주 80%, 비중소기업]")
+    _safe_print("\n[Case 1: 일반법인, 지배주주 80%, 비중소기업]")
     result1 = engine.generate_full_report(
         net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
         net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
         purpose='상속세 신고'
     )
-    print(result1['summary'])
+    _safe_print(result1['summary'])
     assert result1['itl_value'] == 116_400.0, f"Case 1 검산 실패: {result1['itl_value']}"
 
-    print("\n[Case 2: 80% 하한 발동 (3개년 적자, 순자산 큼, 비지배주주 30%)]")
+    _safe_print("\n[Case 2: 80% 하한 발동 (3개년 적자, 순자산 큼, 비지배주주 30%)]")
     result2 = engine.generate_full_report(
         net_income_year1=-5_000, net_income_year2=-3_000, net_income_year3=-2_000,
         net_assets=100_000, shares_outstanding=500_000, ownership_ratio=0.30,
         purpose='증여세 신고'
     )
-    print(result2['summary'])
+    _safe_print(result2['summary'])
     assert result2['itl_value'] == 80_000.0, f"Case 2 검산 실패: {result2['itl_value']}"
 
-    print("\n[Case 3: 중소기업 특례 (Case 1과 동일 입력, 중소기업 → 할증 배제)]")
+    _safe_print("\n[Case 3: 중소기업 특례 (Case 1과 동일 입력, 중소기업 → 할증 배제)]")
     result3 = engine.generate_full_report(
         net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
         net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
         is_sme=True, purpose='상속세 신고 (중소기업)'
     )
-    print(result3['summary'])
+    _safe_print(result3['summary'])
     assert result3['itl_value'] == 97_000.0, f"Case 3 검산 실패: {result3['itl_value']}"
 
-    print("\n[Case 4: 부동산과다보유법인 (Case 1과 동일 입력, 가중치 2:3)]")
+    _safe_print("\n[Case 4: 부동산과다보유법인 (Case 1과 동일 입력, 가중치 2:3)]")
     result4 = engine.generate_full_report(
         net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
         net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
         is_real_estate_heavy=True, purpose='상속세 신고 (부동산과다법인)'
     )
-    print(result4['summary'])
+    _safe_print(result4['summary'])
     assert result4['itl_value'] == 101_600.0, f"Case 4 검산 실패: {result4['itl_value']}"
 
-    print("\n[Case 5: 중견기업 특례 (Case 1과 동일 입력, 중견기업 → 할증 배제)]")
+    _safe_print("\n[Case 5: 중견기업 특례 (Case 1과 동일 입력, 중견기업 → 할증 배제)]")
     result5 = engine.generate_full_report(
         net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
         net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
         is_medium_large=True, purpose='상속세 신고 (중견기업)'
     )
-    print(result5['summary'])
+    _safe_print(result5['summary'])
     assert result5['itl_value'] == 97_000.0, f"Case 5 검산 실패: {result5['itl_value']}"
 
-    print("\n[Case 6: 3년 연속 결손법인 자동 할증배제 (지배주주 60%, 3개년 전부 적자)]")
+    _safe_print("\n[Case 6: 3년 연속 결손법인 자동 할증배제 (지배주주 60%, 3개년 전부 적자)]")
     result6 = engine.generate_full_report(
         net_income_year1=-1_000, net_income_year2=-2_000, net_income_year3=-1_500,
         net_assets=50_000, shares_outstanding=1_000_000, ownership_ratio=0.60,
         purpose='증여세 신고 (계속 결손법인)'
     )
-    print(result6['summary'])
+    _safe_print(result6['summary'])
     assert result6['itl_value'] == 40_000.0, f"Case 6 검산 실패: {result6['itl_value']}"
 
-    print("\n" + "=" * 60)
-    print("전체 6케이스 검산 통과: 116,400 / 80,000 / 97,000 / 101,600 / 97,000 / 40,000")
-    print("=" * 60)
+    _safe_print("\n" + "=" * 60)
+    _safe_print("전체 6케이스 검산 통과: 116,400 / 80,000 / 97,000 / 101,600 / 97,000 / 40,000")
+    _safe_print("=" * 60)
