@@ -214,6 +214,10 @@ class ValuationOrchestrator:
                 is_sme=inputs.get('is_sme', False),
                 is_medium_large=inputs.get('is_medium_large', False),
                 ownership_ratio=inputs.get('ownership_ratio', 0.0),
+                # 2026-07-16 최대주주 판정 결함 수정: "최대주주 등"은 지분율 50% 초과가
+                # 아니라 본인+특수관계인 합산 최대지분 여부다. is_largest_shareholder
+                # 미전달(None) 시 엔진이 지분율 기준으로 추정 + 경고를 반환한다.
+                is_largest_shareholder=inputs.get('is_largest_shareholder'),
                 discount_rate=inputs.get('discount_rate', 0.10)
             )
         else:
