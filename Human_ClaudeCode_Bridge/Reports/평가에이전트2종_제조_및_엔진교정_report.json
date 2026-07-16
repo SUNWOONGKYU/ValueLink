@@ -1,0 +1,55 @@
+{
+  "report_id": "2026_07_16_valuation_agents_and_engine_fix",
+  "date": "2026-07-16",
+  "task_name": "DCF·상증세법 로컬 설치형 에이전트 2종 제조 + 제품 엔진 결함 교정",
+  "requested_by": "PO (지휘관)",
+  "team": {
+    "structure": "3계층 작업팀 (claude-3tier-team)",
+    "leader": "소대장 (Opus 4.8, 본체)",
+    "squads": [
+      {"name": "squad-A-dcf", "model": "Sonnet 5", "scope": "DCF 에이전트 제조 + 제품 DCF 엔진 단위결함 교정"},
+      {"name": "squad-B-tax", "model": "Sonnet 5", "scope": "상증세법 에이전트 제조 + 엔진 법령 교정 + 제품 이식"},
+      {"name": "squad-C-docs", "model": "Sonnet 5", "scope": "관계도·흐름도·설명문 6종 문서화"}
+    ],
+    "verifiers": [
+      {"name": "verifier-v1-tax", "model": "Sonnet 5", "role": "1차 전수 검증 (읽기 전용)"},
+      {"name": "verifier-v2-tax", "model": "Opus 4.8", "role": "최종 게이트 (읽기 전용)"}
+    ]
+  },
+  "deliverables": {
+    "agents": [
+      "C:/Users/선웅규/Desktop/dcf-valuation-agent/ (V1+V2 통과, 개선권고 반영·확인 완료)",
+      "C:/Users/선웅규/Desktop/tax-valuation-agent/ (V1+V2 통과, 개선권고 반영·확인 완료)"
+    ],
+    "docs": [
+      "각 에이전트 docs/관계도.html·흐름도.html·설명문.md (총 6종, 코드대조+렌더링 검증 통과)"
+    ],
+    "product_fixes": [
+      "Valuation_Company/valuation-platform/backend/app/services/valuation_engine/tax/tax_law_engine.py (법령 교정판 이식 — 구 엔진 약 3배 과대계상·임의할인·80%하한 누락 해소)",
+      "Valuation_Company/valuation-platform/backend/app/services/valuation_engine/dcf/sensitivity_analysis.py (×1e6 단위 변환 누락 수정)",
+      "Valuation_Company/valuation-platform/backend/app/services/valuation_engine/dcf/dcf_engine.py (단위 규약 정렬)",
+      "Valuation_Company/valuation-platform/backend/app/services/valuation_orchestrator.py (신 시그니처 갱신)"
+    ]
+  },
+  "verification": {
+    "gates": "V①(전수) → V②(최종) 이중 게이트, 반려-수정-재검증 순환",
+    "rejections_resolved": [
+      "tax: README 수치 오기 → 정정",
+      "tax: 로그 각주 사실오류 → 정정",
+      "tax: LLM 의견-계산 수치 모순 (근본원인: cmd.exe 인자 파싱 빈줄 유실 → stdin 전달로 수정) ",
+      "tax: 엔진 자체 법령 불일치 → 전면 재작성 (지휘관 지시)",
+      "dcf: 실행 증거 구버전 → 전량 재실행",
+      "dcf: sessions 잔존물 → 삭제",
+      "engines: cp949 콘솔 인코딩 → reconfigure 방어"
+    ],
+    "calculation_check": "상증세법 6케이스(116,400/80,000/97,000/101,600/97,000/40,000백만원) 분대장·V①·소대장 3중 독립 검산 일치. DCF 주주가치 211,663백만원/주당 21,166원 수기 재검산 일치. 법제처 공식 API 현행 조문(2026-02-27 시행) 원문 대조 완료.",
+    "execution_evidence": "각 에이전트 _test_log.txt (TEST 1~12 상당), memory/history·logs 실물 산출물, 제품 엔진 단독 실행 EXIT 0"
+  },
+  "notes": [
+    "라이브 사이트 계산기(frontend)는 원래부터 법령 정확 — 수정 불요 확인",
+    "backend 미배포 상태 — orchestrator 입력 단위(원/백만원) 규약은 backend 활성화 시 확인 필요",
+    "korean-law MCP 설치됨 (OC=wksun999) — 향후 법령 검증 표준 경로",
+    "에이전트 2종은 PO 지시로 자산 미등재"
+  ],
+  "status": "완료"
+}

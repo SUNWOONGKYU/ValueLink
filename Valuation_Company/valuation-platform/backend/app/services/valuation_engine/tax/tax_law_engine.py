@@ -1,97 +1,137 @@
+# -*- coding: utf-8 -*-
 """
 상속세 및 증여세법 평가법 엔진 (Inheritance Tax Law Valuation Engine)
-상속세 및 증여세법 시행령 제54조
+상속세 및 증여세법 시행령 제54조·제56조
 
 작성일: 2025-10-17
-핵심 질문: "상속세 및 증여세법상 평가액은?"
+
+2026-07-16 법령 교정 — 순손익가치 가중평균(3:2:1)÷6÷환원율(구: 평균×3÷10%,
+약 3배 과대계상), 80% 하한 신설, 할증 배제 3사유, 임의 할인 제거.
+근거: 시행령 제54조·56조, 법 제63조③ (법제처 공식 API 원문 대조).
+
+핵심 산식:
+1. 순손익가치: 3개년 개별 순손익을 가중평균(직전년×3 + 2년전×2 + 3년전×1)÷6
+   → 가중평균 후 0 하한 1회 적용 → ÷ 환원율(기본 10%) = 순손익가치
+2. 가중평균: 일반법인 (순손익가치×3 + 순자산가치×2)÷5,
+   부동산과다보유법인 (순손익가치×2 + 순자산가치×3)÷5
+3. 순자산가치 80% 하한 (시행령 제54조 제1항 단서):
+   가중평균액 < 순자산가치×80% 이면 순자산가치×80%를 평가액으로 함
+4. 최대주주 등 할증 (법 제63조 제3항): 지분율 50% 초과이면 +20% 할증.
+   단, 아래 중 하나에 해당하면 할증을 배제한다 (2026-02-27 시행 시행령 기준):
+     ① 중소기업
+     ② 중견기업
+     ③ 평가기준일이 속하는 사업연도 전 3년 이내 사업연도부터 계속하여 결손금이 있는 법인
+        (본 엔진은 입력된 3개년 순손익이 전부 음수이면 이 요건을 충족한 것으로 자동 판정한다)
+5. 임의 할인(소액주주 할인, 비상장 유동성 할인) 없음 — 상증세법상 근거 없어 전면 삭제.
+
+환원율은 "3년 만기 회사채 유통수익률을 고려하여 기획재정부령으로 정하는 이자율"이며
+현행 시행규칙상 10%이나 고시로 변경될 수 있어 파라미터(discount_rate, 기본값 0.10)로
+유지한다.
+
+⚠️ 호환성 참고: 구 시그니처(net_income_3yr 합계 1개 값, controlling_premium,
+minority_discount, marketability_discount)는 폐기되었다. 이 엔진을 호출하는
+app/services/valuation_orchestrator.py도 함께 신 시그니처(net_income_year1/2/3,
+is_real_estate_heavy, is_sme, is_medium_large, discount_rate)로 갱신했다.
 """
 
-from typing import Dict, Optional
+import sys
+from typing import Dict
 
 
 class InheritanceTaxLawEngine:
-    """상속세 및 증여세법 평가법 엔진"""
+    """상속세 및 증여세법 평가법 엔진 (법령 교정판)"""
 
     def __init__(self):
         pass
 
     def run_valuation(self,
-                     net_income_3yr: float,
-                     net_assets: float,
-                     controlling_premium: bool = False,
-                     minority_discount: float = 0.0,
-                     marketability_discount: float = 0.0) -> Dict:
+                       net_income_year1: float,
+                       net_income_year2: float,
+                       net_income_year3: float,
+                       net_assets: float,
+                       is_real_estate_heavy: bool = False,
+                       is_sme: bool = False,
+                       is_medium_large: bool = False,
+                       ownership_ratio: float = 0.0,
+                       discount_rate: float = 0.10) -> Dict:
         """
         상증세법 평가 실행
 
-        법적 근거: 상속세 및 증여세법 시행령 제54조
-        계산식: (순손익가치 × 3 + 순자산가치 × 2) ÷ 5
+        법적 근거: 상속세 및 증여세법 시행령 제54조(보충적 평가방법), 제56조(순손익가치)
 
         Args:
-            net_income_3yr: 최근 3년 순손익 합계 (백만원)
+            net_income_year1: 직전연도(1년전) 순손익 (백만원, 가중치 3)
+            net_income_year2: 2년전 순손익 (백만원, 가중치 2)
+            net_income_year3: 3년전 순손익 (백만원, 가중치 1)
             net_assets: 순자산 장부가액 (백만원)
-            controlling_premium: 지배주주 여부 (True면 +20% 할증)
-            minority_discount: 소액주주 할인율 (0.10 = 10% 할인)
-            marketability_discount: 유동성 할인율 (0.20 = 20% 할인)
+            is_real_estate_heavy: 부동산과다보유법인 여부 (True면 가중치 2:3, False면 3:2)
+            is_sme: 중소기업 여부 (True면 최대주주 할증 배제)
+            is_medium_large: 중견기업 여부 (True면 최대주주 할증 배제)
+            ownership_ratio: 지분율 (0.50 초과 시 최대주주 등 할증 검토 대상)
+            discount_rate: 환원율 (기본 10% = 0.10, 기획재정부령 고시 이자율 — 신고 시점 최신 고시값 확인 필요)
 
         Returns:
-            {
-                'itl_value': 상증세법 평가액,
-                'income_value': 순손익가치,
-                'asset_value': 순자산가치,
-                'base_value': 할증/할인 전 기본가치,
-                'adjustments': 할증/할인 내역,
-                'value_per_share': 주당 가치
-            }
+            계산 과정 전체를 담은 dict
         """
+        # 1. 3개년 가중평균 순손익 (직전×3 + 2년전×2 + 3년전×1) ÷ 6
+        raw_weighted_profit = (net_income_year1 * 3 + net_income_year2 * 2 + net_income_year3 * 1) / 6
 
-        # 1. 순손익가치 계산
-        # 순손익가치 = (최근 3년 순손익 합계 / 3) × 3 / 0.10
-        # = 평균 순손익 × 30
-        avg_net_income = net_income_3yr / 3
-        income_value = avg_net_income * 3 / 0.10  # 할인율 10% 적용
+        # 0 하한은 가중평균 이후 1회만 적용 (적자 연도를 먼저 0으로 올리면 과대계상됨)
+        weighted_profit = max(0.0, raw_weighted_profit)
+        floor_applied_to_profit = raw_weighted_profit < 0
 
-        # 2. 순자산가치
+        # 2. 순손익가치 = 가중평균 순손익 ÷ 환원율
+        income_value = weighted_profit / discount_rate if discount_rate > 0 else 0.0
+
+        # 3. 순자산가치
         asset_value = net_assets
 
-        # 3. 가중평균 (순손익가치 × 3, 순자산가치 × 2)
-        base_value = (income_value * 3 + asset_value * 2) / 5
+        # 4. 가중평균 (법인 유형별 가중치)
+        if is_real_estate_heavy:
+            profit_weight, asset_weight = 2, 3
+        else:
+            profit_weight, asset_weight = 3, 2
 
-        # 4. 할증/할인 적용
+        base_value = (income_value * profit_weight + asset_value * asset_weight) / 5
+
+        # 5. 순자산가치 80% 하한 (시행령 제54조 제1항 단서)
+        asset_floor = asset_value * 0.8
+        floor_applied = base_value < asset_floor
+        value_before_premium = asset_floor if floor_applied else base_value
+
+        # 6. 최대주주 등 할증 (법 제63조 제3항, 지분율 50% 초과)
+        #    할증 배제 사유 3가지 (2026-02-27 시행 시행령 기준):
+        #    ① 중소기업 ② 중견기업 ③ 평가기준일 전 3년 이내부터 계속 결손금이 있는 법인
         adjustments = []
-        final_value = base_value
+        is_controlling = ownership_ratio > 0.50
+        is_continuing_loss = net_income_year1 < 0 and net_income_year2 < 0 and net_income_year3 < 0
 
-        if controlling_premium:
-            # 지배주주 할증 20%
-            premium = base_value * 0.20
+        exemption_reasons = []
+        if is_sme:
+            exemption_reasons.append('중소기업')
+        if is_medium_large:
+            exemption_reasons.append('중견기업')
+        if is_continuing_loss:
+            exemption_reasons.append('평가기준일 전 3년 이내부터 계속 결손금이 있는 법인')
+
+        premium_applied = is_controlling and not exemption_reasons
+        final_value = value_before_premium
+
+        if premium_applied:
+            premium = value_before_premium * 0.20
             final_value += premium
             adjustments.append({
-                'type': '지배주주 할증',
+                'type': '최대주주 등 할증',
                 'rate': 0.20,
                 'amount': premium,
-                'reason': '상증세법 시행령 제54조 - 지배주주 20% 할증'
+                'reason': '상증세법 제63조 제3항 - 최대주주 등(지분 50% 초과) 20% 할증, 할증 배제 사유 없음'
             })
-        else:
-            # 소액주주 할인
-            if minority_discount > 0:
-                discount_amount = base_value * minority_discount
-                final_value -= discount_amount
-                adjustments.append({
-                    'type': '소액주주 할인',
-                    'rate': -minority_discount,
-                    'amount': -discount_amount,
-                    'reason': f'소액주주 {minority_discount:.0%} 할인'
-                })
-
-        # 유동성 할인 (비상장)
-        if marketability_discount > 0:
-            discount_amount = base_value * marketability_discount
-            final_value -= discount_amount
+        elif is_controlling and exemption_reasons:
             adjustments.append({
-                'type': '유동성 할인',
-                'rate': -marketability_discount,
-                'amount': -discount_amount,
-                'reason': f'비상장 주식 유동성 할인 {marketability_discount:.0%}'
+                'type': '최대주주 할증 배제',
+                'rate': 0.0,
+                'amount': 0.0,
+                'reason': f"할증 배제 사유 해당: {', '.join(exemption_reasons)}"
             })
 
         return {
@@ -99,11 +139,21 @@ class InheritanceTaxLawEngine:
             'income_value': round(income_value, 0),
             'asset_value': round(asset_value, 0),
             'base_value': round(base_value, 0),
-            'avg_net_income': round(avg_net_income, 0),
+            'raw_weighted_profit': round(raw_weighted_profit, 1),
+            'weighted_profit': round(weighted_profit, 1),
+            'floor_applied_to_profit': floor_applied_to_profit,
+            'asset_floor': round(asset_floor, 0),
+            'floor_applied': floor_applied,
+            'value_before_premium': round(value_before_premium, 0),
+            'profit_weight': profit_weight,
+            'asset_weight': asset_weight,
+            'is_continuing_loss': is_continuing_loss,
+            'premium_exemption_reasons': exemption_reasons,
             'adjustments': adjustments,
-            'total_adjustment': round(final_value - base_value, 0),
-            'legal_basis': '상속세 및 증여세법 시행령 제54조',
-            'formula': f'({income_value:,.0f} × 3 + {asset_value:,.0f} × 2) ÷ 5'
+            'total_adjustment': round(final_value - value_before_premium, 0),
+            'discount_rate': discount_rate,
+            'legal_basis': '상속세 및 증여세법 시행령 제54조·제56조, 법 제63조 제3항',
+            'formula': f'({income_value:,.0f} × {profit_weight} + {asset_value:,.0f} × {asset_weight}) ÷ 5'
         }
 
     def calculate_value_per_share(self, itl_value: float, shares_outstanding: int) -> float:
@@ -121,102 +171,88 @@ class InheritanceTaxLawEngine:
 
     def determine_shareholder_type(self, ownership_ratio: float) -> Dict:
         """
-        주주 유형 판단 (지배주주 vs 소액주주)
+        주주 유형 판단 (최대주주 등 할증 대상 여부만 판단 — 임의 할인 로직 없음)
 
         Args:
             ownership_ratio: 지분율 (0.30 = 30%)
 
         Returns:
-            {
-                'type': '지배주주' or '소액주주',
-                'controlling_premium': True/False,
-                'recommended_minority_discount': 할인율
-            }
+            {'type': ..., 'is_controlling': True/False, 'reason': ...}
         """
-        if ownership_ratio >= 0.50:
-            # 50% 이상 → 지배주주
+        if ownership_ratio > 0.50:
             return {
-                'type': '지배주주 (과반)',
-                'controlling_premium': True,
-                'recommended_minority_discount': 0.0,
-                'reason': '지분율 50% 이상 - 경영권 보유'
+                'type': '최대주주 등 (지분 50% 초과)',
+                'is_controlling': True,
+                'reason': '지분율 50% 초과 - 상증세법 제63조 제3항 최대주주 할증 검토 대상'
             }
-        elif ownership_ratio >= 0.30:
-            # 30~50% → 준지배주주
-            return {
-                'type': '준지배주주',
-                'controlling_premium': False,
-                'recommended_minority_discount': 0.10,  # 10% 할인
-                'reason': '지분율 30~50% - 경영 참여 가능'
-            }
-        elif ownership_ratio >= 0.10:
-            # 10~30% → 유력주주
-            return {
-                'type': '유력주주',
-                'controlling_premium': False,
-                'recommended_minority_discount': 0.20,  # 20% 할인
-                'reason': '지분율 10~30% - 일부 영향력'
-            }
-        else:
-            # 10% 미만 → 소액주주
-            return {
-                'type': '소액주주',
-                'controlling_premium': False,
-                'recommended_minority_discount': 0.30,  # 30% 할인
-                'reason': '지분율 10% 미만 - 경영권 없음'
-            }
+        return {
+            'type': '일반주주 (지분 50% 이하)',
+            'is_controlling': False,
+            'reason': '지분율 50% 이하 - 최대주주 할증 대상 아님 (별도의 소액주주 할인 등 임의 할인은 상증세법상 근거 없어 적용하지 않음)'
+        }
 
     def generate_full_report(self,
-                            net_income_3yr: float,
-                            net_assets: float,
-                            shares_outstanding: int,
-                            ownership_ratio: float,
-                            is_listed: bool = False,
-                            purpose: str = '상속/증여') -> Dict:
+                              net_income_year1: float,
+                              net_income_year2: float,
+                              net_income_year3: float,
+                              net_assets: float,
+                              shares_outstanding: int,
+                              ownership_ratio: float,
+                              is_real_estate_heavy: bool = False,
+                              is_sme: bool = False,
+                              is_medium_large: bool = False,
+                              discount_rate: float = 0.10,
+                              purpose: str = '상속/증여') -> Dict:
         """
         상증세법 평가 전체 보고서 생성
 
         Args:
-            net_income_3yr: 최근 3년 순손익 합계 (백만원)
+            net_income_year1: 직전연도(1년전) 순손익 (백만원)
+            net_income_year2: 2년전 순손익 (백만원)
+            net_income_year3: 3년전 순손익 (백만원)
             net_assets: 순자산 장부가액 (백만원)
             shares_outstanding: 발행주식수
             ownership_ratio: 지분율
-            is_listed: 상장 여부
+            is_real_estate_heavy: 부동산과다보유법인 여부
+            is_sme: 중소기업 여부 (할증 배제 사유 ①)
+            is_medium_large: 중견기업 여부 (할증 배제 사유 ②)
+            discount_rate: 환원율 (기본 10%)
             purpose: 평가 목적
 
         Returns:
             전체 보고서 Dict
         """
-        # 1. 주주 유형 판단
         shareholder_info = self.determine_shareholder_type(ownership_ratio)
 
-        # 2. 할인율 결정
-        minority_discount = shareholder_info['recommended_minority_discount']
-        marketability_discount = 0.0 if is_listed else 0.20  # 비상장 20% 할인
-
-        # 3. 상증세법 평가
         result = self.run_valuation(
-            net_income_3yr=net_income_3yr,
+            net_income_year1=net_income_year1,
+            net_income_year2=net_income_year2,
+            net_income_year3=net_income_year3,
             net_assets=net_assets,
-            controlling_premium=shareholder_info['controlling_premium'],
-            minority_discount=minority_discount,
-            marketability_discount=marketability_discount
+            is_real_estate_heavy=is_real_estate_heavy,
+            is_sme=is_sme,
+            is_medium_large=is_medium_large,
+            ownership_ratio=ownership_ratio,
+            discount_rate=discount_rate,
         )
 
-        # 4. 주당 가치
         value_per_share = self.calculate_value_per_share(
             result['itl_value'], shares_outstanding
         )
 
-        # 5. 보고서 통합
         report = {
             **result,
             'value_per_share': round(value_per_share, 0),
             'shares_outstanding': shares_outstanding,
             'ownership_ratio': ownership_ratio,
             'shareholder_type': shareholder_info['type'],
-            'is_listed': is_listed,
+            'is_real_estate_heavy': is_real_estate_heavy,
+            'is_sme': is_sme,
+            'is_medium_large': is_medium_large,
             'purpose': purpose,
+            'net_income_year1': net_income_year1,
+            'net_income_year2': net_income_year2,
+            'net_income_year3': net_income_year3,
             'summary': self._generate_summary(
                 result, value_per_share, shareholder_info, purpose
             )
@@ -225,11 +261,17 @@ class InheritanceTaxLawEngine:
         return report
 
     def _generate_summary(self, result: Dict, value_per_share: float,
-                         shareholder_info: Dict, purpose: str) -> str:
+                           shareholder_info: Dict, purpose: str) -> str:
         """평가 요약 텍스트 생성"""
         adjustments_text = ""
         for adj in result['adjustments']:
             adjustments_text += f"║ • {adj['type']}: {adj['rate']:+.0%} ({adj['amount']:+,.0f}백만원)\n"
+        if not adjustments_text:
+            adjustments_text = "║ • (해당 없음)\n"
+
+        floor_note = ""
+        if result['floor_applied']:
+            floor_note = f"\n║ ※ 순자산가치 80% 하한 적용 ({result['asset_value']:,}백만원 × 80% = {result['asset_floor']:,}백만원)"
 
         summary = f"""
 ╔════════════════════════════════════════════════════════════╗
@@ -238,17 +280,19 @@ class InheritanceTaxLawEngine:
 ║ 평가 목적: {purpose}
 ║ 법적 근거: {result['legal_basis']}
 ║ 주주 유형: {shareholder_info['type']}
+║ 법인 유형: {'부동산과다보유법인' if result['profit_weight'] == 2 else '일반법인'}
 ║
 ║ [계산 과정]
-║ 1. 순손익가치: {result['income_value']:,}백만원
-║    (최근 3년 평균 순손익 {result['avg_net_income']:,} × 30)
+║ 1. 3개년 가중평균 순손익: {result['weighted_profit']:,}백만원
+║    (가중평균 전 값: {result['raw_weighted_profit']:,}백만원{' , 0 하한 적용됨' if result['floor_applied_to_profit'] else ''})
+║ 2. 순손익가치 (÷환원율 {result['discount_rate']:.0%}): {result['income_value']:,}백만원
 ║
-║ 2. 순자산가치: {result['asset_value']:,}백만원
+║ 3. 순자산가치: {result['asset_value']:,}백만원
 ║
-║ 3. 가중평균 (순손익×3 + 순자산×2) ÷ 5:
-║    {result['base_value']:,}백만원
+║ 4. 가중평균 ({result['profit_weight']}:{result['asset_weight']}) 기본가치:
+║    {result['base_value']:,}백만원{floor_note}
 ║
-║ [할증/할인]
+║ [최대주주 할증 판정]
 {adjustments_text}║    총 조정: {result['total_adjustment']:+,}백만원
 ║
 ║ [최종 평가액]
@@ -262,118 +306,74 @@ class InheritanceTaxLawEngine:
 # ==================== 테스트 코드 ====================
 
 if __name__ == "__main__":
-    print("=" * 60)
-    print("상증세법 평가 테스트")
-    print("=" * 60)
+    # 한국어 Windows 기본 콘솔(cp949)에서 summary의 박스 문자('╔' 등)가
+    # UnicodeEncodeError를 일으키는 것을 방지 (reconfigure 미지원 환경 대비 try/except)
+    try:
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+    except (AttributeError, ValueError):
+        pass
 
-    # Case 1: 지배주주 (50% 이상)
-    print("\n[Case 1: 지배주주 상속 (지분 80%)]")
-
-    net_income_3yr = 35_000  # 최근 3년 순손익 합계 350억 (100억, 120억, 130억)
-    net_assets = 60_000  # 순자산 600억
-    shares = 1_000_000
-    ownership = 0.80
+    print("=" * 60)
+    print("상증세법 평가 테스트 (법령 교정판)")
+    print("=" * 60)
 
     engine = InheritanceTaxLawEngine()
-    result = engine.generate_full_report(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        shares_outstanding=shares,
-        ownership_ratio=ownership,
-        is_listed=False,
+
+    print("\n[Case 1: 일반법인, 지배주주 80%, 비중소기업]")
+    result1 = engine.generate_full_report(
+        net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
+        net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
         purpose='상속세 신고'
     )
+    print(result1['summary'])
+    assert result1['itl_value'] == 116_400.0, f"Case 1 검산 실패: {result1['itl_value']}"
 
-    print(result['summary'])
-
-    # Case 2: 소액주주 (10% 미만)
-    print("\n" + "=" * 60)
-    print("\n[Case 2: 소액주주 증여 (지분 5%)]")
-
+    print("\n[Case 2: 80% 하한 발동 (3개년 적자, 순자산 큼, 비지배주주 30%)]")
     result2 = engine.generate_full_report(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        shares_outstanding=shares,
-        ownership_ratio=0.05,  # 5% 소액주주
-        is_listed=False,
+        net_income_year1=-5_000, net_income_year2=-3_000, net_income_year3=-2_000,
+        net_assets=100_000, shares_outstanding=500_000, ownership_ratio=0.30,
         purpose='증여세 신고'
     )
-
     print(result2['summary'])
+    assert result2['itl_value'] == 80_000.0, f"Case 2 검산 실패: {result2['itl_value']}"
 
-    # Case 3: 비교
-    print("\n" + "=" * 60)
-    print("\n[주주 유형별 가치 비교]")
-    print(f"• 지배주주 (80%): {result['itl_value']:,}백만원 ({result['value_per_share']:,}원/주)")
-    print(f"• 소액주주 (5%):  {result2['itl_value']:,}백만원 ({result2['value_per_share']:,}원/주)")
-    print(f"• 차이: {result['itl_value'] - result2['itl_value']:+,}백만원 "
-          f"({(result['itl_value'] / result2['itl_value'] - 1) * 100:+.1f}%)")
-
-    print("\n" + "=" * 60)
-
-    # Case 4: 상장사 vs 비상장사
-    print("\n[Case 4: 상장사 vs 비상장사 비교]")
-
-    result_listed = engine.run_valuation(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        controlling_premium=False,
-        minority_discount=0.30,  # 소액주주 30%
-        marketability_discount=0.0  # 상장사 → 유동성 할인 없음
+    print("\n[Case 3: 중소기업 특례 (Case 1과 동일 입력, 중소기업 → 할증 배제)]")
+    result3 = engine.generate_full_report(
+        net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
+        net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
+        is_sme=True, purpose='상속세 신고 (중소기업)'
     )
+    print(result3['summary'])
+    assert result3['itl_value'] == 97_000.0, f"Case 3 검산 실패: {result3['itl_value']}"
 
-    result_unlisted = engine.run_valuation(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        controlling_premium=False,
-        minority_discount=0.30,  # 소액주주 30%
-        marketability_discount=0.20  # 비상장 → 유동성 할인 20%
+    print("\n[Case 4: 부동산과다보유법인 (Case 1과 동일 입력, 가중치 2:3)]")
+    result4 = engine.generate_full_report(
+        net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
+        net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
+        is_real_estate_heavy=True, purpose='상속세 신고 (부동산과다법인)'
     )
+    print(result4['summary'])
+    assert result4['itl_value'] == 101_600.0, f"Case 4 검산 실패: {result4['itl_value']}"
 
-    print(f"\n상장사 (유동성 할인 없음): {result_listed['itl_value']:,}백만원")
-    print(f"비상장사 (유동성 할인 20%): {result_unlisted['itl_value']:,}백만원")
-    print(f"차이: {result_listed['itl_value'] - result_unlisted['itl_value']:+,}백만원 "
-          f"({(result_listed['itl_value'] / result_unlisted['itl_value'] - 1) * 100:+.1f}%)")
-
-    print("\n" + "=" * 60)
-
-    # Case 5: 실전 예시 - 가업승계
-    print("\n[Case 5: 실전 예시 - 가업승계]")
-
-    print("\n[시나리오]")
-    print("• 부모 (지배주주 80%) → 자녀에게 40% 증여")
-    print("• 증여 후: 부모 40%, 자녀 40%")
-
-    # 증여 전 (부모 80%)
-    result_before = engine.generate_full_report(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        shares_outstanding=shares,
-        ownership_ratio=0.80,
-        is_listed=False,
-        purpose='증여 전 평가'
+    print("\n[Case 5: 중견기업 특례 (Case 1과 동일 입력, 중견기업 → 할증 배제)]")
+    result5 = engine.generate_full_report(
+        net_income_year1=13_000, net_income_year2=12_000, net_income_year3=10_000,
+        net_assets=60_000, shares_outstanding=1_000_000, ownership_ratio=0.80,
+        is_medium_large=True, purpose='상속세 신고 (중견기업)'
     )
+    print(result5['summary'])
+    assert result5['itl_value'] == 97_000.0, f"Case 5 검산 실패: {result5['itl_value']}"
 
-    # 증여 후 (자녀 40%)
-    result_after = engine.generate_full_report(
-        net_income_3yr=net_income_3yr,
-        net_assets=net_assets,
-        shares_outstanding=shares,
-        ownership_ratio=0.40,
-        is_listed=False,
-        purpose='증여 후 평가'
+    print("\n[Case 6: 3년 연속 결손법인 자동 할증배제 (지배주주 60%, 3개년 전부 적자)]")
+    result6 = engine.generate_full_report(
+        net_income_year1=-1_000, net_income_year2=-2_000, net_income_year3=-1_500,
+        net_assets=50_000, shares_outstanding=1_000_000, ownership_ratio=0.60,
+        purpose='증여세 신고 (계속 결손법인)'
     )
-
-    print(f"\n증여 전 (부모 80% 보유 시 주당 가치):")
-    print(f"  주당가치: {result_before['value_per_share']:,}원")
-    print(f"  총가치: {result_before['itl_value']:,}백만원")
-
-    print(f"\n증여 후 (자녀 40% 보유 시 주당 가치):")
-    print(f"  주당가치: {result_after['value_per_share']:,}원")
-    print(f"  40% 가치: {result_after['itl_value'] * 0.40 / 0.40:,.0f}백만원")
-
-    print(f"\n40% 증여세 과세표준:")
-    print(f"  {result_after['value_per_share']:,}원 × {shares * 0.40:,.0f}주")
-    print(f"  = {result_after['value_per_share'] * shares * 0.40 / 1_000_000:,.0f}백만원")
+    print(result6['summary'])
+    assert result6['itl_value'] == 40_000.0, f"Case 6 검산 실패: {result6['itl_value']}"
 
     print("\n" + "=" * 60)
+    print("전체 6케이스 검산 통과: 116,400 / 80,000 / 97,000 / 101,600 / 97,000 / 40,000")
+    print("=" * 60)

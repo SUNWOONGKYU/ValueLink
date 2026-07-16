@@ -198,12 +198,23 @@ class ValuationOrchestrator:
                 fair_value_data=inputs.get('fair_value_data')
             )
         elif self.method == 'inheritance_tax':
+            # 2026-07-16 법령 교정 반영 (시행령 제54조·56조, 법 제63조③ 재검증 완료).
+            # 구 시그니처(net_income_3yr 합계 1개 값, controlling_premium,
+            # minority_discount, marketability_discount)는 폐기됨 —
+            # 3개년 순손익은 개별 입력이 필수이고, 임의 할인(minority/marketability)은
+            # 상증세법상 근거가 없어 신 엔진에서 제거되었다. 호출부가 이 오케스트레이터
+            # 하나뿐이고 아직 어떤 API 엔드포인트에서도 사용되지 않아(고아 코드) 안전하게
+            # 직접 갱신함 (호환 래퍼 불필요).
             result = self.engine.run_valuation(
-                net_income_3yr=inputs.get('net_income_3yr'),
+                net_income_year1=inputs.get('net_income_year1'),
+                net_income_year2=inputs.get('net_income_year2'),
+                net_income_year3=inputs.get('net_income_year3'),
                 net_assets=inputs.get('net_assets'),
-                controlling_premium=inputs.get('controlling_premium', False),
-                minority_discount=inputs.get('minority_discount', 0.0),
-                marketability_discount=inputs.get('marketability_discount', 0.0)
+                is_real_estate_heavy=inputs.get('is_real_estate_heavy', False),
+                is_sme=inputs.get('is_sme', False),
+                is_medium_large=inputs.get('is_medium_large', False),
+                ownership_ratio=inputs.get('ownership_ratio', 0.0),
+                discount_rate=inputs.get('discount_rate', 0.10)
             )
         else:
             raise ValueError(f"Unsupported method: {self.method}")

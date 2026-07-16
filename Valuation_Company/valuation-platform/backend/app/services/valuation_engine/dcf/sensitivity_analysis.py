@@ -3,6 +3,12 @@ DCF 민감도 분석 모듈
 
 WACC와 영구성장률 변화에 따른 주당가치 변동 분석
 
+⚠️ 입력 단위 규약: projections의 FCF, adjustments의 cash/total_debt/
+non_operating_assets는 모두 "백만원" 단위로 입력해야 한다. shares_outstanding만
+예외로 실제 발행주식수(정수)를 그대로 입력한다. value_per_share 계산식이
+(equity_value[백만원] * 1,000,000 / shares) 형태이므로, 이 규약을 지켜야
+결과가 "원" 단위로 올바르게 산출된다. dcf_engine.py의 DCFEngine과 동일한 규약이다.
+
 Author: Valuation Engine Team
 Date: 2025-10-17
 """
@@ -96,8 +102,10 @@ class SensitivityAnalyzer:
                 # 주주가치
                 equity_value = ev - net_debt + non_op_assets
 
-                # 주당가치
-                value_per_share = equity_value / shares
+                # 주당가치 (입력 단위: 백만원 → 결과 단위: 원)
+                # dcf_engine.calculate_equity_value()와 동일한 단위 변환을 적용해야
+                # 기준 케이스(base_case) 주당가치와 일치한다.
+                value_per_share = (equity_value * 1_000_000) / shares
 
                 row.append(int(value_per_share))
 
@@ -111,7 +119,7 @@ class SensitivityAnalyzer:
         base_pv_tv = base_tv / (1 + base_wacc) ** periods
         base_ev = base_pv_fcf + base_pv_tv
         base_equity = base_ev - net_debt + non_op_assets
-        base_value_per_share = base_equity / shares
+        base_value_per_share = (base_equity * 1_000_000) / shares  # 백만원 → 원
 
         return {
             'wacc_values': wacc_values,
@@ -242,7 +250,7 @@ class SensitivityAnalyzer:
 
             # 주주가치
             equity_value = ev - net_debt + non_op_assets
-            value_per_share = equity_value / shares
+            value_per_share = (equity_value * 1_000_000) / shares  # 백만원 → 원
 
             results[scenario_name] = {
                 'description': params['description'],
@@ -264,19 +272,19 @@ if __name__ == "__main__":
     print("Sensitivity Analysis - Test")
     print("=" * 80)
 
-    # 샘플 데이터
+    # 샘플 데이터 (단위: 백만원. shares_outstanding만 실제 주식 수)
     test_projections = [
-        {'year': 2025, 'fcf': 14000000000},
-        {'year': 2026, 'fcf': 15000000000},
-        {'year': 2027, 'fcf': 16000000000},
-        {'year': 2028, 'fcf': 16500000000},
-        {'year': 2029, 'fcf': 16891226352}
+        {'year': 2025, 'fcf': 14000},
+        {'year': 2026, 'fcf': 15000},
+        {'year': 2027, 'fcf': 16000},
+        {'year': 2028, 'fcf': 16500},
+        {'year': 2029, 'fcf': 16891},
     ]
 
     test_adjustments = {
-        'cash': 10000000000,
-        'total_debt': 30000000000,
-        'non_operating_assets': 5000000000,
+        'cash': 10000,
+        'total_debt': 30000,
+        'non_operating_assets': 5000,
         'shares_outstanding': 10000000
     }
 

@@ -6,6 +6,16 @@ Based on:
 - 삼일PwC "M&A ESSENCE 2020" Chapter 3
 - Standard Corporate Finance Theory
 
+⚠️ 입력 단위 규약: historical_financials/projections의 금액(매출·영업이익·
+FCF 등)과 adjustments의 cash/total_debt/non_operating_assets는 모두
+"백만원" 단위로 입력해야 한다. adjustments.shares_outstanding만 예외로
+실제 발행주식수(정수)를 그대로 입력한다.
+이유: calculate_equity_value()의 주당가치 계산식이
+    value_per_share = (equity_value[백만원] * 1,000,000) / shares
+형태로, equity_value가 "백만원" 단위일 때만 결과가 "원" 단위로 정확하다.
+원(₩) 단위로 그대로 입력하면 결과가 100만 배 부풀려진다 (V② 지적 "단위 함정").
+sensitivity_analysis.py의 SensitivityAnalyzer도 동일한 단위 규약을 따른다.
+
 Author: Valuation Engine Team
 Date: 2025-10-17
 Version: 1.0
@@ -36,17 +46,17 @@ class DCFEngine:
         - 정상화된 EBIT, FCF 산출
 
         Args:
-            raw_financials: 과거 3~5년 재무제표
+            raw_financials: 과거 3~5년 재무제표 (금액 단위: 백만원)
                 [{
                     'year': 2022,
-                    'revenue': 100000000000,
-                    'operating_income': 15000000000,
-                    'net_income': 10000000000,
-                    'depreciation': 3000000000,
-                    'capex': 5000000000,
-                    'working_capital_change': 2000000000,
+                    'revenue': 100000,          # 100,000백만원 = 1,000억원
+                    'operating_income': 15000,
+                    'net_income': 10000,
+                    'depreciation': 3000,
+                    'capex': 5000,
+                    'working_capital_change': 2000,
                     'tax_rate': 0.25,
-                    'one_time_items': [500000000, -300000000]  # 일회성 손익
+                    'one_time_items': [500, -300]  # 일회성 손익
                 }, ...]
 
         Returns:
@@ -427,7 +437,7 @@ if __name__ == "__main__":
     print("DCF Engine - Test Case")
     print("=" * 80)
 
-    # 샘플 입력 데이터 (KPMG 가이드 기반)
+    # 샘플 입력 데이터 (KPMG 가이드 기반, 금액 단위: 백만원)
     test_inputs = {
         'company_id': 'TEST001',
         'company_name': '테스트기업',
@@ -435,33 +445,33 @@ if __name__ == "__main__":
         'historical_financials': [
             {
                 'year': 2022,
-                'revenue': 100000000000,  # 1,000억
-                'operating_income': 12000000000,  # 120억
-                'net_income': 8000000000,
-                'depreciation': 3000000000,
-                'capex': 4000000000,
-                'working_capital_change': 1000000000,
+                'revenue': 100000,  # 100,000백만원 = 1,000억원
+                'operating_income': 12000,  # 12,000백만원 = 120억원
+                'net_income': 8000,
+                'depreciation': 3000,
+                'capex': 4000,
+                'working_capital_change': 1000,
                 'tax_rate': 0.25,
-                'one_time_items': [500000000]  # 일회성 이익 5억
+                'one_time_items': [500]  # 일회성 이익 500백만원 = 5억원
             },
             {
                 'year': 2023,
-                'revenue': 115000000000,
-                'operating_income': 15000000000,
-                'net_income': 10000000000,
-                'depreciation': 3500000000,
-                'capex': 5000000000,
-                'working_capital_change': 1500000000,
+                'revenue': 115000,
+                'operating_income': 15000,
+                'net_income': 10000,
+                'depreciation': 3500,
+                'capex': 5000,
+                'working_capital_change': 1500,
                 'tax_rate': 0.25
             },
             {
                 'year': 2024,
-                'revenue': 130000000000,
-                'operating_income': 18000000000,
-                'net_income': 12000000000,
-                'depreciation': 4000000000,
-                'capex': 6000000000,
-                'working_capital_change': 1500000000,
+                'revenue': 130000,
+                'operating_income': 18000,
+                'net_income': 12000,
+                'depreciation': 4000,
+                'capex': 6000,
+                'working_capital_change': 1500,
                 'tax_rate': 0.25
             }
         ],
@@ -484,9 +494,9 @@ if __name__ == "__main__":
             'tax_rate': 0.25
         },
         'adjustments': {
-            'cash': 10000000000,  # 현금 100억
-            'total_debt': 30000000000,  # 부채 300억
-            'non_operating_assets': 5000000000,  # 비영업자산 50억
+            'cash': 10000,  # 현금 10,000백만원 = 100억원
+            'total_debt': 30000,  # 부채 30,000백만원 = 300억원
+            'non_operating_assets': 5000,  # 비영업자산 5,000백만원 = 50억원
             'shares_outstanding': 10000000  # 발행주식 1,000만주
         }
     }
@@ -498,7 +508,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 80)
     print("DCF Valuation Results")
     print("=" * 80)
-    print(f"기업가치: {result['valuation_result']['enterprise_value']:,.0f}원")
-    print(f"주주가치: {result['valuation_result']['equity_value']:,.0f}원")
+    print(f"기업가치: {result['valuation_result']['enterprise_value']:,.0f}백만원")
+    print(f"주주가치: {result['valuation_result']['equity_value']:,.0f}백만원")
     print(f"주당가치: {result['valuation_result']['value_per_share']:,.0f}원")
     print("=" * 80)
